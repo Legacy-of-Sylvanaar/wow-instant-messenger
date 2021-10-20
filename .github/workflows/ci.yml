@@ -21,8 +21,6 @@ jobs:
 
       - name: Install and run Luacheck
         uses: nebularg/actions-luacheck@v1
-        with:
-          args: "--local luacheck"
 
       - name: Create Retail Package
         uses: BigWigsMods/packager@master
