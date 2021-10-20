@@ -22,7 +22,7 @@ jobs:
       - name: Install and run Luacheck
         uses: nebularg/actions-luacheck@v1
         with:
-          args: "--no-color -q"
+          args: "--local luacheck"
 
       - name: Create Retail Package
         uses: BigWigsMods/packager@master
