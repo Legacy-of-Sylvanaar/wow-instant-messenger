@@ -1,6 +1,6 @@
 --[[
     Update:2010/07/04
-    Language Localization: zhTW 
+    Language Localization: zhTW
     Translated by: Junxian <junxian1121@hotmail.com>
 ]]
 
@@ -22,7 +22,7 @@ WIM.AddLocale("zhTW", {
     ["Unknown"] = "未知",
     ["Click to update..."] = "點擊更新...",
     ["Usage"] = "使用",
-    
+
     ["state_resting"] = "休息",
     ["state_combat"] = "戰鬥",
     ["state_pvp"] = "PVP",
@@ -30,13 +30,13 @@ WIM.AddLocale("zhTW", {
     ["state_party"] = "組隊",
     ["state_raid"] = "團隊",
     ["state_other"] = "一般 (其他)",
-    
+
     ["<Shift-Click> to close window."] = "<Shift-左鍵> 關閉視窗",
-    
+
     ["A new version of WIM is available!\nYou can download the latest version by going to:\n\n http://www.wimaddon.com"] = "目前已經有新版的 WIM!\n您可以到http://www.wimaddon.com 下載新版本",
-    
+
     ["Options"] = "選項",
-    
+
     ["Icon Position"] = "小圖示/按鈕位置",
     ["Font Size"] = "字型大小",
     ["Window Scale (Percent)"] = "縮放視窗(百分比)",
@@ -50,7 +50,7 @@ WIM.AddLocale("zhTW", {
     ["Invalid Alias!"] = "無效的別名",
     ["Invalid Keyword/Phrase!"] = "無效的關鍵字/片詞",
     ["Keyword/Phrase is already used!"] = "關鍵字/片詞，已經被使用",
-    
+
     ["Day"] = "日",
     ["Week"] = "週",
     ["Month"] = "月",
@@ -62,10 +62,10 @@ WIM.AddLocale("zhTW", {
     ["Ignore"] = "忽略",
     ["Block"] = "封鎖",
     ["Enable WIM"] = "開啟 WIM",
-    
+
     ["Auto Close Friends after:"] = "好友自動關閉時間:",
     ["Auto Close Non-Friends after:"] = "非好友自動關閉時間:",
-    
+
     ["Display"] = "顯示",
     ["Incoming Messages"] = "收到訊息",
     ["Outgoing Messages"] = "發出訊息",
@@ -82,14 +82,14 @@ WIM.AddLocale("zhTW", {
     ["Requires /who querying."] = "請輸入 /who 查詢",
     ["Enable window fading effects."] = "開啟視窗淡化效果",
     ["Enable window animations."] = "開啟視窗動態效果",
-    
+
     ["Display minimap icon."] = "顯示小地圖按鈕",
-    
+
     ["General"] = "一般",
     ["History"] = "聊天記錄",
     ["Filters"] = "過濾條件",
     ["Plugins"] = "插件",
-    
+
     ["Auto focus when window is shown."] = "當對話視窗出現，自動跳到最上層/獲得焦點",
     ["Preserve focus after sending messages."] = "送出訊息後，仍將對話視窗保留在最上層/焦點狀態",
     ["Display tooltips."] = "顯示小秘訣",
@@ -107,7 +107,7 @@ WIM.AddLocale("zhTW", {
     ["Display emoticons."] = "顯示心情符號",
     ["Display URLs as item links."] = "顯示網址上的物品連結",
     ["Display floating item links."] = "直接顯示物品連結",
-    
+
     ["Cascade windows."] = "視窗層疊顯示",
     ["Direction:"] = "方向:",
     ["Tabs"] = "標籤列",
@@ -130,7 +130,7 @@ WIM.AddLocale("zhTW", {
     ["Warlock"] = "術士",
     ["Warrior"] = "戰士",
     ["Death Knight"] = "死亡騎士",
-    
+
     -- Female Class Names --
     ["DruidF"] = "德魯伊",
     ["HunterF"] = "獵人",
@@ -142,14 +142,14 @@ WIM.AddLocale("zhTW", {
     ["WarlockF"] = "術士",
     ["WarriorF"] = "戰士",
     ["Death KnightF"] = "死亡騎士",
-    
+
     ["Game Master"] = "遊戲管理者",
-    
+
     -- WIM.lua --
     ["Toggle WIM 'On' and 'Off'."] = "開啟/關閉 WIM",
     ["Toggle Debugging Mode 'On' and 'Off'."] = "開啟/關閉 Debugging 模式",
     ["WIM is currently running. To access WIM's wide array of options type:"] = "WIM 已載入。請進入設定頁選擇樣式:",
-    
+
     -- Filters.lua --
     ["Whispers Sent by Addons"] = "由插件所發出的密語",
     ["WhisperSelect Part 1"] = "密語選擇 1",
@@ -177,7 +177,7 @@ WIM.AddLocale("zhTW", {
     ["Cancel"] = "取消",
     ["Edit Filter"] = "編輯過濾條件",
     ["Add Filter"] = "增加過濾條件",
-    
+
     -- History.lua --
     ["WIM History Button"] = "WIM 對話記錄按鈕",
     ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "按下對話視窗的 %s 按鈕將會顯示使用者對話記錄。",
@@ -196,18 +196,18 @@ WIM.AddLocale("zhTW", {
     ["WIM History Viewer can be accessed any time by typing:"] = "WIM 對話記錄檢視可以隨時透過下列指令開啟:",
     ["WIM History Viewer"] = "檢視 WIM 對話記錄",
     ["Display history viewer."] = "顯示對話記錄",
-    
+
     -- ldb.lua --
     ["No New Messages"] = "沒有新的訊息",
-    
+
     -- Menu.lua --
     ["Whispers"] = "密語",
     ["Chat"] = "聊天訊息",
-    
+
     -- Negotiate.lua --
     ["WIM Update Available!"] = "WIM 已有新的更新!",
     ["There is a newer version of WIM available for download. You can download it at %s."] = "目前已經有新版的 WIM!\n您可以到 %s 下載新版本",
-    
+
     -- ShortcutBar.lua --
     ["Location"] = "玩家位置",
     --["Player Location"] = "玩家位置",
@@ -220,15 +220,15 @@ WIM.AddLocale("zhTW", {
     ["Are you sure you want to\nignore %s?"] = "您確定您要忽略 %s",
     ["Right-Click for profile links..."] ="右鍵點擊 查看英雄榜",
     ["Profile Links"] = "查看英雄榜",
-    
+
     -- Tutorials.lua --
     ["Display WIM tips"] = "顯示 WIM 小提示",
-    
+
     -- W2W.lua --
     ["%s is typing..."] = "%s 正在輸入訊息...",
     ["W2W Profile"] = "W2W 設定",
     ["Talent Spec"] = "天賦資訊",
-    
+
     -- WhisperEngine.lua --
     ["Whisper Received!"] = "收到密語!",
     ["You received a whisper which was hidden due to your current activity. You can change how whispers behave in WIM's options by typing"] = "您收到一個密語但因為您現在的活動而被隱藏。您可以變更 WIM 的密語設定。",
@@ -241,17 +241,17 @@ WIM.AddLocale("zhTW", {
     ["You are about to restore WIM's filters to it's default settings!"] = "你即將把 WIM 的過濾選項恢復成預設值!",
     ["Usage"] = "使用",
     ["Clear various WIM data."] = "清除所有 WIM 資料",
-    
+
     -- SlashHandler.lua --
     ["WIM Slash Commands"] = "WIM 指令",
     ["To see a list of available WIM slash commands type:"] = "顯示可用的 WIM 指令:",
     ["Display available slash commands."] = "顯示可用的 WIM 指令",
     ["Reload User Interface."] = "重新載入使用者介面",
-    
+
     -- TabHandler.lua --
     ["Manipulating Tabs"] = "操作群組標籤",
     ["You can <Shift-Click> a tab and drag it out into it's own window."] = "您可以 <shift-左鍵> 一個群組標籤然後將它拖曳到屬於它的視窗。",
-    
+
     -- WindowHandler.lua --
     ["Window Resized!"] = "視窗尺寸已改變",
     ["If you want all windows to be this size, you can set the default window size within WIM's options."] = "若您想要將所有視窗變為此尺寸，您可以至WIM設定選單去對預設視窗做設定。",
@@ -268,12 +268,12 @@ WIM.AddLocale("zhTW", {
     ["%s does not wish to be disturbed: %s"] = "%s 目前不願被打擾: %s",
     ["Right-Mouse Click!"] = "滑鼠 右鍵點擊!",
     ["There might be useful tools hidden under the message box. Right-Click to see them!"] = "有可用的工具被隱藏在訊息欄下方，請按滑鼠右鍵開啟",
-    
+
     -- Options.lua --
     ["Display WIM's options."] = "顯示 WIM 設定選單",
     ["Resetting WIM will clear all of your settings!"] = "重設 WIM 將會清除您所有的設定!",
     ["Reset all options to default."] = "將所有設定恢復為預設值",
-    
+
     -- CoreOptions --
     ["Created By:"] = "作者：",
     ["Special Thanks:"] = "特別感謝：",
@@ -397,7 +397,7 @@ WIM.AddLocale("zhTW", {
     ["Bracket names."] = "名字加上括號",
     ["Clamp window to screen."] = "限制視窗不超出畫面",
     ["Group with whisper windows."] = "群組包含密語視窗",
-    
+
     -- TabManagement.lua --
     ["Tab Management"] = "標籤管理",
     ["Automatically manage your open windows and place them into appropriate tab groups."] = "WIM 會將您的密語對話視窗自動放到適合的群組",
@@ -440,23 +440,23 @@ WIM.AddLocale("zhTW", {
     ["Change Log"] = "更新日誌",
     ["View WIM's change log."] = "檢視 WIM 的更新日誌",
     ["Available For Download!"] = "有新版本可下載！",
-    
+
     -- Filters.lua --
     ["Show Alert"] = "顯示警告",
     ["WIM has blocked a message from %s."] = "WIM 發現阻檔訊息來自 %s",
     ["View Blocked Message"] = "檢視阻檔訊息",
     ["Blocked Message"] = "阻檔訊息",
-    
+
     -- MinimapIcon.lua
     ["Show Unread Messages"] = "顯示未閱讀訊息",
     ["Show All Windows"] = "顯示所有視窗",
     ["Hide All Windows"] = "隱藏所有視窗",
-    
+
     --Emoticons.lua
     ["Also"] = "並且",
     ["More"] = "更多",
     ["Emoticons"] = "心情符號",
-    
+
     --Expose.lua
     ["Your conversations have been hidden in order to clear your screen while in combat. To disable this feature type"] = "你的對話視窗將在進入戰鬥狀態時被隱藏。要停用這個功能請輸入:",
     ["Expose"] = "Expose",
@@ -492,11 +492,11 @@ WIM.AddLocale("zhTW", {
     ["Sensitivity"] = "靈敏度",
     ["Enable WorldFrame Click Detection."] = "啟用「世界框架」點擊檢測",
     ["The UI must be reloaded in order to disable this module fully. Reload UI now?"] = "為了使這個 UI 模組完全停用，你必須重新載入所有 UI，你現在要重新載入 UI 嗎？",
-    
+
     --OffScreenTracker.lua
     ["WIM Window Off Screen"] = "關閉 WIM 視窗追蹤",
     ["Click to reposition."] = "點擊 重新定位",
-    
+
     --Misc
     ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM 發現你正在一個私人的伺服器上玩 WOW，某些私人的伺服器並不完全支援 WIM 的模組，你是否仍要嘗試載入 WIM 呢？",
 

@@ -5,8 +5,7 @@ exclude_files = {
 	".luacheckrc"
 }
 ignore = {
-	"11./SLASH_.*", -- Setting an undefined (Slash handler) global variable
-	"11./BINDING_.*", -- Setting an undefined (Keybinding header) global variable
+	"11", -- Setting an undefined global variable (WIM uses private global space)
 	"211", -- Unused local variable
 	"211/L", -- Unused local variable "L"
 	"211/CL", -- Unused local variable "CL"
@@ -31,6 +30,7 @@ globals = {
 	"geterrorhandler",
 	"fastrandom",
 	"format",
+	"hooksecurefunc",
 	"strjoin",
 	"strsplit",
 	"tContains",
@@ -41,5 +41,10 @@ globals = {
 	"tremove",
 
 	-- WoW
-
+	"CreateFrame",
+	"ChatFontNormal",
+	"GetRealmName",
+	"UISpecialFrames",
+	"LOCALIZED_CLASS_NAMES_MALE",
+	"LOCALIZED_CLASS_NAMES_FEMALE",
 }
