@@ -12,9 +12,9 @@
 			WIM.ToggleContainer(WIM.db.winAnimation);
 	</Binding>
 	<Binding name="WIMHISTORY">
-			WIM.ShowHistoryViewer();	
+			WIM.ShowHistoryViewer();
 	</Binding>
 	<Binding name="WIMOPTIONS">
-			WIM.ShowOptions();	
+			WIM.ShowOptions();
 	</Binding>
 </Bindings>
