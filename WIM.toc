@@ -1,6 +1,6 @@
-## Interface: 90005
-## Interface-Classic: 11307
-## Interface-BCC: 20501
+## Interface: 90105
+## Interface-Classic: 11400
+## Interface-BCC: 20502
 
 ## X-Curse-Project-ID: 7474
 ## X-WoWI-ID: 5342

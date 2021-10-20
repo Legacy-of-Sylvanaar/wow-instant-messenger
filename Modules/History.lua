@@ -383,7 +383,7 @@ end
 
 local function createHistoryViewer()
 	-- Changes for Patch 9.0.1 - Shadowlands, retail and classic
-	local win = CreateFrame("Frame", "WIM3_HistoryFrame", _G.UIParent, isTBC and "BackdropTemplate");
+	local win = CreateFrame("Frame", "WIM3_HistoryFrame", _G.UIParent, "BackdropTemplate");
 
     win:Hide();
     win.filter = {};
@@ -398,11 +398,7 @@ local function createHistoryViewer()
         tile = true, tileSize = 64, edgeSize = 64,
         insets = { left = 64, right = 64, top = 64, bottom = 64 }};
 
-	if not isTBC then
-		win:SetBackdrop(win.backdropInfo);
-	else
-		win:ApplyBackdrop();
-	end
+	win:ApplyBackdrop();
 
     -- set basic frame properties
     win:SetClampedToScreen(true);

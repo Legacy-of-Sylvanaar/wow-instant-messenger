@@ -132,7 +132,7 @@ end
 local function createGroup(title, list, maxButtons, showNone)
     groupCount = groupCount + 1;
 	-- Changes for Patch 9.0.1 - Shadowlands, retail and classic
-	local group = CreateFrame("Frame", "WIM3MenuGroup"..groupCount, _G.WIM3Menu, isTBC and "BackdropTemplate");
+	local group = CreateFrame("Frame", "WIM3MenuGroup"..groupCount, _G.WIM3Menu, "BackdropTemplate");
 
     -- set backdrop - changes for Patch 9.0.1 - Shadowlands, retail and classic
     group.backdropInfo = {bgFile = "Interface\\AddOns\\"..addonTocName.."\\Modules\\Textures\\Menu_bg",
@@ -140,11 +140,7 @@ local function createGroup(title, list, maxButtons, showNone)
         tile = true, tileSize = 32, edgeSize = 32,
         insets = { left = 32, right = 32, top = 32, bottom = 32 }};
 
-	if not isTBC then
-		group:SetBackdrop(group.backdropInfo);
-	else
-		group:ApplyBackdrop();
-	end
+	group:ApplyBackdrop();
 
     group.list = list;
     group.title = CreateFrame("Frame", group:GetName().."Title", group);

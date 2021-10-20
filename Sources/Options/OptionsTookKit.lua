@@ -126,7 +126,7 @@ end
 
 local function CreateSlider(parent, title, minText, maxText, min, max, step, dbTree, varName, valChanged)
 	-- Changes to Patch 9.0.1 - Shadowlands, retail and classic
-	local s = CreateFrame("Slider", parent:GetName()..statObject("Slider"), parent, isTBC and "BackdropTemplate");
+	local s = CreateFrame("Slider", parent:GetName()..statObject("Slider"), parent, "BackdropTemplate");
 
     -- set backdrop -changes to Patch 9.0.1 - Shadowlands, retail and classic
     s.backdropInfo = {bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
@@ -134,11 +134,7 @@ local function CreateSlider(parent, title, minText, maxText, min, max, step, dbT
         tile = true, tileSize = 8, edgeSize = 8,
         insets = { left = 3, right = 3, top = 6, bottom = 6 }};
 
-	if not isTBC then
-		s:SetBackdrop(s.backdropInfo);
-	else
-		s:ApplyBackdrop();
-	end
+	s:ApplyBackdrop();
 
     s:SetHeight(17);
     s:SetPoint("LEFT");
@@ -582,7 +578,7 @@ function options.createDropDownFrame()
         return dropDownFrame;
     end
 	-- Changes to Patch 9.0.1 - Shadowlands, retail and classic
-	local f = CreateFrame("Button", "WIM_DropDownFrame", _G.UIParent, isTBC and "BackdropTemplate");
+	local f = CreateFrame("Button", "WIM_DropDownFrame", _G.UIParent, "BackdropTemplate");
 
 	f:Hide();
     f:SetFrameStrata("TOOLTIP");
@@ -597,11 +593,7 @@ function options.createDropDownFrame()
         insets = { left = 5, right = 5, top = 5, bottom = 5 }
     };
 
-	if not isTBC then
-		f:SetBackdrop(f.backdropInfo);
-	else
-		f:ApplyBackdrop();
-	end
+	f:ApplyBackdrop();
 
     f:SetBackdropBorderColor(_G.TOOLTIP_DEFAULT_COLOR.r, _G.TOOLTIP_DEFAULT_COLOR.g, _G.TOOLTIP_DEFAULT_COLOR.b);
     f:SetBackdropColor(_G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, _G.TOOLTIP_DEFAULT_BACKGROUND_COLOR.b);
