@@ -123,11 +123,11 @@ local function checkClass(result, filter)
     if(constants.classes[result.Class]) then
         classTag = string.gsub(constants.classes[result.Class].tag, "F$", "");
         if(not filter.classSpecific) then
-		triggerClass = true;
+			triggerClass = true;
         else
-		if(filter.classSpecific ~= classTag) then
-		    triggerClass = false;
-	    end
+			if(filter.classSpecific ~= classTag) then
+			    triggerClass = false;
+	    	end
         end
     end
     return triggerClass;

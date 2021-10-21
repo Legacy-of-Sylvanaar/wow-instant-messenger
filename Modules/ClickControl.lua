@@ -27,7 +27,7 @@ db_defaults.ClickControl = {
 
 local function getButtonDownCount()
     local count = 0;
-    for button, tbl in pairs(buttons) do
+    for _, tbl in pairs(buttons) do
         if(tbl.mouseDown) then
             count = count + 1;
         end

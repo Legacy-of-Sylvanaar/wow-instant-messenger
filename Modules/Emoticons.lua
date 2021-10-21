@@ -24,7 +24,7 @@ local tmpList = {};
 -- we could just as well construct a static specialstr for the replacement function manually and save us some string garbage.
 local special = {"%", ":", "-", "^", "$", ")", "(", "]", "]", "~", "@", "#", "&", "*", "_", "+", "=", ",", ".", "?", "/", "\\", "{", "}", "|", "`", ";", "\"", "'"};
 local specialrepl = "["
-for i,token in ipairs(special) do
+for _,token in ipairs(special) do
 	specialrepl = specialrepl.."%"..token
 end
 specialrepl = specialrepl.."]"
@@ -109,8 +109,7 @@ local function filterEmoticons(theMsg, smf)
     local emoteTable = GetSelectedSkin().emoticons;
 
     -- first as to not disrupt any links, lets remove them and put them back later.
-    local results, orig;
-    orig = theMsg;
+--	local orig = theMsg;--This doesn't appear to be used at all, what was intent here?
     -- clean out colors and wait to put back.
     local results;
     theMsg = encodeColors(theMsg);
@@ -129,7 +128,7 @@ local function filterEmoticons(theMsg, smf)
     --restore color
 
     -- lets exchange emotes...
-    local emote, img;
+    local img;
     for emote,_ in pairs(emoteTable.definitions) do
         img = getEmoteFilePath(emote);
         if(img and img ~= "") then
