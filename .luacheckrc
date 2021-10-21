@@ -5,7 +5,7 @@ exclude_files = {
 	".luacheckrc"
 }
 ignore = {
-	"111", -- Setting an undefined global variable (WIM uses private global space)
+	"11", -- Setting, Mutating or Accessing an undefined global variable (mutes all global warnings for WIMs private global space)
 	"211", -- Unused local variable
 	"211/L", -- Unused local variable "L"
 	"211/CL", -- Unused local variable "CL"
