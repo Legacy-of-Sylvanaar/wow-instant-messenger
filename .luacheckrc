@@ -10,6 +10,7 @@ ignore = {
 	"211/L", -- Unused local variable "L"
 	"211/CL", -- Unused local variable "CL"
 	"212", -- Unused argument
+	"213", -- Unused loop variable
 	"231", -- Local variable is set but never accessed (in some cases in WIM, it's practical to set variable name thats not used to remember chat args)
 	"311", -- Value assigned to a local variable is unused (maybe something to cleanup later)
 	"43.", -- Shadowing an upvalue, an upvalue argument, an upvalue loop variable.
@@ -27,6 +28,7 @@ globals = {
 	-- Lua
 	"bit.band",
 	"string.split",
+	"string.trim",
 	"table.wipe",
 	"time",
 

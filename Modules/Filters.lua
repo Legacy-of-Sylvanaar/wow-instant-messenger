@@ -503,7 +503,7 @@ local function createFilterFrame()
             info.value = 1;
             info.func = win.by.click;
             _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
-            local info = _G.UIDropDownMenu_CreateInfo();
+            info = _G.UIDropDownMenu_CreateInfo();
             info.text = L["User Type"];
             info.value = 2;
             info.func = win.by.click;
@@ -675,20 +675,20 @@ local function createFilterFrame()
             win.level.class:Show();
         end
     win.level.class.init = function(self)
-            local info = _G.UIDropDownMenu_CreateInfo();
-            info.text = L["All Classes"];
-            info.value = 0;
-            info.func = win.level.class.click;
+		local info = _G.UIDropDownMenu_CreateInfo();
+		info.text = L["All Classes"];
+		info.value = 0;
+		info.func = win.level.class.click;
 	    local classes = constants.classListEng;
 	    _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
 	    for i=1, #classes do
-                local info = _G.UIDropDownMenu_CreateInfo();
-                info.text = L[classes[i]];
-                info.value = constants.classes[L[classes[i]]].tag;
-                info.func = win.level.class.click;
-		_G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+			info = _G.UIDropDownMenu_CreateInfo();
+			info.text = L[classes[i]];
+			info.value = constants.classes[L[classes[i]]].tag;
+			info.func = win.level.class.click;
+			_G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
 	    end
-        end
+    end
     win.level.class:SetScript("OnShow", function(self)
             win.filter.classSpecific = win.filter.classSpecific or 0;
             _G.UIDropDownMenu_Initialize(self, self.init);
@@ -742,12 +742,12 @@ local function createFilterFrame()
             info.value = 1;
             info.func = win.action.click;
             _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
-            local info = _G.UIDropDownMenu_CreateInfo();
+            info = _G.UIDropDownMenu_CreateInfo();
             info.text = L["Ignore"];
             info.value = 2;
             info.func = win.action.click;
             _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
-            local info = _G.UIDropDownMenu_CreateInfo();
+            info = _G.UIDropDownMenu_CreateInfo();
             info.text = L["Blocked"];
             info.value = 3;
             info.func = win.action.click;

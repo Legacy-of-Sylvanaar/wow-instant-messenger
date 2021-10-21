@@ -611,7 +611,8 @@ local function createHistoryViewer()
 
                 button.SetUser = function(self, user)
                         local original, extra, color = user, "";
-                        local user, gmTag = string.match(original, "([^*]+)(*?)$");
+                        local gmTag
+                        user, gmTag = string.match(original, "([^*]+)(*?)$");
                         color = gmTag == "*" and constants.classes[L["Game Master"]].color or "ffffff";
                         if(string.match(original, "^*")) then
                             extra = " |TInterface\\AddOns\\WIM\\Skins\\Default\\minimap.blp:20:20:0:0|t";
@@ -658,10 +659,10 @@ local function createHistoryViewer()
                                         end
                                     end
                                 elseif(realm and history[realm]) then
-                                    for character, convos in pairs(history[realm]) do
+                                    for char, convos in pairs(history[realm]) do
                                         convos[self:GetParent().user] = nil;
                                         if(isEmptyTable(convos)) then
-                                            history[realm][character] = nil;
+                                            history[realm][char] = nil;
                                         end
                                     end
                                     if(isEmptyTable(history[realm])) then
