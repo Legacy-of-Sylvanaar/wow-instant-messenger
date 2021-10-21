@@ -99,7 +99,6 @@ classes[L["Game Master"]] = {
                          };
 
 -- propigate female class types and update tags appropriately
-local i;
 for i=1, table.getn(classList) do
      if(L[classList[i]] ~= L[classList[i].."F"]) then
           classes[L[classList[i].."F"]] = {

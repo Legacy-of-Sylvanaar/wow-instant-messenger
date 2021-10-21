@@ -21,7 +21,6 @@ local rawset = rawset;
 local rawget = rawget;
 local next = next;
 local select = select;
-local math = math;
 
 -- set namespace
 setfenv(1, WIM);
@@ -34,8 +33,8 @@ local function clearTables(...)
         local tbl = select(i, ...);
         if(type(tbl) == "table") then
             setmetatable(tbl, nil);
-            for i=#tbl, 1, -1 do
-                table.remove(tbl, i);
+            for j=#tbl, 1, -1 do
+                table.remove(tbl, j);
             end
             for k, v in pairs(tbl) do
                 tbl[k] = nil;
@@ -255,7 +254,7 @@ local function CompressHuffman(uncompressed)
 
     -- Header: byte 0=#leafs, byte 1-3=size of uncompressed data
     -- max 2^24 bytes
-    local l = string.len(uncompressed);
+    l = string.len(uncompressed);
     compressed[2] = string.char(bit.band(nLeafs-1, 255));		-- number of leafs
     compressed[3] = string.char(bit.band(l, 255));			-- bit 0-7
     compressed[4] = string.char(bit.band(bit.rshift(l, 8), 255));	-- bit 8-15
@@ -263,9 +262,9 @@ local function CompressHuffman(uncompressed)
     compressed_size = 5;
 
     -- create symbol/code map
-    for symbol, leaf in pairs(symbols) do
+    for symbol, anotherLeaf in pairs(symbols) do
 	addBits(compressed, symbol, 8);
-	if addBits(compressed, escape_code(leaf.bcode, leaf.blength)) then
+	if addBits(compressed, escape_code(anotherLeaf.bcode, anotherLeaf.blength)) then
 	    -- code word too long. Needs new revision to be able to handle more than 32 bits
             cleanCompress();
 	    return string_char(0)..uncompressed
@@ -468,7 +467,6 @@ local function DecompressHuffman(compressed)
     local large_uncompressed_size = 0
     local test_code
     local test_code_len = minCodeLen;
-    local symbol;
     local dec_size = 0;
     compressed_size = compressed_size + 1
     local temp_limit = 200; -- first limit of uncompressed data. large_uncompressed will hold strings of length 200

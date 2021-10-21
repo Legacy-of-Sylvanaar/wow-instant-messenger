@@ -760,7 +760,6 @@ function WIM:CreateMessageWindow(userName)
     end
     local func = function ()
                         if(WindowSoupBowl.available > 0) then
-                            local i;
                             for i=1,table.getn(WindowSoupBowl.windows) do
                                 if(WindowSoupBowl.windows[i].inUse == false) then
                                     return WindowSoupBowl.windows[i].obj, i;

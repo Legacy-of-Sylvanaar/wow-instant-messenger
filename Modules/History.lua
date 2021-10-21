@@ -767,7 +767,7 @@ local function createHistoryViewer()
                     end
                 end
             elseif(realm and history[realm]) then
-                for character, convos in pairs(history[realm]) do
+                for char, convos in pairs(history[realm]) do
                     for convo, tbl in pairs(convos) do
                         for i=1, #tbl do
                             if(searchResult(tbl[i].msg, self:GetText())) then
@@ -1060,7 +1060,7 @@ local function createHistoryViewer()
            		ShowHistoryViewer()
            	end
         elseif(realm and history[realm]) then
-            for character, tbl in pairs(history[realm]) do
+            for char, tbl in pairs(history[realm]) do
                 if(tbl[win.CONVO]) then
                     for i=1, #tbl[win.CONVO] do
                         table.insert(win.CONVOLIST, tbl[win.CONVO][i]);
@@ -1086,7 +1086,7 @@ local function createHistoryViewer()
                 addToTableUnique(win.USERLIST, convo..(t.info and t.info.gm and "*" or ""));
             end
         elseif(realm and (not character or character == "") and history[realm]) then
-            for character, tbl in pairs(history[realm]) do
+            for char, tbl in pairs(history[realm]) do
                 for convo, t in pairs(tbl) do
                     ChannelCache[convo] = t.info and t.info.channelNumber or nil;
                     convo = (t.info and t.info.chat and "*" or "")..convo

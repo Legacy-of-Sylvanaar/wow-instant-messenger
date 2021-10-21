@@ -55,7 +55,6 @@ end
 -- a simple function to add an item to a table checking for duplicates.
 -- this is ok, since the table is never too large to slow things down.
 function WIM.addToTableUnique(tbl, item, prioritize)
-    local i;
     for i=1,table.getn(tbl) do
         if(tbl[i] == item) then
             return false;
@@ -71,7 +70,6 @@ end
 
 -- remove item from table. Return true if removed, false otherwise.
 function WIM.removeFromTable(tbl, item)
-    local i;
     for i=1,table.getn(tbl) do
         if(tbl[i] == item) then
             table.remove(tbl, i);
@@ -249,7 +247,7 @@ function WIM.paddString(str, paddingChar, minLength, paddRight)
 end
 
 function WIM.gSplit(splitBy, str)
-    local index, splitBy, str = 0, splitBy, str;
+	local index = 0
     return function()
         index = index + 1;
         return select(index, string.split(splitBy, str));

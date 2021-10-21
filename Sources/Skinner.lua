@@ -51,7 +51,6 @@ end
 
 local function setPointsToObj(obj, pointsTable)
     obj:ClearAllPoints();
-    local i;
     for i=1, #pointsTable do
         local point, relativeTo, relativePoint, offx, offy = unpack(pointsTable[i]);
         -- first we need to convert the string representation of objects into actual objects.

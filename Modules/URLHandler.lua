@@ -270,7 +270,7 @@ if(not isPrivateServer) then
         info.isTitle = true;
         armoryMenu:AddSubItem(AddContextMenu("MENU_ARMORY_TITLE", info));
         for i=1, #armoryLinks do
-            local info = _G.UIDropDownMenu_CreateInfo();
+            info = _G.UIDropDownMenu_CreateInfo();
             info.text = armoryLinks[i].title;
             info.value = armoryLinks[i].url;
             info.notCheckable = true;

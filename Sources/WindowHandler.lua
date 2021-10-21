@@ -158,7 +158,6 @@ WindowParent = _G.CreateFrame("Frame", "WIM_UIParent", _G.UIParent);
 local Widget_Triggers = {};
 
 local function getFormatByName(format)
-	local i;
 	for i=1, #FormattingCalls do
 		if(FormattingCalls[i].name == format) then
 			return FormattingCalls[i].fun;
@@ -202,7 +201,6 @@ end
 local windowListByLevel_Recycle = {};
 local function getActiveWindowListByLevel()
 	-- first remove items from previously used list.
-	local i;
 	for i=1,#windowListByLevel_Recycle do
 		table.remove(windowListByLevel_Recycle, 1);
 	end
@@ -223,7 +221,6 @@ function getWindowAtCursorPosition(excludeObj)
 	-- can optionaly exclude an object
 	local x,y = _G.GetCursorPosition();
 	local windows = getActiveWindowListByLevel();
-	local i;
 	for i=1,#windows do
 		if(excludeObj ~= windows[i]) then
 			local x1, y1 = windows[i]:GetLeft()*windows[i]:GetEffectiveScale(), windows[i]:GetTop()*windows[i]:GetEffectiveScale();
@@ -717,7 +714,6 @@ end
 
 
 local function setAllChildrenParentWindow(parent, child)
-	local i;
 	if(child ~= parent) then
 		child.parentWindow = parent;
 	end
@@ -1198,7 +1194,6 @@ local function instantiateWindow(obj)
         local minWidth, minHeight = GetSelectedSkin().message_window.min_width, GetSelectedSkin().message_window.min_height;
 
 	-- process registered widgets
-	local widgetName, widgetObj;
 	for widgetName, widgetObj in pairs(obj.widgets) do
 		if(type(widgetObj.UpdateProps) == "function") then
 			widgetObj:UpdateProps();
@@ -1277,7 +1272,6 @@ local function instantiateWindow(obj)
     end
 
     -- enforce that all core widgets have parentWindow set.
-	local w;
 	for _, w in pairs(obj.widgets) do
 		w.parentWindow = obj;
 	end
@@ -1362,7 +1356,6 @@ local function loadWindowDefaults(obj)
 	loadHandlers(obj);
 
 	-- process registered widgets
-	local widgetName, widgetObj;
 	for widgetName, widgetObj in pairs(obj.widgets) do
 		if(type(widgetObj.SetDefaults) == "function") then
 			widgetObj:SetDefaults();
@@ -2014,7 +2007,7 @@ RegisterWidgetTrigger("msg_box", "whisper,w2w", "OnTabPressed", function(self)
                 		local nextWhisperTarget = _G.ChatEdit_GetNextTellTarget(whisperTarget,chatType)
 
                 		if nextWhisperTarget ~= "" then
-                			local win = GetWhisperWindowByUser(nextWhisperTarget);
+                			win = GetWhisperWindowByUser(nextWhisperTarget);
                 			chatType = win.isBN and "BN_WHISPER" or "WHISPER"
                 			win:Hide();
                 			win:Pop(true); -- force popup
@@ -2134,7 +2127,7 @@ escapeFrame:Show();
 local info = _G.UIDropDownMenu_CreateInfo();
 info.text = "MENU_MSGBOX";
 local msgBoxMenu = AddContextMenu(info.text, info);
-                local info = _G.UIDropDownMenu_CreateInfo();
+                info = _G.UIDropDownMenu_CreateInfo();
                 info.text = _G.CANCEL;
                 info.notCheckable = true;
                 info.func = function() _G.CloseDropDownMenus(); end

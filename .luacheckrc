@@ -24,11 +24,15 @@ globals = {
 
 	-- WIM
 	"WIM",
+	"debug",
 
 	-- Lua
 	"bit.band",
+	"bit.bor",
+	"bit.lshift",
 	"string.split",
 	"string.trim",
+	"table.getn",
 	"table.wipe",
 	"time",
 

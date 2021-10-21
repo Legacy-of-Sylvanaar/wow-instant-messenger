@@ -99,7 +99,6 @@ local function initialize()
     RegisterPrematureSkins();
 
     --enableModules
-    local moduleName, tData;
     for moduleName, tData in pairs(modules) do
         modules[moduleName].db = db;
         if(modules[moduleName].canDisable ~= false) then
@@ -211,7 +210,6 @@ end
 local function onEnable()
     db.enabled = true;
 
-    local tEvent;
     for tEvent, _ in pairs(Events) do
         workerFrame:RegisterEvent(tEvent);
     end
@@ -252,7 +250,6 @@ end
 local function onDisable()
     db.enabled = false;
 
-    local tEvent;
     for tEvent, _ in pairs(Events) do
         workerFrame:UnregisterEvent(tEvent);
     end
@@ -358,9 +355,8 @@ end
 function CallModuleFunction(funName, ...)
     -- notify all enabled modules.
     dPrint("Calling Module Function: "..funName);
-    local module, tData, fun;
     for module, tData in pairs(WIM.modules) do
-        fun = tData[funName];
+        local fun = tData[funName];
         if(type(fun) == "function" and tData.enabled) then
                 dPrint(" +--"..module);
                 fun(tData, ...);
@@ -408,7 +404,6 @@ function WIM:CoreEventHandler(event, ...)
 
     -- Module Event Handlers
     if(db and db.enabled) then
-        local module, tData;
         for module, tData in pairs(modules) do
             fun = tData[event];
             if(type(fun) == "function" and tData.enabled) then

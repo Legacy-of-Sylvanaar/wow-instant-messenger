@@ -71,7 +71,6 @@ end
 -- update tabStip with propper skin layout.
 local function applySkin(tabStrip)
     local skinTable = GetSelectedSkin().tab_strip;
-    local i;
     for i=1,table.getn(tabStrip.tabs) do
         local tab = tabStrip.tabs[i];
         tab:ClearAllPoints();
@@ -167,7 +166,6 @@ local function createTabGroup()
 
     --create tabs for tab strip.
     tabStrip.tabs = {};
-    local i;
     for i=1,tabsPerStrip do
         local tab = CreateFrame("Button", stripName.."_Tab"..i, tabStrip);
         tab.text = tab:CreateFontString(tab:GetName().."Text", "OVERLAY", "ChatFontNormal")
@@ -603,7 +601,6 @@ local function getAvailableTabGroup()
     if(table.getn(tabGroups) == 0) then
         return createTabGroup();
     else
-        local i;
         for i=1, table.getn(tabGroups) do
             if(table.getn(tabGroups[i].attached) == 0) then
                 return tabGroups[i];

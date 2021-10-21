@@ -90,7 +90,7 @@ local function OnEvent(self, event, ...)
         if(sIndex and packet) then
             local socket = getSocket(from, tonumber(sIndex));
             socket.data = socket.data..packet;
-            local cmd = string.match(socket.data, "^(%w+):(.*)");
+            cmd = string.match(socket.data, "^(%w+):(.*)");
             --dPrint(string.len(socket.data)/socket.len*100 .. "%")
             if(CommandHandlers[cmd]) then
                 for i = 1,  #CommandHandlers[cmd] do
@@ -106,7 +106,7 @@ local function OnEvent(self, event, ...)
             end
             return;
         end
-        local cmd, args = string.match(data, "^!(.*)");
+        cmd, args = string.match(data, "^!(.*)");
         if(cmd) then
             ProcessData(channel, from, cmd);
             return;

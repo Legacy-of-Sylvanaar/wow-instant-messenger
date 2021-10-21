@@ -54,7 +54,6 @@ local minimapShapes = {
 }
 
 local function getNotificationTable(tag)
-    local i;
     local emptyNote;
     for i=1, #Notification_Bowl do
         if(Notification_Bowl[i].tag == "") then
@@ -92,7 +91,6 @@ local function pushNote(tag, color, num, desc)
 end
 
 local function popNote(tag)
-    local i, note;
     for i=1, #Notifications do
         if(Notifications[i].tag == tag) then
             local note = Notifications[i];
