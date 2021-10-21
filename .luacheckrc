@@ -13,6 +13,7 @@ ignore = {
 	"213", -- Unused loop variable
 	"231", -- Local variable is set but never accessed (in some cases in WIM, it's practical to set variable name thats not used to remember chat args)
 	"311", -- Value assigned to a local variable is unused (maybe something to cleanup later)
+	"314", -- Value of a field in a table literal is unused. (basically to ignore way localization is coded)
 	"43.", -- Shadowing an upvalue, an upvalue argument, an upvalue loop variable.
 --    "431", -- shadowing upvalue
 	"542", -- An empty if branch
@@ -30,6 +31,7 @@ globals = {
 	"bit.band",
 	"bit.bor",
 	"bit.lshift",
+	"bit.rshift",
 	"string.split",
 	"string.trim",
 	"table.getn",

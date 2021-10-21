@@ -1377,7 +1377,6 @@ local function createWindow(userName, wtype)
     -- end
     local func = function ()
                         if(WindowSoupBowl.available > 0) then
-                            local i;
                             for i=1,#WindowSoupBowl.windows do
                                 if(WindowSoupBowl.windows[i].inUse == false) then
                                     return WindowSoupBowl.windows[i].obj, i;
