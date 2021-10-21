@@ -50,9 +50,9 @@ local function evaluateState()
     else
         WIM.curState = "other";
     end
-    
+
     WIM.lastState = WIM.curState; -- we want to remember our last state.
-    
+
     WIM.CallModuleFunction("OnStateChange", WIM.curState, flag_combat);
     WIM.dPrint("Evaluated State: "..WIM.curState);
 end
@@ -77,7 +77,7 @@ end
 function WIM:PLAYER_UPDATE_RESTING(...)
     -- player has either entered or left resting state
     flag_resting = IsResting();
-    evaluateState();    
+    evaluateState();
 end
 
 function WIM:PLAYER_ENTERING_WORLD(...)

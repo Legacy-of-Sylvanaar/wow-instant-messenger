@@ -71,11 +71,11 @@ end
 -- load selected skin
 function ApplySkinToWindow(obj)
     local fName = obj:GetName();
-    
+
     local SelectedSkin = WIM:GetSelectedSkin();
-    
+
     obj:SetMinResize(SelectedSkin.message_window.min_width, SelectedSkin.message_window.min_height);
-    
+
     --set backdrop edges and background textures.
     local tl = obj.widgets.Backdrop.tl;
     tl:SetTexture(SelectedSkin.message_window.texture);
@@ -135,17 +135,17 @@ function ApplySkinToWindow(obj)
     bg:ClearAllPoints();
     bg:SetPoint("TOPLEFT", fName.."Backdrop_TL", "BOTTOMRIGHT", 0, 0);
     bg:SetPoint("BOTTOMRIGHT", fName.."Backdrop_BR", "TOPLEFT", 0, 0);
-    
+
     --set class icon
     local class_icon = obj.widgets.class_icon;
     ApplySkinToWidget(class_icon);
     class_icon:SetTexture(SelectedSkin.message_window.widgets.class_icon.texture);
     --WIM_UpdateMessageWindowClassIcon(obj);
-    
+
     --set from font
     local from = obj.widgets.from;
     ApplySkinToWidget(from);
-    
+
     --set character details font
     local char_info = obj.widgets.char_info;
     ApplySkinToWidget(char_info);
@@ -163,15 +163,15 @@ function ApplySkinToWindow(obj)
         close:SetPushedTexture(SelectedSkin.message_window.widgets.close.state_close.PushedTexture);
         close:SetHighlightTexture(SelectedSkin.message_window.widgets.close.state_close.HighlightTexture, SelectedSkin.message_window.widgets.close.state_close.HighlightAlphaMode);
     end
-    
+
     --scroll_up button
     local scroll_up = obj.widgets.scroll_up;
     ApplySkinToWidget(scroll_up);
-    
+
     --scroll_down button
     local scroll_down = obj.widgets.scroll_down;
     ApplySkinToWidget(scroll_down);
-    
+
     --chat display
     local chat_display = obj.widgets.chat_display;
     ApplySkinToWidget(chat_display);
@@ -229,11 +229,11 @@ function LoadSkin(skinName)
     if(skinName == nil or (not SkinTable[skinName])) then
         skinName = "WIM Classic";
     end
-    
+
     SelectedSkin = SkinTable[skinName];
-    
+
     db.skin.selected = skinName;
-    
+
     SKIN_DEBUG = SKIN_DEBUG..skinName.." loaded..\n";
     -- apply skin to window objects
     local window_objects = WindowSoupBowl.windows;
@@ -265,7 +265,7 @@ function RegisterSkin(skinTable)
     local required = {"title", "author", "version"};
     local error_list = "";
     local addonName;
-    
+
     local stack = {string.split("\n", debugstack())};
     if(table.getn(stack) >= 2) then
         local paths = {string.split("\\", stack[2])};
@@ -273,18 +273,18 @@ function RegisterSkin(skinTable)
     else
         addonName = "Unknown";
     end
-    
+
     for i=1,table.getn(required) do
         if(skinTable[required[i]] == nil or skinTable[required[i]] == "") then error_list = error_list.."- Required field '"..required[i].."' was not defined.\n"; end
     end
-    
-    
+
+
     if(error_list ~= "") then
         SKIN_DEBUG = SKIN_DEBUG.."\n\n---------------------------------------------------------\nSKIN ERROR FROM: "..addonName.."\n---------------------------------------------------------\n";
         SKIN_DEBUG = SKIN_DEBUG.."Skin was not loaded for the following reason(s):\n\n"..error_list.."\n\n";
         return;
     end
-    
+
     if(skinTable.title == "WIM Classic") then
         SkinTable[skinTable.title] = skinTable;
         if(skinTable.title == db.skin.selected) then
@@ -292,13 +292,13 @@ function RegisterSkin(skinTable)
         end
         return; -- this is the main skin, we don't need to do anything further...
     end
-    
+
     -- inherrit missing data from default skin.
     linkSkinTable(SkinTable["WIM Classic"], skinTable);
 
     -- finalize registration
     SkinTable[skinTable.title] = skinTable;
-    
+
     -- if this is the selected skin, load it now
     if(skinTable.title == WIM.db.skin.selected) then
         LoadSkin(WIM.db.skin.selected, WIM.db.skin);

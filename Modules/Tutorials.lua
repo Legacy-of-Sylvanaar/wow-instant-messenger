@@ -74,7 +74,7 @@ local function createChangelogButton()
     button:SetWidth(_G.WIM_TutorialButtonChangeLogText:GetStringWidth()+30)
     button:Hide();
     button:SetScript("OnClick", ShowChangeLog);
-    
+
     return button;
 end
 
@@ -151,7 +151,7 @@ local TUTORIAL_QUEST_ARRAY = {
 
 local DISPLAY_DATA = {
     ["Base"] = {
-		tileHeight = 10, 
+		tileHeight = 10,
 		anchorData = {align = "LEFT", xOff = 15, yOff = 30},
 		textBox = {topLeft_xOff = 33, topLeft_yOff = -75, bottomRight_xOff = -29, bottomRight_yOff = 35},
     },
@@ -182,7 +182,7 @@ function _G.TutorialFrame_Update(currentTutorial)
 	if ( not displayData ) then
 		displayData = DISPLAY_DATA["Base"];
 	end
-	
+
 	-- setup the frame
 	_G.TutorialFrame_ClearTextures();
 	if (displayData.anchorData) then
@@ -234,7 +234,7 @@ function _G.TutorialFrame_Update(currentTutorial)
 	local _, raceName  = _G.UnitRace("player");
 	className = _G.strupper(className);
 	raceName = _G.strupper(raceName);
-	
+
 	if (displayData.displayNPC) then
 		_G.TutorialNPCModel:SetCreature(TUTORIAL_QUEST_ARRAY[raceName].displayNPC);
 		_G.TutorialNPCModel:Show();
@@ -256,7 +256,7 @@ function _G.TutorialFrame_Update(currentTutorial)
 			text = _G["TUTORIAL"..currentTutorial];
 		end
 	end
-	
+
 	if (displayData.raidwarning) then
 		_G.RaidNotice_AddMessage(_G.RaidWarningFrame, text, _G.ChatTypeInfo["RAID_WARNING"]);
 		return;
@@ -303,14 +303,14 @@ function _G.TutorialFrame_Update(currentTutorial)
 	if(mouseData) then
 		local mouseTexture = _G["TutorialFrameMouse"..mouseData.image];
 		mouseTexture:SetPoint( mouseData.align, TutorialFrame, mouseData.align, mouseData.xOff, mouseData.yOff );
-		
+
 		local scale = 1.0;
 		if ( mouseData.scale ) then
 			scale = mouseData.scale;
 		end
 		mouseTexture:SetWidth( MOUSE_SIZE.x * scale );
 		mouseTexture:SetHeight( MOUSE_SIZE.y * scale );
-		
+
 		if ( mouseData.layer ) then
 			mouseTexture:SetDrawLayer(mouseData.layer);
 		end
@@ -359,7 +359,7 @@ function _G.TutorialFrame_Update(currentTutorial)
 			arrowTexture:Hide();
 		end
 	end
-	
+
 	-- show
 	_G.TutorialFrame:Show();
 	_G.TutorialFrame_CheckNextPrevButtons();

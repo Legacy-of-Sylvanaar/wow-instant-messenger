@@ -5,7 +5,7 @@ exclude_files = {
 	".luacheckrc"
 }
 ignore = {
-	"11", -- Setting an undefined global variable (WIM uses private global space)
+	"111", -- Setting an undefined global variable (WIM uses private global space)
 	"211", -- Unused local variable
 	"211/L", -- Unused local variable "L"
 	"211/CL", -- Unused local variable "CL"
@@ -13,6 +13,7 @@ ignore = {
 	"43.", -- Shadowing an upvalue, an upvalue argument, an upvalue loop variable.
 --    "431", -- shadowing upvalue
 	"542", -- An empty if branch
+	"631", -- Line is too long
 }
 globals = {
 	-- Saved Variables

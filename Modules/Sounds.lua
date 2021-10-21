@@ -30,7 +30,7 @@ db_defaults.sounds = {
         msgin_sml = "Chat Blip",
         msgout = false,
         msgout_sml = "Chat Blip",
-        
+
         guild_sml = "Chat Blip",
         officer_sml = "Chat Blip",
         party_sml = "Chat Blip",
@@ -157,9 +157,9 @@ function ChatSounds:PostEvent_ChatMessage(event, ...)
             elseif(d.raid and (event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER")) then
                 playSound(db.sounds.chat.raid_sml);
             elseif(d.raid and event == "CHAT_MSG_INSTANCE_CHAT_LEADER") then
-                playSound(db.sounds.chat.battlegroundleader_sml);    
+                playSound(db.sounds.chat.battlegroundleader_sml);
             elseif(d.raid and (event == "CHAT_MSG_INSTANCE_CHAT" or event == "CHAT_MSG_INSTANCE_CHAT_LEADER")) then
-                playSound(db.sounds.chat.battleground_sml);    
+                playSound(db.sounds.chat.battleground_sml);
             elseif(d.say and event == "CHAT_MSG_SAY") then
                 playSound(db.sounds.chat.say_sml);
             elseif(event == "CHAT_MSG_CHANNEL" and isWorld) then

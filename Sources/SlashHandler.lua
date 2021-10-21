@@ -26,13 +26,13 @@ end
 local function processCommand(cmd)
     cmd = (cmd ~= "") and cmd or "options";
     cmdList = cmdList or CommandList;
-    
+
     local args;
     cmd, args = string.match(cmd, "([^%s]*)%s*(.*)");
     cmd = string.upper(cmd);
-    
+
     if(CommandList[cmd]) then
-       CommandList[cmd](args); 
+       CommandList[cmd](args);
     else
         if(cmd == "WHO") then
             WIM.WhoList(args);

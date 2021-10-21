@@ -34,22 +34,22 @@ WIM.S = {
 When Convo is opened:
     - Say Hello, if response, send services.
     *Services are automatically resent whenever changed, ie: w2w privacy options changed.
-    
+
 Services Packet contains a list of "English" strings of available services. Example: Coordinates, Typing
     if Coodinates, need an exchange process of current location. One side doesn't need to have a convo
         opened. Currently using a Ping/Pong method. Problems: Waste of traffic. Solution, transmit less bits on request.
-        
+
     if Typing, Sender only sends on/off bit when typing. Avoid resending the same bit values. only send on if previous bit was off.
-    
+
 Profiles: Alerted in Service packet. Hashed by modification date.
     - Profile hash should be sent with Services. ie: Profile:1234567
         -to be parsed as "Profile" with hash "1234567'.
         -Receiver checks if there is a record of profile 1234567, if not, request profile.
         -profile should be stored within the window object.
         -Since hash is stored in services, if profile is changed, services are updated and receiver can request profile again.
-        
+
     GetProfile - called to user to return serialized profile data. (Includes most recent hash)
-    
+
     Avatars: Subclass of Profiles. 2 types.
         1. static - sends texture file name.
         2. Stewmat - sends avatar hash (again timestamp of modified)
@@ -57,7 +57,7 @@ Profiles: Alerted in Service packet. Hashed by modification date.
             - UI can use socket data to display progressbar of transmission.
             *Depending on Drawing time, one canvas should be shared between all
                 instances showing the avatar. Canvases are messy.
-                
+
 Depending on solution of location sharing, a second method might be required for minimap tracking.
 
 Ideas for sharing location:

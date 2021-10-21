@@ -53,19 +53,19 @@ local function addMenuItem(tag, info)
     if(ctxMenu[string.upper(tag)]) then
         return ctxMenu[string.upper(tag)];
     end
-    
+
     -- propper formatting
     tag = string.upper(tag);
-    
+
     -- load data into its own table. we will send this back to the user later.
     local item = {};
     for key, val in pairs(info) do
         item[key] = val;
     end
-    
+
     ctxMenu[tag] = item;
     item.MENU_ID = tag;
-    
+
     item.AddSubItem = function(self, menuItem, insertAt)
         if(type(menuItem) == "string") then
             menuItem = ctxMenu[string.upper(menuItem)];
@@ -76,7 +76,7 @@ local function addMenuItem(tag, info)
         if(not (type(menuItem) == "table" and menuItem.MENU_ID)) then
             return;
         end
-        
+
         if(not self.menuTable) then
             self.menuTable = {};
         end
@@ -125,7 +125,7 @@ function PopContextMenu(tag, parent)
         return;
     end
     tag = string.upper(tag);
-    
+
     local id = ctxMenu[tag];
     if(id) then
         _G.CloseDropDownMenus();

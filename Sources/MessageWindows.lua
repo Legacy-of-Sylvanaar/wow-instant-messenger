@@ -5,28 +5,28 @@ local WIM = WIM;
 -- load message window related default settings.
 WIM.db_defaults.displayColors = {
 		wispIn = {
-				r=0.5607843137254902, 
-				g=0.03137254901960784, 
+				r=0.5607843137254902,
+				g=0.03137254901960784,
 				b=0.7607843137254902
 			},
 		wispOut = {
-				r=1, 
-				g=0.07843137254901961, 
+				r=1,
+				g=0.07843137254901961,
 				b=0.9882352941176471
 			},
 		sysMsg = {
-				r=1, 
-				g=0.6627450980392157, 
+				r=1,
+				g=0.6627450980392157,
 				b=0
 			},
 		errorMsg = {
-				r=1, 
-				g=0, 
+				r=1,
+				g=0,
 				b=0
 			},
 		webAddress = {
-				r=0, 
-				g=0, 
+				r=0,
+				g=0,
 				b=1
 			},
 	};
@@ -226,12 +226,12 @@ end
 
 local function MessageWindow_W2WButton_Initialize()
 	local info = {};
-	
+
 	info = { };
 	info.text = "W2W - WIM To WIM";
 	info.isTitle = true;
 	UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL);
-	
+
 	info = { };
 	info.text = WIM_W2W_TRACKMINIMAP;
 	info.func = MessageWindow_W2WButtomMenu_OnClick;
@@ -364,7 +364,7 @@ end
 
 local function MessageWindow_MsgBox_OnEnterPressed()
     local _, tParent = this:GetParent();
-						
+
     if(this:GetText() == "") then
 	if(WIM.db.windowFade and this:GetParent().QueuedToHide) then
             --WIM_FadeOut(this:GetParent().theUser);
@@ -377,7 +377,7 @@ local function MessageWindow_MsgBox_OnEnterPressed()
             --WIM_FadeOutDelayed(this:GetParent().theUser);
         end
     end
-						
+
     if(strsub(this:GetText(), 1, 1) == "/") then
         WIM_EditBoxInFocus = nil;
         ChatFrameEditBox:SetText(this:GetText());
@@ -421,7 +421,7 @@ end
 
 local function MessageWindow_MsgBox_OnTextChanged()
     if(WIM_W2W[this:GetParent().theUser]) then
-	if(not this.w2w_typing) then 
+	if(not this.w2w_typing) then
 		this.w2w_typing = 0;
 	end
 	if(this:GetText() ~= "") then
@@ -487,12 +487,12 @@ local function instantiateMessageWindowObj(obj)
     obj:SetScript("OnShow", MessageWindow_Frame_OnShow);
     obj:SetScript("OnHide", MessageWindow_Frame_OnHide);
     obj:SetScript("OnUpdate", MessageWindow_Frame_OnUpdate);
-    
+
 
     obj.w2w_menu = CreateFrame("Frame", fName.."W2WMenu", obj, "UIDropDownMenuTemplate");
     obj.w2w_menu:SetClampedToScreen(true);
-    
-    
+
+
     -- add window backdrop frame
     local Backdrop = CreateFrame("Frame", fName.."Backdrop", obj);
     Backdrop:SetToplevel(false);
@@ -509,7 +509,7 @@ local function instantiateMessageWindowObj(obj)
     local bg = Backdrop:CreateTexture(fName.."Backdrop_BG", "BORDER");
     local from = Backdrop:CreateFontString(fName.."BackdropFrom", "OVERLAY", "GameFontNormalLarge");
     local char_info = Backdrop:CreateFontString(fName.."BackdropCharacterDetails", "OVERLAY", "GameFontNormal");
-    
+
     -- create window objects
     local close = CreateFrame("Button", fName.."ExitButton", obj);
     close:RegisterForClicks("LeftButtonUp", "RightButtonUp");
@@ -578,8 +578,8 @@ local function instantiateMessageWindowObj(obj)
     msg_box:SetScript("OnTextChanged", MessageWindow_MsgBox_OnTextChanged);
     msg_box:SetScript("OnUpdate", MessageWindow_MsgBox_OnUpdate);
     msg_box:SetScript("OnMouseUp", MessageWindow_MsgBox_OnMouseUp);
-    
-    
+
+
     local shortcuts = CreateFrame("Frame", fName.."ShortcutFrame", obj);
     shortcuts:SetToplevel(true);
     shortcuts:SetFrameStrata("DIALOG");
@@ -601,7 +601,7 @@ end
 local function setMessageWindowClass(obj, class)
     local fName = obj:GetName();
     local class_icon = getglobal(fName.."BackdropClassIcon");
-    
+
     local classes = {};
     classes[WIM_LOCALIZED_DRUID]    = "druid";
     classes[WIM_LOCALIZED_HUNTER]   = "hunter";
@@ -612,7 +612,7 @@ local function setMessageWindowClass(obj, class)
     classes[WIM_LOCALIZED_SHAMAN]   = "shaman";
     classes[WIM_LOCALIZED_WARLOCK]  = "warlock";
     classes[WIM_LOCALIZED_WARRIOR]  = "warrior";
-    
+
     classes[WIM_LOCALIZED_DRUID_FEMALE]    = classes[WIM_LOCALIZED_DRUID];
     classes[WIM_LOCALIZED_HUNTER_FEMALE]   = classes[WIM_LOCALIZED_HUNTER];
     classes[WIM_LOCALIZED_MAGE_FEMALE]	   = classes[WIM_LOCALIZED_MAGE];
@@ -622,9 +622,9 @@ local function setMessageWindowClass(obj, class)
     classes[WIM_LOCALIZED_SHAMAN_FEMALE]   = classes[WIM_LOCALIZED_SHAMAN];
     classes[WIM_LOCALIZED_WARLOCK_FEMALE]  = classes[WIM_LOCALIZED_WARLOCK];
     classes[WIM_LOCALIZED_WARRIOR_FEMALE]  = classes[WIM_LOCALIZED_WARRIOR];
-    
+
     classes[WIM_LOCALIZED_GM] 	    = "gm";
-    
+
     if(classes[class]) then
         class_icon.class = classes[class];
     else
@@ -671,44 +671,44 @@ local function loadMessageWindowDefaults(obj)
     obj.theLevel = "";
     obj.theRace = "";
     obj.theClass = "";
-    
+
     obj.icon.track = false;
 
     local fName = obj:GetName();
     obj:SetScale(1);
     obj:SetAlpha(1);
-    
+
     local backdrop = getglobal(fName.."Backdrop");
     backdrop:SetAlpha(1);
-    
+
     local class_icon = getglobal(fName.."BackdropClassIcon");
     class_icon.class = "blank";
-    
+
     local from = getglobal(fName.."BackdropFrom");
     from:SetText(GetReadableName(obj.theUser));
-    
+
     local char_info = getglobal(fName.."BackdropCharacterDetails");
     char_info:SetText("");
-    
+
     local history = getglobal(fName.."HistoryButton");
     history:Hide();
-    
+
     local w2w = getglobal(fName.."W2WButton");
     w2w:Hide();
-    
+
     local chatting = getglobal(fName.."IsChattingButton");
     chatting:Hide();
-    
+
     local msg_box = getglobal(fName.."MsgBox");
     msg_box.setText = 0;
     msg_box:SetText("");
-    
+
     local scroll_up = CreateFrame("Button", fName.."ScrollUp", obj);
     scroll_up:Disable();
-    
+
     local scroll_down = CreateFrame("Button", fName.."ScrollDown", obj);
     scroll_down:Disable();
-    
+
     WIM:LoadMessageWindowSkin(obj);
 end
 
@@ -718,10 +718,10 @@ end
 
 local function getXYLimits()
     local width, height;
-    
+
     width = SelectedSkin.message_window.rect.top_left.size.x + SelectedSkin.message_window.rect.bottom_right.size.x;
     height = SelectedSkin.message_window.rect.top_left.size.y + SelectedSkin.message_window.rect.bottom_right.size.y;
-    
+
     return width, height;
 end
 

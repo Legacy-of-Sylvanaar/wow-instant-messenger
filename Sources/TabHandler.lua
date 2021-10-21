@@ -102,7 +102,7 @@ local function applySkin(tabStrip)
     tabStrip.prevButton:SetPushedTexture(skinTable.textures.prev.PushedTexture);
     tabStrip.prevButton:SetHighlightTexture(skinTable.textures.prev.HighlightTexture, skinTable.textures.prev.HighlightAlphaMode);
     tabStrip.prevButton:SetDisabledTexture(skinTable.textures.prev.DisabledTexture);
-                
+
     tabStrip.prevButton:ClearAllPoints();
     tabStrip.prevButton:SetPoint("RIGHT", tabStrip, "LEFT", 0, 0);
     tabStrip.prevButton:SetWidth(skinTable.textures.prev.width); tabStrip.prevButton:SetHeight(skinTable.textures.prev.height);
@@ -151,7 +151,7 @@ local function createTabGroup()
     tabStrip:SetToplevel(true);
     --tabStrip:SetWidth(384);
     --tabStrip:SetHeight(32);
-    
+
     -- properties, tags, trackers
     tabStrip.attached = {};
     tabStrip.selected = {
@@ -161,10 +161,10 @@ local function createTabGroup()
     };
     tabStrip.curOffset = 0;
     tabStrip.visibleCount = 0;
-    
+
     --test
     tabStrip:SetPoint("CENTER");
-    
+
     --create tabs for tab strip.
     tabStrip.tabs = {};
     local i;
@@ -203,7 +203,7 @@ local function createTabGroup()
         tab.smiddle:SetTexCoord(0.25, 0.75, 0.0, 1.0);
         tab.smiddle:SetPoint("TOPLEFT", tab.left, "TOPRIGHT");
         tab.smiddle:SetPoint("BOTTOMRIGHT", tab.right, "BOTTOMLEFT");
-        
+
         tab.dragFrame = _G.CreateFrame("Frame");
         tab.dragFrame.parentTab = tab;
         tab.dragFrame.tabStrip = tabStrip;
@@ -249,7 +249,7 @@ local function createTabGroup()
         tab.dragFrame:SetScript("OnDragStop", function(self)
             self:StopMovingOrSizing();
             self.dragging = nil;
-            
+
             local win = self.draggedObject;
             win.isMoving = nil;
             win:ClearAllPoints();
@@ -259,7 +259,7 @@ local function createTabGroup()
 
             win:ClearAllPoints();
             win:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", win:GetLeft(), win:GetTop());
-            
+
             -- account for win's helper frame.
             if(win.helperFrame.isAttached) then
                 local dropTo = win.helperFrame.attachedTo;
@@ -278,7 +278,7 @@ local function createTabGroup()
                     end
                 end
             end
-            
+
             self:ClearAllPoints();
             self:SetPoint("TOPLEFT", self.parentTab, 0, 0);
             self:SetPoint("BOTTOMRIGHT", self.parentTab, 0, 0);
@@ -290,10 +290,10 @@ local function createTabGroup()
                 fun(self);
             end
         end);
-        
+
         tab.dragFrame:Hide();
-        
-        
+
+
         tab.SetTexture = function(self, pathOrTexture)
             self.left:SetTexture(pathOrTexture);
             self.middle:SetTexture(pathOrTexture);
@@ -346,29 +346,29 @@ local function createTabGroup()
         tab:SetScript("OnLeave", function(self)
             self:SetScript("OnUpdate", nil);
         end);
-        
+
         table.insert(tabStrip.tabs, tab);
     end
-    
+
     -- create prev and next buttons
     tabStrip.prevButton = CreateFrame("Button", stripName.."_Prev", tabStrip);
     tabStrip.prevButton:SetScript("OnClick", function(self) setTabOffset(self:GetParent(), -1); end);
     tabStrip.nextButton = CreateFrame("Button", stripName.."_Next", tabStrip);
     tabStrip.nextButton:SetScript("OnClick", function(self) setTabOffset(self:GetParent(), 1); end);
-    
+
     -- tabStip functions
     tabStrip.UpdateTabs = function(self, ignoreOffset)
-        
+
         -- sort tabs
         table.sort(self.attached, sortTabs);
-    
+
         -- relocate tabStrip to window
         local win = self.selected.obj;
         local skinTable = GetSelectedSkin().tab_strip;
         self:SetParent(win);
         self.parentWindow = win;
         SetWidgetRect(self, skinTable);
-        
+
         -- check to see if we have more than one tab to show...
         if(#self.attached > 1) then
             self:Show();
@@ -379,7 +379,7 @@ local function createTabGroup()
             self:Hide();
             return;
         end
-    
+
         -- re-order tabs & sizing
         local curSize;
         if(skinTable.vertical) then
@@ -389,7 +389,7 @@ local function createTabGroup()
         end
         local count = math.floor(curSize / minimumWidth);
         self.visibleCount = count;
-        
+
         if(not ignoreOffset) then
             local index;
             -- get index of selected object
@@ -408,7 +408,7 @@ local function createTabGroup()
                     end
             end
         end
-        
+
         if((self.curOffset + count) > #self.attached) then
             self.curOffset = math.max(#self.attached - count , 0);
         end
@@ -419,10 +419,10 @@ local function createTabGroup()
 	else
 		self.nextButton:Show();
 		self.prevButton:Show();
-                
+
                 self.prevButton.parentWindow = self:GetParent();
                 self.nextButton.parentWindow = self:GetParent();
-                
+
 		if(self.curOffset <= 0) then
                         self.curOffset = 0;
 			self.prevButton:Disable();
@@ -460,7 +460,7 @@ local function createTabGroup()
             tab:SetHeight(curSize/count);
         end
     end
-    
+
     tabStrip.SetSelectedName = function(self, win)
         --local win = windows.active.whisper[winName] or windows.active.chat[winName] or windows.active.w2w[winName];
         if(win) then
@@ -470,7 +470,7 @@ local function createTabGroup()
             self.parentWindow = win;
         end
     end
-    
+
     tabStrip.JumpToTab = function(self, win)
         local lastWin = "NONE";
         if(win) then
@@ -479,7 +479,7 @@ local function createTabGroup()
             local inFocus = EditBoxInFocus and EditBoxInFocus:GetParent().tabStrip == self and true or false;
             win.customSize = true;
  --           DisplayTutorial(L["Manipulating Tabs"], L["You can <Shift-Click> a tab and drag it out into it's own window."]);
-            
+
             if(oldWin and oldWin ~= win) then
                 local oW, oH, oL, oT, oA = oldWin:GetWidth(), oldWin:GetHeight(), oldWin:GetLeft(), oldWin:SafeGetTop(), oldWin:GetAlpha();
                 local cW, cH, cL, cT, cA = win:GetWidth(), win:GetHeight(), win:GetLeft(), win:SafeGetTop(), win:GetAlpha();
@@ -496,9 +496,9 @@ local function createTabGroup()
                     win.widgets.msg_box:SetFocus()
                 end
             end
-            
+
             win.customSize = oldCustomSize;
-            
+
             self:UpdateTabs();
             if( not win.popNoShow ) then
                 for i=1,#self.attached do
@@ -511,7 +511,7 @@ local function createTabGroup()
             win.popNoShow = nil;
         end
     end
-    
+
     tabStrip.Detach = function(self, win)
         --local win = windows.active.whisper[winName] or windows.active.chat[winName] or windows.active.w2w[winName];
         if(win) then
@@ -546,7 +546,7 @@ local function createTabGroup()
             dPrint(win:GetName().." is detached from "..self:GetName());
         end
     end
-    
+
     tabStrip.Attach = function(self, win, jumpToTab)
         --local win = windows.active.whisper[winName] or windows.active.chat[winName] or windows.active.w2w[winName];
         if(win) then
@@ -561,7 +561,7 @@ local function createTabGroup()
             dPrint(win:GetName().." is attached to "..self:GetName());
         end
     end
-    
+
     tabStrip.flashTrack_elapsed = 0;
     tabStrip:SetScript("OnUpdate", function(self, elapsed)
             -- manage flashing tabs.
@@ -588,9 +588,9 @@ local function createTabGroup()
                 self.flashTrack_elapsed = 0;
             end
         end);
-    
+
     applySkin(tabStrip);
-    
+
     -- hide after first created.
     tabStrip:Hide();
     table.insert(tabGroups, tabStrip);

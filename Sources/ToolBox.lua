@@ -223,10 +223,10 @@ function WIM.getGradientFromColor(...)
     v1 = math.max(0, v-.57/2);
     s2 = math.max(0, s-.29/2);
     v2 = math.min(1, s+.57/2);
-    
+
     local r1, g1, b1 = WIM.HSVPerctoRGBPerc(h, s1, v1);
     local r2, g2, b2 = WIM.HSVPerctoRGBPerc(h, s2, v2);
-    
+
     return r1, g1, b1, r2, g2, b2;
 end
 

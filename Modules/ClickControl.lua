@@ -21,7 +21,7 @@ local buttons = {};
 local frame;
 
 db_defaults.ClickControl = {
-    clickSensitivity = .2;  
+    clickSensitivity = .2;
 };
 
 
@@ -59,7 +59,7 @@ end
 
 function ClickControl:OnEnable()
     if(not isInitialized) then
-    
+
         _G.WorldFrame:HookScript("OnMouseDown", function(self, button)
             if(ClickControl.enabled) then
                 local p = getButtonTable(button);
@@ -67,7 +67,7 @@ function ClickControl:OnEnable()
                 p.clickStart = GetTime();
             end
         end);
-    
+
         _G.WorldFrame:HookScript("OnMouseUp", function(self, button)
             if(ClickControl.enabled) then
                 local buttonCount = getButtonDownCount(); -- we need to know this cause we don't want to count moving.
@@ -80,7 +80,7 @@ function ClickControl:OnEnable()
                 cleanButtonTable(button);
             end
 	end);
-        
+
 	-- we only want to add hook once.
 	isInitialized = true;
     end
@@ -101,7 +101,7 @@ function ClickControl:OnDisable()
             timeout = 0,
             whileDead = 1,
             hideOnEscape = 1
-        };        
+        };
         _G.StaticPopup_Show ("WIM_CLICKCONTROL_DISABLE", theLink);
     end
 end

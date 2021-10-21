@@ -35,9 +35,9 @@ local function Animation_UpdateFrame(self, animElapsed, animTable)
 	else	--Just finished animating
 		animTable.updateFunc(self, animTable.getPosFunc(self, self.animReverse and 0 or 1));
 		self.animating = false;
-		
+
 		AnimatingFrames[self][animTable.updateFunc] = 0;	--We use 0 instead of nil'ing out because we don't want to mess with 'next' (used in pairs)
-		
+
 		if ( self.animPostFunc ) then
 			self.animPostFunc(self);
 		end
@@ -71,15 +71,15 @@ function SetUpAnimation(frame, animTable, postFunc, reverse)
 	if ( not AnimatingFrames[frame] ) then
 		AnimatingFrames[frame] = {};
 	end
-	
+
 	AnimatingFrames[frame][animTable.updateFunc] = animTable;
-	
+
 	frame.animStartTime = totalElapsed;
-	frame.animReverse = reverse;	
+	frame.animReverse = reverse;
 	frame.animPostFunc = postFunc;
 	frame.animating = true;
-	
+
 	animTable.updateFunc(frame, animTable.getPosFunc(frame, frame.animReverse and 1 or 0));
-	
+
 	AnimUpdateFrame:SetScript("OnUpdate", Animation_OnUpdate);
 end

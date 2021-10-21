@@ -63,7 +63,7 @@ hooksecurefunc("ChatEdit_ActivateChat", function(editBox)
         hookChatFrameEditBox(editBox);
     end);
 
-   
+
 function WIM.getVisibleChatFrameEditBox()
     for eb in pairs(Hooked_ChatFrameEditBoxes) do
         if _G[eb]:wimIsVisible() then

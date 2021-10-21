@@ -20,7 +20,7 @@ local Emote = WIM.CreateModule("Emoticons", true);
 local LinkRepository = {}; -- used for emotes and link parsing.
 local tmpList = {};
 
--- Dri: keeping the special table as a helper for authors poking into WIM code to more easily add chars for parsing, 
+-- Dri: keeping the special table as a helper for authors poking into WIM code to more easily add chars for parsing,
 -- we could just as well construct a static specialstr for the replacement function manually and save us some string garbage.
 local special = {"%", ":", "-", "^", "$", ")", "(", "]", "]", "~", "@", "#", "&", "*", "_", "+", "=", ",", ".", "?", "/", "\\", "{", "}", "|", "`", ";", "\"", "'"};
 local specialrepl = "["
@@ -74,28 +74,28 @@ local function filterEmoticons(theMsg, smf)
     if(not theMsg or theMsg == "") then
         return "";
     end
-    
+
     --check if special formatting is not wanted
     if(smf and (smf.noEscapedStrings or smf.noEmoticons)) then
         return theMsg;
     end
-	
+
 	--remove player hyperlink from message to circumvent misbehavior as of 8.1
 	local s,e = string.find(theMsg, ": ")
 	local playerLink
-	
+
 	if e then
 		playerLink = string.sub(theMsg, 1, e)
 		theMsg = string.sub(theMsg, e+1)
 	elseif string.find(theMsg, "^|K") then
 		return theMsg
 	end
-	
+
 	--safety check again...
     if(not theMsg or theMsg == "") then
         return playerLink or "";
     end
-	
+
     --accomodate WoW's built in symbols and inherrit WoW's options whether to display them or not.
     if ( 1 ) then
 	for tag in string.gmatch(theMsg, "%b{}") do
@@ -107,7 +107,7 @@ local function filterEmoticons(theMsg, smf)
     end
 
     local emoteTable = GetSelectedSkin().emoticons;
-        
+
     -- first as to not disrupt any links, lets remove them and put them back later.
     local results, orig;
     orig = theMsg;
@@ -127,7 +127,7 @@ local function filterEmoticons(theMsg, smf)
         end, 1);
     until results == 0;
     --restore color
-    
+
     -- lets exchange emotes...
     local emote, img;
     for emote,_ in pairs(emoteTable.definitions) do
@@ -136,17 +136,17 @@ local function filterEmoticons(theMsg, smf)
             theMsg = string.gsub(theMsg, convertEmoteToPattern(emote), "|T"..img..":"..emoteTable.width..":"..emoteTable.height..":"..emoteTable.offset[1]..":"..emoteTable.offset[2].."|t");
         end
     end
-        
+
     -- put all the links back into the string...
     for i=#LinkRepository, 1, -1 do
         theMsg = string.gsub(theMsg, "\001\004"..i.."", LinkRepository[i]);
     end
-    
+
     -- clear table to be recycled by next process
     for key, _ in pairs(LinkRepository) do
         LinkRepository[key] = nil;
     end
-    
+
     return decodeColors((playerLink or "")..theMsg);
 end
 
@@ -238,7 +238,7 @@ local function generateEmoticonList(self, button)
             tbl[k] = nil;
         end
     end
-    
+
     loadTable(emoteTmpList, GetEmotes());
     local EMOTICON_MORE = 1;
     local info;
@@ -278,5 +278,5 @@ local function generateEmoticonList(self, button)
 end
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnMouseDown", generateEmoticonList);
-    
-    
+
+

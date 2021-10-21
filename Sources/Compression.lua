@@ -163,7 +163,7 @@ local function CompressHuffman(uncompressed)
 
     --Start with as many leaves as there are symbols.
     local leaf;
-    
+
     for symbol, weight in pairs(hist) do
         leaf = getNewTable();
         leaf.symbol=string.char(symbol);
@@ -175,7 +175,7 @@ local function CompressHuffman(uncompressed)
     table.sort(leafs, function(a,b) if a.weight<b.weight then return true elseif a.weight>b.weight then return false else return nil end end)
 
     local nLeafs = #leafs
-    
+
     --While there is more than one node in the queues:
     local l,h, li, hi, leaf1, leaf2
     local newNode;
@@ -242,17 +242,17 @@ local function CompressHuffman(uncompressed)
 	_huff.bcode = 0
 	_huff.blength = 1
     end
-	
+
     -- WRITING
     remainder = 0;
     remainder_length = 0;
-	
+
     local compressed = Huffman_compressed;
     --compressed_size = 0
 
     -- first byte is version info. 0 = uncompressed, 1 = 8-bit word huffman compressed
     compressed[1] = "\003";
-	
+
     -- Header: byte 0=#leafs, byte 1-3=size of uncompressed data
     -- max 2^24 bytes
     local l = string.len(uncompressed);
@@ -261,7 +261,7 @@ local function CompressHuffman(uncompressed)
     compressed[4] = string.char(bit.band(bit.rshift(l, 8), 255));	-- bit 8-15
     compressed[5] = string.char(bit.band(bit.rshift(l, 16), 255));	-- bit 16-23
     compressed_size = 5;
-	
+
     -- create symbol/code map
     for symbol, leaf in pairs(symbols) do
 	addBits(compressed, symbol, 8);
@@ -287,14 +287,14 @@ local function CompressHuffman(uncompressed)
 	large_compressed[large_compressed_size] = table.concat(compressed, "", 1, compressed_size);
 	compressed_size = 0;
     end
-	
+
     -- add remainding bits (if any)
     if remainder_length>0 then
 	large_compressed_size = large_compressed_size + 1;
 	large_compressed[large_compressed_size] = string.char(remainder);
     end
     local compressed_string = table.concat(large_compressed, "", 1, large_compressed_size);
-	
+
     -- is compression worth it? If not, return uncompressed data.
     if (#uncompressed+1) <= #compressed_string then
         cleanCompress();
@@ -333,7 +333,7 @@ local function getCode(bitfield, field_len)
 	    b = bit.band(bitfield, lshiftMask[i]);
 	    if not (p==0) and not (b == 0) then
 		-- found 2 bits set right after each other (stop bits)
-		return bit.band( bitfield, lshiftMinusOneMask[i-1]), i-1, 
+		return bit.band( bitfield, lshiftMinusOneMask[i-1]), i-1,
 			    bit.rshift(bitfield, i+1), field_len-i-1;
 	    end
 	    p = b;
@@ -379,7 +379,7 @@ local map_metatable1 = {
 
 local map_metatable2 = {
     __index = function (t, k)
-                return mt 
+                return mt
             end
 };
 
@@ -417,9 +417,9 @@ local function DecompressHuffman(compressed)
     -- decode code->symbal map
     local bitfield = 0;
     local bitfield_len = 0;
-    
+
     setmetatable(map, map_metatable1)
-	
+
     local i = 6; -- byte 1-5 are header bytes
     local c, cl;
     local minCodeLen = 1000;
@@ -436,7 +436,7 @@ local function DecompressHuffman(compressed)
 	c = string.byte(compressed, i)
 	bitfield = bit.bor(bitfield, bit.lshift(c, bitfield_len))
 	bitfield_len = bitfield_len + 8
-		
+
 	if state == 0 then
 	    symbol = bit.band(bitfield, 255)
 	    bitfield = bit.rshift(bitfield, 8)
@@ -457,11 +457,11 @@ local function DecompressHuffman(compressed)
 	end
 	    i=i+1
     end
-	
+
     -- dont create new subtables for entries not in the map. Waste of space.
     -- But do return an empty table to prevent runtime errors. (instead of returning nil)
     setmetatable(map, map_metatable2);
-	
+
     local uncompressed = Huffman_uncompressed
     local large_uncompressed = Huffman_large_uncompressed
     local uncompressed_size = 0
@@ -473,7 +473,7 @@ local function DecompressHuffman(compressed)
     compressed_size = compressed_size + 1
     local temp_limit = 200; -- first limit of uncompressed data. large_uncompressed will hold strings of length 200
     while true do
-	if test_code_len<=bitfield_len then 
+	if test_code_len<=bitfield_len then
 	    test_code=bit.band( bitfield, lshiftMinusOneMask[test_code_len])
 	    symbol = map[test_code_len][test_code]
 	    if symbol then

@@ -15,7 +15,7 @@
     <Script file="Socket.lua" />
     <Script file="Clear.lua" />
     <Script file="OpCodes.lua" />
-    
+
     <Script file="Options\Options.lua" />
     <Script file="Options\OptionsTookKit.lua" />
     <Script file="Options\CoreOptions.lua" />

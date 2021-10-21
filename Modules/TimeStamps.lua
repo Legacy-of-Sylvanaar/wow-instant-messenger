@@ -49,7 +49,7 @@ function GetTimeStamp(cTime, chatDisplay)
         chatDisplay:AddMessage(" ");
         chatDisplay:AddMessage("["..cDate.."]", color.r, color.g, color.b);
     end
-    local stamp = "|cff"..RGBPercentToHex(color.r, color.g, color.b)..date(db.timeStampFormat, cTime).."|r"; 
+    local stamp = "|cff"..RGBPercentToHex(color.r, color.g, color.b)..date(db.timeStampFormat, cTime).."|r";
     if(win) then
         win.lastDate = cDate;
         win.nextChatDisplay = nil;

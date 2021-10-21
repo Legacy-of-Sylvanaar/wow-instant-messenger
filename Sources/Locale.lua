@@ -19,7 +19,7 @@ setmetatable(L, {
     __index = function(t, k)
         --dPrint("String not localized: '"..tostring(k).."'"); -- for debugging purposes only.
         table.insert(UnlocalizedStrings, tostring(k));
-        return tostring(k);    
+        return tostring(k);
     end
 });
 

@@ -35,7 +35,7 @@ function getAlias(name, isRealid)
     end
     -- processes alias table;
     local tbl = db.lists.alias;
-    
+
     return name;
 end
 
