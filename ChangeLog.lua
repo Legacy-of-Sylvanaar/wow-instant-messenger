@@ -16,9 +16,9 @@ local function addBetaEntry(version, rdate, description, transmitted)
 end
 
 -- ChangeLog Entries.
-addEntry("3.9.0", "03/31/2021", [[
-	*TOC update for 9.0.5
-	*Compatible with TBC Beta
+addEntry("3.9.2", "10/20/2021", [[
+	*TOC update for 9.1.0, 2.5.2, and 1.14.0
+	*Compatible with TBC Classic and Classic era 1.14.0
 ]]);
 
 local function entryExists(version)
