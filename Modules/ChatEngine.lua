@@ -251,9 +251,9 @@ function Guild:OnDisable()
     self:UnregisterChatEvent("CHAT_MSG_GUILD_ACHIEVEMENT");
 end
 
-function Guild:OnWindowDestroyed(self)
-    if(self.type == "chat" and self.chatType == "guild") then
-        local chatName = self.theUser;
+function Guild:OnWindowDestroyed(win)
+    if(win.type == "chat" and win.chatType == "guild") then
+        local chatName = win.theUser;
         Windows[chatName].chatType = nil;
         Windows[chatName].unreadCount = nil;
         Windows[chatName].chatLoaded = nil;
@@ -263,15 +263,10 @@ function Guild:OnWindowDestroyed(self)
     end
 end
 
-function Guild:OnWindowShow(self)
-    if(self.type == "chat" and self.chatType == "guild") then
+function Guild:OnWindowShow(win)
+    if(win.type == "chat" and win.chatType == "guild") then
 		-- H.Sch. - ReglohPri - this is deprecated -> GuildRoster() - changed to C_GuildInfo.GuildRoster()
-		if (select(4, _G.GetBuildInfo()) <= 19999) then
-			--for classic
-			_G.GuildRoster();
-		else
-			_G.C_GuildInfo.GuildRoster();
-		end
+		_G.C_GuildInfo.GuildRoster();
     end
 end
 
@@ -360,9 +355,9 @@ function Officer:OnDisable()
     self:UnregisterChatEvent("CHAT_MSG_OFFICER");
 end
 
-function Officer:OnWindowDestroyed(self)
-    if(self.type == "chat" and self.chatType == "officer") then
-        local chatName = self.theUser;
+function Officer:OnWindowDestroyed(win)
+    if(win.type == "chat" and win.chatType == "officer") then
+        local chatName = win.theUser;
         Windows[chatName].chatType = nil;
         Windows[chatName].unreadCount = nil;
         Windows[chatName].chatLoaded = nil;
@@ -458,9 +453,9 @@ function Party:OnDisable()
     self:UnregisterChatEvent("CHAT_MSG_PARTY_LEADER");
 end
 
-function Party:OnWindowDestroyed(self)
-    if(self.type == "chat" and self.chatType == "party") then
-        local chatName = self.theUser;
+function Party:OnWindowDestroyed(win)
+    if(win.type == "chat" and win.chatType == "party") then
+        local chatName = win.theUser;
         Windows[chatName].chatType = nil;
         Windows[chatName].unreadCount = nil;
         Windows[chatName].chatLoaded = nil;
@@ -588,9 +583,9 @@ function Raid:OnDisable()
     self:UnregisterChatEvent("CHAT_MSG_RAID_WARNING");
 end
 
-function Raid:OnWindowDestroyed(self)
-    if(self.type == "chat" and self.chatType == "raid") then
-        local chatName = self.theUser;
+function Raid:OnWindowDestroyed(win)
+    if(win.type == "chat" and win.chatType == "raid") then
+        local chatName = win.theUser;
         Windows[chatName].chatType = nil;
         Windows[chatName].unreadCount = nil;
         Windows[chatName].chatLoaded = nil;
@@ -750,9 +745,9 @@ function Battleground:OnDisable()
     self:UnregisterChatEvent("CHAT_MSG_INSTANCE_CHAT_LEADER");
 end
 
-function Battleground:OnWindowDestroyed(self)
-    if(self.type == "chat" and self.chatType == "battleground") then
-        local chatName = self.theUser;
+function Battleground:OnWindowDestroyed(win)
+    if(win.type == "chat" and win.chatType == "battleground") then
+        local chatName = win.theUser;
         Windows[chatName].chatType = nil;
         Windows[chatName].unreadCount = nil;
         Windows[chatName].chatLoaded = nil;
@@ -872,9 +867,9 @@ function Say:OnDisable()
 	self:UnregisterChatEvent("CHAT_MSG_TEXT_EMOTE");
 end
 
-function Say:OnWindowDestroyed(self)
-    if(self.type == "chat" and self.chatType == "say") then
-        local chatName = self.theUser;
+function Say:OnWindowDestroyed(win)
+    if(win.type == "chat" and win.chatType == "say") then
+        local chatName = win.theUser;
         Windows[chatName].chatType = nil;
         Windows[chatName].unreadCount = nil;
         Windows[chatName].chatLoaded = nil;
@@ -1021,9 +1016,9 @@ function Channel:OnDisable()
     self:UnregisterChatEvent("CHAT_MSG_CHANNEL_NOTICE_USER");
 end
 
-function Channel:OnWindowDestroyed(self)
-    if(self.type == "chat" and self.chatType == "channel") then
-        local chatName = self.theUser;
+function Channel:OnWindowDestroyed(win)
+    if(win.type == "chat" and win.chatType == "channel") then
+        local chatName = win.theUser;
         Windows[chatName].chatType = nil;
         Windows[chatName].unreadCount = nil;
         Windows[chatName].chatLoaded = nil;

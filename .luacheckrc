@@ -13,6 +13,7 @@ ignore = {
 	"43.", -- Shadowing an upvalue, an upvalue argument, an upvalue loop variable.
 --    "431", -- shadowing upvalue
 	"542", -- An empty if branch
+	"621", -- Inconsistent indentation (SPACE followed by TAB) (This should be fixed at some point, but not today)
 	"631", -- Line is too long
 }
 globals = {
