@@ -1903,7 +1903,7 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 		return
     end
 
-	ChatFrame_OnHyperlinkShow(self, link, text, button);
+	_G.ChatFrame_OnHyperlinkShow(self, link, text, button);
 	-- if link == "garrmission:weakauras" then
 	-- 		_G.SetItemRef(link, text, button, self);
 	-- else
