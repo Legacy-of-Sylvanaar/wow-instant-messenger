@@ -701,7 +701,7 @@ function CF_OpenChat(text, chatFrame, desiredCursorPosition)
 		if not string.find(target, "^|K") then
 			return
 		end
-	elseif not (chatType == "BN_WHISPER") or not target then
+	elseif chatType ~= "BN_WHISPER" or not target then
 		return
 	end
 

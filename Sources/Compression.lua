@@ -145,7 +145,7 @@ end
 -- word size for this huffman algorithm is 8 bits (1 byte). This means the best compression is representing 1 byte with 1 bit, i.e. compress to 0.125 of original size.
 local function CompressHuffman(uncompressed)
     compressed_size = 0;
-    if not type(uncompressed)=="string" then
+    if type(uncompressed) ~= "string" then
         cleanCompress();
         return nil, "Can only compress strings";
     end
@@ -330,7 +330,7 @@ local function getCode(bitfield, field_len)
 	local p = 0;
 	for i = 0, field_len-1 do
 	    b = bit.band(bitfield, lshiftMask[i]);
-	    if not (p==0) and not (b == 0) then
+	    if p ~= 0 and b ~= 0  then
 		-- found 2 bits set right after each other (stop bits)
 		return bit.band( bitfield, lshiftMinusOneMask[i-1]), i-1,
 			    bit.rshift(bitfield, i+1), field_len-i-1;
@@ -348,7 +348,7 @@ local function unescape_code(code, code_len)
     local i = 0
     while i < code_len do
 	b = bit.band( code, lshiftMask[i]);
-	if not (b==0) then
+	if b ~= 0 then
 	    unescaped_code = bit.bor(unescaped_code, lshiftMask[l]);
 	    i = i + 1;
 	end
@@ -398,7 +398,7 @@ local function DecompressHuffman(compressed)
         cleanDecompress();
 	return compressed:sub(2) --return uncompressed data
     end
-    if not (info_byte==3) then
+    if info_byte ~=3 then
         cleanDecompress();
 	return compressed --, "Can only decompress Huffman compressed data ("..tostring(info_byte)..")"
     end
