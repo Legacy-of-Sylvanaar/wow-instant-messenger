@@ -125,6 +125,12 @@ local function filterEmoticons(theMsg, smf)
             return "\001\004"..#LinkRepository;
         end, 1);
     until results == 0;
+	repeat
+        theMsg, results = string.gsub(theMsg, "(|T[^|]+|t)", function(theLink)
+            table.insert(LinkRepository, theLink);
+            return "\001\004"..#LinkRepository;
+        end, 1);
+    until results == 0;
     --restore color
 
     -- lets exchange emotes...
