@@ -113,6 +113,12 @@ local function filterEmoticons(theMsg, smf)
     -- clean out colors and wait to put back.
     local results;
     theMsg = encodeColors(theMsg);
+	repeat
+        theMsg, results = string.gsub(theMsg, "(|T[^|]+|t)", function(theLink)
+            table.insert(LinkRepository, theLink);
+            return "\001\004"..#LinkRepository;
+        end, 1);
+    until results == 0;
     repeat
         theMsg, results = string.gsub(theMsg, "(|K[^|]+|k[^|]+|k)", function(theLink)
             table.insert(LinkRepository, theLink);
@@ -121,12 +127,6 @@ local function filterEmoticons(theMsg, smf)
     until results == 0;
     repeat
         theMsg, results = string.gsub(theMsg, "(|H[^|]+|h[^|]+|h)", function(theLink)
-            table.insert(LinkRepository, theLink);
-            return "\001\004"..#LinkRepository;
-        end, 1);
-    until results == 0;
-	repeat
-        theMsg, results = string.gsub(theMsg, "(|T[^|]+|t)", function(theLink)
             table.insert(LinkRepository, theLink);
             return "\001\004"..#LinkRepository;
         end, 1);
