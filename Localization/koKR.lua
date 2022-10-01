@@ -337,7 +337,7 @@ WIM.AddLocale("koKR", {
     ["Ignore"] = "무시",
     ["Block"] = "차단",
     ["Filtering"] = "필터링",
-    ["Filtering allows you to control which messages are handled as well as how they are handlef by WIM."] = "Filtering allows you to control which messages are handled as well as how they are handlef by WIM.",
+    ["Filtering allows you to control which messages are handled as well as how they are handled by WIM."] = "Filtering allows you to control which messages are handled as well as how they are handled by WIM.",
     ["Enable Filtering"] = "필터링 허용",
     ["Protected"] = "보호",
     ["Action:"] = "실행:",

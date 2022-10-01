@@ -348,7 +348,7 @@ WIM.AddLocale("ruRU", {
 	["Ignore"] = "Игнорировать",
 	["Block"] = "Блокировать",
 	["Filtering"] = "Фильтрация",
-	["Filtering allows you to control which messages are handled as well as how they are handlef by WIM."] = "Фильтрация позволяет вам контролировать, какие сообщения обрабатывать, а также каким образом они будут обрабатываться WIMом.",
+	["Filtering allows you to control which messages are handled as well as how they are handled by WIM."] = "Фильтрация позволяет вам контролировать, какие сообщения обрабатывать, а также каким образом они будут обрабатываться WIMом.",
 	["Enable Filtering"] = "Включить фильтрацию",
 	["Protected"] = "Под защитой",
 	["Action:"] = "Действие",

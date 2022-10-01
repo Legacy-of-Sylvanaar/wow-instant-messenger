@@ -351,7 +351,7 @@ WIM.AddLocale("zhTW", {
     ["Ignore"] = "忽略",
     ["Block"] = "封鎖",
     ["Filtering"] = "過濾",
-    ["Filtering allows you to control which messages are handled as well as how they are handlef by WIM."] = "在此您可以設定 WIM 的過濾機制",
+    ["Filtering allows you to control which messages are handled as well as how they are handled by WIM."] = "在此您可以設定 WIM 的過濾機制",
     ["Enable Filtering"] = "開啟過濾功能",
     ["Protected"] = "已保護",
     ["Action:"] = "動作:",

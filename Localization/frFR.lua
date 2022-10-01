@@ -352,7 +352,7 @@ WIM.AddLocale("frFR", {
     ["Ignore"] = "Ignore",
     ["Block"] = "Bloquer",
     ["Filtering"] = "Filtrage",
-    ["Filtering allows you to control which messages are handled as well as how they are handlef by WIM."] = "Le filtrage vous permet de contrôler quels messages sont transformés, ainsi que la façon dont ils seront traités WIM",
+    ["Filtering allows you to control which messages are handled as well as how they are handled by WIM."] = "Le filtrage vous permet de contrôler quels messages sont transformés, ainsi que la façon dont ils seront traités WIM",
     ["Enable Filtering"] = "Activer le filtrage",
     ["Protected"] = "Protégées",
     ["Action:"] = "Action:",

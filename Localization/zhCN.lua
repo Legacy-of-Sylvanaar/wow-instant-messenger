@@ -355,7 +355,7 @@ WIM.AddLocale("zhCN", {
     ["Ignore"] = "忽略",
     ["Block"] = "屏蔽",
     ["Filtering"] = "过滤器",
-    ["Filtering allows you to control which messages are handled as well as how they are handlef by WIM."] = "设置消息过滤规则。",
+    ["Filtering allows you to control which messages are handled as well as how they are handled by WIM."] = "设置消息过滤规则。",
     ["Enable Filtering"] = "开启过滤器",
     ["Protected"] = true,
     ["Action:"] = "动作：",
