@@ -73,7 +73,11 @@ function ApplySkinToWindow(obj)
 
     local SelectedSkin = WIM:GetSelectedSkin();
 
-    obj:SetMinResize(SelectedSkin.message_window.min_width, SelectedSkin.message_window.min_height);
+	if obj.SetResizeBounds then -- WoW 10.0
+		obj:SetResizeBounds(SelectedSkin.message_window.min_width, SelectedSkin.message_window.min_height);
+	else
+    	obj:SetMinResize(SelectedSkin.message_window.min_width, SelectedSkin.message_window.min_height);
+    end
 
     --set backdrop edges and background textures.
     local tl = obj.widgets.Backdrop.tl;

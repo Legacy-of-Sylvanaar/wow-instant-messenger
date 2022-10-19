@@ -1209,7 +1209,11 @@ local function instantiateWindow(obj)
                         end
                 end
 	end
-        self:SetMinResize(minWidth, minHeight);
+		if self.SetResizeBounds then -- WoW 10.0
+			self:SetResizeBounds(minWidth, minHeight);
+		else
+        	self:SetMinResize(minWidth, minHeight);
+        end
         self:SetWidth(_G.math.max(minWidth, self:GetWidth()));
         self:SetHeight(_G.math.max(minHeight, self:GetHeight()));
         self.initialized = true;

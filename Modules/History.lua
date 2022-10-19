@@ -407,7 +407,11 @@ local function createHistoryViewer()
     win:SetToplevel(true);
     win:EnableMouse(true);
     win:RegisterForDrag("LeftButton");
-    win:SetMinResize(600, 400);
+    if win.SetResizeBounds then -- WoW 10.0
+		win:SetResizeBounds(240,240)
+	else
+   		win:SetMinResize(600, 400);
+   	end
 
     -- set script events
     win:SetScript("OnDragStart", function(self) self:StartMoving(); end);
