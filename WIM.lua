@@ -21,6 +21,7 @@ debug = false; -- turn debugging on and off.
 useProtocol2 = true; -- test switch for new W2W Protocol. (Dev use only)
 local buildNumber = select(4, _G.GetBuildInfo())
 isShadowlands = buildNumber >= 90001;
+isDragonflight = buildNumber >= 100000;
 
 -- is Private Server?
 --[[isPrivateServer = not (string.match(_G.GetCVar("realmList"), "worldofwarcraft.com$")

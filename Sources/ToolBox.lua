@@ -201,7 +201,7 @@ end
 
 -- pass rgb as signle arg hex, or triple arg rgb percent.
 -- entering ! before a hex, will return a solid color.
-function WIM.getGradientFromColor(...)
+function WIM.getGradientFromColor_Legacy(...)
     local h, s, v, s1, v1, s2, v2;
     if(select("#", ...) == 0) then
         return 0, 0, 0, 0, 0, 0;
@@ -226,6 +226,12 @@ function WIM.getGradientFromColor(...)
     local r2, g2, b2 = WIM.HSVPerctoRGBPerc(h, s2, v2);
 
     return r1, g1, b1, r2, g2, b2;
+end
+
+function WIM.getGradientFromColor(...)
+	local r1, g1, b1, r2, g2, b2 = WIM.getGradientFromColor_Legacy(...)
+
+	return { r = r1, g = g1, b = b1, a = 1 }, { r = r2, g = g2, b = b2, a = 1 }
 end
 
 

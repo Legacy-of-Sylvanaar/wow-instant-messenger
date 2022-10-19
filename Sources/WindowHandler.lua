@@ -906,13 +906,27 @@ local function instantiateWindow(obj)
                 local chat_type = self.chatType == "battleground" and "INSTANCE_CHAT" or string.upper(self.chatType);
                 local color = _G.ChatTypeInfo[chat_type]; -- Drii: ticket 344
                 icon:SetTexCoord(0,1,0,1);
-                icon:SetGradient("VERTICAL", color.r, color.g, color.b, color.r, color.g, color.b);
+				if (isDragonflight) then -- WoW 10
+					icon:SetGradient("VERTICAL",
+						{ r = color.r, g = color.g, b = color.b, a = 1},
+						{ r = color.r, g = color.g, b = color.b, a = 1 }
+					);
+				else
+                	icon:SetGradient("VERTICAL", color.r, color.g, color.b, color.r, color.g, color.b);
+				end
                 if(GetSelectedSkin().message_window.widgets.from.use_class_color) then
                                 self.widgets.from:SetTextColor(color.r, color.g, color.b);
                 end
         else
                 local classTag = obj.class;
-                icon:SetGradient("VERTICAL", 1, 1, 1, 1, 1, 1);
+				if (isDragonflight) then -- WoW 10
+					icon:SetGradient("VERTICAL",
+						{ r = 1, g = 1, b = 1, a = 1 },
+						{ r = 1, g = 1, b = 1, a = 1 }
+					);
+				else
+					icon:SetGradient("VERTICAL", 1, 1, 1, 1, 1, 1);
+				end
                 if(self.bn and self.bn.client == _G.BNET_CLIENT_SC2) then
                                 classTag = "sc2";--"Interface\\FriendsFrame\\Battlenet-Sc2icon"
                                 icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
@@ -966,7 +980,7 @@ local function instantiateWindow(obj)
                 if(constants.classes[self.class]) then
                         self.classColor = constants.classes[self.class].color;
                         if(GetSelectedSkin().message_window.widgets.from.use_class_color) then
-                                        self.widgets.from:SetTextColor(RGBHexToPercent(constants.classes[self.class].color));
+                            self.widgets.from:SetTextColor(RGBHexToPercent(constants.classes[self.class].color));
                         end
                 end
           end
@@ -977,15 +991,15 @@ local function instantiateWindow(obj)
     end
 
     obj.WhoCallback = function(result)
-	if(result and result.Online and result.Name == obj.theUser) then
-		obj.class = result.Class;
-		obj.level = result.Level;
-		obj.race = result.Race;
-		obj.guild = result.Guild;
-		obj.location = result.Zone;
-		obj:UpdateIcon();
-		obj:UpdateCharDetails();
-	end
+        if(result and result.Online and result.Name == obj.theUser) then
+            obj.class = result.Class;
+            obj.level = result.Level;
+            obj.race = result.Race;
+            obj.guild = result.Guild;
+            obj.location = result.Zone;
+            obj:UpdateIcon();
+            obj:UpdateCharDetails();
+        end
     end
 
     obj.SendWho = function(self)
@@ -1006,34 +1020,34 @@ local function instantiateWindow(obj)
                 -- get information of BN user from friends data.
                 local id = self.theUser and _G.BNet_GetBNetIDAccount(self.theUser) or nil;
                 if(id) then
-                				local _, _, _, _, _, bnetIDGameAccount = GetBNGetFriendInfoByID(id)
-                                local hasFocus, toonName, client, realmName, realmID, faction, race, class, guild, zoneName, level, gameText, broadcastText, broadcastTime = GetBNGetGameAccountInfo(bnetIDGameAccount or 0);
-                                self.class = class or "";
-                                self.level = level or "";
-                                self.race = race or "";
-                                self.guild = guild or "";
-                                self.location = client == _G.BNET_CLIENT_WOW and zoneName or gameText;
-                                self.bn.class = class;
-                                self.bn.level = level;
-                                self.bn.race = race;
-                                self.bn.guild = guild;
-                                self.bn.location = client == _G.BNET_CLIENT_WOW and zoneName or gameText;
-                                self.bn.gameText = gameText;
-                                self.bn.toonName = toonName;
-                                self.bn.client = client;
-                                self.bn.realmName = realmName;
-                                self.bn.faction = faction;
-                                self.bn.broadcastText = broadcastText;
-                                self.bn.broadcastTime = broadcastTime;
-                                self.bn.hasFocus = hasFocus;
-                                self.bn.id = id;
-                                -- self.widgets.from:SetText(self.theUser.." - "..toonName);
-                                self:UpdateIcon();
-                                if (client == _G.BNET_CLIENT_WOW) then
-                                  self:UpdateCharDetails();
-                                end
+					local _, _, _, _, _, bnetIDGameAccount = GetBNGetFriendInfoByID(id)
+					local hasFocus, toonName, client, realmName, realmID, faction, race, class, guild, zoneName, level, gameText, broadcastText, broadcastTime = GetBNGetGameAccountInfo(bnetIDGameAccount or 0);
+					self.class = class or "";
+					self.level = level or "";
+					self.race = race or "";
+					self.guild = guild or "";
+					self.location = client == _G.BNET_CLIENT_WOW and zoneName or gameText;
+					self.bn.class = class;
+					self.bn.level = level;
+					self.bn.race = race;
+					self.bn.guild = guild;
+					self.bn.location = client == _G.BNET_CLIENT_WOW and zoneName or gameText;
+					self.bn.gameText = gameText;
+					self.bn.toonName = toonName;
+					self.bn.client = client;
+					self.bn.realmName = realmName;
+					self.bn.faction = faction;
+					self.bn.broadcastText = broadcastText;
+					self.bn.broadcastTime = broadcastTime;
+					self.bn.hasFocus = hasFocus;
+					self.bn.id = id;
+					-- self.widgets.from:SetText(self.theUser.." - "..toonName);
+					self:UpdateIcon();
+					if (client == _G.BNET_CLIENT_WOW) then
+						self:UpdateCharDetails();
+					end
                 else
-                                self:AddMessage(_G.BN_UNABLE_TO_RESOLVE_NAME, db.displayColors.errorMsg.r, db.displayColors.errorMsg.g, db.displayColors.errorMsg.b);
+					self:AddMessage(_G.BN_UNABLE_TO_RESOLVE_NAME, db.displayColors.errorMsg.r, db.displayColors.errorMsg.g, db.displayColors.errorMsg.b);
                 end
         else
         		--Check if sending unit is in your party, then check guild
@@ -1041,16 +1055,16 @@ local function instantiateWindow(obj)
         			for i = 1, _G.GetNumGroupMembers() do
         				local unitId = "raid"..i
         				local name = _G.GetUnitName(unitId, true)
-                                        if self.theUser == name then
-                                                self.WhoCallback({
-                                                        Name = name,
-                                                        Online = true,
-                                                        Guild = self.guild or "",
-                                                        Class = UnitClass(unitId) or "",
-                                                        Level = UnitLevel(unitId) or "",
-                                                        Race = UnitRace(unitId) or "",
-                                                        Zone = self.zone  or ""
-                                                });
+						if self.theUser == name then
+							self.WhoCallback({
+								Name = name,
+								Online = true,
+								Guild = self.guild or "",
+								Class = UnitClass(unitId) or "",
+								Level = UnitLevel(unitId) or "",
+								Race = UnitRace(unitId) or "",
+								Zone = self.zone  or ""
+							});
         					break
         				end
         			end
@@ -1058,37 +1072,37 @@ local function instantiateWindow(obj)
         			for i = 1, _G.GetNumSubgroupMembers() do
         				local unitId = "party"..i
         				local name = _G.GetUnitName(unitId, true)
-                                        if self.theUser == name then
-                                                self.WhoCallback({
-                                                        Name = name,
-                                                        Online = true,
-                                                        Guild = self.guild or "",
-                                                        Class = UnitClass(unitId) or "",
-                                                        Level = UnitLevel(unitId) or "",
-                                                        Race = UnitRace(unitId) or "",
-                                                        Zone = self.zone  or ""
-                                                });
+						if self.theUser == name then
+							self.WhoCallback({
+								Name = name,
+								Online = true,
+								Guild = self.guild or "",
+								Class = UnitClass(unitId) or "",
+								Level = UnitLevel(unitId) or "",
+								Race = UnitRace(unitId) or "",
+								Zone = self.zone  or ""
+							});
         					break
         				end
         			end
         		end
         		if _G.IsInGuild() then
-                                        local lookupName = Ambiguate(self.theUser, "none");
-                                        local playerGuildIndex = lists.guild[lookupName];
-                                        if (playerGuildIndex) then
-                                                local name, rank, rankIndex, level, class, zone = _G.GetGuildRosterInfo(playerGuildIndex)
-                                                if name and lookupName:lower() == Ambiguate(name, "none"):lower() then --no name, means during our scan someone left guild and we hit an index that no longer returns player name, or the index is outdated and names do not match
-                                                        self.WhoCallback({
-                                                                Name = self.theUser,
-                                                                Online = true,
-                                                                Guild = select(1, GetGuildInfo("player")) or "",
-                                                                Class = class or "",
-                                                                Level = level or "",
-                                                                Race = self.race or "",
-                                                                Zone = zone  or ""
-                                                        });
-                                                end
-                                        end
+					local lookupName = Ambiguate(self.theUser, "none");
+					local playerGuildIndex = lists.guild[lookupName];
+					if (playerGuildIndex) then
+						local name, rank, rankIndex, level, class, zone = _G.GetGuildRosterInfo(playerGuildIndex)
+						if name and lookupName:lower() == Ambiguate(name, "none"):lower() then --no name, means during our scan someone left guild and we hit an index that no longer returns player name, or the index is outdated and names do not match
+							self.WhoCallback({
+								Name = self.theUser,
+								Online = true,
+								Guild = select(1, GetGuildInfo("player")) or "",
+								Class = class or "",
+								Level = level or "",
+								Race = self.race or "",
+								Zone = zone  or ""
+							});
+						end
+					end
         		end
         end
     end
@@ -1182,9 +1196,9 @@ local function instantiateWindow(obj)
 
 	self.widgets.from:SetAlpha(1);
 	self.widgets.char_info:SetAlpha(1);
-	self.widgets.close:SetAlpha(db.windowAlpha);
-	self.widgets.scroll_up:SetAlpha(db.windowAlpha);
-	self.widgets.scroll_down:SetAlpha(db.windowAlpha);
+	self.widgets.close:SetAlpha(db.windowAlpha / 100);
+	self.widgets.scroll_up:SetAlpha(db.windowAlpha / 100);
+	self.widgets.scroll_down:SetAlpha(db.windowAlpha / 100);
 
         if(not self.customSize) then
                 self:SetWidth(db.winSize.width);
@@ -1234,8 +1248,8 @@ local function instantiateWindow(obj)
 			self:Hide_Normal();
 			self:ResetAnimation();
 		else
-                        self.widgets.chat_display:SetParent("UIParent");
-                        self.widgets.chat_display:Hide();
+			self.widgets.chat_display:SetParent(_G.UIParent);
+			self.widgets.chat_display:Hide();
 			local a = self.animation;
 			obj:SetClampedToScreen(false);
 			a.initLeft = self:SafeGetLeft();
@@ -1326,12 +1340,12 @@ local function loadWindowDefaults(obj)
 	obj.race = "";
 	obj.class = "";
 	obj.location = "";
-        obj.demoSave = nil;
-        obj.classColor = "ffffff";
+	obj.demoSave = nil;
+	obj.classColor = "ffffff";
 
-        obj.isGM = lists.gm[obj.theUser];
+	obj.isGM = lists.gm[obj.theUser];
 
-        obj:UpdateIcon();
+	obj:UpdateIcon();
 	obj.isNew = true;
 
 	obj:SetScale(1);

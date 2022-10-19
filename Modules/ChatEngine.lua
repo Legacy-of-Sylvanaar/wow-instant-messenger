@@ -1342,7 +1342,14 @@ local function loadChatOptions()
             button.bg = button:CreateTexture(nil, "BACKGROUND");
             button.bg:SetAllPoints();
             button.bg:SetColorTexture(1,1,1, ((#self.buttons+1) % 2)*.1);
-            button.bg:SetGradientAlpha("HORIZONTAL", 1,1,1,1, 0,0,0,0);
+			if (isDragonflight) then -- WoW 10
+				button.bg:SetGradient("HORIZONTAL",
+					{ r = 1, g = 1, b = 1, a = 1 },
+					{ r = 0, g = 0, b = 0, a = 0 }
+				);
+			else
+            	button.bg:SetGradientAlpha("HORIZONTAL", 1,1,1,1, 0,0,0,0);
+			end
             button.border = {};
 
             button.border.left = button:CreateTexture(nil, "OVERLAY");
