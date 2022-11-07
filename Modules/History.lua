@@ -279,7 +279,7 @@ function ChatHistory:OnEnable()
 end
 
 function ChatHistory:OnDisable()
-    if(db.modules.HistoryChat.enabled) then
+    if(modules.HistoryChat.enabled) then
         return;
     end
     for widget in Widgets("history") do
