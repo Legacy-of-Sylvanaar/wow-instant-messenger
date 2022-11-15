@@ -69,6 +69,8 @@ local function decodeColors(theMsg)
 end
 
 local function filterEmoticons(theMsg, smf)
+	-- sanitize string of any % characters
+	theMsg = string.gsub(theMsg, "%%", "%%%%");
 
     --safety check...
     if(not theMsg or theMsg == "") then
@@ -151,6 +153,9 @@ local function filterEmoticons(theMsg, smf)
     for key, _ in pairs(LinkRepository) do
         LinkRepository[key] = nil;
     end
+
+	-- desanitize string of any % characters
+	theMsg = string.gsub(theMsg, "%%%%", "%%");
 
     return decodeColors((playerLink or "")..theMsg);
 end
