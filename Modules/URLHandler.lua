@@ -271,7 +271,7 @@ end
 
 -- this menu is not available for private servers.. der..
 if(not isPrivateServer) then
-    local info = _G.UIDropDownMenu_CreateInfo();
+    local info = {};
     info.text = "MENU_ARMORY";
     local armoryMenu = AddContextMenu(info.text, info);
         info.text = L["Profile Links"];
@@ -279,7 +279,7 @@ if(not isPrivateServer) then
         info.isTitle = true;
         armoryMenu:AddSubItem(AddContextMenu("MENU_ARMORY_TITLE", info));
         for i=1, #armoryLinks do
-            info = _G.UIDropDownMenu_CreateInfo();
+            info = {};
             info.text = armoryLinks[i].title;
             info.value = armoryLinks[i].url;
             info.notCheckable = true;

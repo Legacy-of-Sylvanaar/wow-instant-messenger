@@ -198,7 +198,7 @@ local function CreateDropDownMenu(parent, dbTree, varName, itemList, width)
                     end
                     menu.itemList[i].hooked = true;
                 end
-                local info = _G.UIDropDownMenu_CreateInfo();
+                local info = {};
                 for k,v in pairs(menu.itemList[i]) do
                     info[k] = v;
                 end

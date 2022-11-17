@@ -94,6 +94,7 @@ local function initialize()
     -- import libraries.
     libs.SML = _G.LibStub:GetLibrary("LibSharedMedia-3.0");
     libs.ChatHandler = _G.LibStub:GetLibrary("LibChatHandler-1.0");
+	libs.DropDownMenu = _G.LibStub:GetLibrary("LibDropDownMenu");
 
     isInitialized = true;
 

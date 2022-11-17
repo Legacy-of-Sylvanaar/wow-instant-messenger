@@ -220,10 +220,10 @@ end
 -- define context menu
 local emotesPerMenu = 14;
 
-local info = _G.UIDropDownMenu_CreateInfo();
+local info = {};
 info.text = "MENU_MSGBOX";
 local msgBoxMenu = AddContextMenu(info.text, info);
-    info = _G.UIDropDownMenu_CreateInfo();
+    info = {};
     info.text = WIM.L["Emoticons"];
     info.notCheckable = true;
     local emoticonsMenu = msgBoxMenu:AddSubItem(AddContextMenu("EMOTICON_LIST", info), 2);
@@ -254,7 +254,7 @@ local function generateEmoticonList(self, button)
     local info;
     for i=1, #emoteTmpList do
         if(i % emotesPerMenu == 0) then
-            local more = GetContextMenu("EMOTICON_MORE"..EMOTICON_MORE) or _G.UIDropDownMenu_CreateInfo();
+            local more = GetContextMenu("EMOTICON_MORE"..EMOTICON_MORE) or {};
             more.text = "|cff69ccf0"..WIM.L["More"].."|r";
             more.notCheckable = true;
             if(more.menuTable) then
@@ -268,7 +268,7 @@ local function generateEmoticonList(self, button)
             EMOTICON_MORE = EMOTICON_MORE + 1;
         end
 
-        info = GetContextMenu("EMOTICON_"..emoteTmpList[i]) or _G.UIDropDownMenu_CreateInfo();
+        info = GetContextMenu("EMOTICON_"..emoteTmpList[i]) or {};
         info.text = "|T"..getEmoteFilePath(emoteTmpList[i])..":16:16:0:0|t   "..emoteTmpList[i];
         info.tooltipTitle = info.text
         loadTable(tmpList, GetEmoteAlias(emoteTmpList[i]))

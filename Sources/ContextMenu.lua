@@ -1,15 +1,17 @@
 local WIM = WIM;
 
+local DDM = LibStub:GetLibrary("LibDropDownMenu")
+
 -- imports
 local _G = _G;
 local table = table;
 local string = string;
 local pairs = pairs;
 local type = type;
-local UIDropDownMenu_AddButton = UIDropDownMenu_AddButton;
-local UIDropDownMenu_CreateInfo = UIDropDownMenu_CreateInfo
-local UIDropDownMenu_Initialize = UIDropDownMenu_Initialize;
-local ToggleDropDownMenu = ToggleDropDownMenu;
+local UIDropDownMenu_AddButton = DDM.UIDropDownMenu_AddButton;
+local UIDropDownMenu_CreateInfo = DDM.UIDropDownMenu_CreateInfo
+local UIDropDownMenu_Initialize = DDM.UIDropDownMenu_Initialize;
+local ToggleDropDownMenu = DDM.ToggleDropDownMenu;
 
 -- set namespace
 setfenv(1, WIM);
@@ -93,9 +95,9 @@ local function addMenuItem(tag, info)
 end
 
 local function initializeMenu(frame, level, menuTable)
-    level = level or _G.UIDROPDOWNMENU_MENU_LEVEL;
-    if(level > 1 and _G.UIDROPDOWNMENU_MENU_VALUE) then
-        CurMenu = ctxMenu[_G.UIDROPDOWNMENU_MENU_VALUE];
+    level = level or DDM.UIDROPDOWNMENU_MENU_LEVEL;
+    if(level > 1 and DDM.UIDROPDOWNMENU_MENU_VALUE) then
+        CurMenu = ctxMenu[DDM.UIDROPDOWNMENU_MENU_VALUE];
     end
     if(not CurMenu) then
         dPrint("ContextMenu Error - Menu not set.");
@@ -107,7 +109,7 @@ local function initializeMenu(frame, level, menuTable)
         return;
     end
     for i=1, #items do
-        local info = UIDropDownMenu_CreateInfo();
+        local info = {};
         for key, val in pairs(ctxMenu[items[i]]) do
             info[key] = val;
         end
@@ -128,17 +130,17 @@ function PopContextMenu(tag, parent)
 
     local id = ctxMenu[tag];
     if(id) then
-        _G.CloseDropDownMenus();
+        DDM.CloseDropDownMenus();
         dPrint("Popping menu ["..tag.."]");
         CurMenu = id;
-        _G.UIDROPDOWNMENU_MENU_VALUE = nil;
+        DDM.UIDROPDOWNMENU_MENU_VALUE = nil;
         if(WIM.Menu) then
             WIM.Menu:Hide();
         end
         UIDropDownMenu_Initialize(menuFrame, initializeMenu);
         ToggleDropDownMenu(1, 1, menuFrame, parent, 0, 0);
-        _G.UIDropDownMenu_SetButtonWidth(menuFrame, 25);
-	_G.UIDropDownMenu_SetWidth(menuFrame, 25, 5);
+        DDM.UIDropDownMenu_SetButtonWidth(menuFrame, 25);
+		DDM.UIDropDownMenu_SetWidth(menuFrame, 25, 5);
         _G.PlaySound(1115);
     else
         dPrint("Menu ["..tag.."] not found!")

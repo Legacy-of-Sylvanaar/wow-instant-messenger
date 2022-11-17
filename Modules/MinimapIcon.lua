@@ -423,53 +423,53 @@ end
 --------------------------------------
 --      Right Click Menu            --
 --------------------------------------
-local info = _G.UIDropDownMenu_CreateInfo();
+local info = {};
 info.text = "MENU_MINIMAP";
 local minimapMenu = AddContextMenu(info.text, info);
     --show unread messages
-    info = _G.UIDropDownMenu_CreateInfo();
+    info = {};
     info.text = L["Show All Windows"];
     info.func = function() ShowAllWindows(); end;
     info.notCheckable = true;
     minimapMenu:AddSubItem(AddContextMenu("SHOW_ALL_WINDOWS", info));
     --show unread messages
-    info = _G.UIDropDownMenu_CreateInfo();
+    info = {};
     info.text = L["Hide All Windows"];
     info.func = function() HideAllWindows(); end;
     info.notCheckable = true;
     minimapMenu:AddSubItem(AddContextMenu("HIDE_ALL_WINDOWS", info));
     --show unread messages
-    info = _G.UIDropDownMenu_CreateInfo();
+    info = {};
     info.text = L["Show Unread Messages"];
     info.func = function() ShowAllUnreadWindows(); end;
     info.notCheckable = true;
     minimapMenu:AddSubItem(AddContextMenu("SHOW_UNREAD_MESSAGES", info));
     -- add space
-    info = GetContextMenu("MENU_SPACE") or _G.UIDropDownMenu_CreateInfo();
+    info = GetContextMenu("MENU_SPACE") or {};
     info.text = "";
     info.isTitle = true;
     info.notCheckable = true;
     minimapMenu:AddSubItem(AddContextMenu("MENU_SPACE", info));
     -- history viewer
-    info = _G.UIDropDownMenu_CreateInfo();
+    info = {};
     info.text = L["History Viewer"];
     info.func = function() ShowHistoryViewer() end;
     info.notCheckable = true;
     minimapMenu:AddSubItem(AddContextMenu("HISTORY_VIEWER", info));
     -- options
-    info = _G.UIDropDownMenu_CreateInfo();
+    info = {};
     info.text = L["Options"];
     info.func = ShowOptions;
     info.notCheckable = true;
     minimapMenu:AddSubItem(AddContextMenu("OPTIONS", info));
     -- add space
-    info = GetContextMenu("MENU_SPACE") or _G.UIDropDownMenu_CreateInfo();
+    info = GetContextMenu("MENU_SPACE") or {};
     info.text = "";
     info.isTitle = true;
     info.notCheckable = true;
     minimapMenu:AddSubItem(AddContextMenu("MENU_SPACE", info));
     --enable disable WIM
-    info = _G.UIDropDownMenu_CreateInfo();
+    info = {};
     info.text = L["Enable"].." WIM";
     info.func = function() SetEnabled(not db.enabled); end;
     info.notCheckable = true;

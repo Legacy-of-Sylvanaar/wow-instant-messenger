@@ -2143,10 +2143,10 @@ escapeFrame:Show();
 
 
 -- define context menu
-local info = _G.UIDropDownMenu_CreateInfo();
+local info = {};
 info.text = "MENU_MSGBOX";
 local msgBoxMenu = AddContextMenu(info.text, info);
-                info = _G.UIDropDownMenu_CreateInfo();
+                info = {};
                 info.text = _G.CANCEL;
                 info.notCheckable = true;
                 info.func = function() _G.CloseDropDownMenus(); end

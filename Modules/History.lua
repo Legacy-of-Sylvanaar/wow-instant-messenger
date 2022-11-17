@@ -481,7 +481,7 @@ local function createHistoryViewer()
             local self = win.nav.user;
             local list = self:getUserList();
             for i=1, #list do
-                local info = _G.UIDropDownMenu_CreateInfo();
+                local info = {};
                 info.text = list[i];
                 info.value = list[i];
                 info.func = function(self)
