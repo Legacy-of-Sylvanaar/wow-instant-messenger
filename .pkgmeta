@@ -7,6 +7,9 @@ externals:
  Libs/LibSharedMedia-3.0: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
  Libs/ChatThrottleLib: https://repos.wowace.com/wow/chatthrottlelib/trunk
  Libs/LibChatHandler-1.0: https://repos.curseforge.com/wow/libchathandler/trunk
+ Libs/LibDropDownMenu:
+    url: https://github.com/HizurosWoWAddOns/LibDropDownMenu
+    tag: latest
 
 enable-nolib-creation: no
 
