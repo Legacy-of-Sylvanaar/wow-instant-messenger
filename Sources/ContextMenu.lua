@@ -1,6 +1,7 @@
 local WIM = WIM;
 
 local DDM = LibStub:GetLibrary("LibDropDownMenu")
+DDM.SOUNDKIT = SOUNDKIT -- temporary fix until LibDropDownMenu is patched
 
 -- imports
 local _G = _G;
@@ -16,7 +17,8 @@ local ToggleDropDownMenu = DDM.ToggleDropDownMenu;
 -- set namespace
 setfenv(1, WIM);
 
-local menuFrame = _G.CreateFrame("Frame", "WIM3_ContextMenu", _G.UIParent, "UIDropDownMenuTemplate");
+local menuFrame = DDM.Create_DropDownMenu("WIM3_ContextMenu", _G.UIParent)
+menuFrame:SetParent(_G.UIParent);
 menuFrame:SetPoint("TOP", -80, -200);
 menuFrame:Hide();
 

@@ -9,6 +9,8 @@ local type = type;
 local tonumber = tonumber;
 local unpack = unpack;
 
+local DDM = LibStub:GetLibrary("LibDropDownMenu");
+
 --set namespace
 setfenv(1, WIM);
 
@@ -488,12 +490,13 @@ local function createFilterFrame()
     win.byText:SetText(L["Filter By"]..":");
     win.byText:SetTextColor(_G.GameFontNormal:GetTextColor());
     win.byText:SetPoint("TOPLEFT", win.nameText, "BOTTOMLEFT", 0, -20);
-    win.by = CreateFrame("Frame", win:GetName().."By", win, "UIDropDownMenuTemplate");
+	win.by = DDM.Create_DropDownMenu(win:GetName().."By", win)
+	win.by:SetParent(win);
     win.by:SetPoint("TOPLEFT", win.byText, "TOPLEFT", win.byText:GetStringWidth()+8, 8);
     win.by.click = function(self)
             self = self or _G.this;
             win.filter.type = self.value;
-            _G.UIDropDownMenu_SetSelectedValue(win.by, self.value);
+            DDM.UIDropDownMenu_SetSelectedValue(win.by, self.value);
             win.by:Hide();
             win.by:Show();
         end
@@ -502,24 +505,24 @@ local function createFilterFrame()
             info.text = L["Pattern"];
             info.value = 1;
             info.func = win.by.click;
-            _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+            DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
             info = {};
             info.text = L["User Type"];
             info.value = 2;
             info.func = win.by.click;
-            _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+            DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
             -- if(not win.isChat) then
             --     local info = {};
             --     info.text = L["Level"];
             --     info.value = 3;
             --     info.func = win.by.click;
-            --     _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+            --     DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
             -- end
         end
     win.by:SetScript("OnShow", function(self)
             win.filter.type = win.filter.type or 1;
-            _G.UIDropDownMenu_Initialize(self, self.init);
-            _G.UIDropDownMenu_SetSelectedValue(self, win.filter.type);
+            DDM.UIDropDownMenu_Initialize(self, self.init);
+            DDM.UIDropDownMenu_SetSelectedValue(self, win.filter.type);
             if(win.filter.type == 1) then
                 win.patternContainer:Show();
                 win.user:Hide();
@@ -670,7 +673,7 @@ local function createFilterFrame()
     win.level.class.click = function(self)
             self = self or _G.this;
             win.filter.classSpecific = self.value;
-            _G.UIDropDownMenu_SetSelectedValue(win.level.class, self.value);
+            DDM.UIDropDownMenu_SetSelectedValue(win.level.class, self.value);
             win.level.class:Hide();
             win.level.class:Show();
         end
@@ -680,19 +683,19 @@ local function createFilterFrame()
 		info.value = 0;
 		info.func = win.level.class.click;
 	    local classes = constants.classListEng;
-	    _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+	    DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
 	    for i=1, #classes do
 			info = {};
 			info.text = L[classes[i]];
 			info.value = constants.classes[L[classes[i]]].tag;
 			info.func = win.level.class.click;
-			_G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+			DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
 	    end
     end
     win.level.class:SetScript("OnShow", function(self)
             win.filter.classSpecific = win.filter.classSpecific or 0;
-            _G.UIDropDownMenu_Initialize(self, self.init);
-            _G.UIDropDownMenu_SetSelectedValue(self, win.filter.classSpecific);
+            DDM.UIDropDownMenu_Initialize(self, self.init);
+            DDM.UIDropDownMenu_SetSelectedValue(self, win.filter.classSpecific);
         end);
 
 
@@ -732,7 +735,7 @@ local function createFilterFrame()
     win.action.click = function(self)
             self = self or _G.this;
             win.filter.action = self.value;
-            _G.UIDropDownMenu_SetSelectedValue(win.action, self.value);
+            DDM.UIDropDownMenu_SetSelectedValue(win.action, self.value);
             win.action:Hide();
             win.action:Show();
         end
@@ -741,17 +744,17 @@ local function createFilterFrame()
             info.text = L["Allow"];
             info.value = 1;
             info.func = win.action.click;
-            _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+            DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
             info = {};
             info.text = L["Ignore"];
             info.value = 2;
             info.func = win.action.click;
-            _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+            DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
             info = {};
             info.text = L["Blocked"];
             info.value = 3;
             info.func = win.action.click;
-            _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+            DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
         end
     win.actionNotify = CreateFrame("CheckButton", win:GetName().."Notify", win, "UICheckButtonTemplate");
     win.actionNotify:SetPoint("LEFT", win.action, "RIGHT", 130, 2);
@@ -767,8 +770,8 @@ local function createFilterFrame()
 
     win.action:SetScript("OnShow", function(self)
             win.filter.action = win.filter.action or 2;
-            _G.UIDropDownMenu_Initialize(self, self.init);
-            _G.UIDropDownMenu_SetSelectedValue(self, win.filter.action);
+            DDM.UIDropDownMenu_Initialize(self, self.init);
+            DDM.UIDropDownMenu_SetSelectedValue(self, win.filter.action);
             if(win.filter.action ~= 3) then
                 win.actionNotify:Hide();
             else

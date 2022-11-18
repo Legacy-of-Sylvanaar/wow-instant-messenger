@@ -2,6 +2,8 @@
         WindowSoupBowl.used = WindowSoupBowl.used - 1;
 local WIM = WIM;
 
+local DDM = LibStub:GetLibrary("LibDropDownMenu");
+
 -- load message window related default settings.
 WIM.db_defaults.displayColors = {
 		wispIn = {
@@ -230,16 +232,16 @@ local function MessageWindow_W2WButton_Initialize()
 	info = { };
 	info.text = "W2W - WIM To WIM";
 	info.isTitle = true;
-	UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL);
+	DDM.UIDropDownMenu_AddButton(info, DDM.UIDROPDOWNMENU_MENU_LEVEL);
 
 	info = { };
 	info.text = WIM_W2W_TRACKMINIMAP;
 	info.func = MessageWindow_W2WButtomMenu_OnClick;
-        info.value = this:GetParent().theUser;
-        info.checked = this:GetParent().icon.track;
-        info.tooltipTitle = WIM_W2W_TRACKMINIMAP;
-        info.tooltipText = WIM_W2W_TRACKMINIMAP_INFO;
-	UIDropDownMenu_AddButton(info, UIDROPDOWNMENU_MENU_LEVEL);
+	info.value = this:GetParent().theUser;
+	info.checked = this:GetParent().icon.track;
+	info.tooltipTitle = WIM_W2W_TRACKMINIMAP;
+	info.tooltipText = WIM_W2W_TRACKMINIMAP_INFO;
+	DDM.UIDropDownMenu_AddButton(info, DDM.UIDROPDOWNMENU_MENU_LEVEL);
 end
 
 local function MessageWindow_W2WButtomMenu_OnClick()
@@ -253,8 +255,8 @@ local function MessageWindow_W2WButtomMenu_OnClick()
 end
 
 local function MessageWindow_W2WButton_OnClick()
-    UIDropDownMenu_Initialize(this:GetParent().w2w_menu, MessageWindow_W2WButton_Initialize);
-    ToggleDropDownMenu(1, nil, this:GetParent().w2w_menu, this, -130, -1);
+    DDM.UIDropDownMenu_Initialize(this:GetParent().w2w_menu, MessageWindow_W2WButton_Initialize);
+    DDM.ToggleDropDownMenu(1, nil, this:GetParent().w2w_menu, this, -130, -1);
 end
 
 local function MessageWindow_IsChattingButton_OnEnter()
@@ -357,8 +359,8 @@ local function MessageWindow_MsgBox_OnMouseUp()
     CloseDropDownMenus();
     if(arg1 == "RightButton") then
         WIM_MSGBOX_MENU_CUR_USER = this:GetParent().theUser;
-        UIDropDownMenu_Initialize(WIM_MsgBoxMenu, WIM_MsgBoxMenu_Initialize);
-        ToggleDropDownMenu(1, nil, WIM_MsgBoxMenu, this, 0, 0);
+        DDM.UIDropDownMenu_Initialize(WIM_MsgBoxMenu, WIM_MsgBoxMenu_Initialize);
+        DDM.ToggleDropDownMenu(1, nil, WIM_MsgBoxMenu, this, 0, 0);
     end
 end
 
@@ -489,7 +491,8 @@ local function instantiateMessageWindowObj(obj)
     obj:SetScript("OnUpdate", MessageWindow_Frame_OnUpdate);
 
 
-    obj.w2w_menu = CreateFrame("Frame", fName.."W2WMenu", obj, "UIDropDownMenuTemplate");
+	obj.w2w_menu = DDM.Create_DropDownMenu(fName.."W2WMenu", obj);
+	obj.w2w_menu:SetParent(obj);
     obj.w2w_menu:SetClampedToScreen(true);
 
 

@@ -9,6 +9,8 @@ local table = table;
 local pairs = pairs;
 local tonumber = tonumber;
 
+local DDM = LibStub:GetLibrary("LibDropDownMenu")
+
 --set namespace
 setfenv(1, WIM);
 
@@ -180,10 +182,11 @@ end
 
 
 local function CreateDropDownMenu(parent, dbTree, varName, itemList, width)
-    local menu = CreateFrame("Frame", parent:GetName()..statObject("DropDownMenu"), parent, "UIDropDownMenuTemplate");
-    menu:EnableMouse(true);
+    local menu = DDM.Create_DropDownMenu(parent:GetName()..statObject("DropDownMenu"), parent);
+	menu:SetParent(parent);
+	menu:EnableMouse(true);
     if(width) then
-        _G.UIDropDownMenu_SetWidth(menu, width);
+        DDM.UIDropDownMenu_SetWidth(menu, width);
     end
     menu.itemList = itemList or {};
     menu.init = function()
@@ -193,7 +196,7 @@ local function CreateDropDownMenu(parent, dbTree, varName, itemList, width)
                     menu.itemList[i].func = function(self, arg1, arg2)
                         self = self or _G.this; -- wotlk/tbc hack
                         dbTree[varName] = self.value;
-                        _G.UIDropDownMenu_SetSelectedValue(menu, self.value);
+                        DDM.UIDropDownMenu_SetSelectedValue(menu, self.value);
                         func(self, arg1, arg2);
                     end
                     menu.itemList[i].hooked = true;
@@ -202,15 +205,15 @@ local function CreateDropDownMenu(parent, dbTree, varName, itemList, width)
                 for k,v in pairs(menu.itemList[i]) do
                     info[k] = v;
                 end
-                _G.UIDropDownMenu_AddButton(info, _G.UIDROPDOWNMENU_MENU_LEVEL);
+                DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
             end
         end
     menu:SetScript("OnShow", function(self)
-            _G.UIDropDownMenu_Initialize(self, self.init);
-            _G.UIDropDownMenu_SetSelectedValue(self, dbTree[varName]);
+            DDM.UIDropDownMenu_Initialize(self, self.init);
+            DDM.UIDropDownMenu_SetSelectedValue(self, dbTree[varName]);
         end);
     menu.SetValue = function(self, value)
-            _G.UIDropDownMenu_SetSelectedValue(self, value);
+            DDM.UIDropDownMenu_SetSelectedValue(self, value);
         end;
     SetNextAnchor(menu);
     menu:Hide(); menu:Show();
@@ -617,8 +620,8 @@ function options.createDropDownFrame()
     f.scroll:SetMinMaxValues(0, 10);
     f.scroll:SetValue(5);
     f.scroll:EnableMouseWheel(1);
-    f.scroll:SetScript("OnEnter", function(self) _G.UIDropDownMenu_StopCounting(self:GetParent()) end);
-    f.scroll:SetScript("OnLeave", function(self) _G.UIDropDownMenu_StartCounting(self:GetParent()) end);
+    f.scroll:SetScript("OnEnter", function(self) DDM.UIDropDownMenu_StopCounting(self:GetParent()) end);
+    f.scroll:SetScript("OnLeave", function(self) DDM.UIDropDownMenu_StartCounting(self:GetParent()) end);
     f.scroll:SetScript("OnMouseWheel", DropDown_OnMouseWheel);
     f.scroll:SetScript("OnValueChanged", function(self)
         self:GetParent():Refresh();
@@ -724,11 +727,11 @@ function options.createDropDownFrame()
     end
 
     f:SetScript("OnClick", function(self) self:Hide(); end);
-    f:SetScript("OnEnter", _G.UIDropDownMenu_StopCounting);
-    f:SetScript("OnLeave", _G.UIDropDownMenu_StartCounting);
-    f:SetScript("OnUpdate", _G.UIDropDownMenu_OnUpdate);
+    f:SetScript("OnEnter", DDM.UIDropDownMenu_StopCounting);
+    f:SetScript("OnLeave", DDM.UIDropDownMenu_StartCounting);
+    f:SetScript("OnUpdate", DDM.UIDropDownMenu_OnUpdate);
     f:SetScript("OnHide", function(self)
-        _G.UIDropDownMenu_OnHide(self);
+        DDM.UIDropDownMenu_OnHide(self);
         self.prevParent = nil;
     end);
     f:SetScript("OnMouseWheel", DropDown_OnMouseWheel);
