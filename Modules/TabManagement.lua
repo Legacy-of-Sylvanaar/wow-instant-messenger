@@ -125,9 +125,22 @@ function Tabs:OnWindowCreated(win)
             end
             return;
         end
+
+		-- look for whisper group
         group = getAvailableWhisperGroup();
+
+		-- if it exists, attach
         if(group) then
             group:Attach(win);
+
+		-- otherwise, first check if we are grouping whisers and chats together, if so look for chat
+		elseif (db.tabs.chat.aswhisper) then
+			group = getAvailableChatGroup();
+
+			-- if there's a chat group, attach to it.
+			if (group) then
+				group:Attach(win);
+			end
         end
     elseif(db.tabs.chat.enabled and win.type == "chat") then
         local group = db.tabs.chat.aswhisper and getAvailableWhisperGroup() or getAvailableChatGroup();
