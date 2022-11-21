@@ -229,7 +229,7 @@ local msgBoxMenu = AddContextMenu(info.text, info);
     local emoticonsMenu = msgBoxMenu:AddSubItem(AddContextMenu("EMOTICON_LIST", info), 2);
 
 local function emoteMenuClicked(self)
-    _G.CloseDropDownMenus();
+    libs.DropDownMenu.CloseDropDownMenus();
     if(MSG_CONTEXT_MENU_EDITBOX) then
         MSG_CONTEXT_MENU_EDITBOX:Insert(self.value);
     end

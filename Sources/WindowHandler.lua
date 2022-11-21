@@ -2005,7 +2005,7 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusLost", function
                                 -- _G.ACTIVE_CHAT_EDIT_BOX = nil;
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnMouseUp", function(self, button)
-                                _G.CloseDropDownMenus();
+                                libs.DropDownMenu.CloseDropDownMenus();
                                 if(button == "RightButton") then
                                                 PopContextMenu("MENU_MSGBOX", self);
                                 else
@@ -2149,5 +2149,5 @@ local msgBoxMenu = AddContextMenu(info.text, info);
                 info = {};
                 info.text = _G.CANCEL;
                 info.notCheckable = true;
-                info.func = function() _G.CloseDropDownMenus(); end
+                info.func = function() libs.DropDownMenu.CloseDropDownMenus(); end
                 msgBoxMenu:AddSubItem(AddContextMenu("MENU_CANCEL", info));

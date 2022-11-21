@@ -776,7 +776,7 @@ local msgBoxMenu = AddContextMenu(info.text, info);
         end
 
 local function recentMenuClick(self)
-        _G.CloseDropDownMenus();
+        libs.DropDownMenu.CloseDropDownMenus();
         if(MSG_CONTEXT_MENU_EDITBOX) then
                 if(_G.IsShiftKeyDown()) then
                         MSG_CONTEXT_MENU_EDITBOX:Insert(self.value);

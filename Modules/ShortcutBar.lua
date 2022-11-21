@@ -303,7 +303,7 @@ end
 -- Register default buttons.
 RegisterShortcut("location", L["Player Location"], {
 		OnClick = function(self, button)
-			_G.CloseDropDownMenus();
+			libs.DropDownMenu.CloseDropDownMenus();
 			if(button == "LeftButton") then
 				self.parentWindow:SendWho();
 			else

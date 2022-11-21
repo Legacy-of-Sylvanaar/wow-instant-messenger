@@ -668,7 +668,8 @@ local function createFilterFrame()
     win.level.classText:SetText(L["Apply to:"]);
     win.level.classText:SetPoint("TOPLEFT", 20, -70);
     win.level.classText:SetTextColor(_G.GameFontNormal:GetTextColor());
-    win.level.class = CreateFrame("Frame", win:GetName().."ClassList", win.level, "UIDropDownMenuTemplate");
+	win.level.class = DDM.Create_DropDownMenu(win:GetName().."ClassList", win.level)
+	win.level.class:SetParent(win.level);
     win.level.class:SetPoint("TOPLEFT", win.level.classText, "TOPLEFT", win.level.classText:GetStringWidth()+8, 8);
     win.level.class.click = function(self)
             self = self or _G.this;
@@ -730,7 +731,8 @@ local function createFilterFrame()
     win.actionText:SetText(L["Action to Perform:"]);
     win.actionText:SetTextColor(_G.GameFontNormal:GetTextColor());
     win.actionText:SetPoint("TOPLEFT", win.received, "BOTTOMLEFT", 0, -20);
-    win.action = CreateFrame("Frame", win:GetName().."Action", win, "UIDropDownMenuTemplate");
+	win.action = DDM.Create_DropDownMenu(win:GetName().."Action", win);
+	win.action:SetParent(win);
     win.action:SetPoint("TOPLEFT", win.actionText, "TOPLEFT", win.actionText:GetStringWidth()+8, 8);
     win.action.click = function(self)
             self = self or _G.this;

@@ -356,7 +356,7 @@ local function MessageWindow_ScrollingMessageFrame_OnMouseUp()
 end
 
 local function MessageWindow_MsgBox_OnMouseUp()
-    CloseDropDownMenus();
+    WIM.libs.DropDownMenu.CloseDropDownMenus();
     if(arg1 == "RightButton") then
         WIM_MSGBOX_MENU_CUR_USER = this:GetParent().theUser;
         DDM.UIDropDownMenu_Initialize(WIM_MsgBoxMenu, WIM_MsgBoxMenu_Initialize);
