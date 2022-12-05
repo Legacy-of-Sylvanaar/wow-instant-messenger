@@ -31,7 +31,7 @@ isDragonflight = buildNumber >= 100000;
 constants = {}; -- constants such as class colors will be stored here. (includes female class names).
 modules = {}; -- module table. consists of all registerd WIM modules/plugins/skins. (treated the same).
 windows = {active = {whisper = {}, chat = {}, w2w = {}}}; -- table of WIM windows.
-libs = { compat = {} }; -- table of loaded library references.
+libs = {}; -- table of loaded library references.
 stats = {};
 
 -- default options. live data is found in WIM.db
@@ -66,8 +66,7 @@ local Events = {};
 -- import libraries.
 libs.SML = _G.LibStub:GetLibrary("LibSharedMedia-3.0");
 libs.ChatHandler = _G.LibStub:GetLibrary("LibChatHandler-1.0");
-libs.DropDownMenu = isDragonflight and _G.LibStub:GetLibrary("LibDropDownMenu") or WIM.libs.compat.DropDownMenu;
-
+libs.DropDownMenu = _G.LibStub:GetLibrary("LibDropDownMenu");
 
 -- called when WIM is first loaded into memory but after variables are loaded.
 local function initialize()
