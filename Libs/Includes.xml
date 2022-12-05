@@ -9,4 +9,7 @@
 <Include file="ChatThrottleLib\ChatThrottleLib.xml"/>
 <Include file="LibChatHandler-1.0\lib.xml"/>
 <Include file="LibDropDownMenu\LibDropDownMenu.xml"/>
+
+<!-- compatibility -->
+<Include file="compat\LibDropDownMenu.lua"/>
 </Ui>

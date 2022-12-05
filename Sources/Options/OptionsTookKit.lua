@@ -9,7 +9,7 @@ local table = table;
 local pairs = pairs;
 local tonumber = tonumber;
 
-local DDM = LibStub:GetLibrary("LibDropDownMenu")
+local DDM = WIM.libs.DropDownMenu;
 
 --set namespace
 setfenv(1, WIM);

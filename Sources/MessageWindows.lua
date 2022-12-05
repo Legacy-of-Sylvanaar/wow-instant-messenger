@@ -2,7 +2,7 @@
         WindowSoupBowl.used = WindowSoupBowl.used - 1;
 local WIM = WIM;
 
-local DDM = LibStub:GetLibrary("LibDropDownMenu");
+local DDM = WIM.libs.DropDownMenu;
 
 -- load message window related default settings.
 WIM.db_defaults.displayColors = {

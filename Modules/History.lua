@@ -9,7 +9,7 @@ local date = date;
 local time = time;
 local select = select;
 
-local DDM = LibStub:GetLibrary("LibDropDownMenu")
+local DDM = WIM.libs.DropDownMenu;
 
 --set namespace
 setfenv(1, WIM);

@@ -9,7 +9,7 @@ local type = type;
 local tonumber = tonumber;
 local unpack = unpack;
 
-local DDM = LibStub:GetLibrary("LibDropDownMenu");
+local DDM = WIM.libs.DropDownMenu;
 
 --set namespace
 setfenv(1, WIM);

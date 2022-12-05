@@ -1,6 +1,6 @@
 local WIM = WIM;
 
-local DDM = LibStub:GetLibrary("LibDropDownMenu")
+local DDM = WIM.libs.DropDownMenu;
 DDM.SOUNDKIT = SOUNDKIT -- temporary fix until LibDropDownMenu is patched
 
 -- imports
