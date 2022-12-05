@@ -906,7 +906,7 @@ local function instantiateWindow(obj)
                 local chat_type = self.chatType == "battleground" and "INSTANCE_CHAT" or string.upper(self.chatType);
                 local color = _G.ChatTypeInfo[chat_type]; -- Drii: ticket 344
                 icon:SetTexCoord(0,1,0,1);
-				if (isDragonflight) then -- WoW 10
+				if (isModernApi) then -- WoW 10
 					icon:SetGradient("VERTICAL",
 						{ r = color.r, g = color.g, b = color.b, a = 1},
 						{ r = color.r, g = color.g, b = color.b, a = 1 }
@@ -919,7 +919,7 @@ local function instantiateWindow(obj)
                 end
         else
                 local classTag = obj.class;
-				if (isDragonflight) then -- WoW 10
+				if (isModernApi) then -- WoW 10
 					icon:SetGradient("VERTICAL",
 						{ r = 1, g = 1, b = 1, a = 1 },
 						{ r = 1, g = 1, b = 1, a = 1 }

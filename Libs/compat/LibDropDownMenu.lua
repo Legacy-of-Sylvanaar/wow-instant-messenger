@@ -2,9 +2,9 @@
 -- This file will act as a slug to polyfill using WoW globals.
 
 local buildNumber = select(4, _G.GetBuildInfo())
-local isDragonflight = buildNumber >= 100000;
+local isModernApi = buildNumber >= 30401
 
-if (not isDragonflight) then
+if (not isModernApi) then
 	local DDM = LibStub:GetLibrary("LibDropDownMenu");
 
 	local k, v

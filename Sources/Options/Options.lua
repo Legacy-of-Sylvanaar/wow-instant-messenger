@@ -150,7 +150,7 @@ local function createCategory(index)
     cat.bg = cat:CreateTexture(nil, "BACKGROUND");
     cat.bg:SetAllPoints();
     cat.bg:SetColorTexture(1, 1, 1);
-	if (isDragonflight) then -- WoW 10
+	if (isModernApi) then -- WoW 10
     	cat.bg:SetGradient("VERTICAL", getGradientFromColor("658daa"));
 	else
 		cat.bg:SetGradient("VERTICAL", getGradientFromColor_Legacy("658daa"));
@@ -230,7 +230,7 @@ function options.UpdateCategories(self)
                 else
                     cat:SetPoint("BOTTOMLEFT", prevCat, "TOPLEFT", 0, 0);
                 end
-				if (isDragonflight) then -- WoW 10
+				if (isModernApi) then -- WoW 10
                 	cat.bg:SetGradient("VERTICAL", getGradientFromColor("658daa"));
 				else
 					cat.bg:SetGradient("VERTICAL", getGradientFromColor_Legacy("658daa"));
