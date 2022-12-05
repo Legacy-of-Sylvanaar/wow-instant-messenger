@@ -1,30 +1,28 @@
 -- LibDropDownMenu is not compatible with classic.
 -- This file will act as a slug to polyfill using WoW globals.
 
-WIM.libs.compat.DropDownMenu = {};
+local buildNumber = select(4, _G.GetBuildInfo())
+local isDragonflight = buildNumber >= 100000;
 
-local DDM = LibStub:GetLibrary("LibDropDownMenu");
-local lib = WIM.libs.compat.DropDownMenu;
+if (not isDragonflight) then
+	local DDM = LibStub:GetLibrary("LibDropDownMenu");
 
+	local k, v
+	for k,v in pairs (DDM) do
+		if (_G[k]) then
+			DDM[k] = _G[k]
+		end
+	end
 
-function lib.Create_DropDownMenuButton (name, parent, options)
-	return CreateFrame("Frame", name, parent, "UIDropDownMenuButtonTemplate");
-end
+	function DDM.Create_DropDownMenuButton (name, parent, options)
+		return CreateFrame("Frame", name, parent, "UIDropDownMenuButtonTemplate");
+	end
 
-function lib.Create_DropDownMenuList (name, parent, options)
-	return CreateFrame("Frame", name, parent, "UIDropDownListTemplate ");
-end
+	function DDM.Create_DropDownMenuList (name, parent, options)
+		return CreateFrame("Frame", name, parent, "UIDropDownListTemplate ");
+	end
 
-function lib.Create_DropDownMenu (name, parent, options)
-	return CreateFrame("Frame", name, parent, "UIDropDownMenuTemplate");
-end
-
--- lib.CloseDropDownMenus = _G.CloseDropDownMenus;
--- lib.CloseMenus = _G.CloseMenus;
--- lib.OpenColorPicker = _G.OpenColorPicker;
--- lib.ColorPicker_GetPreviousValues = _G.ColorPicker_GetPreviousValues;
-
-local k, v
-for k,v in pairs (DDM) do
-	lib[k] = _G[k]
+	function DDM.Create_DropDownMenu (name, parent, options)
+		return CreateFrame("Frame", name, parent, "UIDropDownMenuTemplate");
+	end
 end
