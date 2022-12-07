@@ -112,7 +112,7 @@ function WIM.GetNameAndServer(user)
 	else
 		name = user
 	end
-	
+
 	return name, realm
 end
 
