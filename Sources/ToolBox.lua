@@ -109,7 +109,10 @@ function WIM.GetNameAndServer(user)
 		realm = string.gsub(realm, "[A-Z]", " %1")
 		realm = string.gsub(realm, "' ", "'")
 		realm = string.gsub(realm, "^[a-z]", string.upper)
+	else
+		name = user
 	end
+	
 	return name, realm
 end
 
