@@ -56,8 +56,42 @@ function RegisterSlashCommand(cmd, fun, info)
     end
 end
 
-_G.SlashCmdList["WIM"] = processCommand;
-_G.SLASH_WIM1 = "/wim";
+-- from @TomCats to avoid tainting of slash command
+local lastMessage
+local function starts(String,Start)
+	return string.sub(String,1,string.len(Start))==Start
+end
+
+_G.hooksecurefunc("ChatEdit_ParseText", function(editBox, send, parseIfNoSpaces)
+    if (send == 0) then
+		lastMessage = editBox:GetText()
+	end
+end)
+
+_G.hooksecurefunc("ChatFrame_DisplayHelpTextSimple", function(frame)
+	if (lastMessage and lastMessage ~= "") then
+		local cmd = string.upper(lastMessage)
+		if (starts(cmd, "/WIM")) then
+			local count = 1
+			local numMessages = frame:GetNumMessages()
+			local function predicateFunction(entry)
+				if (count == numMessages) then
+                    if (string.match(entry, _G.HELP_TEXT_SIMPLE)) then
+						return true
+					end
+				end
+				count = count + 1
+			end
+			frame:RemoveMessagesByPredicate(predicateFunction)
+			processCommand(cmd:gsub("^/WIM%s*", ""))
+		end
+	end
+end)
+
+
+
+-- _G.SlashCmdList["WIM"] = processCommand;
+-- _G.SLASH_WIM1 = "/wim";
 
 -- Register help menu
 RegisterSlashCommand("help", showCommands, L["Display available slash commands."])
