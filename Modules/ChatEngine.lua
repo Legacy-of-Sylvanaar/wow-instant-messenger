@@ -175,10 +175,10 @@ local function getChatWindow(ChatName, chatType)
         Windows[ChatName].widgets.chat_info:SetActive(true);
         Windows[ChatName].chatList = Windows[ChatName].chatList or {};
 
-        if(chatType == "guild") then
-            Windows[ChatName].CHAT_listCount = _G.GetNumGuildMembers;
-            Windows[ChatName].CHAT_listFun = _G.GetGuildRosterInfo;
-	else
+        if(chatType == "guild" or chatType == "officer" or chatType == "party" or chatType == "raid") then
+            Windows[ChatName].CHAT_listCount = function () return #Windows[ChatName].chatList end
+            Windows[ChatName].CHAT_listFun = function (index) return Windows[ChatName].chatList[index] end
+		else
             Windows[ChatName].CHAT_listCount = nil;
             Windows[ChatName].CHAT_listFun = nil;
         end
@@ -276,19 +276,20 @@ function Guild:GUILD_ROSTER_UPDATE()
         cleanChatList(self.guildWindow);
         local count = 0;
         for i=1, _G.GetNumGuildMembers() do
-	    local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName, achievementPoints, achievementRank, isMobile = _G.GetGuildRosterInfo(i);
-	    if(online) then
-		--_G.GuildControlSetRank(rankIndex);
-                local guildchat_listen, guildchat_speak, officerchat_listen, officerchat_speak, promote, demote,
-                        invite_member, remove_member, set_motd, edit_public_note, view_officer_note, edit_officer_note,
-                        modify_guild_info, _, withdraw_repair, withdraw_gold, create_guild_event = _G.C_GuildInfo.GuildControlGetRankFlags(rankIndex);
-        	if(guildchat_listen) then
+			local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName, achievementPoints, achievementRank, isMobile = _G.GetGuildRosterInfo(i);
+			if(online) then
+				--_G.GuildControlSetRank(rankIndex);
+				local guildchat_listen, guildchat_speak, officerchat_listen, officerchat_speak, promote, demote,
+						invite_member, remove_member, set_motd, edit_public_note, view_officer_note, edit_officer_note,
+						modify_guild_info, _, withdraw_repair, withdraw_gold, create_guild_event = _G.C_GuildInfo.GuildControlGetRankFlags(rankIndex);
+				if(guildchat_listen) then
 					name = _G.Ambiguate(name, "none")
-                    count = count + 1;
-                    table.insert(self.guildWindow.chatList, name);
-                end
-	    end
-	end
+					count = count + 1;
+					table.insert(self.guildWindow.chatList, name);
+				end
+			end
+		end
+
         self.guildWindow.widgets.chat_info:SetText(count);
     end
 end
@@ -353,6 +354,13 @@ end
 
 function Officer:OnDisable()
     self:UnregisterChatEvent("CHAT_MSG_OFFICER");
+end
+
+function Officer:OnWindowShow(win)
+    if(win.type == "chat" and win.chatType == "officer") then
+		Officer.officerWindow = win
+		_G.C_GuildInfo.GuildRoster();
+    end
 end
 
 function Officer:OnWindowDestroyed(win)
@@ -453,6 +461,13 @@ function Party:OnDisable()
     self:UnregisterChatEvent("CHAT_MSG_PARTY_LEADER");
 end
 
+function Party:OnWindowShow(win)
+    if(win.type == "chat" and win.chatType == "party") then
+		Party.partyWindow = win;
+		Party:GROUP_ROSTER_UPDATE();
+    end
+end
+
 function Party:OnWindowDestroyed(win)
     if(win.type == "chat" and win.chatType == "party") then
         local chatName = win.theUser;
@@ -538,7 +553,7 @@ function Party:CHAT_MSG_PARTY_LEADER(...)
     arg2 = _G.Ambiguate(arg2, "none")
     local win = getChatWindow(_G.PARTY, "party");
     local color = _G.ChatTypeInfo["PARTY_LEADER"] or _G.NORMAL_FONT_COLOR;
-    self.raidWindow = win;
+    self.partyWindow = win;
     if(not self.chatLoaded) then
         Party:GROUP_ROSTER_UPDATE();
     end
@@ -581,6 +596,13 @@ function Raid:OnDisable()
     self:UnregisterChatEvent("CHAT_MSG_RAID");
     self:UnregisterChatEvent("CHAT_MSG_RAID_LEADER");
     self:UnregisterChatEvent("CHAT_MSG_RAID_WARNING");
+end
+
+function Raid:OnWindowShow(win)
+    if(win.type == "chat" and win.chatType == "raid") then
+		win.raidWindow = win;
+		Raid:GROUP_ROSTER_UPDATE();
+    end
 end
 
 function Raid:OnWindowDestroyed(win)
@@ -1672,6 +1694,7 @@ local function createUserList()
         self:SetParent(attachTo);
         self:SetParentWindow(attachTo.parentWindow);
         self.attachedTo = attachTo;
+		self:ClearAllPoints();
         self:SetPoint(point, attachTo, point2, offsetX, offsetY);
         self:Show();
         win:updateList();
@@ -1679,7 +1702,7 @@ local function createUserList()
 
     win.updateList = function(self)
         self = win;
-        if(self.listCount and self.listFun) then
+        if(self.listCount and self.listFun and self.listCount() > 0) then
             local count = self.listCount();
             local offset = _G.FauxScrollFrame_GetOffset(win.scroll);
             for i=1, USERLIST_BUTTON_COUNT do
