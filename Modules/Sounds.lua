@@ -125,14 +125,6 @@ function ChatSounds:VARIABLES_LOADED()
     isGameSound = GetCVar("Sound_EnableAllSound") == "1" and true or false;
 end
 
-function _G.test()
-    if isGameSound then
-        _G.DEFAULT_CHAT_FRAME:AddMessage("Game Sound Enabled!");
-    else
-        _G.DEFAULT_CHAT_FRAME:AddMessage("Game Sound Disabled!");
-    end
-end
-
 -- Sound events
 function ChatSounds:PostEvent_ChatMessage(event, ...)
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 = ...;

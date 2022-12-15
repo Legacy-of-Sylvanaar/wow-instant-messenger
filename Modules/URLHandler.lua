@@ -133,8 +133,6 @@ local function decodeColors(theMsg)
 end
 
 local function convertURLtoLinks(text)
-	_G.test = text
-
 	-- clean text first
 	local theMsg = text;
 	local results;

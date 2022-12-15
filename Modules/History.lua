@@ -301,7 +301,6 @@ local function recordChannelChat(recordAs, ChannelType, ...)
         local history = getPlayerHistoryTable(recordAs);
         history.info.chat = true;
         history.info.channelNumber = channelNumber;
-        _G.test = history;
         table.insert(history, {
             event = ChannelType,
             channelName = recordAs,
