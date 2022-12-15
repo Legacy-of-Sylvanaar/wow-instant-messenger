@@ -128,6 +128,28 @@ local cascadeDirection = {
         {50, -25},      -- Down & Right
 };
 
+local GameClients = { -- thank you MysticalOS
+    ["BSAp"] = nil, --Battle.net Mobile "Interface\\FriendsFrame\\Battlenet-Battleneticon"
+    ["WoW"] = nil, --World of Warcraft
+    ["S2"] = 'sc2', --Starcraft 2 "Interface\\FriendsFrame\\Battlenet-Sc2icon"
+    ["D3"] = 'd3', --Diablo 3 "Interface\\FriendsFrame\\Battlenet-D3icon"
+    ["WTCG"] = 'hs', --Hearthstone "Interface\\FriendsFrame\\Battlenet-WTCGicon"
+    ["App"] = nil, --Battle.net Client
+    ["Hero"] = 'hots', --Heroes of the Storm "Interface\\FriendsFrame\\Battlenet-HotSicon"
+    ["Pro"] = 'ow', --Overwatch "Interface\\FriendsFrame\\Battlenet-Overwatchicon"
+    ["CLNT"] = nil, --Battle.net Client alternate (Unused?)
+    ["S1"] = 'sc1', --Starcraft 1
+    ["DST2"] = 'dsty2', --Destiny 2
+    ["VIPR"] = 'vipr', --COD
+    ["ODIN"] = 'vipr', --COD MW
+    ["LAZR"] = 'vipr', --COD MW2
+    ["ZEUS"] = 'vipr', --COD BOCW
+    ["W3"] = nil, --Warcraft 3 Reforged
+    ["RTRO"] = nil, --Blizzard Arcane
+    ["WLBY"] = nil, --Crash 4
+    ["OSI"] = 'd3' --Diablo 2
+}
+
 windowsByAge = {};
 
 nextColor = {};
@@ -927,42 +949,16 @@ local function instantiateWindow(obj)
 				else
 					icon:SetGradient("VERTICAL", 1, 1, 1, 1, 1, 1);
 				end
-                if(self.bn and self.bn.client == _G.BNET_CLIENT_SC2) then
-                                classTag = "sc2";--"Interface\\FriendsFrame\\Battlenet-Sc2icon"
-                                icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
-                                icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[classTag]));
-                elseif(self.bn and self.bn.client == _G.BNET_CLIENT_SC) then
-                                classTag = "sc1";--"Interface\\FriendsFrame\\Battlenet-SCicon"
-                                icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
-                                icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[classTag]));
-                elseif(self.bn and self.bn.client == _G.BNET_CLIENT_DESTINY2) then
-                                classTag = "dsty2";--"Interface\\FriendsFrame\\Battlenet-SCicon"
-                                icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
-                                icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[classTag]));
-                elseif(self.bn and self.bn.client == _G.BNET_CLIENT_COD) then
-                                classTag = "vipr";--"Interface\\FriendsFrame\\Battlenet-SCicon"
-                                icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
-                                icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[classTag]));
-                elseif(self.bn and self.bn.client == _G.BNET_CLIENT_D3) then
-                                classTag = "d3";--"Interface\\FriendsFrame\\Battlenet-D3icon"
-                                icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
-                                icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[classTag]));
-                elseif(self.bn and self.bn.client == _G.BNET_CLIENT_WTCG) then
-                                classTag = "hs";--"Interface\\FriendsFrame\\Battlenet-WTCGicon"
-                                icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
-                                icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[classTag]));
-                elseif(self.bn and self.bn.client == _G.BNET_CLIENT_HEROES) then
-                                classTag = "hots";--"Interface\\FriendsFrame\\Battlenet-HotSicon"
-                                icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
-                                icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[classTag]));
-                elseif(self.bn and self.bn.client == _G.BNET_CLIENT_OVERWATCH) then
-                                classTag = "ow";--"Interface\\FriendsFrame\\Battlenet-Overwatchicon"
-                                icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
-                                icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[classTag]));
-                elseif(self.bn and (self.bn.client == _G.BNET_CLIENT_APP or self.bn.client == _G.BNET_CLIENT_CLNT or self.bn.client == "BSAp")) then--Battle.net Desktop/Mobile Apps
-                                classTag = "bnd";--"Interface\\FriendsFrame\\Battlenet-Battleneticon"
-                                icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
-                                icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[classTag]));
+
+				if (self.bn and self.bn.client and (not obj.class or obj.class == "")) then
+					local client = GameClients[self.bn.client];
+					if (client) then
+						icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
+						icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon[client]));
+					else
+						icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
+                		icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon['bnd']));
+					end
                 elseif(self.class == "") then
                 	classTag = "blank"
                 	icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.texture);
