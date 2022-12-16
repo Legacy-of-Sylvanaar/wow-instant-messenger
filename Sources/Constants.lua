@@ -92,6 +92,11 @@ classes[L["Demon Hunter"]]	= {
                               tag = "DEMONHUNTER",
                               talent = createSpecNameTable(12)
                          };
+classes[L["Evoker"]]	= {
+							color = "33937f",
+							tag = "EVOKER",
+							talent = createSpecNameTable(13)
+					   };
 classes[L["Game Master"]] = {
                               color = "00c0ff",
                               tag = "GM",
