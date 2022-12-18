@@ -281,6 +281,17 @@ function WIM.SplitToTable(str, inSplitPattern, outResults )
 end
 
 
+--------------------------------------
+--         Macro Functions          --
+--------------------------------------
+function WIM.sendToFocused (msg, typeFilter) -- typeFilter: whiser | chat | null
+	local focus, win = WIM.EditBoxInFocus, WIM.EditBoxInFocus and WIM.EditBoxInFocus:GetParent()
+
+	if (WIM.EditBoxInFocus and (not typeFilter or typeFilter == win.type)) then
+		focus:SetText(msg)
+		focus:GetScript("OnEnterPressed")(focus)
+	end
+end
 
 --------------------------------------
 --      Debugging Functions         --
