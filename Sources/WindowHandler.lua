@@ -329,16 +329,16 @@ helperFrame:SetWidth(1);
 helperFrame:SetHeight(1);
 helperFrame.ResetState = function(self)
         helperFrame:ClearAllPoints();
-	helperFrame:SetParent(UIPanel);
+		helperFrame:SetParent(UIPanel);
         helperFrame:SetWidth(1);
         helperFrame:SetHeight(1);
         helperFrame:SetPoint("TOPLEFT", WindowParent, "TOPLEFT", 0, 0);
-	helperFrame.isAttached = false;
+		helperFrame.isAttached = false;
         helperFrame.attachedTo = nil;
     end
 helperFrame:SetPoint("TOPLEFT", WindowParent, "TOPLEFT", 0, 0);
 helperFrame:SetScript("OnUpdate", function(self)
-                if(IsShiftKeyDown()) then
+        if(IsShiftKeyDown()) then
 			local obj = GetMouseFocus();
 			if(obj and (obj.isWimWindow or obj.parentWindow)) then
 				local win;
@@ -347,37 +347,41 @@ helperFrame:SetScript("OnUpdate", function(self)
 				else
 					win = obj.parentWindow;
 				end
-                                if(win == WIM.DemoWindow) then
-                                        return;
-                                end
+
+				if(win == WIM.DemoWindow) then
+					return;
+				end
+
 				if(not win.isMoving) then
-                                                resizeFrame:Attach(win);
-                                end
+					resizeFrame:Attach(win);
+				end
+
 				if(win.isMoving and not (win.tabStrip and win.tabStrip:IsVisible())) then
-				        local mWin = getWindowAtCursorPosition(win);
-                                        if(mWin) then
-                                                if(self.isAttached) then
-                                                                if(mWin ~= self.attachedTo) then
-                                                                                self:ResetState();
-                                                                end
-                                                else
-                                                                if(mWin ~= WIM.DemoWindow) then
-                                                                                -- attach to window
-                                                                                local skinTable = GetSelectedSkin().tab_strip;
-                                                                                self.parentWindow = mWin;
-                                                                                self.attachedTo = mWin;
-                                                                                mWin.helperFrame = self;
-                                                                                self:SetParent(mWin);
-                                                                                SetWidgetRect(self, skinTable);
-                                                                                self:SetHeight(self.flash:GetHeight());
-                                                                                self.isAttached = true;
-                                                                end
-                                                end
-                                        else
-                                                if(self.isAttached) then
-                                                                self:ResetState();
-                                                end
-                                        end
+					local mWin = getWindowAtCursorPosition(win);
+
+					if(mWin) then
+						if(self.isAttached) then
+							if(mWin ~= self.attachedTo) then
+											self:ResetState();
+							end
+						else
+							if(mWin ~= WIM.DemoWindow) then
+								-- attach to window
+								local skinTable = GetSelectedSkin().tab_strip;
+								self.parentWindow = mWin;
+								self.attachedTo = mWin;
+								mWin.helperFrame = self;
+								self:SetParent(mWin);
+								SetWidgetRect(self, skinTable);
+								self:SetHeight(self.flash:GetHeight());
+								self.isAttached = true;
+							end
+						end
+					else
+						if(self.isAttached) then
+							self:ResetState();
+						end
+					end
 				else
 					if(self.isAttached) then
 						self:ResetState();
@@ -389,18 +393,19 @@ helperFrame:SetScript("OnUpdate", function(self)
 					self:ResetState();
 				end
 			end
-                else
+		else
 		    resizeFrame:Reset();
-                    if(self.isAttached) then
-                        self:ResetState();
-                    end
-                end
-                if(self.isAttached) then
-                    self.flash:Show();
-                else
-                    self.flash:Hide();
-                end
-            end);
+			if(self.isAttached) then
+				self:ResetState();
+			end
+		end
+
+		if(self.isAttached) then
+			self.flash:Show();
+		else
+			self.flash:Hide();
+		end
+	end);
 helperFrame:Show();
 
 
@@ -2013,6 +2018,7 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusGained", functi
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusLost", function(self)
                                 EditBoxInFocus = nil;
+								_EditBoxInFocus = EditBoxInFocus -- temporary reference
                                 -- _G.ACTIVE_CHAT_EDIT_BOX = nil;
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnMouseUp", function(self, button)
