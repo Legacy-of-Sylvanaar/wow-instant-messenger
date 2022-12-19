@@ -284,12 +284,14 @@ end
 --------------------------------------
 --         Macro Functions          --
 --------------------------------------
-function WIM.sendToFocused (msg, typeFilter) -- typeFilter: whiser | chat | null
-	local focus, win = WIM.EditBoxInFocus, WIM.EditBoxInFocus and WIM.EditBoxInFocus:GetParent()
+function WIM.SendToFocused (msg, typeFilter) -- typeFilter: whiser | chat | null
+	local focus = (WIM.EditBoxInFocus or WIM._EditBoxInFocus)
+	local win = focus and focus:GetParent()
 
-	if (WIM.EditBoxInFocus and (not typeFilter or typeFilter == win.type)) then
+	if (focus and (not typeFilter or typeFilter == win.type)) then
 		focus:SetText(msg)
 		focus:GetScript("OnEnterPressed")(focus)
+		focus:SetFocus()
 	end
 end
 

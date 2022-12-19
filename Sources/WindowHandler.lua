@@ -162,16 +162,33 @@ local StringModifiers = {}; -- registered functions which will be used to format
 
 -- Window's Parent (Container for all Windows)
 WindowParent = _G.CreateFrame("Frame", "WIM_UIParent", _G.UIParent);
-                WindowParent:SetFrameStrata("BACKGROUND");
-                WindowParent:SetPoint("BOTTOMLEFT", _G.UIParent, "BOTTOMLEFT", 0, 0);
-                WindowParent:SetScript("OnShow", function(self)
-                                WindowParent:SetWidth(_G.UIParent:GetWidth());
-                                WindowParent:SetHeight(_G.UIParent:GetHeight());
-                end);
-                -- WindowParent.test = WindowParent:CreateTexture("BACKGROUND");
-                -- WindowParent.test:SetColorTexture(1,1,1,.5)
-                -- WindowParent.test:SetAllPoints();
-                WindowParent:Hide();
+	WindowParent:SetFrameStrata("BACKGROUND");
+	WindowParent:SetPoint("BOTTOMLEFT", _G.UIParent, "BOTTOMLEFT", 0, 0);
+	WindowParent:SetScript("OnShow", function(self)
+					WindowParent:SetWidth(_G.UIParent:GetWidth());
+					WindowParent:SetHeight(_G.UIParent:GetHeight());
+	end);
+	-- WindowParent.test = WindowParent:CreateTexture("BACKGROUND");
+	-- WindowParent.test:SetColorTexture(1,1,1,.5)
+	-- WindowParent.test:SetAllPoints();
+	WindowParent:Hide();
+
+	WindowParent:SetScript("OnUpdate", function (self, elapsed)
+
+		-- EditBoxInFocus & _EditBoxInFocus Management
+		-- if new edit box is focused, reset timer
+		if (EditBoxInFocus and self._editBoxInFocusElapsed) then
+			self._editBoxInFocusElapsed = nil
+
+		-- if no edit box is in focus, but one is stored in temp history, reset after 100ms
+		elseif (not EditBoxInFocus and _EditBoxInFocus) then
+			self._editBoxInFocusElapsed = (self._editBoxInFocusElapsed or 0) + elapsed
+			if (self._editBoxInFocusElapsed > .1) then
+				_EditBoxInFocus = nil
+				self._editBoxInFocusElapsed = nil
+			end
+		end
+	end);
 
 
 -- the following table defines a list of actions to be taken when
@@ -2017,8 +2034,8 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusGained", functi
                                 -- _G.ACTIVE_CHAT_EDIT_BOX = self; -- preserve linking abilities.
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusLost", function(self)
-                                EditBoxInFocus = nil;
 								_EditBoxInFocus = EditBoxInFocus -- temporary reference
+                                EditBoxInFocus = nil;
                                 -- _G.ACTIVE_CHAT_EDIT_BOX = nil;
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnMouseUp", function(self, button)
