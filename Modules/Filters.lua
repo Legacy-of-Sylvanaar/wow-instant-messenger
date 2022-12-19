@@ -546,10 +546,10 @@ local function createFilterFrame()
     options.AddFramedBackdrop(win.patternContainer);
     win.pattern = CreateFrame("EditBox", win:GetName().."Pattern", win.patternContainer);
     win.pattern:SetFontObject(_G.ChatFontNormal);
-    win.pattern:SetMultiLine(true);
     win.patternContainer:SetScrollChild(win.pattern);
     win.pattern:SetWidth(win.patternContainer:GetWidth());
     win.pattern:SetHeight(200);
+    win.pattern:SetMultiLine(true);
     win.pattern:SetAutoFocus(false);
     win.pattern:SetScript("OnTextChanged", function(self)
             win.filter.pattern = self:GetText();
