@@ -235,9 +235,10 @@ end
 
 local splitMessage, splitMessageLinks = {}, {};
 function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
-	-- encode quality codes as not to break links
-	theMsg = string.gsub(theMsg, "|A", "\005\006");
-	theMsg = string.gsub(theMsg, "|a", "\007\008");
+	-- seperate escape sequences when chained without spaces
+	theMsg = string.gsub(theMsg, "|r|c", "|r |c");
+	theMsg = string.gsub(theMsg, "|t|T", "|t |T");
+	theMsg = string.gsub(theMsg, "|h|H", "|h |H");
 
 	-- parse out links as to not split them incorrectly.
 	theMsg, results = string.gsub(theMsg, "(|H[^|]+|h[^|]+|h)", function(theLink)
@@ -256,30 +257,25 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 		else
 			-- reinsert links of necessary
 			chunk = string.gsub(chunk, "\001\002%d+\003\004", function(link)
-					local index = _G.tonumber(string.match(link, "(%d+)"));
-					return splitMessageLinks[index] or link;
+				local index = _G.tonumber(string.match(link, "(%d+)"));
+				return splitMessageLinks[index] or link;
 			end);
-
-			-- decode quality codes
-			chunk = string.gsub(chunk, "\005\006", "|A");
-			chunk = string.gsub(chunk, "\007\008", "|a");
 
 			if(Windows[to] and Windows[to].isBN) then
 				_G.BNSendWhisper(Windows[to].bn.id, chunk);
 			else
 				_G.ChatThrottleLib:SendChatMessage(PRIORITY, HEADER, chunk, CHANNEL, EXTRA, to);
 			end
-
 			chunk = (splitMessage[i] or "").." ";
 		end
 	end
 
 	-- clean up
 	for k, _ in pairs(splitMessage) do
-			splitMessage[k] = nil;
+		splitMessage[k] = nil;
 	end
 	for k, _ in pairs(splitMessageLinks) do
-			splitMessageLinks[k] = nil;
+		splitMessageLinks[k] = nil;
 	end
 end
 
