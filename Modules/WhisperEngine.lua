@@ -241,7 +241,7 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 	theMsg = string.gsub(theMsg, "|h|H", "|h |H");
 
 	-- parse out links as to not split them incorrectly.
-	theMsg, results = string.gsub(theMsg, "(|H[^|]+|h[^|]+|h)", function(theLink)
+	theMsg, results = string.gsub(theMsg, "(|H[^|]+|h.-|h|r)", function(theLink)
 		table.insert(splitMessageLinks, theLink);
 		return "\001\002"..paddString(#splitMessageLinks, "0", string.len(theLink)-4).."\003\004";
 	end);
