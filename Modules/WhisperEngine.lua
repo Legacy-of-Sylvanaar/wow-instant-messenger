@@ -270,7 +270,8 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 			if(isBN) then
 				_G.BNSendWhisper(Windows[to].bn.id, chunk);
 			else
-				_G.ChatThrottleLib:SendChatMessage(PRIORITY, HEADER, chunk, CHANNEL, EXTRA, to);
+                _G.SendChatMessage(chunk, CHANNEL, EXTRA, to)
+				-- _G.ChatThrottleLib:SendChatMessage(PRIORITY, HEADER, chunk, CHANNEL, EXTRA, to);
 			end
 			chunk = (splitMessage[i] or "").." ";
 		end
@@ -289,14 +290,16 @@ end
 RegisterWidgetTrigger("msg_box", "whisper", "OnEnterPressed", function(self)
         local obj = self:GetParent();
         local msg = PreSendFilterText(self:GetText());
-        local msgCount = math.ceil(string.len(msg)/255);
+		local messageLength = obj.isBN and 800 or 255;
+        local msgCount = math.ceil(string.len(msg)/messageLength);
         if(msgCount == 1) then
             Windows[obj.theUser].msgSent = true;
-	    if(obj.isBN) then
-		_G.BNSendWhisper(obj.bn.id, msg);
-	    else
-	        _G.ChatThrottleLib:SendChatMessage("ALERT", "WIM", msg, "WHISPER", nil, obj.theUser);
-	    end
+			if(obj.isBN) then
+				_G.BNSendWhisper(obj.bn.id, msg);
+			else
+				_G.SendChatMessage(msg, "WHISPER", nil, obj.theUser);
+				-- _G.ChatThrottleLib:SendChatMessage("ALERT", "WIM", msg, "WHISPER", nil, obj.theUser);
+			end
         elseif(msgCount > 1) then
             Windows[obj.theUser].msgSent = true;
             SendSplitMessage("ALERT", "WIM", msg, "WHISPER", nil, obj.theUser);

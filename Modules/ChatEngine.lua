@@ -220,7 +220,8 @@ RegisterWidgetTrigger("msg_box", "chat", "OnEnterPressed", function(self)
         end
         local msgCount = math.ceil(string.len(msg)/255);
         if(msgCount == 1) then
-	        _G.ChatThrottleLib:SendChatMessage("ALERT", "WIM", msg, TARGET, nil, NUMBER);
+			_G.SendChatMessage(msg, TARGET, nil, NUMBER);
+	        -- _G.ChatThrottleLib:SendChatMessage("ALERT", "WIM", msg, TARGET, nil, NUMBER);
         elseif(msgCount > 1) then
             SendSplitMessage("ALERT", "WIM", msg, TARGET, nil, NUMBER);
         end
