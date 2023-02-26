@@ -235,6 +235,12 @@ end
 
 local splitMessage, splitMessageLinks = {}, {};
 function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
+    -- determine isBNET
+    local isBN, messageLimit = false, 255;
+    if(Windows[to] and Windows[to].isBN) then
+        isBN = true;
+        messageLimit = 800;
+    end
 	-- seperate escape sequences when chained without spaces
 	theMsg = string.gsub(theMsg, "|r|c", "|r |c");
 	theMsg = string.gsub(theMsg, "|t|T", "|t |T");
@@ -252,7 +258,7 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 	--reconstruct message into chunks of no more than 255 characters.
 	local chunk = "";
 	for i=1, #splitMessage + 1 do
-		if(splitMessage[i] and string.len(chunk) + string.len(splitMessage[i]) <= 254) then
+		if(splitMessage[i] and string.len(chunk) + string.len(splitMessage[i]) < messageLimit) then
 			chunk = chunk..splitMessage[i].." ";
 		else
 			-- reinsert links of necessary
@@ -261,7 +267,7 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 				return splitMessageLinks[index] or link;
 			end);
 
-			if(Windows[to] and Windows[to].isBN) then
+			if(isBN) then
 				_G.BNSendWhisper(Windows[to].bn.id, chunk);
 			else
 				_G.ChatThrottleLib:SendChatMessage(PRIORITY, HEADER, chunk, CHANNEL, EXTRA, to);
