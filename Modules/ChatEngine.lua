@@ -1129,7 +1129,7 @@ function Channel:CHAT_MSG_CHANNEL_CONTROLLER(eventController, arg1, arg2, arg3, 
     -- arg8 Channel Number
     -- arg9 Channel Name
     local isWorld = arg7 and arg7 > 0;
-    local channelName = string.split(" - ", arg9);
+    local channelName = string.split("-", arg9:gsub(' ', ''));
     local neverSuppress = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].neverSuppress;
     --check options. do we want the specified channels.
     if(isWorld and not db.chat.world.enabled) then
@@ -1150,14 +1150,15 @@ function Channel:CHAT_MSG_CHANNEL(...)
     -- arg8 Channel Number
     -- arg9 Channel Name
     local isWorld = arg7 and arg7 > 0;
-    local channelName = string.split(" - ", arg9);
+    local channelName = string.split("-", arg9:gsub(' ', ''));
+
     --check options. do we want the specified channels.
     if(isWorld and not db.chat.world.enabled) then
         return;
     elseif(not isWorld and not db.chat.custom.enabled) then
         return;
     elseif(not db.chat[isWorld and "world" or "custom"].channelSettings[channelName] or not db.chat[isWorld and "world" or "custom"].channelSettings[channelName].monitor) then
-        return;
+		return;
     end
     arg2 = _G.Ambiguate(arg2, "none")
     local win = getChatWindow(channelName, "channel");
@@ -1222,7 +1223,7 @@ function ChatAlerts:PostEvent_ChatMessage(event, ...)
     event = event:gsub("CHAT_MSG_", "");
     if(event == "CHANNEL") then
         local isWorld = arg7 and arg7 > 0;
-        local channelName = string.split(" - ", arg9);
+        local channelName = string.split("-", arg9:gsub(' ', ''));
         local win = getChatWindow(channelName, "channel");
         local showAlert = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].showAlerts;
         if(showAlert and win and not win:IsVisible() and win.unreadCount) then
