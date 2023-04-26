@@ -2210,4 +2210,6 @@ local function toggleWindows (type)
 	end
 end
 
+WIM.ToggleWindows = toggleWindows;
+
 WIM.RegisterSlashCommand("toggle", toggleWindows, L["Hide or show {all, whisper, chat} windows."]);
