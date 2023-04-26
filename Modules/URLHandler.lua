@@ -22,12 +22,12 @@ local URL = CreateModule("URLHandler", true);
 armoryLinks = {
     {
         title = "WoW Armory",
-        --https://worldofwarcraft.com/en-us/character/stormrage/Omegall
-        url = "https://worldofwarcraft.com/{armeu/armus}/character/{realm-}/{user}"
+		--https://worldofwarcraft.blizzard.com/en-us/character/us/moon-guard/zincarla
+		url = "https://worldofwarcraft.blizzard.com/{armeu/armus}/character/{eu/us}/{realm-}/{user}"
     },
     {
-				title = "Wowhead Profiler",
-				url = "http://www.wowhead.com/profile={eu/us}.{realm-}.{user}",
+		title = "Wowhead Profiler",
+		url = "http://www.wowhead.com/profile={eu/us}.{realm-}.{user}",
     },
     {
         title = "WoWProgress",
