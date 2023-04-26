@@ -100,12 +100,12 @@ local function filterEmoticons(theMsg, smf)
 
     --accomodate WoW's built in symbols and inherrit WoW's options whether to display them or not.
     if ( 1 ) then
-	for tag in string.gmatch(theMsg, "%b{}") do
-	    local term = string.lower(string.gsub(tag, "[{}]", ""));
-	    if ( _G.ICON_TAG_LIST[term] and _G.ICON_LIST[_G.ICON_TAG_LIST[term]] ) then
-		theMsg = string.gsub(theMsg, tag, _G.ICON_LIST[_G.ICON_TAG_LIST[term]] .. "0|t");
-	    end
-	end
+		for tag in string.gmatch(theMsg, "%b{}") do
+			local term = string.lower(string.gsub(tag, "[{}]", ""));
+			if ( _G.ICON_TAG_LIST[term] and _G.ICON_LIST[_G.ICON_TAG_LIST[term]] ) then
+			theMsg = string.gsub(theMsg, tag, _G.ICON_LIST[_G.ICON_TAG_LIST[term]] .. "0|t");
+			end
+		end
     end
 
     local emoteTable = GetSelectedSkin().emoticons;
@@ -134,7 +134,7 @@ local function filterEmoticons(theMsg, smf)
         end, 1);
     until results == 0;
     repeat
-        theMsg, results = string.gsub(theMsg, "(|H[^|]+|h[^|]+|h)", function(theLink)
+        theMsg, results = string.gsub(theMsg, "(|H[^|]+|h.-|h|r)", function(theLink)
             table.insert(LinkRepository, theLink);
             return "\001\004"..#LinkRepository;
         end, 1);
