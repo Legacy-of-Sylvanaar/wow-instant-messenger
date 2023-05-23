@@ -143,7 +143,7 @@ local function convertURLtoLinks(text)
 	theMsg = decodeURI(theMsg)
 	theMsg = encodeColors(theMsg);
 	repeat
-		theMsg, results = string.gsub(theMsg, "(|H[^|]+|h.-|h|r)", function(theLink)
+		theMsg, results = string.gsub(theMsg, "(|H[^|]+|h.-|h)", function(theLink)
 			table.insert(LinkRepository, theLink);
 			return "\001\004"..#LinkRepository;
 		end, 1);

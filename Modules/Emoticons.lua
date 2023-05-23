@@ -127,14 +127,14 @@ local function filterEmoticons(theMsg, smf)
             return "\001\004"..#LinkRepository;
         end, 1);
     until results == 0;
-	repeat
-        theMsg, results = string.gsub(theMsg, "(|A[^|]+|a)", function(theLink)
-            table.insert(LinkRepository, theLink);
-            return "\001\004"..#LinkRepository;
-        end, 1);
-    until results == 0;
+	-- repeat
+    --     theMsg, results = string.gsub(theMsg, "(|A[^|]+|a)", function(theLink)
+    --         table.insert(LinkRepository, theLink);
+    --         return "\001\004"..#LinkRepository;
+    --     end, 1);
+    -- until results == 0;
     repeat
-        theMsg, results = string.gsub(theMsg, "(|H[^|]+|h.-|h|r)", function(theLink)
+        theMsg, results = string.gsub(theMsg, "(|H[^|]+|h.-|h)", function(theLink)
             table.insert(LinkRepository, theLink);
             return "\001\004"..#LinkRepository;
         end, 1);
