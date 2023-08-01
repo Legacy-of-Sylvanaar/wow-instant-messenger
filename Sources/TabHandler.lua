@@ -132,7 +132,7 @@ local function tabOnUpdate(self, elapsed)
         return;
     end
     local dragFrame = self.dragFrame or self.isDragFrame and self
-    if(dragFrame and (IsShiftKeyDown() or self.dragging)) then
+    if(dragFrame and IsShiftKeyDown()) then
         -- shift is being held down over tab.
         dragFrame:Show();
     else
@@ -257,7 +257,8 @@ local function createTabGroup()
             self.tabStrip = self.parentTab.tabStrip;
 
             win:ClearAllPoints();
-            win:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", win:GetLeft(), win:GetTop());
+			local scale = win:GetEffectiveScale();
+            win:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", self:GetLeft() / scale, self:GetTop() / scale);
 
             -- account for win's helper frame.
             if(win.helperFrame.isAttached) then
