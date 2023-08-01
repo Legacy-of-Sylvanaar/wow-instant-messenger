@@ -131,8 +131,8 @@ local function tabOnUpdate(self, elapsed)
     if(IsShiftKeyDown() and not self.dragFrame and self.dragging) then
         return;
     end
-    local dragFrame = self.dragFrame or self
-    if(IsShiftKeyDown()) then
+    local dragFrame = self.dragFrame or self.isDragFrame and self
+    if(dragFrame and (IsShiftKeyDown() or self.dragging)) then
         -- shift is being held down over tab.
         dragFrame:Show();
     else
@@ -203,6 +203,7 @@ local function createTabGroup()
         tab.smiddle:SetPoint("BOTTOMRIGHT", tab.right, "BOTTOMLEFT");
 
         tab.dragFrame = _G.CreateFrame("Frame");
+		tab.dragFrame.isDragFrame = true;
         tab.dragFrame.parentTab = tab;
         tab.dragFrame.tabStrip = tabStrip;
         tab.dragFrame:SetPoint("TOPLEFT", tab.dragFrame.parentTab, 0, 0);
@@ -483,7 +484,10 @@ local function createTabGroup()
                 local cW, cH, cL, cT, cA = win:GetWidth(), win:GetHeight(), win:GetLeft(), win:SafeGetTop(), win:GetAlpha();
                 if(oW ~= cW) then win:SetWidth(oW); end
                 if(oH ~= cH) then win:SetHeight(oH); end
-                if(oL ~= cL or oT ~= oT) then win:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", oL, oT); end
+                if(oL ~= cL or oT ~= oT) then
+					win:ClearAllPoints();
+					win:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", oL, oT);
+				end
                 if(oA ~= cA) then win:SetAlpha(oA); end
                 lastWin = oldWin:GetName();
             end
