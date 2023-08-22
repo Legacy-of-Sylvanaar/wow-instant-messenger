@@ -950,27 +950,19 @@ local function instantiateWindow(obj)
                 local chat_type = self.chatType == "battleground" and "INSTANCE_CHAT" or string.upper(self.chatType);
                 local color = _G.ChatTypeInfo[chat_type]; -- Drii: ticket 344
                 icon:SetTexCoord(0,1,0,1);
-				if (isModernApi) then -- WoW 10
-					icon:SetGradient("VERTICAL",
-						{ r = color.r, g = color.g, b = color.b, a = 1},
-						{ r = color.r, g = color.g, b = color.b, a = 1 }
-					);
-				else
-                	icon:SetGradient("VERTICAL", color.r, color.g, color.b, color.r, color.g, color.b);
-				end
+				icon:SetGradient("VERTICAL",
+					{ r = color.r, g = color.g, b = color.b, a = 1},
+					{ r = color.r, g = color.g, b = color.b, a = 1 }
+				);
                 if(GetSelectedSkin().message_window.widgets.from.use_class_color) then
                                 self.widgets.from:SetTextColor(color.r, color.g, color.b);
                 end
         else
                 local classTag = obj.class;
-				if (isModernApi) then -- WoW 10
-					icon:SetGradient("VERTICAL",
-						{ r = 1, g = 1, b = 1, a = 1 },
-						{ r = 1, g = 1, b = 1, a = 1 }
-					);
-				else
-					icon:SetGradient("VERTICAL", 1, 1, 1, 1, 1, 1);
-				end
+				icon:SetGradient("VERTICAL",
+					{ r = 1, g = 1, b = 1, a = 1 },
+					{ r = 1, g = 1, b = 1, a = 1 }
+				);
 
 				if (self.bn and self.bn.client and (not obj.class or obj.class == "")) then
 					local client = GameClients[self.bn.client];

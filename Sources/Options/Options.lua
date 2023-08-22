@@ -150,11 +150,7 @@ local function createCategory(index)
     cat.bg = cat:CreateTexture(nil, "BACKGROUND");
     cat.bg:SetAllPoints();
     cat.bg:SetColorTexture(1, 1, 1);
-	if (isModernApi) then -- WoW 10
-    	cat.bg:SetGradient("VERTICAL", getGradientFromColor("658daa"));
-	else
-		cat.bg:SetGradient("VERTICAL", getGradientFromColor_Legacy("658daa"));
-	end
+    cat.bg:SetGradient("VERTICAL", getGradientFromColor("658daa"));
     cat.text = _G.getglobal(cat:GetName().."Text");
     cat.text:ClearAllPoints();
     cat.text:SetPoint("CENTER");
@@ -230,11 +226,7 @@ function options.UpdateCategories(self)
                 else
                     cat:SetPoint("BOTTOMLEFT", prevCat, "TOPLEFT", 0, 0);
                 end
-				if (isModernApi) then -- WoW 10
-                	cat.bg:SetGradient("VERTICAL", getGradientFromColor("658daa"));
-				else
-					cat.bg:SetGradient("VERTICAL", getGradientFromColor_Legacy("658daa"));
-				end
+                cat.bg:SetGradient("VERTICAL", getGradientFromColor("658daa"));
                 cat:Enable();
                 prevCat = cat;
             else
