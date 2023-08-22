@@ -2,7 +2,7 @@
 -- This file will act as a slug to polyfill using WoW globals.
 
 local buildNumber = select(4, _G.GetBuildInfo())
-local isModernApi = buildNumber >= 30401
+local isModernApi = buildNumber >= 30401--This needs review
 
 if (not isModernApi) then
 	local DDM = LibStub:GetLibrary("LibDropDownMenu");

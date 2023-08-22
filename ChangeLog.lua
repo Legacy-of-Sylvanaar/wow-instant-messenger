@@ -16,9 +16,8 @@ local function addBetaEntry(version, rdate, description, transmitted)
 end
 
 -- ChangeLog Entries.
-addEntry("3.9.2", "10/20/2021", [[
-	*TOC update for 9.1.0, 2.5.2, and 1.14.0
-	*Compatible with TBC Classic and Classic era 1.14.0
+addEntry("3.10.14", "08/22/2023", [[
+	*Compatible Classic Era 1.14.4
 ]]);
 
 local function entryExists(version)
@@ -67,7 +66,7 @@ local changeLogWindow;
 
 local function createChangeLogWindow()
     -- create frame object - changes for Patch 9.0.1 - Shadowlands, retail and classic
-	local win = CreateFrame("Frame", "WIM3_ChangeLog", _G.UIParent, WIM.isShadowlands and "BackdropTemplate");
+	local win = CreateFrame("Frame", "WIM3_ChangeLog", _G.UIParent, "BackdropTemplate");
 
     win:Hide(); -- hide initially, scripts aren't loaded yet.
     table.insert(UISpecialFrames, "WIM3_ChangeLog");
@@ -83,11 +82,7 @@ local function createChangeLogWindow()
         tile = true, tileSize = 64, edgeSize = 64,
         insets = { left = 64, right = 64, top = 64, bottom = 64 }};
 
-	if not WIM.isShadowlands then
-		win:SetBackdrop(win.backdropInfo);
-	else
-		win:ApplyBackdrop();
-	end
+	win:ApplyBackdrop();
 
     -- set basic frame properties
     win:SetClampedToScreen(true);

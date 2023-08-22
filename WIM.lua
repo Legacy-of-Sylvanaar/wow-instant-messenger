@@ -20,9 +20,8 @@ beta = false; -- flags current version as beta.
 debug = false; -- turn debugging on and off.
 useProtocol2 = true; -- test switch for new W2W Protocol. (Dev use only)
 local buildNumber = select(4, _G.GetBuildInfo());
-isShadowlands = buildNumber >= 90001;
-isModernApi = buildNumber >= 11404
-isDragonflight = buildNumber >= 100000;
+isModernBnet = buildNumber >= 90001;--Blizzard did not sync bnet changes from retail back to classic despite rebase of other functions, so this check is needed in many places still that relate to BNet APIs
+--isModernApi = buildNumber >= 11404--Currently unused, since as of 1.14.4, any breaking 10.x changes have now been synced to both wrath and classic era. This will likey return next time retail changes something
 
 -- is Private Server?
 --[[isPrivateServer = not (string.match(_G.GetCVar("realmList"), "worldofwarcraft.com$")
@@ -88,7 +87,7 @@ local function initialize()
         --querie guild roster
         if( _G.IsInGuild() ) then
 			-- H.Sch. - ReglohPri - this is deprecated -> GuildRoster() - changed to C_GuildInfo.GuildRoster()
-			if not isShadowlands then
+			if not isModernBnet then
 				--for classic
 				_G.GuildRoster();
 			else
@@ -146,7 +145,7 @@ end
 --These should work in all files that use them since they are written to WIMs global namespace
 --Retail kind of has these for now, but won't forever, and classic is not expected to make same API restructuring, so this ugly mess is probably required forever
 function GetBNGetFriendInfo(friendIndex)
-	if not isShadowlands then--Classic
+	if not isModernBnet then--Classic
 		return _G.BNGetFriendInfo(friendIndex)
 	else
 		local accountInfo = _G.C_BattleNet.GetFriendAccountInfo(friendIndex);
@@ -163,7 +162,7 @@ function GetBNGetFriendInfo(friendIndex)
 end
 
 function GetBNGetFriendInfoByID(id)
-	if not isShadowlands then--Classic/TBC
+	if not isModernBnet then--Classic/TBC
 		return _G.BNGetFriendInfoByID(id)
 	else--Retail
 		local accountInfo = _G.C_BattleNet.GetAccountInfoByID(id) or {};
@@ -180,7 +179,7 @@ function GetBNGetFriendInfoByID(id)
 end
 
 function GetBNGetGameAccountInfo(toonId)
-	if not isShadowlands then--Classic/TBC
+	if not isModernBnet then--Classic/TBC
 		return _G.BNGetGameAccountInfo(toonId)
 	else--Retail
 		local gameAccountInfo = _G.C_BattleNet.GetGameAccountInfoByID(toonId)

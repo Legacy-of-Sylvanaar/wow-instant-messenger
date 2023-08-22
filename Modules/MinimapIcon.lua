@@ -195,20 +195,12 @@ local function createMinimapIcon()
 				local minimap = self:GetParent();
 				if(NotificationIndex > #Notifications or not Notifications[NotificationIndex]) then
 				    minimap.icon:Show();
-					if (isModernApi) then -- WoW 10
-				    	minimap.backGround:SetGradient("VERTICAL", getGradientFromColor(IconColor));
-					else
-						minimap.backGround:SetGradient("VERTICAL", getGradientFromColor_Legacy(IconColor));
-					end
+				    minimap.backGround:SetGradient("VERTICAL", getGradientFromColor(IconColor));
 				    minimap.text:Hide();
 				    NotificationIndex = 0; -- will be incremented at end of loop
 				else
 				    minimap:SetText(Notifications[NotificationIndex].text);
-					if (isModernApi) then  -- WoW 10
-				    	minimap.backGround:SetGradient("VERTICAL", getGradientFromColor(Notifications[NotificationIndex].color));
-					else
-						minimap.backGround:SetGradient("VERTICAL", getGradientFromColor_Legacy(Notifications[NotificationIndex].color));
-					end
+				    minimap.backGround:SetGradient("VERTICAL", getGradientFromColor(Notifications[NotificationIndex].color));
 				    minimap.text:Show();
 				    minimap.icon:Hide();
 				end
@@ -221,11 +213,7 @@ local function createMinimapIcon()
 				local minimap = self:GetParent();
 				minimap.text:Hide();
 				minimap.icon:Show();
-				if (isModernApi) then  -- WoW 10
-					minimap.backGround:SetGradient("VERTICAL", getGradientFromColor(IconColor));
-				else
-					minimap.backGround:SetGradient("VERTICAL", getGradientFromColor_Legacy(IconColor));
-				end
+				minimap.backGround:SetGradient("VERTICAL", getGradientFromColor(IconColor));
 				flash:Hide();
 			    end
 			end

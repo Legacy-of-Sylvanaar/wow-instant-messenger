@@ -24,7 +24,7 @@ constants.classListEng = classList;
 local GetNumSpecializationsForClassID, GetSpecializationInfoForClassID = _G.GetNumSpecializationsForClassID, _G.GetSpecializationInfoForClassID
 local function createSpecNameTable(classID)
 	local t = {}
-	if not isShadowlands then return t end
+	if not isModernBnet then return t end
 	for spec = 1, GetNumSpecializationsForClassID(classID) do
 		local specID, name = GetSpecializationInfoForClassID(classID,spec)
 		t[spec] = name
