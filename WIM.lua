@@ -20,8 +20,7 @@ beta = false; -- flags current version as beta.
 debug = false; -- turn debugging on and off.
 useProtocol2 = true; -- test switch for new W2W Protocol. (Dev use only)
 local buildNumber = select(4, _G.GetBuildInfo());
-isModernBnet = buildNumber >= 90001;--Blizzard did not sync bnet changes from retail back to classic despite rebase of other functions, so this check is needed in many places still that relate to BNet APIs
---isModernApi = buildNumber >= 11404--Currently unused, since as of 1.14.4, any breaking 10.x changes have now been synced to both wrath and classic era. This will likey return next time retail changes something
+isModernApi = buildNumber >= 90001; -- Still needed for non synced invite API and for classID checks
 
 -- is Private Server?
 --[[isPrivateServer = not (string.match(_G.GetCVar("realmList"), "worldofwarcraft.com$")
@@ -87,12 +86,7 @@ local function initialize()
         --querie guild roster
         if( _G.IsInGuild() ) then
 			-- H.Sch. - ReglohPri - this is deprecated -> GuildRoster() - changed to C_GuildInfo.GuildRoster()
-			if not isModernBnet then
-				--for classic
-				_G.GuildRoster();
-			else
-				_G.C_GuildInfo.GuildRoster();
-			end
+			_G.C_GuildInfo.GuildRoster();
         end
 
     isInitialized = true;
@@ -141,67 +135,53 @@ local function initialize()
     dPrint("WIM initialized...");
 end
 
---Begin Compat wrappers for retail and classic to access same functions and expect same returns
---These should work in all files that use them since they are written to WIMs global namespace
---Retail kind of has these for now, but won't forever, and classic is not expected to make same API restructuring, so this ugly mess is probably required forever
+--Retail and Classic bnet apis are now mostly in sync, but i'm keeping wrappers so if they ever get out of sync again, it's easy to fix in these wrappers
 function GetBNGetFriendInfo(friendIndex)
-	if not isModernBnet then--Classic
-		return _G.BNGetFriendInfo(friendIndex)
-	else
-		local accountInfo = _G.C_BattleNet.GetFriendAccountInfo(friendIndex);
-		if accountInfo then
-			local wowProjectID = accountInfo.gameAccountInfo.wowProjectID or 0;
-			local clientProgram = accountInfo.gameAccountInfo.clientProgram ~= "" and accountInfo.gameAccountInfo.clientProgram or nil;
+	local accountInfo = _G.C_BattleNet.GetFriendAccountInfo(friendIndex);
+	if accountInfo then
+		local wowProjectID = accountInfo.gameAccountInfo.wowProjectID or 0;
+		local clientProgram = accountInfo.gameAccountInfo.clientProgram ~= "" and accountInfo.gameAccountInfo.clientProgram or nil;
 
-			return	accountInfo.bnetAccountID, accountInfo.accountName, accountInfo.battleTag, accountInfo.isBattleTagFriend,
-				accountInfo.gameAccountInfo.characterName, accountInfo.gameAccountInfo.gameAccountID, clientProgram,
-				accountInfo.gameAccountInfo.isOnline, accountInfo.lastOnlineTime, accountInfo.isAFK, accountInfo.isDND, accountInfo.customMessage, accountInfo.note, accountInfo.isFriend,
-				accountInfo.customMessageTime, wowProjectID, accountInfo.rafLinkType == _G.Enum.RafLinkType.Recruit, accountInfo.gameAccountInfo.canSummon, accountInfo.isFavorite, accountInfo.gameAccountInfo.isWowMobile;
-		end
+		return	accountInfo.bnetAccountID, accountInfo.accountName, accountInfo.battleTag, accountInfo.isBattleTagFriend,
+			accountInfo.gameAccountInfo.characterName, accountInfo.gameAccountInfo.gameAccountID, clientProgram,
+			accountInfo.gameAccountInfo.isOnline, accountInfo.lastOnlineTime, accountInfo.isAFK, accountInfo.isDND, accountInfo.customMessage, accountInfo.note, accountInfo.isFriend,
+			accountInfo.customMessageTime, wowProjectID, accountInfo.rafLinkType == _G.Enum.RafLinkType.Recruit, accountInfo.gameAccountInfo.canSummon, accountInfo.isFavorite, accountInfo.gameAccountInfo.isWowMobile;
 	end
 end
 
 function GetBNGetFriendInfoByID(id)
-	if not isModernBnet then--Classic/TBC
-		return _G.BNGetFriendInfoByID(id)
-	else--Retail
-		local accountInfo = _G.C_BattleNet.GetAccountInfoByID(id) or {};
-		if accountInfo and accountInfo.gameAccountInfo then
-			local wowProjectID = accountInfo.gameAccountInfo.wowProjectID or 0;
-			local clientProgram = accountInfo.gameAccountInfo.clientProgram ~= "" and accountInfo.gameAccountInfo.clientProgram or nil;
+	local accountInfo = _G.C_BattleNet.GetAccountInfoByID(id) or {};
+	if accountInfo and accountInfo.gameAccountInfo then
+		local wowProjectID = accountInfo.gameAccountInfo.wowProjectID or 0;
+		local clientProgram = accountInfo.gameAccountInfo.clientProgram ~= "" and accountInfo.gameAccountInfo.clientProgram or nil;
 
-			return	accountInfo.bnetAccountID, accountInfo.accountName, accountInfo.battleTag, accountInfo.isBattleTagFriend,
-				accountInfo.gameAccountInfo.characterName, accountInfo.gameAccountInfo.gameAccountID, clientProgram,
-				accountInfo.gameAccountInfo.isOnline, accountInfo.lastOnlineTime, accountInfo.isAFK, accountInfo.isDND, accountInfo.customMessage, accountInfo.note, accountInfo.isFriend,
-				accountInfo.customMessageTime, wowProjectID, accountInfo.rafLinkType == _G.Enum.RafLinkType.Recruit, accountInfo.gameAccountInfo.canSummon, accountInfo.isFavorite, accountInfo.gameAccountInfo.isWowMobile;
-		end
+		return	accountInfo.bnetAccountID, accountInfo.accountName, accountInfo.battleTag, accountInfo.isBattleTagFriend,
+			accountInfo.gameAccountInfo.characterName, accountInfo.gameAccountInfo.gameAccountID, clientProgram,
+			accountInfo.gameAccountInfo.isOnline, accountInfo.lastOnlineTime, accountInfo.isAFK, accountInfo.isDND, accountInfo.customMessage, accountInfo.note, accountInfo.isFriend,
+			accountInfo.customMessageTime, wowProjectID, accountInfo.rafLinkType == _G.Enum.RafLinkType.Recruit, accountInfo.gameAccountInfo.canSummon, accountInfo.isFavorite, accountInfo.gameAccountInfo.isWowMobile;
 	end
 end
 
 function GetBNGetGameAccountInfo(toonId)
-	if not isModernBnet then--Classic/TBC
-		return _G.BNGetGameAccountInfo(toonId)
-	else--Retail
-		local gameAccountInfo = _G.C_BattleNet.GetGameAccountInfoByID(toonId)
-		if gameAccountInfo then
-			local wowProjectID = gameAccountInfo.wowProjectID or 0;
-			local characterName = gameAccountInfo.characterName or "";
-			local realmName = gameAccountInfo.realmName or "";
-			local realmID = gameAccountInfo.realmID or 0;
-			local factionName = gameAccountInfo.factionName or "";
-			local raceName = gameAccountInfo.raceName or "";
-			local className = gameAccountInfo.className or "";
-			local areaName = gameAccountInfo.areaName or "";
-			local characterLevel = gameAccountInfo.characterLevel or "";
-			local richPresence = gameAccountInfo.richPresence or "";
-			local gameAccountID = gameAccountInfo.gameAccountID or 0;
-			local playerGuid = gameAccountInfo.playerGuid or 0;
-			return	gameAccountInfo.hasFocus, characterName, gameAccountInfo.clientProgram,
-				realmName, realmID, factionName, raceName, className, "", areaName, characterLevel,
-				richPresence, nil, nil,
-				gameAccountInfo.isOnline, gameAccountID, nil, gameAccountInfo.isGameAFK, gameAccountInfo.isGameBusy,
-				playerGuid, wowProjectID, gameAccountInfo.isWowMobile
-		end
+	local gameAccountInfo = _G.C_BattleNet.GetGameAccountInfoByID(toonId)
+	if gameAccountInfo then
+		local wowProjectID = gameAccountInfo.wowProjectID or 0;
+		local characterName = gameAccountInfo.characterName or "";
+		local realmName = gameAccountInfo.realmName or "";
+		local realmID = gameAccountInfo.realmID or 0;
+		local factionName = gameAccountInfo.factionName or "";
+		local raceName = gameAccountInfo.raceName or "";
+		local className = gameAccountInfo.className or "";
+		local areaName = gameAccountInfo.areaName or "";
+		local characterLevel = gameAccountInfo.characterLevel or "";
+		local richPresence = gameAccountInfo.richPresence or "";
+		local gameAccountID = gameAccountInfo.gameAccountID or 0;
+		local playerGuid = gameAccountInfo.playerGuid or 0;
+		return	gameAccountInfo.hasFocus, characterName, gameAccountInfo.clientProgram,
+			realmName, realmID, factionName, raceName, className, "", areaName, characterLevel,
+			richPresence, nil, nil,
+			gameAccountInfo.isOnline, gameAccountID, nil, gameAccountInfo.isGameAFK, gameAccountInfo.isGameBusy,
+			playerGuid, wowProjectID, gameAccountInfo.isWowMobile
 	end
 end
 --End Compat wrappers for retail and classic to access same functions and expect same returns

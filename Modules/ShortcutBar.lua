@@ -354,7 +354,7 @@ RegisterShortcut("invite", L["Invite to Party"], {
 					_G.FriendsFrame_BattlenetInvite(nil, win.bn.id)
 				end
 			else
-				if isModernBnet then
+				if isModernApi then
 					_G.C_PartyInfo.InviteUnit(win.theUser)
 				else
 					_G.InviteUnit(win.theUser)
