@@ -1,7 +1,7 @@
 ## Interface: 100107
 ## Interface-Classic: 11404
 ## Interface-BCC: 20504
-## Interface-Wrath: 30402
+## Interface-Wrath: 30403
 
 ## X-Curse-Project-ID: 7474
 ## X-WoWI-ID: 5342
