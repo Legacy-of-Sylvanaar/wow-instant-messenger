@@ -10,5 +10,6 @@
     <Script file="zhTW.lua"/>
     <Script file="zhCN.lua"/>
     <Script file="ruRU.lua"/>
+	<Script file="trTR.lua"/>
 
 </Ui>
