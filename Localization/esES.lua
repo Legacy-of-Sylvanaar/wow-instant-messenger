@@ -11,7 +11,7 @@ local translations = {
 
     ["_DateFormat"] = "%d/%m/%Y",
 
-    ["Yes"] = "Si",
+    ["Yes"] = "Sí",
     ["No"] = "No",
     ["None"] = "Ninguno",
     ["<Right-Click>"] = "<Clic-Derecho>",
