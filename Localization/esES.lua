@@ -482,7 +482,7 @@ local translations = {
     ["Auto hide/restore windows during combat."] = "Ocultar/restaurar ventanas automáticamente durante el combate.",
     ["Delay if I am typing a message."] = "Retrasar si estoy escribiendo un mensaje.",
     ["Border Size"] = "Tamaño del Borde",
-    ["Only while in an instance."] = "Solo en una instancia.",
+    ["Only while in an instance."] = "Sólo en una estancia.",
     ["Show Border"] = "Mostrar Borde",
     ["Animation Direction:"] = "Dirección de Animación",
 
