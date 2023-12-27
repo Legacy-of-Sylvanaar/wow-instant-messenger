@@ -198,7 +198,7 @@ local function createPopRuleFrame(winType)
     frame.main.tabs:SetHeight(20);
     frame.main.tabs.title = frame.main.tabs:CreateFontString(nil, "OVERLAY", "GameFontNormal");
     frame.main.tabs.title:SetPoint("BOTTOMLEFT", frame.main.tabs, "TOPLEFT", 0, 10);
-    frame.main.tabs.title:SetText(L["Behaviors for state"]..":");
+    frame.main.tabs.title:SetText(L["Behaviors for state:"]);
     frame.main.tabs.buttons = {};
     local function createButton(tg)
             local state = states[#tg.buttons+1];
