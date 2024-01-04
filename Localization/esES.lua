@@ -213,7 +213,7 @@ local translations = {
     ["There is a newer version of WIM available for download. You can download it at %s."] = "Hay una versión más nueva de WIM disponible para descargar. Puede descargarla en %s.",
 
     -- ShortcutBar.lua --
-    ["Player Location"] = "Localización de Jugador",
+    ["Player Location"] = "Zona del Jugador",
     ["Unknown"] = "Desconocido",
     ["Click to update..."] = "Haga clic para actualizar...",
     ["Coordinates"] = "Coordenadas",
@@ -223,7 +223,7 @@ local translations = {
     ["Are you sure you want to\nignore %s?"] = "¿Estás seguro de que quieres\nignorar a %s?",
     ["Right-Click for profile links..."] = "Haga clic derecho para enlaces de perfil...",
     ["Profile Links"] = "Enlaces de Perfil",
-    ["Location"] = "Localización",
+    ["Location"] = "Zona",
     ["Game"] = "Juego",
     ["Realm"] = "Reino",
     ["Character"] = "Personaje",
