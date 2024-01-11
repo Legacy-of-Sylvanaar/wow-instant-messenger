@@ -490,7 +490,7 @@ WIM.AddLocale("frFR", {
     ["Play special sound for %s."] = "Jouez le son spécial pour %s.",
     ["Play sound when a message is received."] = "Jouer un son quand un message est reçu.",
     ["Play sound when a message is sent."] = "Jouer un son quand un message est envoyé.",
-	["Enable WorldFrame Click Detection."] = "Activez la détection des clics WorldFrame.",
+	["Enable WorldFrame Click Detection."] = "Activer la détection des clics WorldFrame.",
 	["The UI must be reloaded in order to disable this module fully. Reload UI now?"] = "L'interface utilisateur doit être rechargée afin de désactiver complètement ce module. Recharger l'interface utilisateur maintenant ?",
 
 
