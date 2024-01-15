@@ -179,7 +179,7 @@ WIM.AddLocale("frFR", {
     ["WIM History Button"] = "WIM bouton de l'historique",
     ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Cliquer sur %s le bouton de la fenêtre du message, indiquera que l'historique du chuchotement de l'utilisateur sera gardé",
     ["Click to view message history."] = "Cliquez pour voir l'historique des messages.",
-    ["WIM pruned %d |4message:messages; from your history."] = "WIM taille %d |4message: messages, à partir de votre histoire.",
+    ["WIM pruned %d |4message:messages; from your history."] = "WIM taille %d |4message:messages, à partir de votre histoire.",
     ["History Viewer"] = "Voir l'historique",
     ["Filters"] = "Filtres",
     ["Are you sure you want to delete all history saved for %s on %s?"] = "Etes-vous sûr de vouloir supprimer toute l'historique enregistrée de %s sur %s?",
