@@ -4,7 +4,7 @@
 
 WIM.AddLocale("ptBR", {
     ["WIM (WoW Instant Messenger)"] = "WIM (WoW Instant Messenger)",
-    ["_Description"] = "WIM é um addon que traz um sensação familiar da comunicar através de chat em World of Warcraft. Nesta tela, você será capaz de personalizar o WIM para adequá-lo as suas necessidades. Se você tem alguma questão, comentário ou sujestão por favor vá para http://www.WIMAddon.com(em inglês)",
+    ["_Description"] = "WIM é um addon que traz um sensação familiar da comunicar através de chat em World of Warcraft. Nesta tela, você será capaz de personalizar o WIM para adequá-lo as suas necessidades. Se você tem alguma questão, comentário ou sujestão por favor vá para http://www.WIMAddon.com (em inglês)",
 
     ["_DemoText"] = "Essa é uma demonstração da janela e não é totalmente funcional. Cloque esta janela no local onde você quer que todas as janelas surjam. Quando terminar, você pode fechar essa janela e suas preferências serão salvas.",
 
@@ -413,7 +413,8 @@ WIM.AddLocale("ptBR", {
     ["Place friends in their own group."] = "Coloque amigos no seu próprio grupo.",
     ["Place guild members in their own group."] = "Coloque membros da guild no seu próprio grupo.",
     ["Does not apply to windows already opened."] = "Isso não se aplica à janelas já abertas.",
-
+	["Last Activity"] = "Última atividade",
+    ["Window Created"] = "Janela criada",
 
     -- Talent Specs --
     ["Affliction"] = "Suplício",
@@ -487,7 +488,7 @@ WIM.AddLocale("ptBR", {
     ["Show Minimap Alerts"] = "Exibir alertas do Minimapa",
     ["Never pop-up on my screen."] = "Nunca aparece na minha tela.",
     ["Never suppress messages."] = "Nunca suprima mensagens.",
-	["Include emotes."] = "Incluir emotes.",
+	["Include emotes."] = "Incluir expressões.",
     ["Have WIM monitor this channel."] = "Faça com que o WIM monitore este canal.",
     ["Never Pop"] = "Nunca aparece",
     ["Never have this window pop-up on my screen."] = "Nunca essa janela apareceu na minha tela.",
