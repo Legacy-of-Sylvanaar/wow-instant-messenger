@@ -4,7 +4,7 @@
 
 WIM.AddLocale("ptBR", {
     ["WIM (WoW Instant Messenger)"] = "WIM (WoW Instant Messenger)",
-    ["_Description"] = "WIM é um addon que traz um sensação familiar da comunicar através de chat em World of Warcraft. Nesta tela, você será capaz de personalizar o WIM para adequá-lo as suas necessidades. Se você tem alguma questão, comentário ou sujestão por favor vá para http://www.WIMAddon.com (em inglês)",
+    ["_Description"] = "WIM é um addon que traz um sensação familiar da comunicar através de chat em World of Warcraft. Nesta tela, você será capaz de personalizar o WIM para adequá-lo as suas necessidades.",
 
     ["_DemoText"] = "Essa é uma demonstração da janela e não é totalmente funcional. Cloque esta janela no local onde você quer que todas as janelas surjam. Quando terminar, você pode fechar essa janela e suas preferências serão salvas.",
 
