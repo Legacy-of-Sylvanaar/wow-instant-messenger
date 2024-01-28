@@ -185,7 +185,7 @@ local translations = {
     -- History.lua --
     ["WIM History Button"] = "Botón de Historial de WIM",
     ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Al hacer clic en el botón %s en la ventana del mensaje, se mostrará el historial de ese usuario en el Visor de Historial de WIM.",
-    ["Click to view message history."] = "Haga clic para ver el historial de mensajes.",
+    ["Click to view message history."] = "Haz clic para ver el historial de mensajes.",
     ["WIM pruned %d |4message:messages; from your history."] = "WIM eliminó %d |4mensaje:mensajes; de tu historial.",
     ["History Viewer"] = "Visor de Historial",
     ["Filters"] = "Filtros",
@@ -215,13 +215,13 @@ local translations = {
     -- ShortcutBar.lua --
     ["Player Location"] = "Zona del Jugador",
     ["Unknown"] = "Desconocido",
-    ["Click to update..."] = "Haga clic para actualizar...",
+    ["Click to update..."] = "Haz clic para actualizar...",
     ["Coordinates"] = "Coordenadas",
     ["Invite to Party"] = "Invitar al Grupo",
     ["Add Friend"] = "Añadir Amigo",
     ["Ignore User"] = "Ignorar Usuario",
     ["Are you sure you want to\nignore %s?"] = "¿Estás seguro de que quieres\nignorar a %s?",
-    ["Right-Click for profile links..."] = "Haga clic derecho para enlaces de perfil...",
+    ["Right-Click for profile links..."] = "Haz clic derecho para enlaces de perfil...",
     ["Profile Links"] = "Enlaces de Perfil",
     ["Location"] = "Zona",
     ["Game"] = "Juego",
@@ -273,8 +273,8 @@ local translations = {
     ["Default"] = "Predeterminado",
     ["%s is Away From Keyboard: %s"] = "%s está Ausente: %s",
     ["%s does not wish to be disturbed: %s"] = "%s no desea ser molestrado: %s",
-    ["Right-Mouse Click!"] = "¡Haga clic derecho!",
-    ["There might be useful tools hidden under the message box. Right-Click to see them!"] = "Puede haber herramientas útiles ocultas debajo del cuadro de mensaje. ¡Haga clic derecho para verlas!",
+    ["Right-Mouse Click!"] = "¡Haz clic derecho!",
+    ["There might be useful tools hidden under the message box. Right-Click to see them!"] = "Puede haber herramientas útiles ocultas debajo del cuadro de mensaje. ¡Haz clic derecho para verlas!",
 
 
     -- Options.lua --
@@ -288,7 +288,7 @@ local translations = {
     ["Welcome!"] = "¡Bienvenido!",
     ["Enable WIM"] = "Habilitar WIM",
     ["Display Minimap Icon"] = "Mostrar icono de minimapa",
-    ["<Right-Click> to show unread messages."] = "<Haga clic derecho> para mostrar mensajes no leídos",
+    ["<Right-Click> to show unread messages."] = "<Haz clic derecho> para mostrar mensajes no leídos",
     ["Display Tutorials"] = "Mostrar Tutoriales",
     ["Reset Tutorials"] = "Restablecer Tutoriales",
     ["Credits"] = "Créditos",
@@ -514,7 +514,7 @@ local translations = {
 
     --OffScreenTracker.lua
     ["WIM Window Off Screen"] = "Ventana WIM fuera de pantalla",
-    ["Click to reposition."] = "Haga clic para reposicionar.",
+    ["Click to reposition."] = "Haz clic para reposicionar.",
 
     --Misc
     ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM ha detectado que estás jugando en un servidor privado. Algunos servidores no pueden procesar ChatAddonMessages. ¿Quieres habilitarlos de todos modos?"
