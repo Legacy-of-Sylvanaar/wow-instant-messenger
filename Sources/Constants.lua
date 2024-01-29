@@ -134,7 +134,7 @@ end
 function classes.GetMyColoredName()
      local name = _G.UnitName("player");
      local class, englishClass = _G.UnitClass("player");
-     local classColorTable = _G.RAID_CLASS_COLORS[englishClass];
+     local classColorTable = (_G.CUSTOM_CLASS_COLORS or _G.RAID_CLASS_COLORS)[englishClass];
      return string.format("\124cff%.2x%.2x%.2x", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255)..name.."\124r"
 end
 
@@ -144,7 +144,7 @@ function classes.GetColoredNameByChatEvent(event, arg1, arg2, arg3, arg4, arg5, 
 	    	 if type ~= "Player" then return arg2 end--Blizzard didn't return a valid guid, so abort class colors
           local localizedClass, englishClass, localizedRace, englishRace, sex = _G.GetPlayerInfoByGUID(arg12)
           if ( englishClass ) then
-               local classColorTable = _G.RAID_CLASS_COLORS[englishClass];
+               local classColorTable = (_G.CUSTOM_CLASS_COLORS or _G.RAID_CLASS_COLORS)[englishClass];
                if ( not classColorTable ) then
                     return arg2;
                end
