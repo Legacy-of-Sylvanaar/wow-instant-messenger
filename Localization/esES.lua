@@ -7,7 +7,7 @@ local translations = {
     ["WIM (WoW Instant Messenger)"] = "WIM (WoW Instant Messenger)",
     ["_Description"] = "WIM es un addon que aporta una sensación familiar a la comunicación a través del chat en The World of Warcraft. En esta pantalla podrá personalizar WIM para adaptarlo a sus necesidades.",
 
-    ["_DemoText"] = "Esta es una ventana de demostración y no es completamente funcional. Coloques esta ventana en el lugar donde deseas que aparezcan todas las demás ventanas. Cuando termines, puedes cerrar esta ventana y su configuración se guardará.",
+    ["_DemoText"] = "Esta es una ventana de demostración y no es completamente funcional. Coloca esta ventana en el lugar donde deseas que aparezcan todas las demás ventanas. Cuando termines, puedes cerrar esta ventana y su configuración se guardará.",
 
     ["_DateFormat"] = "%d/%m/%Y",
 
