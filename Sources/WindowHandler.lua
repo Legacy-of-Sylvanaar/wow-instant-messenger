@@ -1114,6 +1114,34 @@ local function instantiateWindow(obj)
 						end
 					end
         		end
+        		if( obj.location == "" ) then
+					local function eventHandlerWho(self, event, ...)
+						-- CODE NEVER REACHED :<<
+					    if event == "WHO_LIST_UPDATE" then
+					        local numResults = _G.C_FriendList.GetNumWhoResults()
+					        for i = 1, numResults do
+					            local info = _G.C_FriendList.GetWhoInfo(i)
+					            if( info.fullName == self.thUser ) then
+									_G.WhoCallback({
+										Name = info.fullName or "",
+										Online = true,
+										Guild = info.guild or "",
+										Class = info.classStr or "",
+										Level = info.level or "",
+										Race = info.raceStr or "",
+										Zone = info.area or "",
+									});
+					            end
+					        end
+					        self:UnregisterEvent("WHO_LIST_UPDATE")
+					    end
+					end
+					local wFrame = CreateFrame("Frame")
+					wFrame:RegisterEvent("WHO_LIST_UPDATE")
+				    wFrame:SetScript("OnEvent", eventHandlerWho)
+				    wFrame.thUser = self.theUser
+				    _G.C_FriendList.SendWho("n-"..self.theUser)
+				end
         end
     end
 
