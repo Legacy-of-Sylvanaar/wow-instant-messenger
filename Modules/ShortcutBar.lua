@@ -305,10 +305,10 @@ RegisterShortcut("location", L["Player Location"], {
 		OnClick = function(self, button)
 			libs.DropDownMenu.CloseDropDownMenus();
 			if(button == "LeftButton") then
-	      local currentSelf = self;
-	      self.parentWindow:SendWho(function()
-	        buttons[currentSelf.index].scripts.OnEnter(currentSelf);
-	        end)
+				local currentSelf = self;
+				self.parentWindow:SendWho(function()
+					buttons[currentSelf.index].scripts.OnEnter(currentSelf);
+					end)
 			else
 				WIM.MENU_ARMORY_USER = self.parentWindow.theUser;
 				WIM.MENU_ARMORY_REALM = env.realm;
