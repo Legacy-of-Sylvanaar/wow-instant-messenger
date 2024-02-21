@@ -305,7 +305,10 @@ RegisterShortcut("location", L["Player Location"], {
 		OnClick = function(self, button)
 			libs.DropDownMenu.CloseDropDownMenus();
 			if(button == "LeftButton") then
-				self.parentWindow:SendWho();
+	      local currentSelf = self;
+	      self.parentWindow:SendWho(function()
+	        buttons[currentSelf.index].scripts.OnEnter(currentSelf);
+	        end)
 			else
 				WIM.MENU_ARMORY_USER = self.parentWindow.theUser;
 				WIM.MENU_ARMORY_REALM = env.realm;
@@ -318,6 +321,7 @@ RegisterShortcut("location", L["Player Location"], {
 		end,
 		OnEnter = function(self)
 			local location = self.parentWindow.location ~= "" and self.parentWindow.location or L["Unknown"];
+			local guild = self.parentWindow.guild ~= "" and self.parentWindow.guild or L["Unknown"];
 			local tbl = self.parentWindow.w2w;
 			if(not tbl or not tbl.services) then
 				_G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT");

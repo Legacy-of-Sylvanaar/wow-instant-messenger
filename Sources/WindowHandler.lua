@@ -1012,7 +1012,7 @@ local function instantiateWindow(obj)
         end
     end
 
-    obj.SendWho = function(self)
+    obj.SendWho = function(self,wCallback)
         if(self.type ~= "whisper") then
                 return;
         end
@@ -1116,31 +1116,35 @@ local function instantiateWindow(obj)
         		end
         		if( obj.location == "" ) then
 					local function eventHandlerWho(self, event, ...)
-						-- CODE NEVER REACHED :<<
 					    if event == "WHO_LIST_UPDATE" then
-					        local numResults = _G.C_FriendList.GetNumWhoResults()
+					        local numResults = _G.C_FriendList.GetNumWhoResults();
 					        for i = 1, numResults do
-					            local info = _G.C_FriendList.GetWhoInfo(i)
+					            local info = _G.C_FriendList.GetWhoInfo(i);
 					            if( info.fullName == self.thUser ) then
-									_G.WhoCallback({
+									self.WCallback({
 										Name = info.fullName or "",
 										Online = true,
-										Guild = info.guild or "",
+										Guild = info.fullGuildName or "",
 										Class = info.classStr or "",
 										Level = info.level or "",
 										Race = info.raceStr or "",
 										Zone = info.area or "",
 									});
+						            if wCallback then
+						                wCallback();
+						            end
 					            end
 					        end
-					        self:UnregisterEvent("WHO_LIST_UPDATE")
+					        self:UnregisterEvent("WHO_LIST_UPDATE");
 					    end
 					end
-					local wFrame = CreateFrame("Frame")
-					wFrame:RegisterEvent("WHO_LIST_UPDATE")
-				    wFrame:SetScript("OnEvent", eventHandlerWho)
-				    wFrame.thUser = self.theUser
-				    _G.C_FriendList.SendWho("n-"..self.theUser)
+					_G.C_FriendList.SetWhoToUi(1);
+					local wFrame = CreateFrame("Frame");
+					wFrame:RegisterEvent("WHO_LIST_UPDATE");
+				    wFrame:SetScript("OnEvent", eventHandlerWho);
+				    wFrame.thUser = self.theUser;
+				    wFrame.WCallback = self.WhoCallback;
+				    _G.C_FriendList.SendWho("n-"..self.theUser);
 				end
         end
     end
