@@ -1133,12 +1133,15 @@ local function instantiateWindow(obj)
 						            if wCallback then
 						                wCallback();
 						            end
+						            _G.C_FriendList.SetWhoToUi(false);
+						            -- close who frame
+						            _G.FriendsFrameCloseButton:Click();
 					            end
 					        end
 					        self:UnregisterEvent("WHO_LIST_UPDATE");
 					    end
 					end
-					_G.C_FriendList.SetWhoToUi(1);
+					_G.C_FriendList.SetWhoToUi(true);
 					local wFrame = CreateFrame("Frame");
 					wFrame:RegisterEvent("WHO_LIST_UPDATE");
 				    wFrame:SetScript("OnEvent", eventHandlerWho);
