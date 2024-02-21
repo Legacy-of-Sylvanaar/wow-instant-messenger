@@ -33,11 +33,11 @@ armoryLinks = {
         url = "https://raider.io/characters/{eu/us}/{realm}/{user}"
     },
     {
-        title = "Warcraftlogs Retail",
+        title = "Warcraft Logs",
         url = "https://www.warcraftlogs.com/character/{eu/us}/{realm}/{user}"
     },
     {
-        title = "Warcraftlogs SoD",
+        title = "Warcraft Logs Vanilla",
         url = "https://vanilla.warcraftlogs.com/character/{eu/us}/{realm}/{user}"
     },
 };
