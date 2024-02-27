@@ -62,7 +62,7 @@ local translations = {
     ["Block"] = "Bloquear",
     ["Enable WIM"] = "Activar WIM",
 
-    ["Auto Close Friends after:"] = "Cerrar amigos automáticamente después de:",
+    ["Auto Close Friends after:"] = "Cerrar automáticamente amigos después de:",
     ["Auto Close Non-Friends after:"] = "Cerrar automáticamente no amigos después de:",
 
     ["Display"] = "Visualización",
