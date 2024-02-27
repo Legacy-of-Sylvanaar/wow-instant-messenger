@@ -60,9 +60,9 @@ local translations = {
     ["Right"] = "Derecha",
     ["Ignore"] = "Ignorar",
     ["Block"] = "Bloquear",
-    ["Enable WIM"] = "Habilitar WIM",
+    ["Enable WIM"] = "Activar WIM",
 
-    ["Auto Close Friends after:"] = "Cerrar amigos automáticamente después de:",
+    ["Auto Close Friends after:"] = "Cerrar automáticamente amigos después de:",
     ["Auto Close Non-Friends after:"] = "Cerrar automáticamente no amigos después de:",
 
     ["Display"] = "Visualización",
@@ -71,16 +71,16 @@ local translations = {
     ["System Messages"] = "Mensajes de Sistema",
     ["Error Messages"] = "Mensajes de Error",
     ["Web URLs"] = "URLs de Web",
-    ["Enable"] = "Habilitar",
-    ["Disable"] = "Deshabilitar",
+    ["Enable"] = "Activar",
+    ["Disable"] = "Desactivar",
     ["Enabled"] = "Activado",
     ["Disabled"] = "Desactivado",
     ["Display character information."] = "Mostrar información sobre personaje",
     ["Display time stamps"] = "Mostrar sellos de tiempo",
     ["This setting limits the\nwindow's minimum height."] = "Esta configuración limita\nla altura mínima de la ventana.",
     ["Requires /who querying."] = "Requiere consulta de /quien",
-    ["Enable window fading effects."] = "Habilitar efectos de desvanecimiento de ventana.",
-    ["Enable window animations."] = "Habilitar animaciones de ventana.",
+    ["Enable window fading effects."] = "Activar efectos de desvanecimiento de ventana.",
+    ["Enable window animations."] = "Activar animaciones de ventana.",
 
     ["Display minimap icon."] = "Mostrar icono de minimapa",
 
@@ -115,7 +115,7 @@ local translations = {
     ["Recent Activity"] = "Actividad Reciente",
     ["Keep windows on top of your UI."] = "Manten las ventanas encima de tu IU.",
 
-    ["Enable/Disable addon messages."] = "Habilitar / deshabilitar mensajes de addons.",
+    ["Enable/Disable addon messages."] = "Activar/Desactivar mensajes de addons.",
 
     -- Class Names --
     ["Druid"] = LOCALIZED_CLASS_NAMES_MALE.DRUID,
@@ -286,7 +286,7 @@ local translations = {
     ["Created By:"] = "Creado Por:",
     ["Special Thanks:"] = "Gracias Especial:",
     ["Welcome!"] = "¡Bienvenido!",
-    ["Enable WIM"] = "Habilitar WIM",
+    ["Enable WIM"] = "Activar WIM",
     ["Display Minimap Icon"] = "Mostrar icono de minimapa",
     ["<Right-Click> to show unread messages."] = "<Haz clic derecho> para mostrar mensajes no leídos",
     ["Display Tutorials"] = "Mostrar Tutoriales",
@@ -337,8 +337,8 @@ local translations = {
     ["Color: History Messages Sent"] = "Color: Historial Mensajes Enviados",
     ["Color: History Messages Received"] = "Color: Historial Mensajes Recibidos",
     ["Use colors suggested by skin."] = "Usar colores sugeridos por la skin.",
-    ["Enable window fading effects."] = "Habilitar efectos de desvanecimiento de ventana.",
-    ["Enable window animation effects."] = "Habilitar efectos de animación de ventana.",
+    ["Enable window fading effects."] = "Activar efectos de desvanecimiento de ventana.",
+    ["Enable window animation effects."] = "Activar efectos de animación de ventana.",
     ["Display item links when hovering over them."] = "Mostrar enlaces de elementos al pasar el cursor sobre ellos.",
     ["Fonts"] = "Fuentes",
     ["Configure the fonts used in WIM's message windows."] = "Configura las fuentes utilizadas en las ventanas de mensajes de WIM.",
@@ -361,14 +361,14 @@ local translations = {
     ["Block"] = "Bloquear",
     ["Filtering"] = "Filtro",
     ["Filtering allows you to control which messages are handled as well as how they are handled by WIM."] = "El filtro te permite controlar qué mensajes se manejan y cómo WIM los maneja.",
-    ["Enable Filtering"] = "Habilitar Filtro",
+    ["Enable Filtering"] = "Activar Filtro",
     ["Protected"] = "Protegido",
     ["Action:"] = "Acción:",
     ["Occurrences:"] = "Ocurrencias:",
     ["Delete Filter"] = "Eliminar Filtro",
     ["History"] = "Historial",
     ["WIM can store conversations to be viewed at a later time."] = "WIM puede archivar conversaciones para verlas más adelante.",
-    ["Enable History"] = "Habilitar Historial",
+    ["Enable History"] = "Activar Historial",
     ["Messages"] = "Mensajes",
     ["Preview history inside message windows."] = "Vista previa del historial dentro de las ventanas de mensajes.",
     ["Record Whispers"] = "Grabar Susurros",
@@ -382,7 +382,7 @@ local translations = {
     ["%d |1Week:Week;"] = "%d |1Semana:Semana;",
     ["Automatically delete old messages."] = "Eliminar automáticamente los mensajes antiguos.",
     ["WIM-2-WIM is a feature which allows users with WIM to interact in ways that normal whispering can not."] = "WIM-2-WIM es una característica que permite a los usuarios con WIM interactuar de formas que los susurros normales no pueden.",
-    ["Enable WIM-2-WIM"] = "Habilitar WIM-2-WIM",
+    ["Enable WIM-2-WIM"] = "Activar WIM-2-WIM",
     ["Privacy"] = "Privacidad",
     ["Restrict the data that is shared."] = "Restringir los datos que se comparten.",
     ["Allow others to see me typing."] = "Permitir que otros me vean escribiendo.",
@@ -476,7 +476,7 @@ local translations = {
     ["Emoticons"] = "Emoticones",
 
     --Expose.lua
-    ["Your conversations have been hidden in order to clear your screen while in combat. To disable this feature type"] = "Tus conversaciones se han ocultado para limpiar tu pantalla mientras estás en combate. Para deshabilitar esto escribe",
+    ["Your conversations have been hidden in order to clear your screen while in combat. To disable this feature type"] = "Tus conversaciones se han ocultado para limpiar tu pantalla mientras estás en combate. Para desactivar esto escribe",
     ["Expose"] = "Expose",
     ["Expose is a Mac OS X inspired feature which enables you to quickly clear your screen of windows and then restore them back to their original position."] = "Expose es una característica inspirada en Mac OS X que le permite borrar rápidamente la pantalla de ventanas y luego restaurarlas a su posición original.",
     ["Auto hide/restore windows during combat."] = "Ocultar/restaurar ventanas automáticamente durante el combate.",
@@ -509,15 +509,15 @@ local translations = {
     ["Do not play sounds for this channel."] = "No reproduzca sonidos para este canal.",
     ["No Sound"] = "Sin Sonido",
     ["Sensitivity"] = "Sensibilidad",
-    ["Enable WorldFrame Click Detection."] = "Habilitar Detección de Clic WorldFrame.",
-    ["The UI must be reloaded in order to disable this module fully. Reload UI now?"] = "La IU debe recargarse para deshabilitar este módulo por completo. ¿Recargar la IU ahora?",
+    ["Enable WorldFrame Click Detection."] = "Activar Detección de Clic WorldFrame.",
+    ["The UI must be reloaded in order to disable this module fully. Reload UI now?"] = "La IU debe recargarse para desactivar este módulo por completo. ¿Recargar la IU ahora?",
 
     --OffScreenTracker.lua
     ["WIM Window Off Screen"] = "Ventana WIM fuera de pantalla",
     ["Click to reposition."] = "Haz clic para reposicionar.",
 
     --Misc
-    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM ha detectado que estás jugando en un servidor privado. Algunos servidores no pueden procesar ChatAddonMessages. ¿Quieres habilitarlos de todos modos?"
+    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM ha detectado que estás jugando en un servidor privado. Algunos servidores no pueden procesar ChatAddonMessages. ¿Quieres activarlos de todos modos?"
 ,
 
 };
