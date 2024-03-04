@@ -1012,7 +1012,7 @@ local function instantiateWindow(obj)
         end
     end
 
-    obj.SendWho = function(self)
+    obj.SendWho = function(self,wCallback)
         if(self.type ~= "whisper") then
                 return;
         end
@@ -1114,6 +1114,41 @@ local function instantiateWindow(obj)
 						end
 					end
         		end
+        		if( obj.location == "" ) then
+					local function eventHandlerWho(self, event, ...)
+					    if event == "WHO_LIST_UPDATE" then
+					        local numResults = _G.C_FriendList.GetNumWhoResults();
+					        for i = 1, numResults do
+					            local info = _G.C_FriendList.GetWhoInfo(i);
+					            if( info.fullName == self.thUser ) then
+									self.WCallback({
+										Name = info.fullName or "",
+										Online = true,
+										Guild = info.fullGuildName or "",
+										Class = info.classStr or "",
+										Level = info.level or "",
+										Race = info.raceStr or "",
+										Zone = info.area or "",
+									});
+						            if wCallback then
+						                wCallback();
+						            end
+						            _G.C_FriendList.SetWhoToUi(false);
+						            -- close who frame
+						            _G.FriendsFrameCloseButton:Click();
+					            end
+					        end
+					        self:UnregisterEvent("WHO_LIST_UPDATE");
+					    end
+					end
+					_G.C_FriendList.SetWhoToUi(true);
+					local wFrame = CreateFrame("Frame");
+					wFrame:RegisterEvent("WHO_LIST_UPDATE");
+				    wFrame:SetScript("OnEvent", eventHandlerWho);
+				    wFrame.thUser = self.theUser;
+				    wFrame.WCallback = self.WhoCallback;
+				    _G.C_FriendList.SendWho("n-"..self.theUser);
+				end
         end
     end
 
