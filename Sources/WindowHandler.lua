@@ -1012,7 +1012,7 @@ local function instantiateWindow(obj)
         end
     end
 
-    obj.SendWho = function(self,wCallback)
+    obj.SendWho = function(self,wCallback, invokeFriendListWho)
         if(self.type ~= "whisper") then
                 return;
         end
@@ -1114,7 +1114,7 @@ local function instantiateWindow(obj)
 						end
 					end
         		end
-        		if( obj.location == "" ) then
+        		if( invokeFriendListWho ) then
 					local function eventHandlerWho(self, event, ...)
 					    if event == "WHO_LIST_UPDATE" then
 					        local numResults = _G.C_FriendList.GetNumWhoResults();

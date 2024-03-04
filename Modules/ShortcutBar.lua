@@ -308,7 +308,7 @@ RegisterShortcut("location", L["Player Location"], {
 				local currentSelf = self;
 				self.parentWindow:SendWho(function()
 					buttons[currentSelf.index].scripts.OnEnter(currentSelf);
-					end)
+					end, true)
 			else
 				WIM.MENU_ARMORY_USER = self.parentWindow.theUser;
 				WIM.MENU_ARMORY_REALM = env.realm;
