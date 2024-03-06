@@ -40,6 +40,10 @@ armoryLinks = {
         title = "Warcraft Logs Vanilla",
         url = "https://vanilla.warcraftlogs.com/character/{eu/us}/{realm}/{user}"
     },
+	{
+		title = "Warcraft Logs Season of Mastery",
+		url = "https://sod.warcraftlogs.com/character/{us/eu}/{realm}/{user}"
+	}
 };
 
 -- patterns created by Sylvanaar & used in Prat
