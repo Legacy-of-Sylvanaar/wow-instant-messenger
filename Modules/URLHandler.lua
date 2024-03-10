@@ -42,7 +42,7 @@ armoryLinks = {
     },
 	{
 		title = "Warcraft Logs Season of Mastery",
-		url = "https://sod.warcraftlogs.com/character/{us/eu}/{realm}/{user}"
+		url = "https://sod.warcraftlogs.com/character/{eu/us}/{realm}/{user}"
 	}
 };
 
