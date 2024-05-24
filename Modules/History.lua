@@ -120,6 +120,9 @@ local function createWidget()
     return button;
 end
 
+local function safeName(user)
+	return string.lower(user or "")
+end
 
 --BNet_GetValidatedCharacterName
 local function recordWhisper(inbound, ...)
@@ -128,7 +131,7 @@ local function recordWhisper(inbound, ...)
 	   	return
 	end
     local db = db.history.whispers;
-    local win = windows.active.whisper[from] or windows.active.chat[from] or windows.active.w2w[from];
+    local win = windows.active.whisper[safeName(from)] or windows.active.chat[from] or windows.active.w2w[safeName(from)];
     if (win and (lists.gm[from] or db.all or (db.friends and (lists.friends[from] or win.isBN)) or (db.guild and lists.guild[from]))) then
         win.widgets.history:SetHistory(true);
         --If realid/btag whisper, we save them under btag to avoid caching issues
