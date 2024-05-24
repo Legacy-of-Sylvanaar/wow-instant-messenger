@@ -91,9 +91,12 @@ local function CreateColorPicker(parent, title, dbTree, varName, valChanged)
             self.bg:SetVertexColor(_G.HIGHLIGHT_FONT_COLOR.r, _G.HIGHLIGHT_FONT_COLOR.g, _G.HIGHLIGHT_FONT_COLOR.b);
         end);
     frame.swatch:SetScript("OnClick", function(self, button)
-            _G.ColorPickerFrame.hasOpacity = false;
+			-- retail / classic compatibility
+			local colorPicker = _G.ColorPickerFrame.Content and _G.ColorPickerFrame.Content.ColorPicker or _G.ColorPickerFrame
+
+			_G.ColorPickerFrame.hasOpacity = false;
             _G.ColorPickerFrame.func = function()
-                    local r,g,b = _G.ColorPickerFrame:GetColorRGB();
+                    local r,g,b = colorPicker:GetColorRGB();
                     dbTree[varName].r = r;
                     dbTree[varName].g = g;
                     dbTree[varName].b = b;
@@ -101,8 +104,11 @@ local function CreateColorPicker(parent, title, dbTree, varName, valChanged)
                     self:Show();
                     options.frame:Enable();
                 end
+			_G.ColorPickerFrame.swatchFunc = _G.ColorPickerFrame.func
             _G.ColorPickerFrame.prev = {dbTree[varName].r, dbTree[varName].g, dbTree[varName].b};
-            _G.ColorPickerFrame:SetColorRGB(dbTree[varName].r, dbTree[varName].g, dbTree[varName].b);
+
+			colorPicker:SetColorRGB(dbTree[varName].r, dbTree[varName].g, dbTree[varName].b);
+
             _G.ColorPickerFrame.cancelFunc = function()
                     dbTree[varName].r = _G.ColorPickerFrame.prev[1];
                     dbTree[varName].g = _G.ColorPickerFrame.prev[2];
