@@ -8,6 +8,7 @@ local CreateFrame = CreateFrame;
 local date = date;
 local time = time;
 local select = select;
+local tonumber = tonumber;
 
 local DDM = WIM.libs.DropDownMenu;
 
@@ -771,7 +772,7 @@ local function createHistoryViewer()
                 for convo, tbl in pairs(history[realm][character]) do
                     for i=1, #tbl do
                         if(searchResult(tbl[i].msg, self:GetText())) then
-                            table.insert(win.SEARCHLIST, tbl[i]);
+                            table.insert(win.SEARCHLIST, copyTable(tbl[i], {seq = i}));
                         end
                     end
                 end
@@ -780,13 +781,16 @@ local function createHistoryViewer()
                     for convo, tbl in pairs(convos) do
                         for i=1, #tbl do
                             if(searchResult(tbl[i].msg, self:GetText())) then
-                                table.insert(win.SEARCHLIST, tbl[i]);
+                                table.insert(win.SEARCHLIST, copyTable(tbl[i], {seq = i}));
                             end
                         end
                     end
                 end
             end
             table.sort(win.SEARCHLIST, function(a, b)
+				if (a.seq and b.seq) then
+					return tonumber(a.time.."."..a.seq) < tonumber(b.time.."."..b.seq)
+				end
                 return a.time < b.time;
             end);
             if(#win.SEARCHLIST > 0) then
@@ -1063,7 +1067,7 @@ local function createHistoryViewer()
             local tbl = history[realm][character][win.CONVO];
             if tbl then
            	   for i=1, #tbl do
-            	    table.insert(win.CONVOLIST, tbl[i]);
+            	    table.insert(win.CONVOLIST, copyTable(tbl[i], {seq = i}));
            	   end
            	else
            		ShowHistoryViewer()
@@ -1072,12 +1076,15 @@ local function createHistoryViewer()
             for char, tbl in pairs(history[realm]) do
                 if(tbl[win.CONVO]) then
                     for i=1, #tbl[win.CONVO] do
-                        table.insert(win.CONVOLIST, tbl[win.CONVO][i]);
+                        table.insert(win.CONVOLIST, copyTable(tbl[win.CONVO][i], {seq = i}));
                     end
                 end
             end
         end
         table.sort(win.CONVOLIST, function(a, b)
+			if (a.seq and b.seq) then
+				return tonumber(a.time.."."..a.seq) < tonumber(b.time.."."..b.seq)
+			end
             return a.time < b.time;
         end);
     end
