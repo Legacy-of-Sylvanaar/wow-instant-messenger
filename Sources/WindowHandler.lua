@@ -934,10 +934,16 @@ local function instantiateWindow(obj)
 
     obj.AddEventMessage = function(self, r, g, b, event, ...)
         nextColor.r, nextColor.g, nextColor.b = r, g, b;
-	local str = applyMessageFormatting(self.widgets.chat_display, event, ...);
-	self:AddMessage(str, r, g, b);
-	self.msgWaiting = true;
-	self.lastActivity = _G.GetTime();
+
+		-- second pass of filters, mainly to allow questie to process links.
+		WIM.NEXT_CHAT_FILTER_FRAME = self.widgets.chat_display
+		local _, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15 = honorChatFrameEventFilter(event, ...)
+		local str = applyMessageFormatting(self.widgets.chat_display, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+		WIM.NEXT_CHAT_FILTER_FRAME = nil
+
+		self:AddMessage(str, r, g, b);
+		self.msgWaiting = true;
+		self.lastActivity = _G.GetTime();
         if(self.tabStrip) then
                 self.tabStrip:UpdateTabs();
         end
