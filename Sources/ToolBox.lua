@@ -1,5 +1,20 @@
 local WIM = WIM;
 
+--------------------------------------
+--     Compatibility Functions      --
+--------------------------------------
+
+function WIM.GetMouseTopFocus()
+	-- Interface 11.0+
+	if (GetMouseFoci) then
+		return GetMouseFoci[1]
+
+	-- Legacy method
+	else
+		return GetMouseFocus()
+	end
+end
+
 
 --------------------------------------
 --          Table Functions         --
