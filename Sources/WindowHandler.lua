@@ -923,10 +923,10 @@ local function instantiateWindow(obj)
 
     -- Addmessage functions
     obj.AddMessage = function(self, msg, ...)
-	msg = applyStringModifiers(msg, self.widgets.chat_display);
-	self.widgets.chat_display:AddMessage(msg, ...);
+		msg = applyStringModifiers(msg, self.widgets.chat_display);
+		self.widgets.chat_display:AddMessage(msg, ...);
         updateScrollBars(self);
-	CallModuleFunction("OnWindowMessageAdded", self, msg, ...);
+		CallModuleFunction("OnWindowMessageAdded", self, msg, ...);
     end
 
     obj.AddMessageRaw = function(self, msg, ...)
@@ -934,11 +934,51 @@ local function instantiateWindow(obj)
     end
 
     obj.AddEventMessage = function(self, r, g, b, event, ...)
-        nextColor.r, nextColor.g, nextColor.b = r, g, b;
+		local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
-		local str = applyMessageFormatting(self.widgets.chat_display, event, ...);
+		nextColor.r, nextColor.g, nextColor.b = r, g, b;
 
-		self:AddMessage(str, r, g, b);
+		local messageFormatter = function (msg)
+			return applyMessageFormatting(self.widgets.chat_display, event, msg or arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17);
+		end
+
+		local str = messageFormatter();
+
+		-- if censoring is supported by client
+		if (
+			_G.C_ChatInfo and
+			_G.C_ChatInfo.IsChatLineCensored and
+			_G.ChatHistory_GetAccessID and
+			_G.ChatHistory_GetAccessID and
+			_G.Chat_GetChatCategory
+		) then
+
+			local infoType = strsub(event, 10);
+			local chatGroup = _G.Chat_GetChatCategory(infoType);
+			local info = _G.ChatTypeInfo[infoType];
+
+			local chatTarget;
+			if chatType == 'CHANNEL' then
+				chatTarget = infoType .. arg8;
+			elseif chatType == 'WHISPER' then
+				chatTarget = arg2;
+			end
+
+			local isChatLineCensored = _G.C_ChatInfo.IsChatLineCensored(arg11);
+			local accessID = _G.ChatHistory_GetAccessID(chatGroup, chatTarget);
+			local typeID = _G.ChatHistory_GetAccessID(infoType, chatTarget, arg12 or arg13);
+
+			local eventArgs;
+			if isChatLineCensored then
+				eventArgs = packTable(...)
+			end
+
+			self:AddMessage(str, r, g, b, info.id, accessID, typeID, event, eventArgs, messageFormatter);
+		else
+			-- otherwise use old method
+			self:AddMessage(str, r, g, b);
+		end
+
 		self.msgWaiting = true;
 		self.lastActivity = _G.GetTime();
         if(self.tabStrip) then
@@ -1991,6 +2031,44 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 
 	if t == 'player' then
 		_G.ChatFrame_OnHyperlinkShow(_G.DEFAULT_CHAT_FRAME, link, text, button);
+		return;
+	end
+
+	if t == 'censoredmessage' then
+		local hyperlinkLineID = _G.tonumber(n);
+
+		-- Uncensor this line so that the original text can be retrieved from C_ChatInfo.GetChatLineText.
+		_G.C_ChatInfo.UncensorChatLine(hyperlinkLineID);
+
+		local function DoesMessageLineIDMatch(message, r, g, b, infoID, accessID, typeID, event, eventArgs, MessageFormatter, ...)
+			-- eventArgs only present if the line was censored.
+			local lineID = eventArgs and eventArgs[11];
+			return lineID == hyperlinkLineID;
+		end
+
+		local _event = nil;
+		local _eventArgs = nil;
+		local function SetMessage(message, r, g, b, infoID, accessID, typeID, event, eventArgs, MessageFormatter, ...)
+			local lineID = eventArgs[11];
+
+			-- Original text is routed through the tts system, which prepends the message with "<player whispers> text.
+			local text = _G.C_ChatInfo.GetChatLineText(lineID);
+
+			-- The displayed message
+			local formattedText = MessageFormatter(text);
+
+			-- Report hyperlink is appended to the display message.
+			local reportHyperlink = _G.CENSORED_MESSAGE_REPORT:format(lineID);
+			formattedText = formattedText..reportHyperlink;
+
+			_event = event;
+			_eventArgs = eventArgs;
+			_eventArgs[1] = text;
+			return formattedText, r, g, b, infoID, accessID, typeID, event, eventArgs, MessageFormatter, ...;
+		end
+
+		self:TransformMessages(DoesMessageLineIDMatch, SetMessage)
+
 		return;
 	end
 
