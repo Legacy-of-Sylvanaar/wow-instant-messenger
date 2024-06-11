@@ -453,6 +453,10 @@ function WIM:FRIENDLIST_UPDATE()
     dPrint("Friends list updated...");
 end
 
+local function safeName(user)
+	return string.lower(user or "")
+end
+
 function WIM:BN_FRIEND_LIST_SIZE_CHANGED()
     env.cache[env.realm][env.character].friendList = env.cache[env.realm][env.character].friendList or {};
     for key, d in pairs(env.cache[env.realm][env.character].friendList) do
@@ -464,8 +468,8 @@ function WIM:BN_FRIEND_LIST_SIZE_CHANGED()
 	    local id, name = GetBNGetFriendInfo(i);
 	    if(name) then
 		env.cache[env.realm][env.character].friendList[name] = 2; --[set place holder for quick lookup
-			if(windows.active.whisper[name]) then
-			    windows.active.whisper[name]:SendWho();
+			if(windows.active.whisper[safeName(name)]) then
+			    windows.active.whisper[safeName(name)]:SendWho();
 			end
 	    end
 	end
