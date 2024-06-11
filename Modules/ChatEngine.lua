@@ -328,7 +328,8 @@ function Guild:CHAT_MSG_GUILD(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -356,7 +357,7 @@ function Guild:CHAT_MSG_GUILD(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_GUILD", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_GUILD", ...);
 end
 
 
@@ -459,7 +460,8 @@ function Officer:CHAT_MSG_OFFICER(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -486,7 +488,7 @@ function Officer:CHAT_MSG_OFFICER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_OFFICER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_OFFICER", ...);
 end
 
 
@@ -585,7 +587,8 @@ function Party:CHAT_MSG_PARTY(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -612,7 +615,7 @@ function Party:CHAT_MSG_PARTY(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY", ...);
 end
 
 function Party:CHAT_MSG_PARTY_LEADER(...)
@@ -635,7 +638,8 @@ function Party:CHAT_MSG_PARTY_LEADER(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -662,7 +666,7 @@ function Party:CHAT_MSG_PARTY_LEADER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY_LEADER", ...);
 end
 
 
@@ -759,7 +763,8 @@ function Raid:CHAT_MSG_RAID(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -786,7 +791,7 @@ function Raid:CHAT_MSG_RAID(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID", ...);
 end
 
 function Raid:CHAT_MSG_RAID_LEADER(...)
@@ -809,7 +814,8 @@ function Raid:CHAT_MSG_RAID_LEADER(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -836,7 +842,7 @@ function Raid:CHAT_MSG_RAID_LEADER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_LEADER", ...);
 end
 
 function Raid:CHAT_MSG_RAID_WARNING(...)
@@ -973,7 +979,8 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -998,7 +1005,7 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT", ...);
 end
 
 function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
@@ -1021,7 +1028,8 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -1046,7 +1054,7 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT_LEADER", ...);
 end
 
 --------------------------------------
@@ -1119,7 +1127,8 @@ function Say:CHAT_MSG_SAY(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -1146,7 +1155,7 @@ function Say:CHAT_MSG_SAY(...)
     end
 
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_SAY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_SAY", ...);
    	end
 end
 
@@ -1170,7 +1179,8 @@ function Say:CHAT_MSG_EMOTE(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -1197,7 +1207,7 @@ function Say:CHAT_MSG_EMOTE(...)
     end
 
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_EMOTE", ...);
    	end
 end
 
@@ -1221,7 +1231,8 @@ function Say:CHAT_MSG_TEXT_EMOTE(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -1248,7 +1259,7 @@ function Say:CHAT_MSG_TEXT_EMOTE(...)
     end
 
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_TEXT_EMOTE", ...);
    	end
 end
 
@@ -1419,7 +1430,8 @@ function Channel:CHAT_MSG_CHANNEL(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -1455,7 +1467,7 @@ function Channel:CHAT_MSG_CHANNEL(...)
             end
         end
 
-        CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_CHANNEL", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+        CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_CHANNEL", ...);
     end
 end
 

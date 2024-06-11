@@ -418,7 +418,8 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -447,7 +448,7 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
         });
     end
 
-    CallModuleFunction("PostEvent_Whisper", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_Whisper", ...);
 end
 
 function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
@@ -470,7 +471,8 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -484,7 +486,7 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
-    CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_WhisperInform", ...);
     addToTableUnique(recentSent, arg1);
 	if(#recentSent > maxRecent) then
 		table.remove(recentSent, 1);
@@ -510,7 +512,8 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
@@ -525,7 +528,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
-    CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_WhisperInform", ...);
     addToTableUnique(recentSent, arg1);
 	if(#recentSent > maxRecent) then
 		table.remove(recentSent, 1);
@@ -551,7 +554,8 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
 				end
 				return true;
 			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+				local _;
+				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
 			end
 		end
 	end
