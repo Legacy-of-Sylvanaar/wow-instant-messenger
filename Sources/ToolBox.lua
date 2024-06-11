@@ -87,6 +87,16 @@ function WIM.isInTable(tbl, val)
         end
         return false;
 end
+
+function WIM.packTable (...)
+	local tbl = { ... };
+	table.n = select('#', ...);
+	return tbl;
+end
+
+function WIM.unpackTable (tbl)
+	return unpack(tbl, tbl.n);
+end
 ----------------------------------------------
 --              Text Formatting             --
 ----------------------------------------------
