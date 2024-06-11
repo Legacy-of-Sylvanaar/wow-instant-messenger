@@ -95,11 +95,15 @@ function Sounds:VARIABLES_LOADED()
     isGameSound = GetCVar("Sound_EnableAllSound") == "1" and true or false;
 end
 
+local function safeName(user)
+	return string.lower(user or "")
+end
+
 -- Sound events
 function Sounds:PostEvent_Whisper(...)
     if(db and db.sounds.whispers.msgin) then
         local msg, user = ...;
-        if(db.sounds.whispers.bnet and windows.active.whisper[user].isBN) then
+        if(db.sounds.whispers.bnet and windows.active.whisper[safeName(user)].isBN) then
             playSound(db.sounds.whispers.bnet_sml);
         elseif(db.sounds.whispers.friend and lists.friends[user]) then
             playSound(db.sounds.whispers.friend_sml);

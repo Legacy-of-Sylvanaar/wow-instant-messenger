@@ -462,7 +462,6 @@ local function createTabGroup()
     end
 
     tabStrip.SetSelectedName = function(self, win)
-        --local win = windows.active.whisper[winName] or windows.active.chat[winName] or windows.active.w2w[winName];
         if(win) then
             self.selected.name = win.theUser;
             self.selected.obj = win;
@@ -516,7 +515,6 @@ local function createTabGroup()
     end
 
     tabStrip.Detach = function(self, win)
-        --local win = windows.active.whisper[winName] or windows.active.chat[winName] or windows.active.w2w[winName];
         if(win) then
             local curIndex = getIndexFromTable(self.attached, win);
             if(curIndex and self.attached[curIndex]) then
@@ -551,7 +549,6 @@ local function createTabGroup()
     end
 
     tabStrip.Attach = function(self, win, jumpToTab)
-        --local win = windows.active.whisper[winName] or windows.active.chat[winName] or windows.active.w2w[winName];
         if(win) then
             --if already attached, detach then attach here.
             if(win.tabStrip) then
