@@ -90,7 +90,7 @@ end
 
 function WIM.packTable (...)
 	local tbl = { ... };
-	table.n = select('#', ...);
+	tbl.n = select('#', ...);
 	return tbl;
 end
 

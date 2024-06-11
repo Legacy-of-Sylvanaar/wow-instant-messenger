@@ -2061,9 +2061,7 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 			local reportHyperlink = _G.CENSORED_MESSAGE_REPORT:format(lineID);
 			formattedText = formattedText..reportHyperlink;
 
-			_event = event;
-			_eventArgs = eventArgs;
-			_eventArgs[1] = text;
+			eventArgs[1] = text
 			return formattedText, r, g, b, infoID, accessID, typeID, event, eventArgs, MessageFormatter, ...;
 		end
 
