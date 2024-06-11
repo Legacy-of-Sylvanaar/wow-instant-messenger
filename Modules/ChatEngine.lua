@@ -183,7 +183,7 @@ local function getChatWindow(ChatName, chatType)
             Windows[ChatName].CHAT_listFun = nil;
         end
 
-        return Windows[ChatName];
+        return Windows[ChatName], true;
     end
 end
 
@@ -237,19 +237,18 @@ RegisterWidgetTrigger("msg_box", "chat", "OnEnterPressed", function(self)
 -- create GuildChat Module
 local Guild = CreateModule("GuildChat");
 
--- This Module requires LibChatHandler-1.0
-_G.LibStub:GetLibrary("LibChatHandler-1.0"):Embed(Guild);
-
 function Guild:OnEnable()
     RegisterWidget("chat_info", createWidget_Chat);
-    self:RegisterChatEvent("CHAT_MSG_GUILD");
-    self:RegisterChatEvent("CHAT_MSG_GUILD_ACHIEVEMENT");
+
+    self:RegisterEvent("CHAT_MSG_GUILD");
+    self:RegisterEvent("CHAT_MSG_GUILD_ACHIEVEMENT");
     self:RegisterEvent("GUILD_ROSTER_UPDATE");
+
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
 end
 
 function Guild:OnDisable()
-    self:UnregisterChatEvent("CHAT_MSG_GUILD");
-    self:UnregisterChatEvent("CHAT_MSG_GUILD_ACHIEVEMENT");
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
 end
 
 function Guild:OnWindowDestroyed(win)
@@ -295,32 +294,58 @@ function Guild:GUILD_ROSTER_UPDATE()
     end
 end
 
-function Guild:CHAT_MSG_GUILD_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.guild.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+function Guild.ChatMessageEventFilter (frame, event, ...)
+	local ignore, block = (IgnoreOrBlockEvent or function () end)(event, ...)
+
+	if (not frame._isWIM and not ignore and not block) then
+		if(not db.chat.guild.neverSuppress and getRuleSet().supress) then
+			return true
+		end
+	elseif (frame._isWIM and ignore or block) then
+		return true
+	end
+
+	return false, ...
 end
 
 function Guild:CHAT_MSG_GUILD(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_GUILD", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.GUILD, "guild");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.GUILD, "guild");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_GUILD');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_GUILD', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["GUILD"] or _G.NORMAL_FONT_COLOR;
+
     self.guildWindow = win;
+
     if(not self.chatLoaded) then
         Guild:GUILD_ROSTER_UPDATE();
     end
+
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_GUILD", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-    if(arg2 ~= _G.UnitName("player")) then
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_GUILD", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+
+	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.guild.neverPop) then
             win:Pop("in");
@@ -330,7 +355,8 @@ function Guild:CHAT_MSG_GUILD(...)
             win:Pop("out");
         end
     end
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_GUILD", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_GUILD", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 
@@ -344,17 +370,17 @@ end
 -- create OfficerChat Module
 local Officer = CreateModule("OfficerChat");
 
--- This Module requires LibChatHandler-1.0
-_G.LibStub:GetLibrary("LibChatHandler-1.0"):Embed(Officer);
-
 function Officer:OnEnable()
     RegisterWidget("chat_info", createWidget_Chat);
-    self:RegisterChatEvent("CHAT_MSG_OFFICER");
+
+    self:RegisterEvent("CHAT_MSG_OFFICER");
     self:RegisterEvent("GUILD_ROSTER_UPDATE");
+
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
 end
 
 function Officer:OnDisable()
-    self:UnregisterChatEvent("CHAT_MSG_OFFICER");
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
 end
 
 function Officer:OnWindowShow(win)
@@ -399,32 +425,57 @@ function Officer:GUILD_ROSTER_UPDATE()
     end
 end
 
-function Officer:CHAT_MSG_OFFICER_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.officer.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+function Officer.ChatMessageEventFilter (frame, event, ...)
+	local ignore, block = (IgnoreOrBlockEvent or function () end)(event, ...)
+
+	if (not frame._isWIM and not ignore and not block) then
+		if(not db.chat.officer.neverSuppress and getRuleSet().supress) then
+			return true
+		end
+	elseif (frame._isWIM and ignore or block) then
+		return true
+	end
+
+	return false, ...
 end
 
 function Officer:CHAT_MSG_OFFICER(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_OFFICER", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.GUILD_RANK1_DESC, "officer");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.GUILD_RANK1_DESC, "officer");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_OFFICER');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_OFFICER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["OFFICER"] or _G.NORMAL_FONT_COLOR;
+
     Officer.officerWindow = win;
     if(not self.chatLoaded) then
         Officer:GUILD_ROSTER_UPDATE();
     end
-    self.chatLoaded = true;
+
+	self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_OFFICER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-    if(arg2 ~= _G.UnitName("player")) then
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_OFFICER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+
+	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.officer.neverPop) then
             win:Pop("in");
@@ -434,7 +485,8 @@ function Officer:CHAT_MSG_OFFICER(...)
             win:Pop("out");
         end
     end
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_OFFICER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_OFFICER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 
@@ -447,19 +499,20 @@ end
 -- create PartyChat Module
 local Party = CreateModule("PartyChat");
 
--- This Module requires LibChatHandler-1.0
-_G.LibStub:GetLibrary("LibChatHandler-1.0"):Embed(Party);
-
 function Party:OnEnable()
     RegisterWidget("chat_info", createWidget_Chat);
-    self:RegisterChatEvent("CHAT_MSG_PARTY");
-    self:RegisterChatEvent("CHAT_MSG_PARTY_LEADER");
+
+    self:RegisterEvent("CHAT_MSG_PARTY");
+    self:RegisterEvent("CHAT_MSG_PARTY_LEADER");
     self:RegisterEvent("GROUP_ROSTER_UPDATE");
+
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
 end
 
 function Party:OnDisable()
-    self:UnregisterChatEvent("CHAT_MSG_PARTY");
-    self:UnregisterChatEvent("CHAT_MSG_PARTY_LEADER");
+    _G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
 end
 
 function Party:OnWindowShow(win)
@@ -498,32 +551,57 @@ function Party:GROUP_ROSTER_UPDATE()
     end
 end
 
-function Party:CHAT_MSG_PARTY_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.party.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+function Party.ChatMessageEventFilter (frame, event, ...)
+	local ignore, block = (IgnoreOrBlockEvent or function () end)(event, ...)
+
+	if (not frame._isWIM and not ignore and not block) then
+		if(not db.chat.party.neverSuppress and getRuleSet().supress) then
+			return true
+		end
+	elseif (frame._isWIM and ignore or block) then
+		return true
+	end
+
+	return false, ...
 end
 
 function Party:CHAT_MSG_PARTY(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_PARTY", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.PARTY, "party");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.PARTY, "party");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_PARTY');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_PARTY', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["PARTY"] or _G.NORMAL_FONT_COLOR;
+
     Party.partyWindow = win;
     if(not self.chatLoaded) then
         Party:GROUP_ROSTER_UPDATE();
     end
+
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_PARTY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-    if(arg2 ~= _G.UnitName("player")) then
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_PARTY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+
+	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.party.neverPop) then
             win:Pop("in");
@@ -533,35 +611,47 @@ function Party:CHAT_MSG_PARTY(...)
             win:Pop("out");
         end
     end
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-end
 
-function Party:CHAT_MSG_PARTY_LEADER_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.party.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function Party:CHAT_MSG_PARTY_LEADER(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_PARTY_LEADER", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.PARTY, "party");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.PARTY, "party");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_PARTY_LEADER');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_PARTY_LEADER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["PARTY_LEADER"] or _G.NORMAL_FONT_COLOR;
-    self.partyWindow = win;
+
+    Party.partyWindow = win;
     if(not self.chatLoaded) then
         Party:GROUP_ROSTER_UPDATE();
     end
+
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_PARTY_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-    if(arg2 ~= _G.UnitName("player")) then
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_PARTY_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+
+	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.party.neverPop) then
             win:Pop("in");
@@ -571,7 +661,8 @@ function Party:CHAT_MSG_PARTY_LEADER(...)
             win:Pop("out");
         end
     end
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 
@@ -582,21 +673,23 @@ end
 -- create RaidChat Module
 local Raid = CreateModule("RaidChat");
 
--- This Module requires LibChatHandler-1.0
-_G.LibStub:GetLibrary("LibChatHandler-1.0"):Embed(Raid);
-
 function Raid:OnEnable()
     RegisterWidget("chat_info", createWidget_Chat);
-    self:RegisterChatEvent("CHAT_MSG_RAID");
-    self:RegisterChatEvent("CHAT_MSG_RAID_LEADER");
-    self:RegisterChatEvent("CHAT_MSG_RAID_WARNING");
+
+    self:RegisterEvent("CHAT_MSG_RAID");
+    self:RegisterEvent("CHAT_MSG_RAID_LEADER");
+    self:RegisterEvent("CHAT_MSG_RAID_WARNING");
     self:RegisterEvent("GROUP_ROSTER_UPDATE");
+
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
 end
 
 function Raid:OnDisable()
-    self:UnregisterChatEvent("CHAT_MSG_RAID");
-    self:UnregisterChatEvent("CHAT_MSG_RAID_LEADER");
-    self:UnregisterChatEvent("CHAT_MSG_RAID_WARNING");
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
 end
 
 function Raid:OnWindowShow(win)
@@ -632,32 +725,57 @@ function Raid:GROUP_ROSTER_UPDATE()
     end
 end
 
-function Raid:CHAT_MSG_RAID_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.raid.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+function Raid.ChatMessageEventFilter (frame, event, ...)
+	local ignore, block = (IgnoreOrBlockEvent or function () end)(event, ...)
+
+	if (not frame._isWIM and not ignore and not block) then
+		if(not db.chat.raid.neverSuppress and getRuleSet().supress) then
+			return true
+		end
+	elseif (frame._isWIM and ignore or block) then
+		return true
+	end
+
+	return false, ...
 end
 
 function Raid:CHAT_MSG_RAID(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_RAID", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.RAID, "raid");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.RAID, "raid");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_RAID');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_RAID', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["RAID"] or _G.NORMAL_FONT_COLOR;
+
     self.raidWindow = win;
     if(not self.chatLoaded) then
         Raid:GROUP_ROSTER_UPDATE();
     end
+
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-    if(arg2 ~= _G.UnitName("player")) then
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+
+	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.raid.neverPop) then
             win:Pop("in");
@@ -667,35 +785,47 @@ function Raid:CHAT_MSG_RAID(...)
             win:Pop("out");
         end
     end
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-end
 
-function Raid:CHAT_MSG_RAID_LEADER_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.raid.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function Raid:CHAT_MSG_RAID_LEADER(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_RAID_LEADER", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.RAID, "raid");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.RAID, "raid");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_RAID_LEADER');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_RAID_LEADER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["RAID_LEADER"] or _G.NORMAL_FONT_COLOR;
+
     self.raidWindow = win;
     if(not self.chatLoaded) then
         Raid:GROUP_ROSTER_UPDATE();
     end
+
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-    if(arg2 ~= _G.UnitName("player")) then
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+
+	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.raid.neverPop) then
             win:Pop("in");
@@ -705,35 +835,47 @@ function Raid:CHAT_MSG_RAID_LEADER(...)
             win:Pop("out");
         end
     end
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-end
 
-function Raid:CHAT_MSG_RAID_WARNING_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.raid.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function Raid:CHAT_MSG_RAID_WARNING(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_RAID_WARNING", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.RAID, "raid");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.RAID, "raid");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_RAID_WARNING');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_RAID_WARNING', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["RAID_WARNING"] or _G.NORMAL_FONT_COLOR;
+
     self.raidWindow = win;
     if(not self.chatLoaded) then
         Raid:GROUP_ROSTER_UPDATE();
     end
+
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID_WARNING", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-    if(arg2 ~= _G.UnitName("player")) then
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID_WARNING", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+
+	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.raid.neverPop) then
             win:Pop("in");
@@ -743,7 +885,8 @@ function Raid:CHAT_MSG_RAID_WARNING(...)
             win:Pop("out");
         end
     end
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_WARNING", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_WARNING", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 
@@ -754,18 +897,19 @@ end
 -- create RaidChat Module
 local Battleground = CreateModule("BattlegroundChat");
 
--- This Module requires LibChatHandler-1.0
-_G.LibStub:GetLibrary("LibChatHandler-1.0"):Embed(Battleground);
-
 function Battleground:OnEnable()
     RegisterWidget("chat_info", createWidget_Chat);
+
     self:RegisterChatEvent("CHAT_MSG_INSTANCE_CHAT");
     self:RegisterChatEvent("CHAT_MSG_INSTANCE_CHAT_LEADER");
+
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
 end
 
 function Battleground:OnDisable()
-    self:UnregisterChatEvent("CHAT_MSG_INSTANCE_CHAT");
-    self:UnregisterChatEvent("CHAT_MSG_INSTANCE_CHAT_LEADER");
+    _G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
 end
 
 function Battleground:OnWindowDestroyed(win)
@@ -795,30 +939,55 @@ function Battleground:OnWindowShow(win)
     end
 end
 
-function Battleground:CHAT_MSG_INSTANCE_CHAT_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.battleground.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+function Battleground.ChatMessageEventFilter (frame, event, ...)
+	local ignore, block = (IgnoreOrBlockEvent or function () end)(event, ...)
+
+	if (not frame._isWIM and not ignore and not block) then
+		if(not db.chat.battleground.neverSuppress and getRuleSet().supress) then
+			return true
+		end
+	elseif (frame._isWIM and ignore or block) then
+		return true
+	end
+
+	return false, ...
 end
 
 function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_INSTANCE_CHAT", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.INSTANCE_CHAT, "battleground");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.INSTANCE_CHAT, "battleground");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_INSTANCE_CHAT');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_INSTANCE_CHAT', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     win.widgets.chat_info:SetText(getBattlegroundCount());
+
     local color = _G.ChatTypeInfo["INSTANCE_CHAT"] or _G.NORMAL_FONT_COLOR;
-    self.battlegroundWindow = win;
+
+	self.battlegroundWindow = win;
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-    if(arg2 ~= _G.UnitName("player")) then
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+
+	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.battleground.neverPop) then
             win:Pop("in");
@@ -828,33 +997,45 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
             win:Pop("out");
         end
     end
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-end
 
-function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.battleground.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_INSTANCE_CHAT_LEADER", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.INSTANCE_CHAT, "battleground");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.INSTANCE_CHAT, "battleground");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_INSTANCE_CHAT_LEADER');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_INSTANCE_CHAT_LEADER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     win.widgets.chat_info:SetText(getBattlegroundCount());
+
     local color = _G.ChatTypeInfo["INSTANCE_CHAT_LEADER"] or _G.NORMAL_FONT_COLOR;
+
     self.battlegroundWindow = win;
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
-    if(arg2 ~= _G.UnitName("player")) then
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+
+	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.battleground.neverPop) then
             win:Pop("in");
@@ -864,7 +1045,8 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
             win:Pop("out");
         end
     end
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 --------------------------------------
@@ -874,20 +1056,22 @@ end
 -- create SayChat Module
 local Say = CreateModule("SayChat");
 
--- This Module requires LibChatHandler-1.0
-_G.LibStub:GetLibrary("LibChatHandler-1.0"):Embed(Say);
-
 function Say:OnEnable()
     RegisterWidget("chat_info", createWidget_Chat);
-	self:RegisterChatEvent("CHAT_MSG_SAY");
-	self:RegisterChatEvent("CHAT_MSG_EMOTE");
-	self:RegisterChatEvent("CHAT_MSG_TEXT_EMOTE");
+
+	self:RegisterEvent("CHAT_MSG_SAY");
+	self:RegisterEvent("CHAT_MSG_EMOTE");
+	self:RegisterEvent("CHAT_MSG_TEXT_EMOTE");
+
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
 end
 
 function Say:OnDisable()
-	self:UnregisterChatEvent("CHAT_MSG_SAY");
-	self:UnregisterChatEvent("CHAT_MSG_EMOTE");
-	self:UnregisterChatEvent("CHAT_MSG_TEXT_EMOTE");
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
 end
 
 function Say:OnWindowDestroyed(win)
@@ -901,31 +1085,55 @@ function Say:OnWindowDestroyed(win)
     end
 end
 
-function Say:CHAT_MSG_SAY_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.say.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
+function Say.ChatMessageEventFilter (frame, event, ...)
+	local ignore, block = (IgnoreOrBlockEvent or function () end)(event, ...)
+
+	if (not frame._isWIM and not ignore and not block) then
+		if(not db.chat.say.neverSuppress and getRuleSet().supress) then
+			return true
+		end
+	elseif (frame._isWIM and ignore or block) then
+		return true
+	end
+
+	return false, ...
 end
 
 function Say:CHAT_MSG_SAY(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_SAY", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.SAY, "say");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.SAY, "say");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_SAY');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_SAY', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["SAY"] or _G.NORMAL_FONT_COLOR;
+
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
     --Don't handle say messages during encounters, when boss mods are handling them
     local fightingBoss = _G.IsEncounterInProgress() or DBM and DBM:InCombat() or false
     if not fightingBoss then
-    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_SAY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_SAY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     end
+
     if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.say.neverPop) then
@@ -936,37 +1144,47 @@ function Say:CHAT_MSG_SAY(...)
             win:Pop("out");
         end
     end
+
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_SAY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_SAY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
    	end
 end
 
-function Say:CHAT_MSG_EMOTE_CONTROLLER(eventController, ...)
-    if(eventController.ignoredByWIM or not db.chat.say.showEmotes) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    if(not db.chat.say.neverSuppress and getRuleSet().supress) then
-        eventController:BlockFromChatFrame(self);
-    end
-end
-Say.CHAT_MSG_TEXT_EMOTE_CONTROLLER = Say.CHAT_MSG_EMOTE_CONTROLLER
-
 function Say:CHAT_MSG_EMOTE(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_EMOTE", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.SAY, "say");
-    local color = _G.ChatTypeInfo["EMOTE"] or _G.NORMAL_FONT_COLOR;
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.SAY, "say");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_EMOTE');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_EMOTE', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
+	local color = _G.ChatTypeInfo["EMOTE"] or _G.NORMAL_FONT_COLOR;
+
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
     --Don't handle say messages during encounters, when boss mods are handling them
     local fightingBoss = _G.IsEncounterInProgress() or DBM and DBM:InCombat() or false
     if not fightingBoss then
-    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     end
+
     if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.say.neverPop) then
@@ -977,26 +1195,47 @@ function Say:CHAT_MSG_EMOTE(...)
             win:Pop("out");
         end
     end
+
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
    	end
 end
 
 function Say:CHAT_MSG_TEXT_EMOTE(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_EMOTE", ...);
-    if(filter) then
-        return;
-    end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(_G.SAY, "say");
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(_G.SAY, "say");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_TEXT_EMOTE');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_TEXT_EMOTE', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["EMOTE"] or _G.NORMAL_FONT_COLOR;
+
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
     --Don't handle say messages during encounters, when boss mods are handling them
     local fightingBoss = _G.IsEncounterInProgress() or DBM and DBM:InCombat() or false
     if not fightingBoss then
-    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     end
+
     if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
         if(not db.chat.say.neverPop) then
@@ -1007,8 +1246,9 @@ function Say:CHAT_MSG_TEXT_EMOTE(...)
             win:Pop("out");
         end
     end
+
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
    	end
 end
 
@@ -1019,24 +1259,20 @@ end
 -- create ChannelChat Module
 local Channel = CreateModule("ChannelChat");
 
--- This Module requires LibChatHandler-1.0
-_G.LibStub:GetLibrary("LibChatHandler-1.0"):Embed(Channel);
-
 function Channel:OnEnable()
     RegisterWidget("chat_info", createWidget_Chat);
-    self:RegisterChatEvent("CHAT_MSG_CHANNEL");
-    self:RegisterChatEvent("CHAT_MSG_CHANNEL_JOIN");
-    self:RegisterChatEvent("CHAT_MSG_CHANNEL_LEAVE");
-    self:RegisterChatEvent("CHAT_MSG_CHANNEL_NOTICE");
-    self:RegisterChatEvent("CHAT_MSG_CHANNEL_NOTICE_USER");
+
+    self:RegisterEvent("CHAT_MSG_CHANNEL");
+    self:RegisterEvent("CHAT_MSG_CHANNEL_JOIN");
+    self:RegisterEvent("CHAT_MSG_CHANNEL_LEAVE");
+    self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE");
+    self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE_USER");
+
+	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
 end
 
 function Channel:OnDisable()
-    self:UnregisterChatEvent("CHAT_MSG_CHANNEL");
-    self:UnregisterChatEvent("CHAT_MSG_CHANNEL_JOIN");
-    self:UnregisterChatEvent("CHAT_MSG_CHANNEL_LEAVE");
-    self:UnregisterChatEvent("CHAT_MSG_CHANNEL_NOTICE");
-    self:UnregisterChatEvent("CHAT_MSG_CHANNEL_NOTICE_USER");
+	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
 end
 
 function Channel:OnWindowDestroyed(win)
@@ -1119,36 +1355,41 @@ function Channel:OnWindowShow(win)
 end
 
 -- manage suppression
-function Channel:CHAT_MSG_CHANNEL_CONTROLLER(eventController, arg1, arg2, arg3, ...)
-    if(eventController.ignoredByWIM) then
-        eventController:BlockFromDelegate(self);
-        return;
-    end
-    local arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...;
-    -- arg7 Generic Channels (1 for General, 2 for Trade, 22 for LocalDefense, 23 for WorldDefense and 26 for LFG)
+function Channel.ChatMessageEventFilter (frame, event, ...)
+	local ignore, block = (IgnoreOrBlockEvent or function () end)(event, ...)
+	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...
+
+	-- arg7 Generic Channels (1 for General, 2 for Trade, 22 for LocalDefense, 23 for WorldDefense and 26 for LFG)
     -- arg8 Channel Number
     -- arg9 Channel Name
-    local isWorld = arg7 and arg7 > 0;
-    local channelName = string.split("-", arg9:gsub(' ', ''));
-    local neverSuppress = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].neverSuppress;
-    --check options. do we want the specified channels.
-    if(isWorld and not db.chat.world.enabled) then
-        return;
-    elseif(not isWorld and not db.chat.custom.enabled) then
-        return;
-    elseif(not neverSuppress and getRuleSet().supress and db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].monitor) then
-        eventController:BlockFromChatFrame(self);
-    end
+
+	if (not frame._isWIM and not ignore and not block) then
+		local isWorld = arg7 and arg7 > 0;
+		local channelName = string.split("-", arg9:gsub(' ', ''));
+		local neverSuppress = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].neverSuppress;
+
+		--check options. do we want the specified channels.
+		if(isWorld and not db.chat.world.enabled) then
+			-- deliver normally
+		elseif(not isWorld and not db.chat.custom.enabled) then
+			-- deliver normally
+		elseif(not neverSuppress and getRuleSet().supress and db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].monitor) then
+			return true
+		end
+	elseif (frame._isWIM and ignore or block) then
+		return true
+	end
+
+	return false, ...
 end
 
 function Channel:CHAT_MSG_CHANNEL(...)
-    local filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = honorChatFrameEventFilter("CHAT_MSG_CHANNEL", ...);
-    if(filter) then
-        return;
-    end
-    -- arg7 Generic Channels (1 for General, 2 for Trade, 22 for LocalDefense, 23 for WorldDefense and 26 for LFG)
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	-- arg7 Generic Channels (1 for General, 2 for Trade, 22 for LocalDefense, 23 for WorldDefense and 26 for LFG)
     -- arg8 Channel Number
     -- arg9 Channel Name
+
     local isWorld = arg7 and arg7 > 0;
     local channelName = string.split("-", arg9:gsub(' ', ''));
 
@@ -1160,24 +1401,48 @@ function Channel:CHAT_MSG_CHANNEL(...)
     elseif(not db.chat[isWorld and "world" or "custom"].channelSettings[channelName] or not db.chat[isWorld and "world" or "custom"].channelSettings[channelName].monitor) then
 		return;
     end
-    arg2 = _G.Ambiguate(arg2, "none")
-    local win = getChatWindow(channelName, "channel");
+
+	arg2 = _G.Ambiguate(arg2, "none")
+
+	local win, isNew = getChatWindow(channelName, "channel");
+
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_CHANNEL');
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_CHANNEL', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+			if ( filter ) then
+				if (isNew) then
+					win:close();
+				end
+				return true;
+			elseif ( newarg1 ) then
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
     local color = _G.ChatTypeInfo["CHANNEL"..arg8] or _G.NORMAL_FONT_COLOR;
+
     if(arg7 == 1 or arg7 == 2 or arg7 == 22 or arg7 == 23 or arg7 == 26) then
         win.widgets.char_info:SetText(arg9);
         win.channelSpecial = _G.time();
     else
         win.widgets.char_info:SetText("");
     end
+
     win.channelNumber = arg8;
     win.channelIdentifier = arg4;
     if(win:IsVisible()) then
         win.widgets.chat_info:SetText(GetChannelCount(win.channelNumber));
     end
+
     self.chatLoaded = true;
     if(arg1 and _G.strlen(arg1) > 0) then
         arg3 = CleanLanguageArg(arg3);
-        win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_CHANNEL", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+        win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_CHANNEL", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
         local neverPop = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].neverPop;
         if(arg2 ~= _G.UnitName("player")) then
             win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -1189,7 +1454,8 @@ function Channel:CHAT_MSG_CHANNEL(...)
                 win:Pop("out");
             end
         end
-        CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_CHANNEL", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+
+        CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_CHANNEL", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     end
 end
 

@@ -911,6 +911,7 @@ local function instantiateWindow(obj)
     widgets.chat_display:EnableMouse(true);
     widgets.chat_display:EnableMouseWheel(1);
     widgets.chat_display.widgetName = "chat_display";
+	widgets.chat_display._isWIM = true; -- flag that this is a WIM frame.
 
     widgets.msg_box = CreateFrame("EditBox", fName.."MsgBox", obj);
     widgets.msg_box:SetAutoFocus(false);
@@ -934,12 +935,6 @@ local function instantiateWindow(obj)
 
     obj.AddEventMessage = function(self, r, g, b, event, ...)
         nextColor.r, nextColor.g, nextColor.b = r, g, b;
-
-		-- -- second pass of filters, mainly to allow questie to process links.
-		-- WIM.NEXT_CHAT_FILTER_FRAME = self.widgets.chat_display
-		-- local _, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15 = honorChatFrameEventFilter(event, ...)
-		-- local str = applyMessageFormatting(self.widgets.chat_display, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
-		-- WIM.NEXT_CHAT_FILTER_FRAME = nil
 
 		local str = applyMessageFormatting(self.widgets.chat_display, event, ...);
 
@@ -1341,6 +1336,11 @@ local function instantiateWindow(obj)
     obj.SafeGetBottom = function(self)
                 return self:GetBottom() - WindowParent:GetBottom();
     end
+
+	obj.close = function (self)
+		self.widgets.close.forceShift = true;
+		self.widgets.close:Click();
+	end
 
     -- enforce that all core widgets have parentWindow set.
 	for _, w in pairs(obj.widgets) do
