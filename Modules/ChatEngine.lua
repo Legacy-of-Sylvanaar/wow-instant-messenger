@@ -357,7 +357,7 @@ function Guild:CHAT_MSG_GUILD(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_GUILD", ...);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_GUILD", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 
@@ -488,7 +488,7 @@ function Officer:CHAT_MSG_OFFICER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_OFFICER", ...);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_OFFICER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 
@@ -615,7 +615,7 @@ function Party:CHAT_MSG_PARTY(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY", ...);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function Party:CHAT_MSG_PARTY_LEADER(...)
@@ -666,7 +666,7 @@ function Party:CHAT_MSG_PARTY_LEADER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY_LEADER", ...);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 
@@ -791,7 +791,7 @@ function Raid:CHAT_MSG_RAID(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID", ...);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function Raid:CHAT_MSG_RAID_LEADER(...)
@@ -842,7 +842,7 @@ function Raid:CHAT_MSG_RAID_LEADER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_LEADER", ...);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function Raid:CHAT_MSG_RAID_WARNING(...)
@@ -1005,7 +1005,7 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT", ...);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
@@ -1054,7 +1054,7 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT_LEADER", ...);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 --------------------------------------
@@ -1155,7 +1155,7 @@ function Say:CHAT_MSG_SAY(...)
     end
 
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_SAY", ...);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_SAY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
    	end
 end
 
@@ -1207,7 +1207,7 @@ function Say:CHAT_MSG_EMOTE(...)
     end
 
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_EMOTE", ...);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
    	end
 end
 
@@ -1259,7 +1259,7 @@ function Say:CHAT_MSG_TEXT_EMOTE(...)
     end
 
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_TEXT_EMOTE", ...);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
    	end
 end
 

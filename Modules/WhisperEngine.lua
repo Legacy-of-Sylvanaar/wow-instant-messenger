@@ -448,7 +448,7 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
         });
     end
 
-    CallModuleFunction("PostEvent_Whisper", ...);
+    CallModuleFunction("PostEvent_Whisper", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
@@ -486,7 +486,7 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
-    CallModuleFunction("PostEvent_WhisperInform", ...);
+    CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     addToTableUnique(recentSent, arg1);
 	if(#recentSent > maxRecent) then
 		table.remove(recentSent, 1);
@@ -528,7 +528,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
-    CallModuleFunction("PostEvent_WhisperInform", ...);
+    CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     addToTableUnique(recentSent, arg1);
 	if(#recentSent > maxRecent) then
 		table.remove(recentSent, 1);
@@ -568,7 +568,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
     _G.ChatEdit_SetLastTellTarget(arg2, "BN_WHISPER");
     win.online = true;
     updateMinimapAlerts();
-    CallModuleFunction("PostEvent_Whisper", ...);
+    CallModuleFunction("PostEvent_Whisper", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
 function WhisperEngine:CHAT_MSG_AFK(...)
