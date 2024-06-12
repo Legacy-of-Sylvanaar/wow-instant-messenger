@@ -496,7 +496,7 @@ end
 function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
-	local win, isNew = getWhisperWindowByUser(arg2, nil, arg13, true);
+	local win, isNew = getWhisperWindowByUser(arg2, true, arg13, true);
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
 
 	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_BN_WHISPER_INFORM');
@@ -538,7 +538,7 @@ end
 function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
-	local win, isNew = getWhisperWindowByUser(arg2, nil, arg13, true);
+	local win, isNew = getWhisperWindowByUser(arg2, true, arg13, true);
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
 
 	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_BN_WHISPER');
