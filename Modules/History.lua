@@ -145,7 +145,7 @@ function History:ReplaceCensoredMessage(lineID, msg)
 	if (lineID and msg and CensoredCache[lineID]) then
 		-- filter out report link
 		msg = msg:gsub('|Hreportcensoredmessage:[^|]+|h.-|h', '');
-		_G.test = msg;
+
 		if CensoredCache[lineID].msg ~= msg then
 			CensoredCache[lineID].msg = msg;
 			return true
