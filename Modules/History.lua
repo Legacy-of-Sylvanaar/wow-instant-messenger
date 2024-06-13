@@ -28,7 +28,7 @@ db_defaults.history = {
     whispers = {
         friends = true,
         guild = true,
-        all = false
+        all = true
     },
     chat = {
         preview = true,
