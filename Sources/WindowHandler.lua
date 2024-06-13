@@ -2061,6 +2061,11 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 			local reportHyperlink = _G.CENSORED_MESSAGE_REPORT:format(lineID);
 			formattedText = formattedText..reportHyperlink;
 
+			-- edit history entry.
+			if (modules.History and modules.History.ReplaceCensoredMessage) then
+				modules.History:ReplaceCensoredMessage(lineID, formattedText);
+			end
+
 			eventArgs[1] = text
 			return formattedText, r, g, b, infoID, accessID, typeID, event, eventArgs, MessageFormatter, ...;
 		end
