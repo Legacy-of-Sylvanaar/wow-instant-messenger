@@ -8,6 +8,8 @@ local CreateFrame = CreateFrame;
 local type = type;
 local tonumber = tonumber;
 local unpack = unpack;
+local time = time;
+local select = select;
 
 local DDM = WIM.libs.DropDownMenu;
 
@@ -94,18 +96,42 @@ local maxLevel = 80;
 
 local Filters = CreateModule("Filters", true);
 
--- This module requires LibChatHandler-1.0
-_G.LibStub:GetLibrary("LibChatHandler-1.0"):Embed(Filters);
+-- Whisper Filters
+function Filters:OnEnable()
+	-- filter out filters using Who lookups.
+	for i = #filters, 1, -1 do
+		if (filters[i].type == 3) then
+			table.remove(filters, i);
+		end
+	end
+end
+
+--Chat Filters
+local ChatFilters = CreateModule("ChatFilters");
+
+function ChatFilters:OnEnable()
+    -- filter out filters using Who lookups.
+    for i = #chatFilters, 1, -1 do
+        if (chatFilters[i].type == 3) then
+            table.remove(chatFilters, i);
+        end
+    end
+end
 
 -- filtering
 
-local userCache = {};
 local blockedEvents = {};
 
-local function logBlockedEvent(eventItem)
+local EVENT_CACHE_SECONDS = 10;
+local EVENT_CACHE_PRUNE_FREQUENCY = EVENT_CACHE_SECONDS / 4;
+local eventCache = {};
+local eventResultCache = {};
+local eventCacheLastRun = time();
+local whitelistedMessages = {};
+
+local function logBlockedEvent(event, ...)
     -- only blocked events whishing a notification will be logged.
-    local event = eventItem:GetEvent();
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = eventItem:GetArgs();
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...;
     if(event == "CHAT_MSG_WHISPER_INFORM") then
         arg2 = _G.UnitName("player");
     end
@@ -114,299 +140,134 @@ local function logBlockedEvent(eventItem)
         arg2 = _G.Ambiguate(arg2, "none")
         local msg = "|cffff7d0a"..L["WIM has blocked a message from %s."].." |r|cffff0000[|HWIMBLOCKED:"..arg11.."|h"..L["View Blocked Message"].."|h]|r"
         _G.DEFAULT_CHAT_FRAME:AddMessage(msg:gsub("%%s", "|r[|Hplayer:"..arg2.."|h"..arg2.."|h]|cffff7d0a"));
-        --_G.PlaySound("TellMessage");
     end
 end
 
+-- run filter against chat event using caching
+local function runFilter(filter, event, ...)
+	local message, from, _, _, _, _, _, _, _, _, messageId = ...
 
-local function checkClass(result, filter)
-    -- class check here
-    local triggerClass, classTag = true, "blank";
-    if(constants.classes[result.Class]) then
-        classTag = string.gsub(constants.classes[result.Class].tag, "F$", "");
-        if(not filter.classSpecific) then
-			triggerClass = true;
-        else
-			if(filter.classSpecific ~= classTag) then
-			    triggerClass = false;
-	    	end
-        end
-    end
-    return triggerClass;
+	-- prune cache
+	local now = time();
+	if (eventCacheLastRun + EVENT_CACHE_PRUNE_FREQUENCY) < now then
+		for key, val in pairs(eventCache) do
+			if (val + EVENT_CACHE_SECONDS) < now then
+				eventCache[key] = nil;
+				eventResultCache[key] = nil;
+			end
+		end
+		eventCacheLastRun = now;
+	end
+
+	-- if in cache, return cached result
+	if (messageId and eventCache[messageId]) then
+		local result = eventResultCache[messageId];
+
+		return result
+	else
+		local result;
+
+		from = _G.Ambiguate(from, "none");
+
+		-- pattern
+		if(filter.type == 1) then
+			local patterns = filter.pattern.."\n";
+			local start, stop, pattern = string.find(patterns, "([^\n]+)\n", 1);
+			while(pattern) do
+				pattern = string.trim(pattern);
+				if(pattern ~= "" and string.find(message, pattern)) then
+					filter.stats = filter.stats + 1;
+					result = filter.action;
+					break;
+				end
+				start, stop, pattern = string.find(patterns, "([^\n]+)\n", stop + 1);
+			end
+
+		-- user
+		elseif(filter.type == 2) then
+			if(filter.all or (filter.friend and (lists.friends[from] or _G.UnitName("player") == from)) or (filter.guild and (lists.guild[from] or _G.UnitName("player") == from)) or
+				(filter.party and (IsInParty(from) or _G.UnitName("player") == from)) or (filter.raid and (IsInRaid(from) or _G.UnitName("player") == from)) or
+				(filter.xrealm and string.find(from, "%-"))) then
+					filter.stats = filter.stats + 1;
+					result = filter.action;
+			end
+		end
+
+		-- cache result
+		if (messageId) then
+			eventCache[messageId] = now;
+			eventResultCache[messageId] = result;
+
+			if result == 3 and filter.notify then
+				logBlockedEvent(event, ...)
+			end
+		end
+
+		return result
+	end
 end
 
-local function cacheUser(result)
-    if(not userCache[result.Name]) then
-	userCache[result.Name] = {};
-    end
-    for key, val in pairs(result) do
-	userCache[result.Name][key] = val;
-    end
+function WIM.IgnoreOrBlockEvent(event, ...)
+	-- ignore non-chat events
+	if event:sub(0, 9) ~= 'CHAT_MSG_' then
+		return false, false
+	end
+
+	-- first check if message is whitelisted
+	local msgId = select(11, ...)
+	if (msgId and whitelistedMessages[msgId]) then
+		return false, false
+	end
+
+	local message, from = ...
+	from = _G.Ambiguate(from, "none")
+
+	local _filters, sent = {}, false;
+
+	-- whisper filters
+	if event:sub(0, 16) == 'CHAT_MSG_WHISPER' or event:sub(0,19) == 'CHAT_MSG_BN_WHISPER' then
+		if (not Filters.enabled) then
+			return false, false
+		end
+
+		_filters = filters;
+		sent = event == 'CHAT_MSG_WHISPER_INFORM' or event == 'CHAT_MSG_BN_WHISPER_INFORM';
+
+	-- chat filters
+	else
+		if (not ChatFilters.enabled) then
+			return false, false
+		end
+
+		_filters = chatFilters;
+		sent = from == _G.UnitName("player");
+	end
+
+	-- run through filters
+	for i=1, #_filters do
+		local filter = _filters[i];
+
+		if filter.enabled and (filter.received and not sent or filter.sent and sent) then
+			local result = runFilter(filter, event, ...);
+			if result then
+				-- allow
+				if (result == 1) then
+					return false, false
+
+				-- ignore
+				elseif result == 2 then
+					return true, false
+
+				-- block
+				elseif result == 3 then
+					return false, true
+				end
+			end
+		end
+	end
+
+	return false, false
 end
-
-local function whoCallback(result, eventItem, filter)
-    local arg1, name = eventItem:GetArgs();
-    if(result and result.Online and result.Name == name) then
-        cacheUser(result);
-        if(result.Level < filter.level and checkClass(result, filter)) then
-            if(filter.action == 1) then
-                dPrint("Filter->WhoCallBack: Allow()");
-                filter.stats = filter.stats + 1;
-                eventItem:Allow();
-                Filters:CHAT_MSG_WHISPER_CONTROLLER(eventItem, eventItem.continueFrom);
-            elseif(filter.action == 2) then
-                dPrint("Filter->WhoCallBack: Ignored()");
-                filter.stats = filter.stats + 1;
-                eventItem.ignoredByWIM = true;
-                eventItem:BlockFromDelegate(modules.WhisperEngine);
-                Filters:CHAT_MSG_WHISPER_CONTROLLER(eventItem, eventItem.continueFrom);
-            elseif(filter.action == 3) then
-                dPrint("Filter->WhoCallBack: Block()");
-                filter.stats = filter.stats + 1;
-                if(filter.notify) then
-                    logBlockedEvent(eventItem);
-                end
-                eventItem:Block();
-                eventItem:Release(Filters);
-            else
-                dPrint("Filter->WhoCallBack: Unknown Action...");
-                Filters:CHAT_MSG_WHISPER_CONTROLLER(eventItem, eventItem.continueFrom);
-            end
-        else
-            dPrint("Filter->WhoCallBack: Level above threshhold");
-            Filters:CHAT_MSG_WHISPER_CONTROLLER(eventItem, eventItem.continueFrom);
-        end
-    else
-        dPrint("Filter->WhoCallBack: Result failure");
-        Filters:CHAT_MSG_WHISPER_CONTROLLER(eventItem, eventItem.continueFrom);
-    end
-end
-
-local function processFilter(eventItem, filter)
-    local message, name = eventItem:GetArgs();
-    name = _G.Ambiguate(name, "none")
-    if(filter.type == 1) then
-        --message = string.trim(message);
-        local patterns = filter.pattern.."\n";
-        local start, stop, pattern = string.find(patterns, "([^\n]+)\n", 1);
-        while(pattern) do
-            pattern = string.trim(pattern);
-            if(pattern ~= "" and string.find(message, pattern)) then
-                filter.stats = filter.stats + 1;
-                return filter.action;
-            end
-            start, stop, pattern = string.find(patterns, "([^\n]+)\n", stop + 1);
-        end
-        return; -- no patterns matched.
-    elseif(filter.type == 2) then
-        if(filter.all or (filter.friend and (lists.friends[name] or _G.UnitName("player") == name)) or (filter.guild and (lists.guild[name] or _G.UnitName("player") == name)) or
-            (filter.party and (IsInParty(name) or _G.UnitName("player") == name)) or (filter.raid and (IsInRaid(name) or _G.UnitName("player") == name)) or
-            (filter.xrealm and string.find(name, "%-"))) then
-                filter.stats = filter.stats + 1;
-                return filter.action;
-        end
-	--[[elseif(filter.type == 3) then--Without SendWho, this filter type not possible
-        -- do not do look up if user has window opened already. Defeats the purpose.
-        if(not windows.active.whisper[name] and not userCache[name] and _G.UnitName("player") ~= name) then
-            dPrint("Running WhoLookUp on: "..name);
-            local result = libs.WhoLib:UserInfo(name,
-    	    {
-    		queue = libs.WhoLib.WHOLIB_QUEUE_QUIET,
-    		timeout = 60,
-    		--flags = libs.WhoLib.WHOLIB_FLAG_ALWAYS_CALLBACK,
-    		callback = function(result)
-                    whoCallback(result, eventItem, filter);
-                end
-    	    });
-            if(result) then
-                whoCallback(result, eventItem, filter);
-            else
-                eventItem:Suspend(Filters);
-            end
-            return 0;
-        elseif(windows.active.whisper[name]) then
-            return;
-        elseif(userCache[name]) then
-            if(userCache[name].Level < filter.level and checkClass(userCache[name], filter)) then
-                return filter.action;
-            else
-                return;
-            end
-        else
-            return;
-        end--]]
-    else
-        return; -- not a valid filter, return nil.
-    end
-end
-
-function Filters:CHAT_MSG_WHISPER_CONTROLLER(eventItem, startFrom)
-    if(not db or not db.enabled) then
-        return;
-    end
-    startFrom = type(startFrom) == "number" and startFrom or 1;
-    for i=startFrom, #filters do
-        if(filters[i].received and filters[i].enabled) then
-            eventItem.continueFrom = startFrom + 1;
-            local result = processFilter(eventItem, filters[i]);
-            if(result == 0) then
-                -- event suspended... will resume later.
-                eventItem.suspendedByWIM_Filter = true;
-                return;
-            elseif(result == 1) then
-                break;
-            elseif(result == 2) then
-                eventItem.ignoredByWIM = true;
-                eventItem:BlockFromDelegate(modules.WhisperEngine);
-                break;
-            elseif(result == 3) then
-                if(filters[i].notify) then
-                    logBlockedEvent(eventItem);
-                end
-                eventItem:Block();
-                break;
-            end
-        end
-    end
-    if(eventItem.suspendedByWIM_Filter) then
-        eventItem.suspendedByWIM_Filter = nil;
-        eventItem:Release(Filters);
-    end
-    if(options.frame and options.frame.filterList) then
-        options.frame.filterList:Hide();
-        options.frame.filterList:Show();
-    end
-end
-
-function Filters:CHAT_MSG_WHISPER_INFORM_CONTROLLER(eventItem, startFrom)
-    if(not db or not db.enabled) then
-        return;
-    end
-    startFrom = type(startFrom) == "number" and startFrom or 1;
-    for i=startFrom, #filters do
-        if(filters[i].sent and filters[i].type == 1 and filters[i].enabled) then
-            local result = processFilter(eventItem, filters[i]);
-            if(result == 0) then
-                -- event suspended... will resume later.
-                break;
-            elseif(result == 1) then
-                break;
-            elseif(result == 2) then
-                eventItem.ignoredByWIM = true;
-                eventItem:BlockFromDelegate(modules.WhisperEngine);
-                break;
-            elseif(result == 3) then
-                if(filters[i].notify) then
-                    logBlockedEvent(eventItem);
-                end
-                eventItem:Block();
-                break;
-            end
-        end
-    end
-    if(eventItem.suspendedByWIM_Filter) then
-        eventItem.suspendedByWIM_Filter = false;
-        eventItem:Release(Filters);
-    end
-    if(options.frame and options.frame.filterList) then
-        options.frame.filterList:Hide();
-        options.frame.filterList:Show();
-    end
-end
-
-function Filters:OnEnable()
-    if(db.enabled) then
-        Filters:RegisterChatEvent("CHAT_MSG_WHISPER", 1);
-        Filters:RegisterChatEvent("CHAT_MSG_WHISPER_INFORM", 1);
-    end
-end
-
-function Filters:OnDisable()
-    Filters:UnregisterChatEvent("CHAT_MSG_WHISPER");
-    Filters:UnregisterChatEvent("CHAT_MSG_WHISPER_INFORM");
-end
-
-
---Chat Filters
-local ChatFilters = CreateModule("ChatFilters");
-
--- This module requires LibChatHandler-1.0
-_G.LibStub:GetLibrary("LibChatHandler-1.0"):Embed(ChatFilters);
-
-function ChatFilters:OnEnable()
-    -- filter out filters using Who lookups.
-    for i = #filters, 1, -1 do
-        if (filters[i].type == 3) then
-            table.remove(filters, i);
-        end
-    end
-
-    if(db.enabled) then
-        ChatFilters:RegisterChatEvent("CHAT_MSG_GUILD", 1);
-        ChatFilters:RegisterChatEvent("CHAT_MSG_OFFICER", 1);
-        ChatFilters:RegisterChatEvent("CHAT_MSG_PARTY", 1);
-        ChatFilters:RegisterChatEvent("CHAT_MSG_RAID", 1);
-        ChatFilters:RegisterChatEvent("CHAT_MSG_RAID_LEADER", 1);
-        ChatFilters:RegisterChatEvent("CHAT_MSG_SAY", 1);
-        ChatFilters:RegisterChatEvent("CHAT_MSG_CHANNEL", 1);
-        ChatFilters:RegisterChatEvent("CHAT_MSG_INSTANCE_CHAT", 1);
-        ChatFilters:RegisterChatEvent("CHAT_MSG_INSTANCE_CHAT_LEADER", 1);
-    end
-end
-
-function ChatFilters:OnDisable()
-    ChatFilters:UnregisterChatEvent("CHAT_MSG_GUILD");
-    ChatFilters:UnregisterChatEvent("CHAT_MSG_OFFICER");
-    ChatFilters:UnregisterChatEvent("CHAT_MSG_PARTY");
-    ChatFilters:UnregisterChatEvent("CHAT_MSG_RAID");
-    ChatFilters:UnregisterChatEvent("CHAT_MSG_RAID_LEADER");
-    ChatFilters:UnregisterChatEvent("CHAT_MSG_SAY");
-    ChatFilters:UnregisterChatEvent("CHAT_MSG_CHANNEL");
-    ChatFilters:UnregisterChatEvent("CHAT_MSG_INSTANCE_CHAT");
-    ChatFilters:UnregisterChatEvent("CHAT_MSG_INSTANCE_CHAT_LEADER");
-end
-
-local function chatController(self, eventItem, msg, from)
-    if(not db or not db.enabled) then
-        return;
-    end
-    from = _G.Ambiguate(from, "none")
-    local isSent = from == _G.UnitName("player");
-    for i=1, #chatFilters do
-        if(((isSent and chatFilters[i].sent) or (not isSent and chatFilters[i].received)) and chatFilters[i].enabled) then
-            local result = processFilter(eventItem, chatFilters[i]);
-            if(result == 1) then
-                break;
-            elseif(result == 2) then
-                eventItem.ignoredByWIM = true;
-                break;
-            elseif(result == 3) then
-                if(chatFilters[i].notify) then
-                    logBlockedEvent(eventItem);
-                end
-                eventItem:Block();
-                break;
-            end
-        end
-    end
-    if(options.frame and options.frame.chatFilterList) then
-        options.frame.chatFilterList:Hide();
-        options.frame.chatFilterList:Show();
-    end
-end
-
-
-ChatFilters.CHAT_MSG_GUILD_CONTROLLER = chatController;
-ChatFilters.CHAT_MSG_OFFICER_CONTROLLER = chatController;
-ChatFilters.CHAT_MSG_PARTY_CONTROLLER = chatController;
-ChatFilters.CHAT_MSG_RAID_CONTROLLER = chatController;
-ChatFilters.CHAT_MSG_RAID_LEADER_CONTROLLER = chatController;
-ChatFilters.CHAT_MSG_SAY_CONTROLLER = chatController;
-ChatFilters.CHAT_MSG_CHANNEL_CONTROLLER = chatController;
-ChatFilters.CHAT_MSG_INSTANCE_CHAT_CONTROLLER = chatController;
-ChatFilters.CHAT_MSG_INSTANCE_CHAT_LEADER_CONTROLLER = chatController;
-
-
 
 -- Globals
 function GetDefaultFilters()
@@ -883,12 +744,13 @@ WIM.RegisterItemRefHandler("WIMBLOCKED", function (link)
         local args = {"\009\002"..blockedEvents[msgId][2],
             blockedEvents[msgId][3], blockedEvents[msgId][4], blockedEvents[msgId][5], blockedEvents[msgId][6],
             blockedEvents[msgId][7], blockedEvents[msgId][8], blockedEvents[msgId][9], blockedEvents[msgId][10],
-            blockedEvents[msgId][11], blockedEvents[msgId][12]};
-        local win;
-        if(event:find("WHISPER_INFORM")) then
-            modules.WhisperEngine:CHAT_MSG_WHISPER_INFORM(_G.unpack(args));
-        elseif(event:find("WHISPER")) then
-            modules.WhisperEngine:CHAT_MSG_WHISPER(_G.unpack(args));
+            blockedEvents[msgId][11], blockedEvents[msgId][12], blockedEvents[msgId][13], blockedEvents[msgId][14]};
+
+		-- whitelist so message isn't blocked again.
+		whitelistedMessages[msgId] = true
+
+		if(event:find("WHISPER")) then
+			modules.WhisperEngine[event](modules.WhisperEngine, _G.unpack(args));
         elseif(event:find("RAID_LEADER")) then
             modules.RaidChat:CHAT_MSG_RAID_LEADER(_G.unpack(args));
         elseif(event:find("RAID")) then
@@ -899,6 +761,8 @@ WIM.RegisterItemRefHandler("WIMBLOCKED", function (link)
             modules.OfficerChat:CHAT_MSG_OFFICER(_G.unpack(args));
         elseif(event:find("PARTY")) then
             modules.PartyChat:CHAT_MSG_PARTY(_G.unpack(args));
+		elseif(event:find("PARTY_LEADER")) then
+            modules.PartyChat:CHAT_MSG_PARTY_LEADER(_G.unpack(args));
         elseif(event:find("SAY")) then
             modules.SayChat:CHAT_MSG_SAY(_G.unpack(args));
         elseif(event:find("CHANNEL")) then

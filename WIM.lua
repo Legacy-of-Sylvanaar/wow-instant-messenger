@@ -64,7 +64,6 @@ local Events = {};
 
 -- import libraries.
 libs.SML = _G.LibStub:GetLibrary("LibSharedMedia-3.0");
-libs.ChatHandler = _G.LibStub:GetLibrary("LibChatHandler-1.0");
 libs.DropDownMenu = _G.LibStub:GetLibrary("LibDropDownMenu");
 
 -- called when WIM is first loaded into memory but after variables are loaded.
@@ -348,25 +347,6 @@ end
 --          Event Handlers          --
 --------------------------------------
 
-function WIM.honorChatFrameEventFilter(event, ...)
-        local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15 = ...;
-        local chatFilters = _G.ChatFrame_GetMessageEventFilters(event);
-		local filter = false;
-        if chatFilters then
-            local narg1, narg2, narg3, narg4, narg5, narg6, narg7, narg8, narg9, narg10, narg11, narg12, narg13, narg14, narg15;
-            for _, filterFunc in next, chatFilters do
-				filter, narg1, narg2, narg3, narg4, narg5, narg6, narg7, narg8, narg9, narg10, narg11, narg12, narg13, narg14, narg15 = filterFunc(WIM.NEXT_CHAT_FILTER_FRAME or workerFrame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
-                if filter then
-                    return true, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15;
-                elseif(narg1) then
-                    arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15 = narg1, narg2, narg3, narg4, narg5, narg6, narg7, narg8, narg9, narg10, narg11, narg12, narg13, narg14, narg15;
-                end
-            end
-        end
-        return filter, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15;
-end
-
-
 function WIM:EventHandler(event,...)
         -- depricated - here for compatibility only
 end
@@ -453,6 +433,10 @@ function WIM:FRIENDLIST_UPDATE()
     dPrint("Friends list updated...");
 end
 
+local function safeName(user)
+	return string.lower(user or "")
+end
+
 function WIM:BN_FRIEND_LIST_SIZE_CHANGED()
     env.cache[env.realm][env.character].friendList = env.cache[env.realm][env.character].friendList or {};
     for key, d in pairs(env.cache[env.realm][env.character].friendList) do
@@ -464,8 +448,8 @@ function WIM:BN_FRIEND_LIST_SIZE_CHANGED()
 	    local id, name = GetBNGetFriendInfo(i);
 	    if(name) then
 		env.cache[env.realm][env.character].friendList[name] = 2; --[set place holder for quick lookup
-			if(windows.active.whisper[name]) then
-			    windows.active.whisper[name]:SendWho();
+			if(windows.active.whisper[safeName(name)]) then
+			    windows.active.whisper[safeName(name)]:SendWho();
 			end
 	    end
 	end

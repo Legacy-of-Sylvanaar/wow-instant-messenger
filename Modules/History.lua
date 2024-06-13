@@ -28,7 +28,7 @@ db_defaults.history = {
     whispers = {
         friends = true,
         guild = true,
-        all = false
+        all = true
     },
     chat = {
         preview = true,
@@ -60,6 +60,7 @@ local tmpTable = {};
 local ViewTypes = {};
 
 local ChannelCache = {};
+local CensoredCache = {};
 
 local function clearTmpTable()
     for key, _ in pairs(tmpTable) do
@@ -121,6 +122,39 @@ local function createWidget()
     return button;
 end
 
+-- store a cached entry if a record is cached. This will be used by History:ReplaceCensoredMessage if original message is shown.
+local function cacheIfCensored (record, ...)
+	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	local lineID = arg11;
+
+	local isChatLineCensored = _G.C_ChatInfo and _G.C_ChatInfo.IsChatLineCensored and _G.C_ChatInfo.IsChatLineCensored(lineID);
+
+	if (isChatLineCensored) then
+		CensoredCache[lineID] = record;
+		record.censored = true;
+
+		-- filter out Show Message link
+		record.msg = record.msg:gsub('|Hcensoredmessage:[^|]+|h.-|h', '');
+	end
+
+	return record;
+end
+
+-- replace a history record by lineID. Returns true is msg is updated.
+function History:ReplaceCensoredMessage(lineID, msg)
+	if (lineID and msg and CensoredCache[lineID]) then
+		-- filter out report link
+		msg = msg:gsub('|Hreportcensoredmessage:[^|]+|h.-|h', '');
+		_G.test = msg;
+		if CensoredCache[lineID].msg ~= msg then
+			CensoredCache[lineID].msg = msg;
+			return true
+		end
+	end
+
+	return false;
+end
+
 local function safeName(user)
 	return string.lower(user or "")
 end
@@ -144,14 +178,14 @@ local function recordWhisper(inbound, ...)
 		end
         local history = getPlayerHistoryTable(from);
         history.info.gm = lists.gm[from];
-        table.insert(history, {
+        table.insert(history, cacheIfCensored({
             convo = from,
             type = 1, -- whisper
             inbound = inbound or false,
             from = inbound and from or env.character,
             msg = msg,
             time = _G.time();
-        });
+        }, ...));
         if(WIM.db.history.maxPer) then
             while(WIM.db.history.maxCount < #history) do
                 table.remove(history, 1);
@@ -305,14 +339,14 @@ local function recordChannelChat(recordAs, ChannelType, ...)
         local history = getPlayerHistoryTable(recordAs);
         history.info.chat = true;
         history.info.channelNumber = channelNumber;
-        table.insert(history, {
+        table.insert(history, cacheIfCensored({
             event = ChannelType,
             channelName = recordAs,
             type = 2, -- chat
             from = from,
             msg = msg,
             time = _G.time();
-        });
+        }, ...));
         if(WIM.db.history.chat.maxPer) then
             while(WIM.db.history.chat.maxCount < #history) do
                 table.remove(history, 1);
