@@ -906,8 +906,8 @@ local Battleground = CreateModule("BattlegroundChat");
 function Battleground:OnEnable()
     RegisterWidget("chat_info", createWidget_Chat);
 
-    self:RegisterChatEvent("CHAT_MSG_INSTANCE_CHAT");
-    self:RegisterChatEvent("CHAT_MSG_INSTANCE_CHAT_LEADER");
+    self:RegisterEvent("CHAT_MSG_INSTANCE_CHAT");
+    self:RegisterEvent("CHAT_MSG_INSTANCE_CHAT_LEADER");
 
 	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
 	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
