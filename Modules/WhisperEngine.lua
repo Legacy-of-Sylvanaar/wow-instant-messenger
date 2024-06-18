@@ -28,6 +28,7 @@ local math = math;
 local time = time;
 local playerRealm = GetRealmName();
 local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
+local FlashClientIcon = FlashClientIcon;
 
 -- set name space
 setfenv(1, WIM);
@@ -448,6 +449,11 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
         });
     end
 
+	-- emulate blizzards flash client icon behavior.
+	if FlashClientIcon then
+		FlashClientIcon();
+	end
+
     CallModuleFunction("PostEvent_Whisper", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
 end
 
@@ -528,8 +534,15 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
+
+	-- emulate blizzards flash client icon behavior.
+	if FlashClientIcon then
+		FlashClientIcon();
+	end
+
     CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-    addToTableUnique(recentSent, arg1);
+
+	addToTableUnique(recentSent, arg1);
 	if(#recentSent > maxRecent) then
 		table.remove(recentSent, 1);
 	end
