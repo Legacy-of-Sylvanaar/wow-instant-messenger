@@ -7,7 +7,7 @@ local WIM = WIM;
 function WIM.GetMouseTopFocus()
 	-- Interface 11.0+
 	if (GetMouseFoci) then
-		return GetMouseFoci[1]
+		return GetMouseFoci()[1]
 
 	-- Legacy method
 	else
