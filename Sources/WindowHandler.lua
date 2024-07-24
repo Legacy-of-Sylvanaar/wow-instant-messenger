@@ -1508,7 +1508,7 @@ local function createWindow(userName, wtype)
         obj.type = wtype;
         loadWindowDefaults(obj); -- clear contents of window and revert back to it's initial state.
         dPrint("Window recycled '"..obj:GetName().."'");
-	CallModuleFunction("OnWindowCreated", obj);
+		CallModuleFunction("OnWindowCreated", obj);
         table.insert(windowsByAge, obj);
         table.sort(windowsByAge, function(a, b) return a.age > b.age; end);
         return obj;

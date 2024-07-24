@@ -29,7 +29,8 @@ local Chats = windows.active.chat;
 -- get first tab group found which contains a friend.
 local function getFriendGroup()
     local ungrouped = nil;
-    for user, win in pairs(Whispers) do
+    for _user, win in pairs(Whispers) do
+		local user = win.theUser;
         if(lists.friends[user]) then
             if(win.tabStrip) then
                 return win.tabStrip;
@@ -50,7 +51,8 @@ end
 -- get first tab group found which contains a guild member.
 local function getGuildGroup()
     local ungrouped = nil;
-    for user, win in pairs(Whispers) do
+    for _user, win in pairs(Whispers) do
+		local user = win.theUser;
         if(lists.guild[user]) then
             if(win.tabStrip) then
                 return win.tabStrip;
@@ -71,7 +73,8 @@ end
 -- get first whisper related tab group found
 local function getAvailableWhisperGroup()
     local ungrouped = nil;
-    for user, win in pairs(Whispers) do
+    for _user, win in pairs(Whispers) do
+		local user = win.theUser;
         if(not (db.tabs.whispers.friends and lists.friends[user]) and not (db.tabs.whispers.guild and lists.guild[user]) ) then
             if(win.tabStrip) then
                 return win.tabStrip;
