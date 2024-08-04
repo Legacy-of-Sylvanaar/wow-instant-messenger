@@ -276,32 +276,33 @@ local function createMinimapIcon()
     end
     icon.OnDragStart = function(self)
         self.dragging = true;
-	self:LockHighlight();
-	self.icon:SetTexCoord(0, 1, 0, 1);
+		self:LockHighlight();
+		self.icon:SetTexCoord(0, 1, 0, 1);
         self:SetScript('OnUpdate', self.OnUpdate);
-	_G.GameTooltip:Hide();
+		_G.GameTooltip:Hide();
     end
     icon.OnDragStop = function(self)
         self.dragging = nil;
-	self:SetScript('OnUpdate', nil);
-	self.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95);
-	self:UnlockHighlight();
+		self:SetScript('OnUpdate', nil);
+		self.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95);
+		self:UnlockHighlight();
         self.registeredForDrag = nil;
         self:RegisterForDrag();
     end
     icon.OnUpdate = function(self)
         local mx, my = _G.Minimap:GetCenter();
-	local px, py = _G.GetCursorPosition();
-	local scale = _G.Minimap:GetEffectiveScale();
+		local px, py = _G.GetCursorPosition();
 
         if(db.minimap.free) then
+			local scale = _G.UIParent:GetEffectiveScale();
             local free = db.minimap.free_position;
             free.point, free.x, free.y = getFreePoints(px, py);
         else
+			local scale = _G.Minimap:GetEffectiveScale();
             px, py = px / scale, py / scale;
             db.minimap.position = math.deg(math.atan2(py - my, px - mx)) % 360;
         end
-	self:UpdatePosition();
+		self:UpdatePosition();
     end
     icon.UpdatePosition = function(self)
         if(db.minimap.free) then
@@ -380,6 +381,8 @@ function MinimapIcon:OnDisableWIM()
 end
 
 function MinimapIcon:OnEnable()
+	MinimapIcon:RegisterEvent("PLAYER_LOGIN");
+
     if(icon) then
         -- display icon
         icon:Show();
@@ -389,8 +392,10 @@ function MinimapIcon:OnEnable()
         icon = createMinimapIcon();
         MinimapIcon:OnEnable();
     end
+
     WIM.MinimapIcon = icon;
-    if(WIM.db.enabled) then
+
+	if(WIM.db.enabled) then
         MinimapIcon:OnEnableWIM();
     else
         MinimapIcon:OnDisableWIM();
@@ -405,6 +410,12 @@ function MinimapIcon:OnDisable()
         icon:Hide();
     end
     WIM.MinimapIcon = nil;
+end
+
+function MinimapIcon:PLAYER_LOGIN()
+	if (icon) then
+		icon:UpdatePosition();
+	end
 end
 
 
