@@ -2,6 +2,7 @@
 
 ## X-Curse-Project-ID: 7474
 ## X-WoWI-ID: 5342
+## X-Wago-ID: aNDmqo6o
 
 ## Title: WIM
 ## Author: Pazza (Bronzebeard), (Updated by Sylvanaar/MysticalOS/Humfras)
