@@ -409,7 +409,7 @@ local translations = {
 
     -- TabManagement.lua --
     ["Tab Management"] = "Gestión de pestañas",
-    ["Automatically manage your open windows and place them into appropriate tab groups."] = "Administrar automáticamente tus ventanas abiertas y colóquelas en grupos de pestañas apropiados.",
+    ["Automatically manage your open windows and place them into appropriate tab groups."] = "Gestiona automáticamente tus ventanas abiertas y colóquelas en grupos de pestañas apropiados.",
     ["Automatically group whispers."] = "Agrupar automáticamente los susurros.",
     ["Automatically group chat windows."] = "Agrupar automáticamente las ventanas de chat.",
     ["Place friends in their own group."] = "Colocar amigos en su propio grupo.",
@@ -487,14 +487,14 @@ local translations = {
     ["Animation Direction:"] = "Dirección de animación",
 
     --ChatEngine.lua
-    ["WIM will manage this chat type within its own message windows."] = "WIM administrará este tipo de chat dentro de sus propias ventanas de mensajes.",
+    ["WIM will manage this chat type within its own message windows."] = "WIM gestionará este tipo de chat dentro de sus propias ventanas de mensajes.",
     ["Show Minimap Alerts"] = "Mostrar alertas de minimapa",
     ["Never pop-up on my screen."] = "Nunca aparecer en mi pantalla",
     ["Never suppress messages."] = "Nunca suprimir mensajes",
     ["Include emotes."] = "Incluir emociones",
     ["Have WIM monitor this channel."] = "Haz que WIM supervise este canal.",
     ["Never Pop"] = "Nunca aparecer",
-    ["Never have this window pop-up on my screen."] = "Nunca tenga esta ventana emergente en mi pantalla.",
+    ["Never have this window pop-up on my screen."] = "Nunca mostrar esta ventana emergente en mi pantalla.",
     ["Never Supress"] = "Nunca suprimir",
     ["Never suppress messages from the default chat frame."] = "Nunca suprimir mensajes del marco de chat predeterminado.",
     ["Show unread message alert on minimap."] = "Mostrar alerta de mensaje no leído en el minimapa.",
