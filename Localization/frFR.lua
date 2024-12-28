@@ -212,7 +212,7 @@ WIM.AddLocale("frFR", {
     ["There is a newer version of WIM available for download. You can download it at %s."] = "Il existe une version plus récente de WIM disponible en téléchargement. Vous pouvez le télécharger à %s.",
 
     -- ShortcutBar.lua --
-    ["Player Location"] = "Lieu du joueur",
+    ["Player Location"] = "Zone du joueur",
     ["Unknown"] = "Inconnu",
     ["Click to update..."] = "Cliquez pour mettre à jour...",
     ["Coordinates"] = "Coordonnées",
@@ -222,7 +222,7 @@ WIM.AddLocale("frFR", {
     ["Are you sure you want to\nignore %s?"] = "Êtes-vous sûr de vouloir ignorer %s?",
     ["Right-Click for profile links..."] = "Clic droit pour les liens de profil...",
     ["Profile Links"] = "Liens de profil",
-	["Location"] = "Lieu",
+	["Location"] = "Zone",
 	["Game"] = "Jeu",
 	["Realm"] = "Royaume",
 	["Character"] = "Personnage",
