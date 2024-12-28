@@ -303,7 +303,7 @@ WIM.AddLocale("frFR", {
     ["Window Behavior"] = "Comportement des fenêtres",
     ["You can control how windows behave while you are in different situations."] = "Vous pouvez contrôler la façon dont se comportent les fenêtres lorsque vous êtes dans des situations différentes.",
     ["Intercept Slash Commands"] = "Intercepter les commandes slash",
-	["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "Respecter les règles d'autofocus lors de l'ouverture des fenêtres via le menu. (autofocus si non coché)",
+	["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "Respecter les règles d'autofocus lors de l'ouverture des fenêtres",
     ["Use the same rules for all states."] = "Utilisez les mêmes règles pour tous les etats.",
     ["Behaviors for state:"] = "Comportements pour l'etat :",
     ["Pop-Up window when message is sent."] = "Fenêtre contextuelle lorsque le message est envoyé.",
