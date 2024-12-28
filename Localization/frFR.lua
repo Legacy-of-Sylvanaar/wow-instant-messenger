@@ -48,8 +48,8 @@ WIM.AddLocale("frFR", {
     ["Invalid Name!"] = "Nom incorrect !",
     ["Name is already used!"] = "Nom est déjà utilisé!",
     ["Invalid Alias!"] = "Alias incorrect !",
-    ["Invalid Keyword/Phrase!"] = "Mot-clé/phrase incorrect !",
-    ["Keyword/Phrase is already used!"] = "Mot-cle/phrase est déjà utilisé !",
+    ["Invalid Keyword/Phrase!"] = "Mot-clé / phrase incorrect !",
+    ["Keyword/Phrase is already used!"] = "Mot-cle / phrase est déjà utilisé !",
 
     ["Day"] = "Jour",
     ["Week"] = "Semaine",
