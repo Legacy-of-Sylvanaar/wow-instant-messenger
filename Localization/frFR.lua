@@ -485,7 +485,7 @@ WIM.AddLocale("frFR", {
 	["Never Pop"] = "Ne jamais apparaître",
 	["Never have this window pop-up on my screen."] = "Ne jamais faire apparaître cette fenêtre sur mon écran.",
     ["Never Supress"] = "Ne jamais supprimer",
-    ["Never suppress messages from the default chat frame."] = "Ne jamais supprimer les messages de la fênetre de discussion par défaut",
+    ["Never suppress messages from the default chat frame."] = "Ne jamais supprimer les messages de la fenêtre de discussion par défaut",
     ["Show unread message alert on minimap."] = "Afficher l'alerte de message non lu sur la minicarte.",
     ["No History"] = "Aucun historique",
     ["Do not record history for this channel."] = "Ne pas enregistrer l'historique de ce canal.",
