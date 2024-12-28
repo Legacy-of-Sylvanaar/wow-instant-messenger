@@ -117,7 +117,7 @@ WIM.AddLocale("frFR", {
     ["Keep windows on top of your UI."] = "Gardez les fenêtres en haut de votre interface d'utilisateur.",
 
   -- Class Names --
-    ["Druid"] = LOCALIZED_CLASS_NAMES_MALE.DRUID,
+	["Druid"] = LOCALIZED_CLASS_NAMES_MALE.DRUID,
     ["Hunter"] = LOCALIZED_CLASS_NAMES_MALE.HUNTER,
     ["Mage"] = LOCALIZED_CLASS_NAMES_MALE.MAGE,
     ["Paladin"] = LOCALIZED_CLASS_NAMES_MALE.PALADIN,
@@ -147,7 +147,7 @@ WIM.AddLocale("frFR", {
 	["EvokerF"] = LOCALIZED_CLASS_NAMES_FEMALE.EVOKER,
 
     ["Game Master"] = "Maître de jeu",
-		
+
     -- WIM.lua --
     ["Toggle WIM 'On' and 'Off'."] = "Basculer WIM 'Activé' et 'Désactivé'.",
     ["Toggle Debugging Mode 'On' and 'Off'."] = "Basculer en débogage 'Activé' et 'Désactivé'.",
@@ -408,10 +408,10 @@ WIM.AddLocale("frFR", {
 -- TabManagement.lua --
     ["Tab Management"] = "Gestion d'onglet",
     ["Automatically manage your open windows and place them into appropriate tab groups."] = "Gérer automatiquement les fenêtres ouvertes et les places dans des groupes d'onglet appropriés.",
-    ["Automatically group whispers."] = "Groupe automatiquement le chuchotement",
-	["Automatically group chat windows."] = "Groupe automatiquement es fenêtres de discussion.",
-    ["Place friends in their own group."] = "Place un ami dans le groupe.",
-    ["Place guild members in their own group."] = "Place des membres de la guilde dans le groupe.",
+    ["Automatically group whispers."] = "Grouper automatiquement les chuchotements",
+	["Automatically group chat windows."] = "Grouper automatiquement les fenêtres de discussion.",
+    ["Place friends in their own group."] = "Placer les amis dans le groupe.",
+    ["Place guild members in their own group."] = "Placer les membres de la guilde dans leur propre groupe.",
     ["Does not apply to windows already opened."] = "Ne s'applique pas à la fenêtre déjà ouverte.",
 
     -- Talent Specs --
