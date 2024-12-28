@@ -302,7 +302,7 @@ WIM.AddLocale("ptBR", {
     ["Window Behavior"] = "Comportamento da janela",
     ["You can control how windows behave while you are in different situations."] = "Você pode controlar como as jenelas se comportam enquanto você está em diferentes situações.",
     ["Intercept Slash Commands"] = "Interceptar comandos de barra",
-	  ["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "Obedeça às regras de foco automático ao abrir quadros através do menu. (Foco automático se desmarcado)",
+	["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "Obedecer as regras de foco automático ao abrir janelas",
     ["Use the same rules for all states."] = "Usar as mesmas regras para todos os estados.",
     ["Behaviors for state:"] = "Comportamentos de estado:",
     ["Pop-Up window when message is sent."] = "Brotar janela quando a mensagem é enviada.",
