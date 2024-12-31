@@ -63,8 +63,8 @@ WIM.AddLocale("frFR", {
     ["Block"] = "Bloquer",
     ["Enable WIM"] = "Activer WIM",
 
-    ["Auto Close Friends after:"] = "Ferme automatiquement les amis après",
-    ["Auto Close Non-Friends after:"] = "Ferme automatiquement non amis après",
+    ["Auto Close Friends after:"] = "Ferme automatiquement les amis après :",
+    ["Auto Close Non-Friends after:"] = "Ferme automatiquement non amis après :",
 
     ["Display"] = "Affichage",
     ["Incoming Messages"] = "Les messages entrants",
@@ -109,9 +109,9 @@ WIM.AddLocale("frFR", {
     ["Display floating item links."] = "Afficher les liens d'objets flottant",
 
     ["Cascade windows."] = "Fenêtres en cascade.",
-    ["Direction:"] = "Direction:",
+    ["Direction:"] = "Direction :",
     ["Tabs"] = "Onglets",
-    ["Sort tabs by:"] = "Trier les onglets par:",
+    ["Sort tabs by:"] = "Trier les onglets par :",
     ["Alphabetical"] = "Alphabétique",
     ["Recent Activity"] = "Activité récente",
     ["Keep windows on top of your UI."] = "Gardez les fenêtres en haut de votre interface d'utilisateur.",
@@ -151,7 +151,7 @@ WIM.AddLocale("frFR", {
     -- WIM.lua --
     ["Toggle WIM 'On' and 'Off'."] = "Basculer WIM 'Activé' et 'Désactivé'.",
     ["Toggle Debugging Mode 'On' and 'Off'."] = "Basculer en débogage 'Activé' et 'Désactivé'.",
-    ["WIM is currently running. To access WIM's wide array of options type:"] = "WIM est en cours d'exécution. Accéder aux options de WIM:",
+    ["WIM is currently running. To access WIM's wide array of options type:"] = "WIM est en cours d'exécution. Accéder aux options de WIM :",
 
     -- Filters.lua --
     ["Whispers Sent by Addons"] = "Chuchotements envoyés par l'addons",
@@ -169,10 +169,10 @@ WIM.AddLocale("frFR", {
     ["Raid Members"] = "Membres du raid",
     ["Cross-Realm"] = "Inter-royaumes",
     ["Everyone"] = "Tout le monde",
-    ["User must be at least level:"] = "L'utilisateur doit être au moins au niveau: ",
+    ["User must be at least level:"] = "L'utilisateur doit être au moins au niveau : ",
     ["Apply to messages received."] = "S'appliquent aux messages reçus.",
     ["Apply to messages sent."] = "S'appliquent aux messages envoyés.",
-    ["Action to Perform:"] = "Action à exécuter:",
+    ["Action to Perform:"] = "Action à exécuter :",
     ["Allow"] = "Autoriser",
     ["Ignore"] = "Ignorer",
     ["Blocked"] = "Bloqué",
@@ -250,7 +250,7 @@ WIM.AddLocale("frFR", {
 
     -- SlashHandler.lua --
     ["WIM Slash Commands"] = "WIM commandes slash",
-    ["To see a list of available WIM slash commands type:"] = "Pour voir une liste des commandes slash WIM disponibles, tapez:",
+    ["To see a list of available WIM slash commands type:"] = "Pour voir une liste des commandes slash WIM disponibles, tapez :",
     ["Display available slash commands."] = "Afficher les commandes slash disponibles.",
     ["Reload User Interface."] = "Recharger l'interface utilisateur.",
 
@@ -473,7 +473,7 @@ WIM.AddLocale("frFR", {
     ["Border Size"] = "Taille de la bordure",
     ["Only while in an instance."] = "Seulement dans une instance.",
     ["Show Border"] = "Afficher la bordure",
-    ["Animation Direction:"] = "Direction de l'animation",
+    ["Animation Direction:"] = "Direction de l'animation :",
 
     --ChatEngine.lua
     ["WIM will manage this chat type within its own message windows."] = "WIM gére ce type de discussion au sein de ses propre fenêtres de message.",
