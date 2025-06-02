@@ -45,6 +45,14 @@ armoryLinks = {
         url = "https://vanilla.warcraftlogs.com/character/{eu/us}/{realm}/{user}"
     },
 	{
+        title = "Warcraft Logs Fresh",
+        url = "https://fresh.warcraftlogs.com/character/{eu/us}/{realm}/{user}"
+    },
+    {
+        title = "Warcraft Logs Classic",
+        url = "https://classic.warcraftlogs.com/character/{eu/us}/{realm}/{user}"
+    },
+	{
 		title = "Warcraft Logs Season of Mastery",
 		url = "https://sod.warcraftlogs.com/character/{eu/us}/{realm}/{user}"
 	}
