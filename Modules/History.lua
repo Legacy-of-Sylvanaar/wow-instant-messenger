@@ -375,6 +375,7 @@ function ChatHistory:PostEvent_ChatMessage(event, ...)
     else
         local recordAs;
         local chatType;
+
         if(event == "GUILD" and db.history.chat.guild) then
             recordAs = _G.GUILD;
             chatType = "guild";
@@ -390,7 +391,7 @@ function ChatHistory:PostEvent_ChatMessage(event, ...)
         elseif((event == "INSTANCE_CHAT" or event == "INSTANCE_CHAT_LEADER") and db.history.chat.battleground) then
             recordAs = _G.INSTANCE_CHAT;
             chatType = "battleground";
-        elseif(event == "SAY" and db.history.chat.say) then
+        elseif((event == "SAY" or event == "EMOTE" or event == "TEXT_EMOTE") and db.history.chat.say) then
             recordAs = _G.SAY;
             chatType = "say";
         end
@@ -1328,7 +1329,7 @@ table.insert(ViewTypes, {
                 local color = db.displayColors[msg.inbound and "wispIn" or "wispOut"];
                 nextColor.r, nextColor.g, nextColor.b = color.r, color.g, color.b;
                 frame.nextStamp = msg.time;
-                frame:AddMessage(applyStringModifiers(applyMessageFormatting(frame, "CHAT_MSG_WHISPER", msg.msg, msg.from,
+                frame:AddMessage(applyStringModifiers(applyMessageFormatting(frame, "CHAT_MSG_"..(msg.event or "WHISPER"), msg.msg, msg.from,
                 nil, nil, nil, nil, 0, msg.channelName and ChannelCache[msg.channelName], msg.channelName, "0x0300000000000000"), frame), color.r, color.g, color.b)
             end
         end
@@ -1357,7 +1358,7 @@ table.insert(ViewTypes, {
 	            frame.nextStamp = msg.time;
                     local chatColor = "[color=#"..RGBPercentToHex(color.r, color.g, color.b).."]";
                     local chatColorPattern = "%[color%=%#"..RGBPercentToHex(color.r, color.g, color.b).."%]%s*%[%/color%]";
-	            msg = applyMessageFormatting(frame, "CHAT_MSG_WHISPER", msg.msg, msg.from)
+	            msg = applyMessageFormatting(frame, "CHAT_MSG_"..(msg.event or "WHISPER"), msg.msg, msg.from)
 	            msg = applyStringModifiers(msg, frame);
 	            msg = msg:gsub("|c[0-9A-Fa-f][0-9A-Fa-f]([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])|Hwim_url:([^|]*)|h.-|h|r", "[/color][url=%2][color=#%1]%2[/color][/url]"..chatColor);
 	            msg = msg:gsub("|c[0-9A-Fa-f][0-9A-Fa-f]([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])", "[color=#%1]");
@@ -1392,7 +1393,7 @@ table.insert(ViewTypes, {
 	            frame.nextStamp = msg.time;
                     local chatColor = "<font color='#"..RGBPercentToHex(color.r, color.g, color.b).."'>";
                     local chatColorPattern = "%<font color%='%#"..RGBPercentToHex(color.r, color.g, color.b).."'%>%s*%<%/font%>";
-	            msg = applyMessageFormatting(frame, "CHAT_MSG_WHISPER", msg.msg, msg.from)
+	            msg = applyMessageFormatting(frame, "CHAT_MSG_"..(msg.event or "WHISPER"), msg.msg, msg.from)
 	            msg = applyStringModifiers(msg, frame);
 
                     -- html escapes
