@@ -1,6 +1,6 @@
 ## Interface: 11506, 11507, 20504, 30404, 40401, 40402, 50500, 110105, 110107, 110200
 
-## X-Curse-Project-ID: 7474
+## X-Curse-Project-ID: 1316803
 ## X-WoWI-ID: 5342
 ## X-Wago-ID: aNDmqo6o
 
