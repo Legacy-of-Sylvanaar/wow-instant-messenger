@@ -184,7 +184,7 @@ local translations = {
 
     -- History.lua --
     ["WIM History Button"] = "Botón de historial de WIM",
-    ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Al hacer clic en el botón %s en la ventana del mensaje, se mostrará el historial de ese usuario en el visor de historial de WIM.",
+    ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Al hacer clic en el botón %s en la ventana del mensaje, se mostrará el historial de ese jugador en el visor de historial de WIM.",
     ["Click to view message history."] = "Haz clic para ver el historial de mensajes.",
     ["WIM pruned %d |4message:messages; from your history."] = "WIM eliminó %d |4mensaje:mensajes; de tu historial.",
     ["History Viewer"] = "Visor de historial",
@@ -388,7 +388,7 @@ local translations = {
     ["Allow others to see my location."] = "Permitir a otros ver mi ubicación.",
     ["Main"] = "Principal",
     ["General"] = "General",
-    ["User Level"] = "Nivel del usuario",
+    ["User Level"] = "Nivel del jugador",
     ["Windows will also be hidden when frames such as the world map are shown."] = "Ventanas también estará oculto cuando se muestren marcos como el mapa del mundo.",
     ["Sounds"] = "Sonidos",
     ["Configure various sound events and how they are triggered."] = "Configura varios eventos de sonido y cómo se activan.",
