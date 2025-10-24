@@ -216,7 +216,7 @@ WIM.AddLocale("ptBR", {
     ["Unknown"] = "Desconhecido",
     ["Click to update..."] = "Clique para atualizar...",
     ["Coordinates"] = "Coordenadas",
-    ["Invite to Party"] = "Convidar para grupo",
+    ["Invite to Party"] = "Convidar",
     ["Add Friend"] = "Adicionar amigo",
     ["Ignore User"] = "Ignorar Jogador",
     ["Are you sure you want to\nignore %s?"] = "Você tem certeza que você quer\nignora %s?",
