@@ -24,7 +24,6 @@ local function showCommands()
 end
 
 local function processCommand(cmd)
-	_G.DEFAULT_CHAT_FRAME:AddMessage("Processing WIM command: "..cmd);
     cmd = (cmd ~= "") and cmd or "options";
     cmdList = cmdList or CommandList;
 
