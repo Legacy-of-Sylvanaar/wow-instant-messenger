@@ -220,7 +220,8 @@ local function displayURL(link)
                 button:SetWidth(100);
                 button:SetPoint("CENTER", editBox, "CENTER", 0, -30);
 
-                _G.getglobal(self:GetName().."AlertIcon"):Hide();  -- HACK : we hide the false AlertIcon
+				local alertIcon = _G.getglobal(self:GetName().."AlertIcon") or self.AlertIcon;
+                alertIcon:Hide();  -- HACK : we hide the false AlertIcon
             end,
         OnHide = function() end,
         OnAccept = function() end,
