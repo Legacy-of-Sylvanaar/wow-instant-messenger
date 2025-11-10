@@ -9,6 +9,7 @@ local select = select;
 local math = math;
 local tonumber = tonumber;
 local playerRealm = GetRealmName()
+local ChatFrameUtil = ChatFrameUtil;
 
 -- set name space
 setfenv(1, WIM);
@@ -229,6 +230,7 @@ RegisterWidgetTrigger("msg_box", "chat", "OnEnterPressed", function(self)
     end);
 
 
+local processMessageEventFilters = modules.WhisperEngine.processMessageEventFilters;
 
 --------------------------------------
 --              Guild Chat          --
@@ -244,11 +246,19 @@ function Guild:OnEnable()
     self:RegisterEvent("CHAT_MSG_GUILD_ACHIEVEMENT");
     self:RegisterEvent("GUILD_ROSTER_UPDATE");
 
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
+	end
 end
 
 function Guild:OnDisable()
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
+	end
 end
 
 function Guild:OnWindowDestroyed(win)
@@ -315,23 +325,11 @@ function Guild:CHAT_MSG_GUILD(...)
 
 	local win, isNew = getChatWindow(_G.GUILD, "guild");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_GUILD');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_GUILD', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_GUILD', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["GUILD"] or _G.NORMAL_FONT_COLOR;
@@ -377,11 +375,19 @@ function Officer:OnEnable()
     self:RegisterEvent("CHAT_MSG_OFFICER");
     self:RegisterEvent("GUILD_ROSTER_UPDATE");
 
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
+	end
 end
 
 function Officer:OnDisable()
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
+	end
 end
 
 function Officer:OnWindowShow(win)
@@ -447,23 +453,11 @@ function Officer:CHAT_MSG_OFFICER(...)
 
 	local win, isNew = getChatWindow(_G.GUILD_RANK1_DESC, "officer");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_OFFICER');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_OFFICER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_OFFICER', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["OFFICER"] or _G.NORMAL_FONT_COLOR;
@@ -508,13 +502,23 @@ function Party:OnEnable()
     self:RegisterEvent("CHAT_MSG_PARTY_LEADER");
     self:RegisterEvent("GROUP_ROSTER_UPDATE");
 
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
+	end
 end
 
 function Party:OnDisable()
-    _G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
+    if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
+	end
 end
 
 function Party:OnWindowShow(win)
@@ -574,23 +578,11 @@ function Party:CHAT_MSG_PARTY(...)
 
 	local win, isNew = getChatWindow(_G.PARTY, "party");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_PARTY');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_PARTY', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_PARTY', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["PARTY"] or _G.NORMAL_FONT_COLOR;
@@ -625,23 +617,11 @@ function Party:CHAT_MSG_PARTY_LEADER(...)
 
 	local win, isNew = getChatWindow(_G.PARTY, "party");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_PARTY_LEADER');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_PARTY_LEADER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_PARTY_LEADER', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["PARTY_LEADER"] or _G.NORMAL_FONT_COLOR;
@@ -685,15 +665,26 @@ function Raid:OnEnable()
     self:RegisterEvent("CHAT_MSG_RAID_WARNING");
     self:RegisterEvent("GROUP_ROSTER_UPDATE");
 
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
+	end
 end
-
 function Raid:OnDisable()
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
+	end
 end
 
 function Raid:OnWindowShow(win)
@@ -750,23 +741,11 @@ function Raid:CHAT_MSG_RAID(...)
 
 	local win, isNew = getChatWindow(_G.RAID, "raid");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_RAID');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_RAID', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_RAID', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["RAID"] or _G.NORMAL_FONT_COLOR;
@@ -801,23 +780,11 @@ function Raid:CHAT_MSG_RAID_LEADER(...)
 
 	local win, isNew = getChatWindow(_G.RAID, "raid");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_RAID_LEADER');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_RAID_LEADER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_RAID_LEADER', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["RAID_LEADER"] or _G.NORMAL_FONT_COLOR;
@@ -852,22 +819,11 @@ function Raid:CHAT_MSG_RAID_WARNING(...)
 
 	local win, isNew = getChatWindow(_G.RAID, "raid");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_RAID_WARNING');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_RAID_WARNING', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_RAID_WARNING', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["RAID_WARNING"] or _G.NORMAL_FONT_COLOR;
@@ -909,13 +865,23 @@ function Battleground:OnEnable()
     self:RegisterEvent("CHAT_MSG_INSTANCE_CHAT");
     self:RegisterEvent("CHAT_MSG_INSTANCE_CHAT_LEADER");
 
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
+	end
 end
 
 function Battleground:OnDisable()
-    _G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
+    if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
+	end
 end
 
 function Battleground:OnWindowDestroyed(win)
@@ -966,23 +932,11 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
 
 	local win, isNew = getChatWindow(_G.INSTANCE_CHAT, "battleground");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_INSTANCE_CHAT');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_INSTANCE_CHAT', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_INSTANCE_CHAT', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     win.widgets.chat_info:SetText(getBattlegroundCount());
@@ -1015,23 +969,11 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
 
 	local win, isNew = getChatWindow(_G.INSTANCE_CHAT, "battleground");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_INSTANCE_CHAT_LEADER');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_INSTANCE_CHAT_LEADER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_INSTANCE_CHAT_LEADER', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     win.widgets.chat_info:SetText(getBattlegroundCount());
@@ -1071,15 +1013,26 @@ function Say:OnEnable()
 	self:RegisterEvent("CHAT_MSG_EMOTE");
 	self:RegisterEvent("CHAT_MSG_TEXT_EMOTE");
 
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
+	end
 end
-
 function Say:OnDisable()
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
+	end
 end
 
 function Say:OnWindowDestroyed(win)
@@ -1114,23 +1067,11 @@ function Say:CHAT_MSG_SAY(...)
 
 	local win, isNew = getChatWindow(_G.SAY, "say");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_SAY');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_SAY', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_SAY', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["SAY"] or _G.NORMAL_FONT_COLOR;
@@ -1166,23 +1107,11 @@ function Say:CHAT_MSG_EMOTE(...)
 
 	local win, isNew = getChatWindow(_G.SAY, "say");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_EMOTE');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_EMOTE', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_EMOTE', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
 	local color = _G.ChatTypeInfo["EMOTE"] or _G.NORMAL_FONT_COLOR;
@@ -1218,23 +1147,11 @@ function Say:CHAT_MSG_TEXT_EMOTE(...)
 
 	local win, isNew = getChatWindow(_G.SAY, "say");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_TEXT_EMOTE');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_TEXT_EMOTE', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_TEXT_EMOTE', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["EMOTE"] or _G.NORMAL_FONT_COLOR;
@@ -1279,11 +1196,19 @@ function Channel:OnEnable()
     self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE");
     self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE_USER");
 
-	_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
+		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+	end
 end
 
 function Channel:OnDisable()
-	_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
+		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+	else
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+	end
 end
 
 function Channel:OnWindowDestroyed(win)
@@ -1417,23 +1342,11 @@ function Channel:CHAT_MSG_CHANNEL(...)
 
 	local win, isNew = getChatWindow(channelName, "channel");
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_CHANNEL');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_CHANNEL', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_CHANNEL', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = _G.ChatTypeInfo["CHANNEL"..arg8] or _G.NORMAL_FONT_COLOR;

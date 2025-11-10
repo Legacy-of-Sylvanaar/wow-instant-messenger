@@ -29,6 +29,7 @@ local time = time;
 local playerRealm = GetRealmName();
 local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
 local FlashClientIcon = FlashClientIcon;
+local ChatFrameUtil = ChatFrameUtil;
 
 -- set name space
 setfenv(1, WIM);
@@ -169,13 +170,21 @@ end
 
 function WhisperEngine:OnEnable ()
 	for i = 1, #CHAT_EVENTS do
-		_G.ChatFrame_AddMessageEventFilter(CHAT_EVENTS[i], WhisperEngine.ChatMessageEventFilter);
+		if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
+			ChatFrameUtil:AddMessageEventFilter(CHAT_EVENTS[i], WhisperEngine.ChatMessageEventFilter);
+		else
+			_G.ChatFrame_AddMessageEventFilter(CHAT_EVENTS[i], WhisperEngine.ChatMessageEventFilter);
+		end
 	end
 end
 
 function WhisperEngine:OnDisable()
 	for i = 1, #CHAT_EVENTS do
-		_G.ChatFrame_RemoveMessageEventFilter(CHAT_EVENTS[i], WhisperEngine.ChatMessageEventFilter);
+		if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
+			ChatFrameUtil:RemoveMessageEventFilter(CHAT_EVENTS[i], WhisperEngine.ChatMessageEventFilter);
+		else
+			_G.ChatFrame_RemoveMessageEventFilter(CHAT_EVENTS[i], WhisperEngine.ChatMessageEventFilter);
+		end
 	end
 end
 
@@ -399,6 +408,34 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 	return false, ...
 end
 
+-- compatibility function for processing message event filters
+local function processMessageEventFilters(win, event, ...)
+	-- if ChatFrameUtil is available, use its method for processing message event filters
+	if (ChatFrameUtil.ProcessMessageEventFilters) then
+		return ChatFrameUtil.ProcessMessageEventFilters(win, event, ...);
+	end
+
+	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	local chatFilters = _G.ChatFrame_GetMessageEventFilters(event);
+	local filter = false;
+
+	if ( chatFilters ) then
+		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+		for _, filterFunc in pairs(chatFilters) do
+			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win, event, ...);
+			if ( filter ) then
+				return true;
+			elseif ( newarg1 ) then
+				local _;
+				arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
+			end
+		end
+	end
+
+	return false, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17;
+end
+WhisperEngine.processMessageEventFilters = processMessageEventFilters; -- make accessible to other modules
+
 function WhisperEngine:CHAT_MSG_WHISPER(...)
 	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
@@ -406,23 +443,11 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
 
 	local win, isNew = getWhisperWindowByUser(arg2, nil, nil, true);
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_WHISPER');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_WHISPER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_WHISPER', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = WIM.db.displayColors.wispIn; -- color contains .r, .g & .b
@@ -464,23 +489,11 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
 
 	local win, isNew = getWhisperWindowByUser(arg2, nil, nil, true);
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_WHISPER_INFORM');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_WHISPER_INFORM', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_WHISPER_INFORM', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = db.displayColors.wispOut; -- color contains .r, .g & .b
@@ -505,23 +518,11 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
 	local win, isNew = getWhisperWindowByUser(arg2, true, arg13, true);
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_BN_WHISPER_INFORM');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_BN_WHISPER_INFORM', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_BN_WHISPER_INFORM', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = db.displayColors.BNwispOut; -- color contains .r, .g & .b
@@ -554,23 +555,11 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
 	local win, isNew = getWhisperWindowByUser(arg2, true, arg13, true);
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
 
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_BN_WHISPER');
-	local filter = false;
-
-	if ( chatFilters ) then
-		local newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-		for _, filterFunc in pairs(chatFilters) do
-			filter, newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14 = filterFunc(win.widgets.chat_display, 'CHAT_MSG_BN_WHISPER', arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-			if ( filter ) then
-				if (isNew) then
-					win:close();
-				end
-				return true;
-			elseif ( newarg1 ) then
-				local _;
-				arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = newarg1, newarg2, newarg3, newarg4, newarg5, newarg6, newarg7, newarg8, newarg9, newarg10, newarg11, newarg12, newarg13, newarg14;
-			end
-		end
+	local filter, _;
+	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_BN_WHISPER', ...);
+	if (filter and isNew) then
+		win:close();
+		return true;
 	end
 
     local color = WIM.db.displayColors.BNwispIn; -- color contains .r, .g & .b
@@ -609,14 +598,8 @@ end
 local CMS_SLUG = {};
 function WhisperEngine:CHAT_MSG_SYSTEM(...)
 	-- the proccessing of the actual message is taking place within the ChatMessageFilter
-	local chatFilters = _G.ChatFrame_GetMessageEventFilters('CHAT_MSG_SYSTEM');
-
-	if ( chatFilters ) then
-		for _, filterFunc in pairs(chatFilters) do
-			CMS_SLUG._isWIM = true;
-			filterFunc(CMS_SLUG, 'CHAT_MSG_SYSTEM', ...);
-		end
-	end
+	CMS_SLUG._isWIM = true;
+	processMessageEventFilters(CMS_SLUG, 'CHAT_MSG_SYSTEM', ...);
 end
 
 function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(process, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, unused, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
@@ -785,7 +768,11 @@ end
 hooksecurefunc("ChatEdit_ExtractTellTarget", CF_ExtractTellTarget);
 hooksecurefunc("ChatFrame_OpenChat", CF_OpenChat);
 
-hooksecurefunc("ChatFrame_SendBNetTell", CF_SentBNetTell);
+if ChatFrameUtil and ChatFrameUtil.SendBNetTell then
+	hooksecurefunc(ChatFrameUtil, "SendBNetTell", CF_SentBNetTell);
+else
+	hooksecurefunc("ChatFrame_SendBNetTell", CF_SentBNetTell);
+end
 
 --Hook ChatFrame_ReplyTell & ChatFrame_ReplyTell2
 hooksecurefunc("ChatFrame_ReplyTell", function() replyTellTarget(true) end);
