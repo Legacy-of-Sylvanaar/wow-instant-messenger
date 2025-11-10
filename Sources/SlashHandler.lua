@@ -24,6 +24,7 @@ local function showCommands()
 end
 
 local function processCommand(cmd)
+	_G.DEFAULT_CHAT_FRAME:AddMessage("Processing WIM command: "..cmd);
     cmd = (cmd ~= "") and cmd or "options";
     cmdList = cmdList or CommandList;
 
@@ -62,31 +63,40 @@ local function starts(String,Start)
 	return string.sub(String,1,string.len(Start))==Start
 end
 
-_G.hooksecurefunc("ChatEdit_ParseText", function(editBox, send, parseIfNoSpaces)
-    if (send == 0) then
-		lastMessage = editBox:GetText()
-	end
-end)
 
-_G.hooksecurefunc("ChatFrame_DisplayHelpTextSimple", function(frame)
-	if (lastMessage and lastMessage ~= "") then
-		local cmd = string.upper(lastMessage)
-		if (starts(cmd, "/WIM")) then
-			local count = 1
-			local numMessages = frame:GetNumMessages()
-			local function predicateFunction(entry)
-				if (count == numMessages) then
-                    if (string.match(entry, _G.HELP_TEXT_SIMPLE)) then
-						return true
-					end
-				end
-				count = count + 1
-			end
-			frame:RemoveMessagesByPredicate(predicateFunction)
-			processCommand(cmd:gsub("^/WIM%s*", ""))
+--  Legacy slash command handler
+if (_G.ChatEdit_ParseText or _G.ChatFrame_DisplayHelpTextSimple) then
+	_G.hooksecurefunc("ChatEdit_ParseText", function(editBox, send, parseIfNoSpaces)
+		if (send == 0) then
+			lastMessage = editBox:GetText()
 		end
-	end
-end)
+	end)
+
+	_G.hooksecurefunc("ChatFrame_DisplayHelpTextSimple", function(frame)
+		if (lastMessage and lastMessage ~= "") then
+			local cmd = string.upper(lastMessage)
+			if (starts(cmd, "/WIM")) then
+				local count = 1
+				local numMessages = frame:GetNumMessages()
+				local function predicateFunction(entry)
+					if (count == numMessages) then
+						if (string.match(entry, _G.HELP_TEXT_SIMPLE)) then
+							return true
+						end
+					end
+					count = count + 1
+				end
+				frame:RemoveMessagesByPredicate(predicateFunction)
+				processCommand(cmd:gsub("^/WIM%s*", ""))
+			end
+		end
+	end)
+end
+
+-- new slash command handler
+if (_G.RegisterNewSlashCommand) then
+	_G.RegisterNewSlashCommand(processCommand, "WIM", "wim");
+end
 
 
 
