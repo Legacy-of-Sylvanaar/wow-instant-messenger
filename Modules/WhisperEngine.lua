@@ -418,7 +418,7 @@ local function processMessageEventFilters(win, event, ...)
 		frame = win.widgets.chat_display
 	end
 	-- if ChatFrameUtil is available, use its method for processing message event filters
-	if (ChatFrameUtil.ProcessMessageEventFilters) then
+	if (ChatFrameUtil and ChatFrameUtil.ProcessMessageEventFilters) then
 		return ChatFrameUtil.ProcessMessageEventFilters(frame, event, ...);
 	end
 
@@ -809,7 +809,7 @@ end
 
 
 -- ChatEditBoxMixin hooking
-if ChatFrameUtil then
+if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 	-- each time a chat edit box is activated, check if it is hooked accordingly.
 	hooksecurefunc(ChatFrameUtil, "ActivateChat", function(editBox)
 		-- first check that the editBox is not WIM's msg_box, if it is, then do nothing.
