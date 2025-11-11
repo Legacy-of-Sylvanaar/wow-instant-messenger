@@ -289,7 +289,7 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 			end);
 
 			if(isBN) then
-				_G.BNSendWhisper(Windows[safeName(to)].bn.id, chunk);
+				(_G.C_BattleNet and _G.C_BattleNet.SendWhisper or _G.BNSendWhisper)(Windows[safeName(to)].bn.id, chunk);
 			else
                 _G.SendChatMessage(chunk, CHANNEL, EXTRA, to)
 				-- _G.ChatThrottleLib:SendChatMessage(PRIORITY, HEADER, chunk, CHANNEL, EXTRA, to);
@@ -316,7 +316,7 @@ RegisterWidgetTrigger("msg_box", "whisper", "OnEnterPressed", function(self)
         if(msgCount == 1) then
             Windows[safeName(obj.theUser)].msgSent = true;
 			if(obj.isBN) then
-				_G.BNSendWhisper(obj.bn.id, msg);
+				(_G.C_BattleNet and _G.C_BattleNet.SendWhisper or _G.BNSendWhisper)(obj.bn.id, msg);
 			else
 				_G.SendChatMessage(msg, "WHISPER", nil, obj.theUser);
 				-- _G.ChatThrottleLib:SendChatMessage("ALERT", "WIM", msg, "WHISPER", nil, obj.theUser);
