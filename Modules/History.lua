@@ -955,7 +955,11 @@ local function createHistoryViewer()
 	    end
 	    self:update();
 	end);
-    win.content.chatFrame:SetScript("OnHyperlinkClick", _G.ChatFrame_OnHyperlinkShow);
+
+    win.content.chatFrame:SetScript("OnHyperlinkClick",
+		_G.ChatFrameMixin and _G.ChatFrameMixin.OnHyperlinkClick or
+		_G.ChatFrame_OnHyperlinkShow
+	);
 
     win.content.chatFrame.up = CreateFrame("Button", nil, win.content.chatFrame);
     win.content.chatFrame.up:SetWidth(28); win.content.chatFrame.up:SetHeight(28);
