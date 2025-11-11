@@ -59,9 +59,15 @@ local function hookChatFrameEditBox(editBox)
     end
 end
 
-hooksecurefunc("ChatEdit_ActivateChat", function(editBox)
+if ChatFrameUtil and ChatFrameUtil.ActivateChat then
+	hooksecurefunc(ChatFrameUtil, "ActivateChat", function(editBox)
+		hookChatFrameEditBox(editBox);
+	end);
+else
+	hooksecurefunc("ChatEdit_ActivateChat", function(editBox)
         hookChatFrameEditBox(editBox);
     end);
+end
 
 
 function WIM.getVisibleChatFrameEditBox()
@@ -76,44 +82,62 @@ end
 -------------------------------------------------------------------------------------------
 
 -- linking hooks
-local ChatEdit_GetActiveWindow_orig = ChatEdit_GetActiveWindow;
-function ChatEdit_GetActiveWindow()
-    --[[
-    --local tb = debugstack();
-    --DEFAULT_CHAT_FRAME:AddMessage(tb);
-    if(WIM.EditBoxInFocus) then
-        -- if WIM has focus, see where its coming from first...
-        -- if from ChatEdit_InsertLink, return EditBoxInFocus, otherwise, return normal.
-        if(tb:match('ChatEdit_InsertLink')) then
-            return WIM.EditBoxInFocus;
-        end
-    end
-    ]]
-    return WIM.EditBoxInFocus or ChatEdit_GetActiveWindow_orig();
+if ChatFrameUtil and ChatFrameUtil.GetActiveWindow then
+	ChatFrameUtil.GetActiveWindow_orig = ChatFrameUtil.GetActiveWindow
+	ChatFrameUtil.GetActiveWindow = function()
+		return WIM.EditBoxInFocus or ChatFrameUtil.GetActiveWindow_orig();
+	end
+else
+	local ChatEdit_GetActiveWindow_orig = ChatEdit_GetActiveWindow;
+	function ChatEdit_GetActiveWindow()
+		return WIM.EditBoxInFocus or ChatEdit_GetActiveWindow_orig();
+	end
 end
 
 
---ItemRef Definitions
-local registeredItemRef = {};
-function WIM.RegisterItemRefHandler(cmd, fun)
-    registeredItemRef[cmd] = fun;
-end
-local ItemRefTooltip_SetHyperlink = ItemRefTooltip.SetHyperlink;
-ItemRefTooltip.SetHyperlink = function(self, link)
-    for cmd, fun in pairs(registeredItemRef) do
-        if(string.match(link, "^"..cmd..":")) then
-            fun(link);
-            return;
-        end
-    end
-    ItemRefTooltip_SetHyperlink(self, link);
-end
+-- --ItemRef Definitions
+-- local registeredItemRef = {};
+-- function WIM.RegisterItemRefHandler(cmd, fun)
+--     registeredItemRef[cmd] = fun;
+-- end
+
+-- if (ItemRefTooltipMixin and ItemRefTooltipMixin.SetHyperlink) then
+-- 	local ItemRefTooltipMixin_SetHyperlink_orig = ItemRefTooltipMixin.SetHyperlink;
+-- 	ItemRefTooltipMixin.SetHyperlink = function (self, ...)
+-- 		for cmd, fun in pairs(registeredItemRef) do
+-- 			if(string.match(link, "^"..cmd..":")) then
+-- 				fun(link);
+-- 				return;
+-- 			end
+-- 		end
+-- 		ItemRefTooltipMixin_SetHyperlink_orig(self, ...);
+-- 	end
+-- else
+-- 	local ItemRefTooltip_SetHyperlink = ItemRefTooltip.SetHyperlink;
+-- 	ItemRefTooltip.SetHyperlink = function(self, link)
+-- 		for cmd, fun in pairs(registeredItemRef) do
+-- 			if(string.match(link, "^"..cmd..":")) then
+-- 				fun(link);
+-- 				return;
+-- 			end
+-- 		end
+-- 		ItemRefTooltip_SetHyperlink(self, link);
+-- 	end
+-- end
 
 
 -- Dri: workaround for WoW build15050 whisper bug when x-realm server name contains a space.
-local origChatFrame_SendTell = _G.ChatFrame_SendTell
-_G.ChatFrame_SendTell = function(name, chatframe, ...)
-	name = gsub(name," ","")
-	origChatFrame_SendTell(name, chatframe, ...)
+if ChatFrameUtil.SendTell then
+	local origSendTell = ChatFrameUtil.SendTell
+	ChatFrameUtil.SendTell = function(name, chatFrame, ...)
+		name = gsub(name," ","")
+		origSendTell(name, chatFrame, ...)
+	end
+else
+	local origChatFrame_SendTell = _G.ChatFrame_SendTell
+	_G.ChatFrame_SendTell = function(name, chatframe, ...)
+		name = gsub(name," ","")
+		origChatFrame_SendTell(name, chatframe, ...)
+	end
 end
 

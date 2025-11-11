@@ -2022,9 +2022,17 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w,demo", "OnMouseUp", func
                 end
 	end);
 
+
+--ItemRef Definitions
+local registeredItemRef = {};
+function RegisterItemRefHandler(cmd, fun)
+    registeredItemRef[cmd] = fun;
+end
+
 local myself = _G.UnitName("player")
 RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", function(self, link, text, button)
 	local t,n,i = string.split(":", link)
+
 	if n == myself then
 		return
     end
@@ -2075,12 +2083,19 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 		return;
 	end
 
-	_G.ChatFrame_OnHyperlinkShow(self, link, text, button);
-	-- if link == "garrmission:weakauras" then
-	-- 		_G.SetItemRef(link, text, button, self);
-	-- else
-	-- 		_G.SetItemRef(link, text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""), button, self);
-	-- end
+	-- registered ItemRef handlers
+	for cmd, fun in pairs(registeredItemRef) do
+		if(string.match(link, "^"..cmd..":")) then
+			fun(link);
+			return;
+		end
+	end
+
+	if (_G.ChatFrameMixin.OnHyperlinkClick) then
+		_G.ChatFrameMixin.OnHyperlinkClick(self, link, text, button);
+	else
+		_G.ChatFrame_OnHyperlinkShow(self, link, text, button);
+	end
 end);
 --RegisterWidgetTrigger("chat_display", "whisper,chat,w2w","OnMessageScrollChanged", function(self) updateScrollBars(self:GetParent()); end);
 

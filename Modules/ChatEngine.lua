@@ -247,7 +247,7 @@ function Guild:OnEnable()
     self:RegisterEvent("GUILD_ROSTER_UPDATE");
 
 	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
 	end
@@ -255,7 +255,7 @@ end
 
 function Guild:OnDisable()
 	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_GUILD', Guild.ChatMessageEventFilter);
 	end
@@ -376,7 +376,7 @@ function Officer:OnEnable()
     self:RegisterEvent("GUILD_ROSTER_UPDATE");
 
 	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
 	end
@@ -384,7 +384,7 @@ end
 
 function Officer:OnDisable()
 	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_OFFICER', Officer.ChatMessageEventFilter);
 	end
@@ -503,8 +503,8 @@ function Party:OnEnable()
     self:RegisterEvent("GROUP_ROSTER_UPDATE");
 
 	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
@@ -513,8 +513,8 @@ end
 
 function Party:OnDisable()
     if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_PARTY', Party.ChatMessageEventFilter);
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_PARTY_LEADER', Party.ChatMessageEventFilter);
@@ -666,9 +666,9 @@ function Raid:OnEnable()
     self:RegisterEvent("GROUP_ROSTER_UPDATE");
 
 	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
@@ -677,9 +677,9 @@ function Raid:OnEnable()
 end
 function Raid:OnDisable()
 	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_RAID_WARNING', Raid.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID', Raid.ChatMessageEventFilter);
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_RAID_LEADER', Raid.ChatMessageEventFilter);
@@ -866,8 +866,8 @@ function Battleground:OnEnable()
     self:RegisterEvent("CHAT_MSG_INSTANCE_CHAT_LEADER");
 
 	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
@@ -876,8 +876,8 @@ end
 
 function Battleground:OnDisable()
     if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', Battleground.ChatMessageEventFilter);
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', Battleground.ChatMessageEventFilter);
@@ -1014,9 +1014,9 @@ function Say:OnEnable()
 	self:RegisterEvent("CHAT_MSG_TEXT_EMOTE");
 
 	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
@@ -1025,9 +1025,9 @@ function Say:OnEnable()
 end
 function Say:OnDisable()
 	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_TEXT_EMOTE', Say.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_SAY', Say.ChatMessageEventFilter);
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_EMOTE', Say.ChatMessageEventFilter);
@@ -1197,7 +1197,7 @@ function Channel:OnEnable()
     self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE_USER");
 
 	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
-		ChatFrameUtil:AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
 	end
@@ -1205,7 +1205,7 @@ end
 
 function Channel:OnDisable()
 	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
-		ChatFrameUtil:RemoveMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
 	else
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
 	end
