@@ -238,6 +238,33 @@ local function createPopRuleFrame(winType)
         createButton(frame.main.tabs);
     end
 
+	if winType == "whisper" and _G.GetCVar and _G.GetCVar("whisperMode") then
+		frame.main.nextOffSetY = -158;
+		frame.main.resetWhisperMode = frame.main:CreateButton(L["Set whispers to In-line"], function()
+			_G.SetCVar("whisperMode", "inline");
+		end);
+
+		frame.main.nextOffSetY = -8;
+		frame.main.socialSettingWarning = frame.main:CreateText();
+		frame.main.socialSettingWarning:SetTextColor(1, 0, 0);
+
+		-- update on whisper mode change if set correctly.
+		frame.main.resetWhisperMode:SetScript("OnUpdate", function(self)
+			local mode = _G.GetCVar("whisperMode");
+			if(mode == "inline") then
+				self:SetAlpha(0);
+				self:Disable();
+				frame.main.socialSettingWarning:SetTextColor(1, 1, 1);
+				frame.main.socialSettingWarning:SetText(L["Whisper Mode: In-line"]);
+			else
+				self:SetAlpha(1);
+				self:Enable();
+				frame.main.socialSettingWarning:SetTextColor(1, 0, 0);
+				frame.main.socialSettingWarning:SetText("** "..L["Message suppression requires whispers to be set to 'In-line'."]);
+			end
+		end);
+	end
+
 
     frame:SetScript("OnShow", function(self)
             if(self.main.alwaysOther:GetChecked()) then
