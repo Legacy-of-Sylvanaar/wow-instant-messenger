@@ -22,11 +22,6 @@ useProtocol2 = true; -- test switch for new W2W Protocol. (Dev use only)
 local buildNumber = select(4, _G.GetBuildInfo());
 isModernApi = buildNumber >= 90001; -- Still needed for non synced invite API and for classID checks
 
--- is Private Server?
---[[isPrivateServer = not (string.match(_G.GetCVar("realmList"), "worldofwarcraft.com$")
-                        or string.match(_G.GetCVar("realmList"), "battle.net$")
-                        or string.match(_G.GetCVar("realmListbn"), "battle.net$")) and true or false;--]]
-
 constants = {}; -- constants such as class colors will be stored here. (includes female class names).
 modules = {}; -- module table. consists of all registerd WIM modules/plugins/skins. (treated the same).
 windows = {active = {whisper = {}, chat = {}, w2w = {}}}; -- table of WIM windows.
@@ -70,23 +65,23 @@ libs.DropDownMenu = _G.LibStub:GetLibrary("LibDropDownMenu");
 local function initialize()
     --load cached information from the WIM_Cache saved variable.
 	env.cache[env.realm] = env.cache[env.realm] or {};
-        env.cache[env.realm][env.character] = env.cache[env.realm][env.character] or {};
+    env.cache[env.realm][env.character] = env.cache[env.realm][env.character] or {};
 	lists.friends = env.cache[env.realm][env.character].friendList;
 	lists.guild = env.cache[env.realm][env.character].guildList;
 
-        if(type(lists.friends) ~= "table") then lists.friends = {}; end
-        if(type(lists.guild) ~= "table") then lists.guild = {}; end
+	if(type(lists.friends) ~= "table") then lists.friends = {}; end
+	if(type(lists.guild) ~= "table") then lists.guild = {}; end
 
-        workerFrame:RegisterEvent("GUILD_ROSTER_UPDATE");
-        workerFrame:RegisterEvent("FRIENDLIST_UPDATE");
+	workerFrame:RegisterEvent("GUILD_ROSTER_UPDATE");
+	workerFrame:RegisterEvent("FRIENDLIST_UPDATE");
 	workerFrame:RegisterEvent("BN_FRIEND_LIST_SIZE_CHANGED");
 	workerFrame:RegisterEvent("BN_FRIEND_INFO_CHANGED");
 
-        --querie guild roster
-        if( _G.IsInGuild() ) then
-			-- H.Sch. - ReglohPri - this is deprecated -> GuildRoster() - changed to C_GuildInfo.GuildRoster()
-			_G.C_GuildInfo.GuildRoster();
-        end
+	--querie guild roster
+	if( _G.IsInGuild() ) then
+		-- H.Sch. - ReglohPri - this is deprecated -> GuildRoster() - changed to C_GuildInfo.GuildRoster()
+		_G.C_GuildInfo.GuildRoster();
+	end
 
     isInitialized = true;
 
@@ -204,26 +199,12 @@ local function onEnable()
                 end
             end
         end
---    DisplayTutorial(L["WIM (WoW Instant Messenger)"], L["WIM is currently running. To access WIM's wide array of options type:"].." |cff69ccf0/wim|r");
-    dPrint("WIM is now enabled.");
-
---[[    --Private Server Check
-    if(isPrivateServer and not db.alertedPrivateServer) then
-      _G.StaticPopupDialogs["WIM_PRIVATE_SERVER"] = {
-      	preferredIndex = STATICPOPUP_NUMDIALOGS,
-        text = L["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"],
-        button1 = _G.TEXT(_G.YES),
-        button2 = _G.TEXT(_G.NO),
-        OnShow = function(self) end,
-        OnHide = function() end,
-        OnAccept = function() db.disableAddonMessages = false; db.alertedPrivateServer = true; end,
-        OnCancel = function() db.disableAddonMessages = true; db.alertedPrivateServer = true; end,
-        timeout = 0,
-        whileDead = 1,
-        hideOnEscape = 1
-      };
-      _G.StaticPopup_Show ("WIM_PRIVATE_SERVER", theLink);
-    end--]]
+	-- DisplayTutorial(L["WIM (WoW Instant Messenger)"], L["WIM is currently running. To access WIM's wide array of options type:"].." |cff69ccf0/wim|r");
+    -- check if WhisperEngine is enabled, if not enable it.
+	if not modules["WhisperEngine"].enabled then
+		modules["WhisperEngine"]:Enable();
+	end
+	dPrint("WIM is now enabled.");
 end
 
 -- called when WIM is disabled.
@@ -404,7 +385,6 @@ function WIM:VARIABLES_LOADED()
 
     SetEnabled(db.enabled);
     initialize();
-     --_G.print("WIM Notice: Since 7.0 there is a new bug where first whisper is not visible until you get a 2nd whisper, or you scroll up and then back down. That's work around. Scroll up, then scroll down.")
 end
 
 function WIM:FRIENDLIST_UPDATE()
