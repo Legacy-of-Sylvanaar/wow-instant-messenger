@@ -2038,7 +2038,7 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
     end
 
 	if t == 'player' then
-		if (_G.ChatFrameMixin.OnHyperlinkClick) then
+		if (_G.ChatFrameMixin and _G.ChatFrameMixin.OnHyperlinkClick) then
 			_G.ChatFrameMixin.OnHyperlinkClick(_G.DEFAULT_CHAT_FRAME, link, text, button);
 		else
 			_G.ChatFrame_OnHyperlinkShow(_G.DEFAULT_CHAT_FRAME, link, text, button);

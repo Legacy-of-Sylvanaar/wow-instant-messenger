@@ -1,2 +1,4 @@
 Libs/*/
 !Libs/compat/
+.vscode
+.emmyrc.json
