@@ -516,12 +516,10 @@ local translations = {
     ["Click to reposition."] = "Haz clic para reposicionar.",
 
     --Misc
-    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM ha detectado que estás jugando en un servidor privado. Algunos servidores no pueden procesar ChatAddonMessages. ¿Quieres activarlos de todos modos?"
-
+    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM ha detectado que estás jugando en un servidor privado. Algunos servidores no pueden procesar ChatAddonMessages. ¿Quieres activarlos de todos modos?",
 	["Set whispers to In-line"] = "Establecer susurros en línea",
 	["Message suppression requires whispers to be set to 'In-line'."] = "La supresión de mensajes requiere que los susurros estén configurados en 'en línea'.",
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "Se recomienda configurar los susurros en línea para manejar su comportamiento correctamente.",
-
 };
 
 if WIM.getLocale() == "esES" then
