@@ -2095,10 +2095,10 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 		end
 	end
 
-	if (_G.ChatFrameMixin.OnHyperlinkClick) then
-		_G.ChatFrameMixin.OnHyperlinkClick(self, link, text, button);
-	else
-		_G.ChatFrame_OnHyperlinkShow(self, link, text, button);
+	if _G.SetItemRef then
+    	_G.SetItemRef(link, text, button, self)
+	elseif ChatFrame_OnHyperlinkShow then
+    	ChatFrame_OnHyperlinkShow(self, link, text, button)
 	end
 end);
 --RegisterWidgetTrigger("chat_display", "whisper,chat,w2w","OnMessageScrollChanged", function(self) updateScrollBars(self:GetParent()); end);
