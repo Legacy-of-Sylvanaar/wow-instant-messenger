@@ -513,5 +513,7 @@ WIM.AddLocale("ptBR", {
 
     --Misc
     ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "O WIM detectou que você está jogando em um servidor privado. Alguns servidores não podem processar o ChatAddonMessages. Deseja ativá-los de qualquer maneira?",
-
+	["Set whispers to In-line"] = "Definir sussurros como Em linha",
+	["Message suppression requires whispers to be set to 'In-line'."] = "A supressão de mensagens requer que os sussurros estejam configurados como 'Em linha'.",
+	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "Recomenda-se configurar os sussurros como Em linha para lidar corretamente com seu comportamento.",
 });
