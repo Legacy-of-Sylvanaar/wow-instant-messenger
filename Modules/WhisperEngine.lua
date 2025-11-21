@@ -329,20 +329,12 @@ end
 RegisterWidgetTrigger("msg_box", "whisper", "OnEnterPressed", function(self)
         local obj = self:GetParent();
         local msg = PreSendFilterText(self:GetText());
-		local messageLength = obj.isBN and 800 or 255;
-        local msgCount = math.ceil(string.len(msg)/messageLength);
-        if(msgCount == 1) then
-            Windows[safeName(obj.theUser)].msgSent = true;
-			if(obj.isBN) then
-				(_G.C_BattleNet and _G.C_BattleNet.SendWhisper or _G.BNSendWhisper)(obj.bn.id, msg);
-			else
-				_G.SendChatMessage(msg, "WHISPER", nil, obj.theUser);
-				-- _G.ChatThrottleLib:SendChatMessage("ALERT", "WIM", msg, "WHISPER", nil, obj.theUser);
-			end
-        elseif(msgCount > 1) then
+
+		if(msg ~= "") then
             Windows[safeName(obj.theUser)].msgSent = true;
             SendSplitMessage("ALERT", "WIM", msg, "WHISPER", nil, obj.theUser);
         end
+
         self:SetText("");
     end);
 

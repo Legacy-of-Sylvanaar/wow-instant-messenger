@@ -199,35 +199,34 @@ end
 
 
 RegisterWidgetTrigger("msg_box", "chat", "OnEnterPressed", function(self)
-        local obj, msg, TARGET, NUMBER = self:GetParent(), self:GetText();
+    local obj, msg, TARGET, NUMBER = self:GetParent(), self:GetText();
 	msg = PreSendFilterText(msg);
-        if(obj.chatType == "guild") then
-            TARGET = "GUILD";
-        elseif(obj.chatType == "officer") then
-            TARGET = "OFFICER";
-        elseif(obj.chatType == "party") then
-            TARGET = "PARTY";
-        elseif(obj.chatType == "raid") then
-            TARGET = "RAID";
-        elseif(obj.chatType == "battleground") then
-            TARGET = "INSTANCE_CHAT";
-        elseif(obj.chatType == "say") then
-            TARGET = "SAY";
-        elseif(obj.chatType == "channel") then
-            TARGET = "CHANNEL";
-            NUMBER = obj.channelNumber;
-        else
-            return;
-        end
-        local msgCount = math.ceil(string.len(msg)/255);
-        if(msgCount == 1) then
-			_G.SendChatMessage(msg, TARGET, nil, NUMBER);
-	        -- _G.ChatThrottleLib:SendChatMessage("ALERT", "WIM", msg, TARGET, nil, NUMBER);
-        elseif(msgCount > 1) then
-            SendSplitMessage("ALERT", "WIM", msg, TARGET, nil, NUMBER);
-        end
-        self:SetText("");
-    end);
+
+	if(obj.chatType == "guild") then
+		TARGET = "GUILD";
+	elseif(obj.chatType == "officer") then
+		TARGET = "OFFICER";
+	elseif(obj.chatType == "party") then
+		TARGET = "PARTY";
+	elseif(obj.chatType == "raid") then
+		TARGET = "RAID";
+	elseif(obj.chatType == "battleground") then
+		TARGET = "INSTANCE_CHAT";
+	elseif(obj.chatType == "say") then
+		TARGET = "SAY";
+	elseif(obj.chatType == "channel") then
+		TARGET = "CHANNEL";
+		NUMBER = obj.channelNumber;
+	else
+		return;
+	end
+
+	if(msg ~= "") then
+		SendSplitMessage("ALERT", "WIM", msg, TARGET, nil, NUMBER);
+	end
+
+	self:SetText("");
+end);
 
 
 local processMessageEventFilters = modules.WhisperEngine.processMessageEventFilters;
