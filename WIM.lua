@@ -556,6 +556,23 @@ function GetTalentSpec()
 end
 
 
+-- 12.00.00 + Secret Tools
+function IsSecretValue(...)
+	if _G.issecretvalue then
+		return _G.issecretvalue(...);
+	else
+		return false;
+	end
+end
+
+function InChatMessagingLockdown()
+	if _G.C_ChatInfo and _G.C_ChatInfo.InChatMessagingLockdown then
+		return _G.C_ChatInfo.InChatMessagingLockdown();
+	else
+		return false;
+	end
+end
+
 
 
 -- list of PreSendFilterText(text)
