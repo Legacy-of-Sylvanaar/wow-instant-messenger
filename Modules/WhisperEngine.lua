@@ -330,6 +330,11 @@ RegisterWidgetTrigger("msg_box", "whisper", "OnEnterPressed", function(self)
         local obj = self:GetParent();
         local msg = PreSendFilterText(self:GetText());
 
+		-- do not send if in chat messaging lockdown (12.0.0+)
+		if InChatMessagingLockdown() then
+			return;
+		end
+
 		if(msg ~= "") then
             Windows[safeName(obj.theUser)].msgSent = true;
             SendSplitMessage("ALERT", "WIM", msg, "WHISPER", nil, obj.theUser);

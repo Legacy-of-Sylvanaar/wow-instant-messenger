@@ -195,11 +195,17 @@ local function recordWhisper(inbound, ...)
 end
 
 function History:PostEvent_Whisper(...)
-    recordWhisper(true, ...);
+	-- check if secret value (12.00.00 + Secret Tools)
+	if not IsSecretValue(select(1, ...)) then
+    	recordWhisper(true, ...);
+	end
 end
 
 function History:PostEvent_WhisperInform(...)
-    recordWhisper(false, ...);
+	-- check if secret value (12.00.00 + Secret Tools)
+	if not IsSecretValue(select(1, ...)) then
+    	recordWhisper(false, ...);
+	end
 end
 
 local function deleteOldHistory(isChat)
@@ -358,6 +364,12 @@ end
 
 function ChatHistory:PostEvent_ChatMessage(event, ...)
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...;
+
+	-- check if secret value (12.00.00 + Secret Tools)
+	if IsSecretValue(arg1) then
+        return;
+    end
+
     event = event:gsub("CHAT_MSG_", "");
     if(event == "CHANNEL") then
         local recordAs;

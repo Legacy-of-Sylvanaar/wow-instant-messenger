@@ -212,6 +212,10 @@ end
 
 
 function applyStringModifiers(str, chatDisplay)
+	if (IsSecretValue(str)) then
+		return str;
+	end
+
 	for i=1, #StringModifiers do
 		str = StringModifiers[i](str, chatDisplay);
 	end

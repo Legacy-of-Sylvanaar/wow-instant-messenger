@@ -202,6 +202,11 @@ RegisterWidgetTrigger("msg_box", "chat", "OnEnterPressed", function(self)
     local obj, msg, TARGET, NUMBER = self:GetParent(), self:GetText();
 	msg = PreSendFilterText(msg);
 
+	-- do not send if in chat messaging lockdown (12.0.0+)
+	if InChatMessagingLockdown() then
+		return;
+	end
+
 	if(obj.chatType == "guild") then
 		TARGET = "GUILD";
 	elseif(obj.chatType == "officer") then

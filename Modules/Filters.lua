@@ -213,6 +213,11 @@ function WIM.IgnoreOrBlockEvent(event, ...)
 		return false, false
 	end
 
+	-- check for secret values
+	if (IsSecretValue(select(1, ...))) then
+		return false, false;
+	end
+
 	-- first check if message is whitelisted
 	local msgId = select(11, ...)
 	if (msgId and whitelistedMessages[msgId]) then
