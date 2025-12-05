@@ -606,9 +606,9 @@ end
 function WhisperEngine:CHAT_MSG_AFK(...)
     local color = db.displayColors.wispIn; -- color contains .r, .g & .b
     local win = Windows[safeName(select(2, ...))];
-	_G.DEFAULT_CHAT_FRAME:AddMessage("AFK message from ".._G.tostring(safeName(select(2, ...)))) -- debugging
+
     if(win) then
-		_G.DEFAULT_CHAT_FRAME:AddMessage("Window Found") -- debugging
+
         win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_AFK", ...);
         win:Pop("out");
    		(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(select(2, ...), "AFK");
