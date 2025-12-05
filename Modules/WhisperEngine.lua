@@ -207,6 +207,14 @@ function WhisperEngine:OnDisable()
 end
 
 local function safeName(user)
+	-- check if cross realm or if realm is included and the same as player, then strip realm
+	if string.find(user, "-") then
+		local player, realm = user:match("^(.-)-(.-)$");
+		if string.lower(realm) == string.lower(env.realm) then
+			user = player;
+		end
+	end
+
 	return string.lower(user or "")
 end
 
@@ -598,7 +606,9 @@ end
 function WhisperEngine:CHAT_MSG_AFK(...)
     local color = db.displayColors.wispIn; -- color contains .r, .g & .b
     local win = Windows[safeName(select(2, ...))];
+	_G.DEFAULT_CHAT_FRAME:AddMessage("AFK message from ".._G.tostring(safeName(select(2, ...)))) -- debugging
     if(win) then
+		_G.DEFAULT_CHAT_FRAME:AddMessage("Window Found") -- debugging
         win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_AFK", ...);
         win:Pop("out");
    		(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(select(2, ...), "AFK");
