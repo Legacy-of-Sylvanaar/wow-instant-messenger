@@ -243,7 +243,7 @@ local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
             Windows[safeName(user)]:SendWho(); -- send who request
         end
         Windows[safeName(user)].online = true;
-        return Windows[safeName(user)], true;
+		return Windows[safeName(user)], true;
     end
 end
 
@@ -849,6 +849,12 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 				curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
 				if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
 					target = _G.Ambiguate(target, "none")--For good measure, ambiguate again cause it seems some mods interfere with this process
+
+					local bNetID = nil;
+					if type == "BN_WHISPER" then
+						bNetID = _G.BNet_GetBNetIDAccount(target);
+					end
+
 					local win = getWhisperWindowByUser(target, bNetID and true, bNetID);
 					if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
 					win.widgets.msg_box.setText = 1;

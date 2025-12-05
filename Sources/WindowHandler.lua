@@ -927,6 +927,9 @@ local function instantiateWindow(obj)
 
     -- Addmessage functions
     obj.AddMessage = function(self, msg, ...)
+		-- check that msg exists
+		if not msg then return end
+
 		msg = applyStringModifiers(msg, self.widgets.chat_display);
 		self.widgets.chat_display:AddMessage(msg, ...);
         updateScrollBars(self);
