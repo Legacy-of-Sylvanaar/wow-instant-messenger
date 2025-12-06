@@ -114,7 +114,7 @@ WIM.AddLocale("koKR", {
     ["Alphabetical"] = "가나다순",
     ["Recent Activity"] = "최근 대화 순",
     ["Keep windows on top of your UI."] = "대화창을 항상 위에 표시",
-    
+
     ["Enable/Disable addon messages."] = "애드온 메시지를 활성화하거나 비활성화합니다.",
 
     -- Class Names --
@@ -415,8 +415,7 @@ WIM.AddLocale("koKR", {
     ["Automatically group chat windows."] = "채팅 창을 자동으로 그룹화합니다.",
     ["Does not apply to windows already opened."] = "이미 열린 창에는 적용되지 않습니다",
 
-
-	   -- Talent Specs --
+	-- Talent Specs --
     ["Affliction"] = "고통",
     ["Arcane"] = "비전",
     ["Arms"] = "무기",
