@@ -405,7 +405,7 @@ WIM.AddLocale("koKR", {
     ["Group with whisper windows."] = "귓속말 창과 함께 그룹화",
     ["Color: BNet Messages Sent"] = "Battle.net 메시지를 보냈을 때 표시되는 색상",
     ["Color: BNet Messages Received"] = "Battle.net 메시지를 받았을 때 표시되는 색상",
-    
+
     -- TabManagement.lua --
     ["Tab Management"] = "탭 관리",
     ["Automatically manage your open windows and place them into appropriate tab groups."] = "열려 있는 창을 자동으로 관리하여 적절한 탭 그룹에 배치합니다.",
