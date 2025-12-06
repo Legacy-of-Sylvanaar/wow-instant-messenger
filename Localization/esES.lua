@@ -378,7 +378,6 @@ local translations = {
     ["Allowing your history logs to grow too large will affect the game's performance, therefore it is reccomended that you use the following options."] = "Permite que tus registros de historial crezcan demasiado afectará el rendimiento del juego, por lo tanto, se recomienda que uses las siguientes opciones.",
     ["Save a maximum number of messages per person."] = "Guardar un número máximo de mensajes por persona",
     ["%d |4Week:Weeks;"] = "%d |4Semana:Semanas;",
-    ["%d |1Week:Week;"] = "%d |1Semana:Semana;",
     ["Automatically delete old messages."] = "Eliminar automáticamente los mensajes antiguos",
     ["WIM-2-WIM is a feature which allows users with WIM to interact in ways that normal whispering can not."] = "WIM-2-WIM es una característica que permite a los usuarios con WIM interactuar de formas que los susurros normales no pueden.",
     ["Enable WIM-2-WIM"] = "Activar WIM-2-WIM",
