@@ -111,6 +111,8 @@ WIM.AddLocale("koKR", {
     ["Direction:"] = "방향:",
     ["Tabs"] = "탭",
     ["Sort tabs by:"] = "탭 정렬 방식 :",
+	["Last Activity"] = "마지막 활동",
+	["Window Created"] = "창 생성됨",
     ["Alphabetical"] = "가나다순",
     ["Recent Activity"] = "최근 대화 순",
     ["Keep windows on top of your UI."] = "대화창을 항상 위에 표시",
@@ -414,8 +416,6 @@ WIM.AddLocale("koKR", {
     ["Place guild members in their own group."] = "길드원은 별도의 그룹에 배치합니다.",
     ["Automatically group chat windows."] = "채팅 창을 자동으로 그룹화합니다.",
     ["Does not apply to windows already opened."] = "이미 열린 창에는 적용되지 않습니다",
-	["Last Activity"] = "마지막 활동",
-	["Window Created"] = "창 생성됨",
 
 	-- Talent Specs --
     ["Affliction"] = "고통",
