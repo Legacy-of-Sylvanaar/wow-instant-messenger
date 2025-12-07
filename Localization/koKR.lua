@@ -414,6 +414,8 @@ WIM.AddLocale("koKR", {
     ["Place guild members in their own group."] = "길드원은 별도의 그룹에 배치합니다.",
     ["Automatically group chat windows."] = "채팅 창을 자동으로 그룹화합니다.",
     ["Does not apply to windows already opened."] = "이미 열린 창에는 적용되지 않습니다",
+	["Last Activity"] = "마지막 활동",
+	["Window Created"] = "창 생성됨",
 
 	-- Talent Specs --
     ["Affliction"] = "고통",
