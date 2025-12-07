@@ -30,7 +30,7 @@ WIM.AddLocale("koKR", {
     ["state_raid"] = "레이드",
     ["state_other"] = "일반 (기타)",
 
-    ["<Shift-Click> to close window."] = "<Shift-Click> 창 닫기",
+    ["<Shift-Click> to close window."] = "Shift 클릭 창 닫기",
 
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = "새로운 버전의 WIM이 이용 가능합니다!\n최신 버전은 Curse에서 다운로드할 수 있습니다.",
 
@@ -284,11 +284,11 @@ WIM.AddLocale("koKR", {
 
     -- CoreOptions --
     ["Created By:"] = "제작자:",
-    ["Special Thanks:"] = "Special Thanks:",
+    ["Special Thanks:"] = "특별 감사:",
     ["Welcome!"] = "환영합니다!",
     ["Enable WIM"] = "WIM 사용",
     ["Display Minimap Icon"] = "미니맵 아이콘 표시",
-    ["<Right-Click> to show unread messages."] = "<Right-Click>으로 읽지 않은 메시지를 표시합니다.",
+    ["<Right-Click> to show unread messages."] = "오른쪽 클릭 으로 읽지 않은 메시지를 표시합니다.",
     ["Display Tutorials"] = "튜토리얼 표시",
     ["Reset Tutorials"] = "튜토리얼 초기화",
     ["Credits"] = "제작자 명단",
