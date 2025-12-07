@@ -1,6 +1,6 @@
 --[[
     Language Localization: esES & esMX
-    Translated by: Woopy - Loatheb (NA)
+    Translated by: Woopy#1685 (NA)
 ]]
 
 local translations = {
