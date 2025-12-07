@@ -30,7 +30,7 @@ WIM.AddLocale("koKR", {
     ["state_raid"] = "레이드",
     ["state_other"] = "일반 (기타)",
 
-    ["<Shift-Click> to close window."] = "Shift 클릭 창 닫기",
+    ["<Shift-Click> to close window."] = "Shift 클릭으로 창 닫기",
 
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = "새로운 버전의 WIM이 이용 가능합니다!\n최신 버전은 Curse에서 다운로드할 수 있습니다.",
 
