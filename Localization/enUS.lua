@@ -415,12 +415,12 @@ WIM.AddLocale("enUS", {
     ["Place friends in their own group."] = true,
 	["Place guild members in their own group."] = true,
 	["Automatically group chat windows."] = true,
-    ["Does not apply to windows already opened."] = true,
-	
-    -- Talent Specs --
-    ["Affliction"] = true,
-    ["Arcane"] = true,
-    ["Arms"] = true,
+	["Does not apply to windows already opened."] = true,
+
+	-- Talent Specs --
+	["Affliction"] = true,
+	["Arcane"] = true,
+	["Arms"] = true,
     ["Assassination"] = true,
     ["Balance"] = true,
     ["Beast Mastery"] = true,
