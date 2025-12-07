@@ -407,8 +407,8 @@ WIM.AddLocale("enUS", {
 	["Group with whisper windows."] = true,
 	["Color: BNet Messages Sent"] = true,
 	["Color: BNet Messages Received"] = true,
-
-    -- TabManagement.lua --
+		
+	-- TabManagement.lua --
     ["Tab Management"] = true,
     ["Automatically manage your open windows and place them into appropriate tab groups."] = true,
     ["Automatically group whispers."] = true,
@@ -416,7 +416,7 @@ WIM.AddLocale("enUS", {
 	["Place guild members in their own group."] = true,
 	["Automatically group chat windows."] = true,
 	["Does not apply to windows already opened."] = true,
-
+		
 	-- Talent Specs --
 	["Affliction"] = true,
 	["Arcane"] = true,
