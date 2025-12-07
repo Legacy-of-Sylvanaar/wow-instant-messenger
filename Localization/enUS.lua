@@ -111,6 +111,8 @@ WIM.AddLocale("enUS", {
     ["Direction:"] = true,
     ["Tabs"] = true,
     ["Sort tabs by:"] = true,
+	["Last Activity"] = true,
+	["Window Created"] = true,	
     ["Alphabetical"] = true,
     ["Recent Activity"] = true,
     ["Keep windows on top of your UI."] = true,
@@ -414,8 +416,6 @@ WIM.AddLocale("enUS", {
 	["Place guild members in their own group."] = true,
 	["Automatically group chat windows."] = true,
     ["Does not apply to windows already opened."] = true,
-	["Last Activity"] = true,
-	["Window Created"] = true,
 
     -- Talent Specs --
     ["Affliction"] = true,
