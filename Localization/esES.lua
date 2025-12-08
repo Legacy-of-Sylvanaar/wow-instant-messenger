@@ -1,6 +1,6 @@
 --[[
     Language Localization: esES & esMX
-    Translated by: Woopy - Loatheb (NA)
+    Translated by: Woopy#1685 (NA)
 ]]
 
 local translations = {
@@ -111,6 +111,8 @@ local translations = {
     ["Direction:"] = "Dirección:",
     ["Tabs"] = "Pestañas",
     ["Sort tabs by:"] = "Ordenar pestañas por:",
+	["Window Created"] = "Ventana creada",
+	["Last Activity"] = "Última actividad",
     ["Alphabetical"] = "Alfabético",
     ["Recent Activity"] = "Actividad reciente",
     ["Keep windows on top of your UI."] = "Mantén las ventanas encima de tu IU.",
@@ -413,9 +415,6 @@ local translations = {
     ["Place friends in their own group."] = "Colocar amigos en su propio grupo",
     ["Place guild members in their own group."] = "Colocar a los miembros de la hermandad en su propio grupo",
     ["Does not apply to windows already opened."] = "No se aplica a las ventanas ya abiertas.",
-    ["Last Activity"] = "Última actividad",
-    ["Window Created"] = "Ventana creada",
-
 
     -- Talent Specs --
     ["Affliction"] = "Aflicción",
