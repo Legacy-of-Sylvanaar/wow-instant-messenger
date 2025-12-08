@@ -416,7 +416,7 @@ WIM.AddLocale("enUS", {
 	["Place guild members in their own group."] = true,
 	["Automatically group chat windows."] = true,
 	["Does not apply to windows already opened."] = true,
-		
+
 	-- Talent Specs --
 	["Affliction"] = true,
 	["Arcane"] = true,
