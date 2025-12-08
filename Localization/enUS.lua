@@ -111,7 +111,7 @@ WIM.AddLocale("enUS", {
     ["Direction:"] = true,
     ["Tabs"] = true,
     ["Sort tabs by:"] = true,
-	["Window Created"] = true,		
+	["Window Created"] = true,
 	["Last Activity"] = true,
     ["Alphabetical"] = true,
     ["Recent Activity"] = true,
@@ -407,7 +407,7 @@ WIM.AddLocale("enUS", {
 	["Group with whisper windows."] = true,
 	["Color: BNet Messages Sent"] = true,
 	["Color: BNet Messages Received"] = true,
-		
+
 	-- TabManagement.lua --
     ["Tab Management"] = true,
     ["Automatically manage your open windows and place them into appropriate tab groups."] = true,
