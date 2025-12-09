@@ -110,6 +110,8 @@ WIM.AddLocale("ptBR", {
     ["Direction:"] = "Direção:",
     ["Tabs"] = "Guias",
     ["Sort tabs by:"] = "Classificar guias por:",
+	["Window Created"] = "Janela criada",
+	["Last Activity"] = "Última atividade",
     ["Alphabetical"] = "Alfabético",
     ["Recent Activity"] = "Recente atividade",
     ["Keep windows on top of your UI."] = "Manter as janelas no topo do seu IU",
@@ -411,8 +413,6 @@ WIM.AddLocale("ptBR", {
     ["Place friends in their own group."] = "Colocar amigos no seu próprio grupo",
     ["Place guild members in their own group."] = "Colocar membros da guilda no seu próprio grupo",
     ["Does not apply to windows already opened."] = "Isso não se aplica à janelas já abertas.",
-	["Last Activity"] = "Última atividade",
-    ["Window Created"] = "Janela criada",
 
     -- Talent Specs --
     ["Affliction"] = "Suplício",
