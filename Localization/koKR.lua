@@ -293,7 +293,7 @@ WIM.AddLocale("koKR", {
     ["Display Tutorials"] = "튜토리얼 표시",
     ["Reset Tutorials"] = "튜토리얼 초기화",
     ["Credits"] = "제작자 명단",
-    ["This is a long message which contains both emoticons and urls 8)."] = "이것은 이모티콘과 URL이 모두 포함된 긴 메시지입니다 8).",
+    ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "이것은 이모티콘과 URL이 모두 포함된 긴 메시지입니다 8). WIM의 홈페이지는 www.WIMAddon.com입니다.",
     ["Message Formatting"] = "메시지 형식",
     ["Manipulate how WIM displays messages."] = "WIM의 메시지 표시 방식을 설정합니다.",
     ["Preview"] = "미리보기",
