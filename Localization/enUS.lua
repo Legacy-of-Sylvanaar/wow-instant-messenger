@@ -294,7 +294,7 @@ WIM.AddLocale("enUS", {
     ["Display Tutorials"] = true,
     ["Reset Tutorials"] = true,
     ["Credits"] = true,
-    ["This is a long message which contains both emoticons and urls 8)."] = true,
+    ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = true,
     ["Message Formatting"] = true,
     ["Manipulate how WIM displays messages."] = true,
     ["Preview"] = true,
