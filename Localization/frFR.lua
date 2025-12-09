@@ -293,7 +293,7 @@ WIM.AddLocale("frFR", {
     ["Display Tutorials"] = "Afficher le tutorial",
     ["Reset Tutorials"] = "Réinitialiser le tutorial",
     ["Credits"] = "Crédits",
-    ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "Il s'agit d'un long message qui contient à la fois des émoticônes et des URL 8). WIM's l'adresse www.WIMAddon.com.",
+    ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "Il s'agit d'un long message qui contient à la fois des émoticônes et des URL 8). La page d’accueil de WIM est www.WIMAddon.com.",
     ["Message Formatting"] = "Format d'un message",
     ["Manipulate how WIM displays messages."] = "Manipulez la façon dont WIM affiche les messages.",
     ["Preview"] = "Aperçu",
