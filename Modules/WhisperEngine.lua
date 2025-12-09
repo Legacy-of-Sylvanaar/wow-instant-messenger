@@ -207,8 +207,13 @@ function WhisperEngine:OnDisable()
 end
 
 local function safeName(user)
+	-- nil check. For some reason, events get modified by other addons and return nil for user.
+	if _G.type(user) ~= "string" or user == "" then
+        return ""
+    end
+
 	-- check if cross realm or if realm is included and the same as player, then strip realm
-	if string.find(user, "-") then
+	if string.find(user or "", "-") then
 		local player, realm = user:match("^(.-)-(.-)$");
 		if string.lower(realm) == string.lower(env.realm) then
 			user = player;
@@ -282,6 +287,18 @@ end
 
 local splitMessage, splitMessageLinks = {}, {};
 function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
+	-- ignore completely empty messages
+    if _G.type(theMsg) ~= "string" or theMsg == "" then
+        return
+    end
+
+    -- for whisper-style channels we *must* have a target
+    if (CHANNEL == "WHISPER" or CHANNEL == "BN_WHISPER")
+       and (_G.type(to) ~= "string" or to == "") then
+        -- no valid target, don't try to send or open windows
+        return
+    end
+
     -- determine isBNET
     local isBN, messageLimit = false, 255;
     if(Windows[safeName(to)] and Windows[safeName(to)].isBN) then
