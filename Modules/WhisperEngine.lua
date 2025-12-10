@@ -223,10 +223,35 @@ local function safeName(user)
 	return string.lower(user or "");
 end
 
+local function findWhisperWindowByBNetID(bnID)
+	for _, win in pairs(Windows) do
+		if(win.isBN and win.bn.id == bnID) then
+			return win;
+		end
+	end
+	return nil;
+end
+
 local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
 	if isBN then
-			local _
-			_, user = GetBNGetFriendInfoByID(bnID) -- fix window handler when using the chat hyperlink
+		local _;
+		local bnWin = findWhisperWindowByBNetID(bnID);
+		local _user = user;
+
+		_, user = GetBNGetFriendInfoByID(bnID) -- fix window handler when using the chat hyperlink
+
+		user = user and user ~= "" and user or _user;
+
+		-- if window already exists for bnID but name has changed, update it.
+		if (bnWin and safeName(bnWin.theUser) ~= safeName(user)) then
+			-- swap the indexed name to the new name
+			Windows[safeName(user)] = bnWin;
+			Windows[safeName(bnWin.theUser)] = nil;
+
+			bnWin:Rename(user);
+
+			return bnWin;
+		end
 	else
 		user = string.gsub(user," ","") -- Drii: WoW build15050 whisper bug for x-realm server with space
 	    user = fromEvent and user or FormatUserName(user);

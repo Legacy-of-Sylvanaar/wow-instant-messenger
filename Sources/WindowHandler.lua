@@ -1272,6 +1272,20 @@ local function instantiateWindow(obj)
 		end
 	end
 
+	-- update/swap window name
+	obj.Rename = function (self, name)
+		for i=1,#WindowSoupBowl.windows do
+			if(WindowSoupBowl.windows[i].user == self.theUser) then
+				WindowSoupBowl.windows[i].user = name;
+				break;
+			end
+		end
+
+		self.user = name
+		self.theUser = name
+		self.widgets.from:SetText(GetReadableName(name))
+	end
+
 	-- at this state the message is no longer classified as a new window, reset flag.
 	obj.isNew = false;
         CallModuleFunction("OnWindowPopped", self);
@@ -1565,7 +1579,7 @@ local function destroyWindow(userNameOrObj)
     if(type(userNameOrObj) == "string") then
         obj, index = getWindowByName(userNameOrObj);
     else
-	obj, index = getWindowByName(userNameOrObj.theUser);
+		obj, index = getWindowByName(userNameOrObj.theUser);
     end
 
     if(obj) then
