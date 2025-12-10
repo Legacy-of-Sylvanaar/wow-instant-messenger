@@ -597,3 +597,13 @@ function(text)
 end
 );
 ]]
+
+function NextTick(func)
+	if(type(func) == "function") then
+		if _G.C_Timer and _G.C_Timer.After then
+			_G.C_Timer.After(0, func);
+		else
+			func();
+		end
+	end
+end
