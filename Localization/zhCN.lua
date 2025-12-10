@@ -292,7 +292,7 @@ WIM.AddLocale("zhCN", {
     ["Display Tutorials"] = "显示教程",
     ["Reset Tutorials"] = "重置教程",
     ["Credits"] = "感谢",
-    ["This is a long message which contains both emoticons and urls 8)."] = "这是一个同时包含表情与网页链接的超长信息这是一个同时包含表情与网页链接的超长信息这是一个同时包含表情与网页链接的超长信息8)",
+    ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "这是一个同时包含表情与网页链接的超长信息8)。WIM的主页是 www.WIMAddon.com。",
     ["Message Formatting"] = "消息格式",
     ["Manipulate how WIM displays messages."] = "控制WIM如何显示消息。",
     ["Preview"] = "预览",
