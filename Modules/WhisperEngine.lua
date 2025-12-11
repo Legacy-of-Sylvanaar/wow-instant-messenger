@@ -703,8 +703,6 @@ local function replyTellTarget(TellNotTold)
 			lastTell, lastTellType = (ChatFrameUtil and ChatFrameUtil.GetLastToldTarget and ChatFrameUtil.GetLastToldTarget or _G.ChatEdit_GetLastToldTarget)();
 		end
 
-		_G.DevTools_Dump({lastTell=lastTell, lastTellType=lastTellType})
-
 		-- Grab the string after the slash command
 		if not lastTell then return end--because if you fat finger R or try to re ply before someone sent a tell, it generates a lua error without this
 
@@ -844,7 +842,9 @@ local function processChatType(editBox, msg, index, send)
 			win.widgets.msg_box:SetFocus();
 
 			if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.ClearChat then
-				editBox:ClearChat();
+				-- editBox:ClearChat();
+				editBox:SetText("");
+				editBox:Hide();
 			else
 				_G.ChatEdit_OnEscapePressed(editBox);
 			end
