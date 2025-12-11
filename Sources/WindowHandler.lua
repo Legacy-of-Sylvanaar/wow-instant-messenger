@@ -1500,7 +1500,7 @@ end
 
 -- Create (recycle if available) message window. Returns object.
 -- (wtype == "whisper", "chat" or "w2w")
-local function createWindow(userName, wtype)
+local function createWindow(userName, wtype, onBeforeReturn)
     if(type(userName) ~= "string") then
         return;
     end
@@ -1529,6 +1529,9 @@ local function createWindow(userName, wtype)
         obj.type = wtype;
         loadWindowDefaults(obj); -- clear contents of window and revert back to it's initial state.
         dPrint("Window recycled '"..obj:GetName().."'");
+		if (type(onBeforeReturn) == "function") then
+			onBeforeReturn(obj);
+		end
 		CallModuleFunction("OnWindowCreated", obj);
         table.insert(windowsByAge, obj);
         table.sort(windowsByAge, function(a, b) return a.age > b.age; end);
@@ -1553,7 +1556,10 @@ local function createWindow(userName, wtype)
         -- f.icon.theUser = userName;
         loadWindowDefaults(f);
         dPrint("Window created '"..f:GetName().."'");
-	CallModuleFunction("OnWindowCreated", f);
+		if (type(onBeforeReturn) == "function") then
+			onBeforeReturn(f);
+		end
+		CallModuleFunction("OnWindowCreated", f);
         table.insert(windowsByAge, f);
         table.sort(windowsByAge, function(a, b) return a.age > b.age; end);
         return f;
@@ -1631,16 +1637,16 @@ function GetWindowSoupBowl()
     return WindowSoupBowl;
 end
 
-function CreateWhisperWindow(playerName)
-    return createWindow(playerName, "whisper");
+function CreateWhisperWindow(playerName, onBeforeReturn)
+    return createWindow(playerName, "whisper", onBeforeReturn);
 end
 
-function CreateChatWindow(chatName)
-    return createWindow(chatName, "chat");
+function CreateChatWindow(chatName, onBeforeReturn)
+    return createWindow(chatName, "chat", onBeforeReturn);
 end
 
-function CreateW2WWindow(chatName)
-    return createWindow(chatName, "w2w");
+function CreateW2WWindow(chatName, onBeforeReturn)
+    return createWindow(chatName, "w2w", onBeforeReturn);
 end
 
 function DestroyWindow(playerNameOrObject)

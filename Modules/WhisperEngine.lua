@@ -271,13 +271,14 @@ local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
         return obj;
     else
         -- otherwise, create a new one.
-        Windows[safeName(user)] = CreateWhisperWindow(user);
-		Windows[safeName(user)].isBN = isBN;
-		Windows[safeName(user)].bn = Windows[safeName(user)].bn or {};
-        if(db.whoLookups or lists.gm[safeName(user)] or Windows[safeName(user)].isBN) then
-            Windows[safeName(user)]:SendWho(); -- send who request
-        end
-        Windows[safeName(user)].online = true;
+        Windows[safeName(user)] = CreateWhisperWindow(user, function(win)
+			win.isBN = isBN;
+			win.bn = win.bn or {};
+			if(db.whoLookups or lists.gm[safeName(user)] or win.isBN) then
+				win:SendWho(); -- send who request
+			end
+			win.online = true;
+		end);
 		return Windows[safeName(user)], true;
     end
 end
