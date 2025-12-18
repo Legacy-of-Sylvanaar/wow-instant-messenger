@@ -30,8 +30,6 @@ WIM.AddLocale("ruRU", {
 	["state_raid"] = "В рейдовом инстансе",
 	["state_other"] = "Обычный (Другое)",
 
-	["<Shift-Click> to close window."] = "<Shift-Клик> для закрытия окна.",
-
 	["A new version of WIM is available!\nYou can download the latest version by going to:\n\n http://www.wimaddon.com"] = "Доступна новая версия WIM!\nВы можете скачать её с сайта:\n\n http://www.wimaddon.com",
 
 	["Options"] = "Настройки",
@@ -111,6 +109,8 @@ WIM.AddLocale("ruRU", {
 	["Direction:"] = "Направление",
 	["Tabs"] = "Закладки",
 	["Sort tabs by:"] = "Сортировка закладок:",
+	["Window Created"] = "По созданию окна",
+	["Last Activity"] = "По последней активности",
 	["Alphabetical"] = "По алфавиту",
 	["Recent Activity"] = "По активности",
 	["Keep windows on top of your UI."] = "Сохранять окно поверх вашего UI.",
@@ -496,8 +496,4 @@ WIM.AddLocale("ruRU", {
 
 	--Misc
     ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM обнаружил, что вы играете на частном сервере. Некоторые серверы не могут обрабатывать ChatAddonMessages. Хотите включить их все равно?",
-
-	["Last Activity"] = "По последней активности",
-	["Window Created"] = "По созданию окна",
-
 });
