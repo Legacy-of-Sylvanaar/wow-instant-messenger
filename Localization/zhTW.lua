@@ -31,8 +31,6 @@ WIM.AddLocale("zhTW", {
     ["state_raid"] = "團隊",
     ["state_other"] = "一般 (其他)",
 
-    ["<Shift-Click> to close window."] = "<Shift-左鍵> 關閉視窗",
-
     ["A new version of WIM is available!\nYou can download the latest version by going to:\n\n http://www.wimaddon.com"] = "目前已經有新版的 WIM!\n您可以到http://www.wimaddon.com 下載新版本",
 
     ["Options"] = "選項",
@@ -499,5 +497,4 @@ WIM.AddLocale("zhTW", {
 
     --Misc
     ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM 發現你正在一個私人的伺服器上玩 WOW，某些私人的伺服器並不完全支援 WIM 的模組，你是否仍要嘗試載入 WIM 呢？",
-
 });
