@@ -30,8 +30,6 @@ WIM.AddLocale("zhCN", {
     ["state_raid"] = "在团队中",
     ["state_other"] = "其他情况",
 
-    ["<Shift-Click> to close window."] = "按住Shift点击关闭窗口。",
-
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = "WIM的新版本已经可用！\n你可以在Curse中进行更新。",
 
     ["Options"] = "选项",
@@ -515,5 +513,4 @@ WIM.AddLocale("zhCN", {
 
     --Misc
     ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = true,
-
 });
