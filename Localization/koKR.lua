@@ -30,8 +30,6 @@ WIM.AddLocale("koKR", {
     ["state_raid"] = "레이드",
     ["state_other"] = "일반 (기타)",
 
-    ["<Shift-Click> to close window."] = "Shift 클릭으로 창 닫기",
-
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = "새로운 버전의 WIM이 이용 가능합니다!\n최신 버전은 Curse에서 다운로드할 수 있습니다.",
 
     ["Options"] = "옵션",
@@ -269,6 +267,7 @@ WIM.AddLocale("koKR", {
     ["Resizing Windows"] = "창 크기 조절",
     ["You can resize a window by holding <Shift> and dragging the bottom right corner of the window."] = "<Shift> 키를 누른 상태에서 창의 오른쪽 아래 모서리를 끌어 크기를 조절할 수 있습니다.",
     ["Demo Window"] = "데모 창",
+	["<Shift-Click> to close window."] = "Shift 클릭으로 창 닫기",
     ["Message Window Hidden"] = "메시지 창 숨김",
     ["WIM's message window has been hidden to WIM's Minimap Icon. If you want to end a conversation, you may do so by <Shift-Clicking> the close button."] = "WIM 메시지 창이 미니맵 아이콘으로 숨겨졌습니다. 대화를 종료하려면 Shift 클릭으로 닫기 버튼을 누르세요.",
     ["Default"] = "기본값",
