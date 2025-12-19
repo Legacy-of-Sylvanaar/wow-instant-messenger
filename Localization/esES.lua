@@ -30,8 +30,6 @@ local translations = {
     ["state_raid"] = "Grupo de banda",
     ["state_other"] = "Normal (otro)",
 
-    ["<Shift-Click> to close window."] = "<Mayús-clic> para cerrar la ventana",
-
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = "¡Una nueva versión de WIM está disponible!\nPuedes descargar la última versión en Curse",
 
     ["Options"] = "Opciones",
@@ -269,7 +267,7 @@ local translations = {
     ["Resizing Windows"] = "Redimensionar Ventanas",
     ["You can resize a window by holding <Shift> and dragging the bottom right corner of the window."] = "Puedes redimensionar una ventana manteniendo presionado <Mayús> y arrastrando la esquina inferior derecha de la ventana.",
     ["Demo Window"] = "Ventana de demonstración",
-    ["<Shift-Click> to close window."] = "<Mayús-clic> para cerrar ventana.",
+    ["<Shift-Click> to close window."] = "<Mayús-clic> para cerrar la ventana.",
     ["Message Window Hidden"] = "Ventana de mensaje oculta",
     ["WIM's message window has been hidden to WIM's Minimap Icon. If you want to end a conversation, you may do so by <Shift-Clicking> the close button."] = "La ventana de mensajes de WIM se ha ocultado al ícono de minimapa de WIM. Si deseas finalizar una conversación, puedes hacerlo presionando <Mayús-Clic> en el botón de cierre.",
     ["Default"] = "Predeterminado",
