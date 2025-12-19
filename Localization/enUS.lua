@@ -30,8 +30,6 @@ WIM.AddLocale("enUS", {
     ["state_raid"] = "Raid Instance",
     ["state_other"] = "Normal (Other)",
 
-    ["<Shift-Click> to close window."] = true,
-
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = true,
 
     ["Options"] = true,
