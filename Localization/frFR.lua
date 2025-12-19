@@ -31,11 +31,9 @@ WIM.AddLocale("frFR", {
     ["state_raid"] = "Groupe de raid",
     ["state_other"] = "Normal (Divers)",
 
-    ["<Shift-Click> to close window."] = "<Maj-Clic> pour fermer la fenêtre.",
-
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = "Une nouvelle version de WIM est disponible !\nVous pouvez télécharger la dernière version sur Curse.",
 
-    ["Options"] = "Options",
+    ["Options"] = true,
 
     ["Icon Position"] = "Position de l'icône",
     ["Font Size"] = "Taille de la police",
