@@ -40,8 +40,6 @@ WIM.AddLocale("deDE", {
     ["state_raid"] = "Schlachtzuginstanz",
     ["state_other"] = "Normal (Sonstiges)",
 
-    ["<Shift-Click> to close window."] = "<Shift-Klick> zum Schlie\195\159en des Fensters.",
-
     ["A new version of WIM is available!\nYou can download the latest version by going to:\n\n http://www.wimaddon.com"] = "Eine neue Version von WIM ist verf\195\188gbar!\nDu kannst die neueste Version auf http://www.wimaddon.com/ herunterladen.",
 
     ["Options"] = "Einstellungen",
@@ -261,7 +259,7 @@ WIM.AddLocale("deDE", {
     ["Resizing Windows"] = "Gr\195\182\195\159enanpassung von Fenstern",
     ["You can resize a window by holding <Shift> and dragging the bottom right corner of the window."] = "Du kannst die Gr\195\182\195\159e eines Fensters anpassen, indem du <Shift> gedr\195\188ckt h\195\164ltst und die obere rechte Ecke des Fensters ziehst.",
     ["Demo Window"] = "Demonstrationsfenster",
-    ["<Shift-Click> to close window."] = "<Shift-Klicken> um Fenster zu schlie\195\159en.",
+    ["<Shift-Click> to close window."] = "<Shift-Klick> zum Schlie\195\159en des Fensters.",
     ["Message Window Hidden"] = "Nachrichtenfenster versteckt",
     ["WIM's message window has been hidden to WIM's Minimap Icon. If you want to end a conversation, you may do so by <Shift-Clicking> the close button."] = "WIMs Nachrichtenfenster wurde im WIM Minimap-Symbol versteckt. Wenn du eine Konversation beenden m\195\182chtest, kannst du das durch einen <Shift-Klick> auf den Schlie\195\159en-Button tun.",
     ["Default"] = "Standard",
@@ -421,5 +419,4 @@ WIM.AddLocale("deDE", {
     ["Show Unread Messages"] = "Zeige ungelesene Nachrichten",
     ["Show All Windows"] = "Zeige alle Fenster",
     ["Hide All Windows"] = "Verberge alle Fenster",
-
 });
