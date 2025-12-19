@@ -29,8 +29,6 @@ WIM.AddLocale("ptBR", {
     ["state_raid"] = "Grupo de raide",
     ["state_other"] = "Normal (outro)",
 
-    ["<Shift-Click> to close window."] = "<Shift-Clique> para fechar a janela.",
-
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = "Uma nova versão do WIM está disponível!\nVocê poderá fazer o download da nova versão indo em curse",
 
     ["Options"] = "Opções",
