@@ -875,7 +875,7 @@ hooksecurefunc("AutoCompleteButton_OnClick", function(self)
 	local target = self.nameInfo and self.nameInfo.name and safeName(_G.Ambiguate(self.nameInfo.name, "none")) or nil;
 
 	-- only proceed if the editBox is a whisper type
-	if (not editBox or (editBox.chatType ~= "WHISPER" and editBox.chatType ~= "BN_WHISPER")) then
+	if (not editBox or (editBox:GetAttribute("chatType") ~= "WHISPER" and editBox:GetAttribute("chatType") ~= "BN_WHISPER")) then
         return;
     end
 
