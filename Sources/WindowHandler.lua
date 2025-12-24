@@ -1102,6 +1102,9 @@ local function instantiateWindow(obj)
 					self.bn.hasFocus = hasFocus;
 					self.bn.id = id;
 					-- self.widgets.from:SetText(self.theUser.." - "..toonName);
+					if (toonName and toonName ~= "") then
+                        self.widgets.from:SetText(GetReadableName(self.theUser).." ("..toonName..")");
+                    end
 					self:UpdateIcon();
 					if (client == _G.BNET_CLIENT_WOW) then
 						self:UpdateCharDetails();
