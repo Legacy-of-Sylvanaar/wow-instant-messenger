@@ -402,7 +402,7 @@ local translations = {
     ["Press <Tab> to advance to next tell target."] = "Presionar <Tab> para avanzar al siguiente objetivo",
     ["Force sounds when game sound is disabled."] = "Forzar sonidos cuando el sonido del juego está desactivado",
     ["Colorize names."] = "Colorear nombres",
-    ["Clamp window to screen."] = "Sujetar la ventana a la pantalla",
+    ["Clamp window to screen."] = "Anclar la ventana a la pantalla",
     ["Group with whisper windows."] = "Agrupar con ventanas de susurros",
 
     -- TabManagement.lua --
