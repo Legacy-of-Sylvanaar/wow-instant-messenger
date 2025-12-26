@@ -20,7 +20,7 @@ db_defaults.stats = {
 local credits = {
     "Pazza <Bronzebeard-US>\n\n",
     "MysticalOS\nHumfras\nSylvaanar\n\nStewarta <Emerald Dream - EU>\n\nAstaldo <Bronzebeard - EU>\nZeke <Coilfang - US>\nMorphieus <Spinebreaker>\nNachonut <Bronzebeard - US>\n\nChiaki <Frostwolf - EU> - deDE\n"..
-    "BlueNyx <bluenyx@gmail.com> - koKR\nStingerSoft <stingersoft@iti.lt> - ruRU\nJunxian <junxian1121@hotmail.com> - zhCN & zhTW\nWoopy <Woopy#1685> - esES & esMX\n\n\nAstrosloth and Zezerat are noobs! ;-p"
+    "BlueNyx <bluenyx@gmail.com> - koKR\nStingerSoft <stingersoft@iti.lt> - ruRU\nJunxian <junxian1121@hotmail.com> - zhCN & zhTW\nWoopy <Woopy#1685 - NA> - esES & esMX\n\n\nAstrosloth and Zezerat are noobs! ;-p"
 };
 
 local states = {"arena", "combat", "pvp", "raid", "party", "resting", "other"};
