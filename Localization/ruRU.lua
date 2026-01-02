@@ -217,6 +217,7 @@ WIM.AddLocale("ruRU", {
 	["Are you sure you want to\nignore %s?"] = "Вы уверены что вы хотите добавить\nперсонажа %s в черный список?",
     ["Right-Click for profile links..."] = "[Правый-Клик] - ссылка на профиль...",
     ["Profile Links"] = "Ссылка на профиль",
+	["Location"] = "Зона",
 
     -- Tutorials.lua --
 	["Display WIM tips"] = "Отображать подсказки WIMа",
