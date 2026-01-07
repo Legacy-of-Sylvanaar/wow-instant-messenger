@@ -227,6 +227,7 @@ WIM.AddLocale("koKR", {
     ["Game"] = "게임",
     ["Realm"] = "서버",
     ["Character"] = "캐릭터",
+	["Copy Name"] = "이름 복사",
 
     -- Tutorials.lua --
     ["Display WIM tips"] = "WIM 팁 보여주기",
