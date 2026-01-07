@@ -33,7 +33,7 @@ armoryLinks = {
         url = "http://www.wowprogress.com/character/{eu/us}/{realm}/{user}"
     },
 		{
-        title = "Raider io",
+        title = "Raider.IO",
         url = "https://raider.io/characters/{eu/us}/{realm}/{user}"
     },
     {
