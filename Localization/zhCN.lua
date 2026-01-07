@@ -225,6 +225,7 @@ WIM.AddLocale("zhCN", {
 	["Game"] = "游戏",
 	["Realm"] = "服务器",
 	["Character"] = "角色",
+	["Copy Name"] = "复制名称",
 
     -- Tutorials.lua --
     ["Display WIM tips"] = "显示WIM提示",
