@@ -25,7 +25,7 @@ armoryLinks = {
 		url = "{user}",
     },
     {
-		title = L["Wowhead Profile"],
+		title = "Wowhead",
 		url = "http://www.wowhead.com/profile={eu/us}.{realm-}.{user}",
     },
     {
