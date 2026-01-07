@@ -227,6 +227,7 @@ local translations = {
     ["Game"] = "Juego",
     ["Realm"] = "Reino",
     ["Character"] = "Personaje",
+	["Copy Name"] = "Copiar nombre",
 
     -- Tutorials.lua --
     ["Display WIM tips"] = "Mostrar consejos de WIM",
