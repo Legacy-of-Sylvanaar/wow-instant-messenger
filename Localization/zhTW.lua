@@ -208,7 +208,6 @@ WIM.AddLocale("zhTW", {
 
     -- ShortcutBar.lua --
     ["Location"] = "玩家位置",
-    --["Player Location"] = "玩家位置",
     ["Unknown"] = "未知",
     ["Click to update..."] = "點擊更新資訊...",
     ["Coordinates"] = "玩家座標",
@@ -218,6 +217,7 @@ WIM.AddLocale("zhTW", {
     ["Are you sure you want to\nignore %s?"] = "您確定您要忽略 %s",
     ["Right-Click for profile links..."] ="右鍵點擊 查看英雄榜",
     ["Profile Links"] = "查看英雄榜",
+	["Copy Name"] = "複製名稱",
 
     -- Tutorials.lua --
     ["Display WIM tips"] = "顯示 WIM 小提示",
