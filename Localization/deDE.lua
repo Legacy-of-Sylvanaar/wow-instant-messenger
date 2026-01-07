@@ -221,7 +221,8 @@ WIM.AddLocale("deDE", {
     ["Add Friend"] = "Freund hinzuf\195\188gen",
     ["Ignore User"] = "Spieler ignorieren",
     ["Are you sure you want to\nignore %s?"] = "Bist du sicher, dass du \n %s ignorieren willst?",
-
+	["Copy Name"] = "Namen kopieren",
+		
     -- Tutorials.lua --
     ["Display WIM tips"] = "WIM Tipps anzeigen",
 
