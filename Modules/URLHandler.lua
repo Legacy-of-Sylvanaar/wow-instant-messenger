@@ -21,11 +21,11 @@ local URL = CreateModule("URLHandler", true);
 
 armoryLinks = {
 	{
-		title = "Copy Name",
+		title = L["Copy Name"],
 		url = "{user}",
     },
     {
-		title = "Wowhead Profiler",
+		title = "Wowhead",
 		url = "http://www.wowhead.com/profile={eu/us}.{realm-}.{user}",
     },
     {
@@ -33,7 +33,7 @@ armoryLinks = {
         url = "http://www.wowprogress.com/character/{eu/us}/{realm}/{user}"
     },
 		{
-        title = "Raider io",
+        title = "Raider.IO",
         url = "https://raider.io/characters/{eu/us}/{realm}/{user}"
     },
     {
