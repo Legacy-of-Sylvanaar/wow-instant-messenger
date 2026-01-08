@@ -223,7 +223,7 @@ WIM.AddLocale("deDE", {
     ["Are you sure you want to\nignore %s?"] = "Bist du sicher, dass du \n %s ignorieren willst?",
 	["Copy Name"] = "Namen kopieren",
 		
-    -- Tutorials.lua --
+	-- Tutorials.lua --
     ["Display WIM tips"] = "WIM Tipps anzeigen",
 
     -- W2W.lua --
