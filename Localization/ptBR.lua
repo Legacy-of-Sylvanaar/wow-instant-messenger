@@ -226,6 +226,7 @@ WIM.AddLocale("ptBR", {
 	["Game"] = "Jogo",
 	["Realm"] = "Reino",
 	["Character"] = "Personagem",
+	["Copy Name"] = "Copiar nome",
 
     -- Tutorials.lua --
     ["Display WIM tips"] = "Exibir dicas",
