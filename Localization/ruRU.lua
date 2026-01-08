@@ -218,6 +218,7 @@ WIM.AddLocale("ruRU", {
     ["Right-Click for profile links..."] = "[Правый-Клик] - ссылка на профиль...",
     ["Profile Links"] = "Ссылка на профиль",
 	["Location"] = "Зона",
+	["Copy Name"] = "Копировать имя",
 
     -- Tutorials.lua --
 	["Display WIM tips"] = "Отображать подсказки WIMа",
