@@ -227,6 +227,7 @@ WIM.AddLocale("enUS", {
 	["Game"] = true,
 	["Realm"] = true,
 	["Character"] = true,
+	["Copy Name"] = true,
 
     -- Tutorials.lua --
     ["Display WIM tips"] = true,
