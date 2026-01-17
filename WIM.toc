@@ -19,6 +19,7 @@
 ## OptionalDeps: LibStub, CallbackHandler-1.0, ChatThrottleLib, LibSharedMedia-3.0, LibChatAnims
 ## X-Embeds: LibStub, CallbackHandler-1.0, ChatThrottleLib, LibSharedMedia-3.0, LibChatAnims
 ## SavedVariables: WIM3_Data, WIM3_Cache, WIM3_Filters, WIM3_History, WIM3_ChatFilters, WIM3_Alias
+## IconTexture: Interface\AddOns\WIM\Skins\Default\minimap
 
 Libs\Includes.xml
 Sources\Namespace.lua
