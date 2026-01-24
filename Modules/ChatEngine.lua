@@ -1083,7 +1083,7 @@ function Say:CHAT_MSG_SAY(...)
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
     --Don't handle say messages during encounters, when boss mods are handling them
-    local fightingBoss = _G.IsEncounterInProgress() or DBM and DBM:InCombat() or false
+    local fightingBoss = (_G.C_InstanceEncounter and _G.C_InstanceEncounter.IsEncounterInProgress and _G.C_InstanceEncounter.IsEncounterInProgress()) or (_G.IsEncounterInProgress and _G.IsEncounterInProgress()) or (DBM and DBM:InCombat()) or false
     if not fightingBoss then
     	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_SAY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     end
@@ -1123,7 +1123,7 @@ function Say:CHAT_MSG_EMOTE(...)
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
     --Don't handle say messages during encounters, when boss mods are handling them
-    local fightingBoss = _G.IsEncounterInProgress() or DBM and DBM:InCombat() or false
+    local fightingBoss = (_G.C_InstanceEncounter and _G.C_InstanceEncounter.IsEncounterInProgress and _G.C_InstanceEncounter.IsEncounterInProgress()) or (_G.IsEncounterInProgress and _G.IsEncounterInProgress()) or (DBM and DBM:InCombat()) or false
     if not fightingBoss then
     	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     end
@@ -1163,7 +1163,7 @@ function Say:CHAT_MSG_TEXT_EMOTE(...)
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
     --Don't handle say messages during encounters, when boss mods are handling them
-    local fightingBoss = _G.IsEncounterInProgress() or DBM and DBM:InCombat() or false
+    local fightingBoss = (_G.C_InstanceEncounter and _G.C_InstanceEncounter.IsEncounterInProgress and _G.C_InstanceEncounter.IsEncounterInProgress()) or (_G.IsEncounterInProgress and _G.IsEncounterInProgress()) or (DBM and DBM:InCombat()) or false
     if not fightingBoss then
     	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     end
