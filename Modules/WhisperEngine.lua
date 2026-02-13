@@ -404,8 +404,7 @@ local CMS_PATTERNS = {
 
 function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	local msg, user = ...;
-	if IsSecretValue(msg) or IsSecretValue(user) then
+	if IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...)) then
 		return false
 	end
 
