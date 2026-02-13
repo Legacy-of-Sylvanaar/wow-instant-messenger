@@ -403,6 +403,12 @@ local CMS_PATTERNS = {
 };
 
 function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
+	-- check if message or sender is secret, if so, do not process
+	local msg, user = ...;
+	if IsSecretValue(msg) or IsSecretValue(user) then
+		return false
+	end
+
 	-- Process all events except for CHAT_MSG_SYSTEM
 	if (event ~= "CHAT_MSG_SYSTEM") then
 		local ignore, block = (IgnoreOrBlockEvent or function () end)(event, ...)
@@ -467,7 +473,7 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 		end
 	end
 
-	return false, ...
+	return false
 end
 
 -- compatibility function for processing message event filters
@@ -507,6 +513,11 @@ WhisperEngine.processMessageEventFilters = processMessageEventFilters; -- make a
 
 function WhisperEngine:CHAT_MSG_WHISPER(...)
 	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	-- check if sender is secret, if so, do not process
+	if IsSecretValue(arg2) then
+		return false;
+	end
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -554,6 +565,10 @@ end
 function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
+	if IsSecretValue(arg2) then
+		return;
+	end
+
 	arg2 = _G.Ambiguate(arg2, "none")
 
 	local win, isNew = getWhisperWindowByUser(arg2, nil, nil, true);
@@ -583,6 +598,10 @@ end
 
 function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	if IsSecretValue(arg2) then
+		return;
+	end
 
 	local win, isNew = getWhisperWindowByUser(arg2, true, arg13, true);
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
@@ -620,6 +639,10 @@ end
 
 function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+
+	if IsSecretValue(arg2) then
+		return;
+	end
 
 	local win, isNew = getWhisperWindowByUser(arg2, true, arg13, true);
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
@@ -668,6 +691,10 @@ end
 
 local CMS_SLUG = {};
 function WhisperEngine:CHAT_MSG_SYSTEM(...)
+	if IsSecretValue(select(1, ...)) then
+		return;
+	end
+
 	-- the proccessing of the actual message is taking place within the ChatMessageFilter
 	CMS_SLUG._isWIM = true;
 	processMessageEventFilters(CMS_SLUG, 'CHAT_MSG_SYSTEM', ...);

@@ -208,14 +208,14 @@ local function runFilter(filter, event, ...)
 end
 
 function WIM.IgnoreOrBlockEvent(event, ...)
+	-- check for secret values
+	if (IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...))) then
+		return false, false;
+	end
+
 	-- ignore non-chat events
 	if event:sub(0, 9) ~= 'CHAT_MSG_' then
 		return false, false
-	end
-
-	-- check for secret values
-	if (IsSecretValue(select(1, ...))) then
-		return false, false;
 	end
 
 	-- first check if message is whitelisted
