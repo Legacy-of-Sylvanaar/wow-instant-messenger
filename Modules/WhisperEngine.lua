@@ -799,58 +799,28 @@ else
 	end
 end
 
-
-local function processChatType(editBox, msg, index, send)
-	local target, chatType, targetFound, parsedMsg;
-
-	-- whispers
-	if (index == "WHISPER" or index == "SMART_WHISPER") then
-		targetFound, target, chatType, parsedMsg = (editBox.ExtractTellTarget or _G.ChatEdit_ExtractTellTarget)(editBox, msg, index);
-		if not targetFound then
-			return
-		end
-
-	-- reply
-	elseif (index == "REPLY") then
-		target, chatType = (ChatFrameUtil and ChatFrameUtil.GetLastTellTarget or _G.ChatEdit_GetLastTellTarget)();
-		if not target then
-			return
-		end
-
-	-- other unsupported
-	else
-		return
-	end
-
-	-- handle the whisper interception
-	if (target and db and db.enabled) then
-		local curState = curState;
-		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-			-- target = _G.Ambiguate(target, "none")--For good measure, ambiguate again cause it seems some mods interfere with this process
-
-			local bNetID = nil;
-			if chatType == "BN_WHISPER" then
+local function editBoxUpdateHeader(self)
+	local chatType = self:GetAttribute("chatType");
+	if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
+		local target = self:GetAttribute("tellTarget");
+		if (target) then
+			-- target = _G.Ambiguate(target, "none")
+			local bNetID;
+			if (chatType == "BN_WHISPER" or target:find("^|K")) then
 				bNetID = _G.BNet_GetBNetIDAccount(target);
 			end
 
 			local win = getWhisperWindowByUser(target, bNetID and true, bNetID);
+			if win then
+				win.widgets.msg_box.setText = 1;
+				win:Pop(true); -- force popup
+				win.widgets.msg_box:SetFocus();
 
-			if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
-
-			win.widgets.msg_box.setText = 1;
-			win:Pop(true); -- force popup
-			win.widgets.msg_box:SetFocus();
-
-			if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.ClearChat then
-				-- editBox:ClearChat();
-				editBox:SetText("");
-				editBox:Hide();
-			else
-				_G.ChatEdit_OnEscapePressed(editBox);
+				self:ClearChat();
 			end
 		end
 	end
+
 end
 
 -- ChatEditBoxMixin hooking
@@ -862,46 +832,12 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 			return;
 		end
 
-		hooksecurefunc(editBox, "ProcessChatType", processChatType);
+		hooksecurefunc(editBox, "UpdateHeader", editBoxUpdateHeader);
 
 		-- mark it as hooked
 		editBox._WIM_WhisperEngine_Hooked = true;
 	end);
 end
-
-hooksecurefunc("AutoCompleteButton_OnClick", function(self)
-	local autoComplete = self:GetParent();
-	local editBox = autoComplete.parent;
-	local target = self.nameInfo and self.nameInfo.name and safeName(_G.Ambiguate(self.nameInfo.name, "none")) or nil;
-
-	-- only proceed if the editBox is a whisper type
-	if (not editBox or (editBox:GetAttribute("chatType") ~= "WHISPER" and editBox:GetAttribute("chatType") ~= "BN_WHISPER")) then
-        return;
-    end
-
-	-- handle the whisper interception
-	if (target and db and db.enabled) then
-		local curState = curState;
-		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-			local bNetID = self.nameInfo.bnetID;
-
-			local win = getWhisperWindowByUser(target, bNetID and true, bNetID);
-
-			if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
-
-			win.widgets.msg_box.setText = 1;
-			win:Pop(true); -- force popup
-			win.widgets.msg_box:SetFocus();
-
-			if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.ClearChat then
-				editBox:ClearChat();
-			else
-				_G.ChatEdit_OnEscapePressed(editBox);
-			end
-		end
-	end
-end);
 
 -- Legacy hooks
 if not _G.ChatFrameEditBoxBaseMixin or not _G.ChatFrameEditBoxBaseMixin.ExtractTellTarget then
