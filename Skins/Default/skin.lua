@@ -3,7 +3,14 @@ local function formatDetails(window, guild, level, race, class)
     if(guild ~= "") then
 	guild = "<"..guild.."> ";
     end
-    return "|cffffffff"..guild..level.." "..race.." "..class.."|r";
+
+	local details = {};
+	if (guild ~= "") then table.insert(details, guild); end
+	if (level ~= "") then table.insert(details, level); end
+	if (race ~= "") then table.insert(details, race); end
+	if (class ~= "") then table.insert(details, class); end
+
+    return "|cffffffff"..table.concat(details, ' ').."|r";
 end
 
 
