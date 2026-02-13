@@ -674,6 +674,7 @@ function WhisperEngine:CHAT_MSG_SYSTEM(...)
 end
 
 function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(process, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, unused, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
+	if IsSecretValue(process) then return end -- don't bother if process is a secret
 
 	local online = process == "FRIEND_ONLINE"
 	local offline = process == "FRIEND_OFFLINE"
