@@ -557,17 +557,19 @@ end
 
 
 -- 12.00.00 + Secret Tools
+local _issecretvalue = _G.issecretvalue;
 function IsSecretValue(...)
-	if _G.issecretvalue then
-		return _G.issecretvalue(...);
+	if _issecretvalue then
+		return _issecretvalue(...);
 	else
 		return false;
 	end
 end
 
+local _inchatmessaginglockdown = _G.C_ChatInfo and _G.C_ChatInfo.InChatMessagingLockdown;
 function InChatMessagingLockdown()
-	if _G.C_ChatInfo and _G.C_ChatInfo.InChatMessagingLockdown then
-		return _G.C_ChatInfo.InChatMessagingLockdown();
+	if _inchatmessaginglockdown then
+		return _inchatmessaginglockdown();
 	else
 		return false;
 	end
