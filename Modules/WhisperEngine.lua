@@ -404,7 +404,7 @@ local CMS_PATTERNS = {
 
 function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...)) then
+	if HasAnySecretValues(...) then
 		return false
 	end
 
@@ -417,6 +417,10 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 			local curState = curState;
 			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
 			if(WIM.db.pop_rules.whisper[curState].supress) then
+				local chatType = strsub(event, 10):gsub("_INFORM", "");
+				if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
+					(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(select(2, ...), chatType);
+				end
 				return true
 			end
 		elseif (frame._isWIM and ignore or block) then
@@ -535,7 +539,7 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
     win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
     win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_WHISPER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     win:Pop("in");
-	(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(arg2, "WHISPER");
+
     win.online = true;
     updateMinimapAlerts();
 
@@ -586,7 +590,7 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
     win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_WHISPER_INFORM", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     win.unreadCount = 0; -- having replied  to conversation implies the messages have been read.
     win:Pop("out");
-	(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(arg2, "WHISPER");
+
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
@@ -622,7 +626,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
 
 	win.unreadCount = 0; -- having replied  to conversation implies the messages have been read.
     win:Pop("out");
-	(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(arg2, "BN_WHISPER");
+
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
@@ -663,7 +667,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
     win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
     win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_BN_WHISPER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     win:Pop("in");
-	(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(arg2, "BN_WHISPER");
+
     win.online = true;
     updateMinimapAlerts();
     CallModuleFunction("PostEvent_Whisper", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
