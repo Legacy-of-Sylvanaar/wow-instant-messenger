@@ -885,7 +885,7 @@ local function editBoxUpdateHeader(self)
 		local target = self:GetAttribute("tellTarget");
 
 		-- handle the whisper interception
-		if (target and db and db.enabled) then
+		if (not InChatMessagingLockdown() and target and db and db.enabled) then
 			local curState = curState;
 			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
 			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
