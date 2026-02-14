@@ -904,10 +904,12 @@ else
 	end
 end
 
+
 local function editBoxUpdateHeader(self)
-	local chatType = self:GetAttribute("chatType");
+
+	local chatType = self:GetChatType();
 	if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
-		local target = self:GetAttribute("tellTarget");
+		local target = self:GetTellTarget();
 
 		-- handle the whisper interception
 		if (not InChatMessagingLockdown() and target and db and db.enabled) then
@@ -926,7 +928,12 @@ local function editBoxUpdateHeader(self)
 					win:Pop(true); -- force popup
 					win.widgets.msg_box:SetFocus();
 
-					self:ClearChat();
+					if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.ClearChat then
+						self:SetText("");
+						self:Hide();
+					else
+						_G.ChatEdit_OnEscapePressed(self);
+					end
 				end
 			end
 		end
@@ -938,12 +945,30 @@ end
 if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 	-- each time a chat edit box is activated, check if it is hooked accordingly.
 	hooksecurefunc(ChatFrameUtil, "ActivateChat", function(editBox)
+
 		-- first check that the editBox is not WIM's msg_box, if it is, then do nothing.
 		if(editBox._WIM_WhisperEngine_Hooked or editBox.widgetName == "msg_box") then
 			return;
 		end
 
 		hooksecurefunc(editBox, "UpdateHeader", editBoxUpdateHeader);
+
+		local lastNonWhisperType;
+		hooksecurefunc(editBox, "Deactivate", function (self)
+			local chatType, target = self:GetChatType(), self:GetTellTarget();
+			if ((chatType == "WHISPER" or chatType == "BN_WHISPER")) then
+				if (target and InChatMessagingLockdown() and db and db.enabled) then
+					local curState = curState;
+					curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
+					if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+						self:SetChatType(lastNonWhisperType or 'SAY');
+					end
+				end
+			else
+				lastNonWhisperType = chatType;
+				self:ResetChatType();
+			end
+		end);
 
 		-- mark it as hooked
 		editBox._WIM_WhisperEngine_Hooked = true;
