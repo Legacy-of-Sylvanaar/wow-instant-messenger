@@ -5,6 +5,7 @@ local CreateFrame = CreateFrame;
 local select = select;
 local type = type;
 local table = table;
+local unpack = unpack;
 local pairs = pairs;
 local string = string;
 local next = next;
@@ -131,6 +132,9 @@ end
 
 --Retail and Classic bnet apis are now mostly in sync, but i'm keeping wrappers so if they ever get out of sync again, it's easy to fix in these wrappers
 function GetBNGetFriendInfo(friendIndex)
+	if friendIndex == 0 then
+		return GetBNGetFriendInfoByID(select(3, _G.BNGetInfo()));
+	end
 	local accountInfo = _G.C_BattleNet.GetFriendAccountInfo(friendIndex);
 	if accountInfo then
 		local wowProjectID = accountInfo.gameAccountInfo.wowProjectID or 0;
@@ -154,6 +158,16 @@ function GetBNGetFriendInfoByID(id)
 			accountInfo.gameAccountInfo.isOnline, accountInfo.lastOnlineTime, accountInfo.isAFK, accountInfo.isDND, accountInfo.customMessage, accountInfo.note, accountInfo.isFriend,
 			accountInfo.customMessageTime, wowProjectID, accountInfo.rafLinkType == _G.Enum.RafLinkType.Recruit, accountInfo.gameAccountInfo.canSummon, accountInfo.isFavorite, accountInfo.gameAccountInfo.isWowMobile;
 	end
+end
+
+function GetBNGetGameAccountInfoByKName(kName)
+	for i=1, _G.BNGetNumFriends() do
+		local info = {GetBNGetFriendInfo(i)};
+		if info[2] and info[2] == kName then
+			return info;
+		end
+	end
+	return nil;
 end
 
 function GetBNGetGameAccountInfo(toonId)
@@ -247,6 +261,96 @@ local function RegisterEvent(event)
     end
 end
 
+
+
+
+
+
+-- defer an event to be called on a next cycle. This is used to defer events that may cause taint if called during combat or during certain protected function calls.
+local deferredEvents = {};
+
+local function sanitizeDeferredEventArgs (...)
+	local args = {...};
+	for i = 1, 29 do
+		if IsSecretValue(args[i]) then
+			args[i] = "";
+		else
+			if type(args[i]) == "nil" then
+				args[i] = "";
+			end
+		end
+	end
+
+	return args;
+end
+
+local function enqueueDeferredEvent(module, event, ...)
+	-- queue the event
+	dPrint("  +-- Deferring Event: "..event);
+	table.insert(deferredEvents, {module = module, event = event, args = sanitizeDeferredEventArgs(...), time = _G.time()});
+end
+
+local function dequeueDeferredEvent ()
+	if InChatMessagingLockdown() or #deferredEvents == 0 then
+		return false;
+	end
+
+	local event = table.remove(deferredEvents, 1);
+	if event then
+		if string.match(event.event, "^CHAT_MSG") then
+			local lineID = event.args[11];
+			event.args[1] = _G.C_ChatInfo.GetChatLineText(lineID) or "";
+			event.args[2] = _G.C_ChatInfo.GetChatLineSenderName(lineID) or "";
+			event.args[12] = _G.C_ChatInfo.GetChatLineSenderGUID(lineID) or "";
+
+			-- if Bnet, add BnetAccountId
+			if event.event == "CHAT_MSG_BN_WHISPER_INFORM" then
+				event.args[13] = GetBNGetFriendInfo(0) or 0;
+			elseif event.event == "CHAT_MSG_BN_WHISPER" then
+				event.args[13] = GetBNGetGameAccountInfoByKName(event.args[2]) or 0;
+			end
+
+			event.args[29] = event.time; -- add original event time as arg29 for modules to use if they want.
+		end
+
+		if event.module.enabled then
+			dPrint("Processing Deferred Event: "..event.event);
+			local handler = event.module[event.event];
+			if type(handler) == "function" then
+				dPrint("  +-- "..event.module.title..":"..event.event);
+				handler(event.module, unpack(event.args));
+			end
+		end
+
+		return true;
+	end
+
+	return false;
+end
+
+local deferredEventQueueProcessor = CreateFrame("Frame", "WIM_DeferredEventQueueProcessor");
+deferredEventQueueProcessor:SetScript("OnUpdate", function(self)
+	if #deferredEvents > 0 then
+		if not dequeueDeferredEvent() then
+			self:Hide();
+			return;
+		end
+
+		return;
+	end
+
+	self:Hide();
+end);
+
+local deferredEventTime = _G.C_Timer.NewTicker(1, function ()
+	if #deferredEvents > 0 then
+		deferredEventQueueProcessor:Show();
+	end
+end);
+
+
+
+
 -- create a new WIM module. Will return module object.
 function CreateModule(moduleName, enableByDefault)
     if(type(moduleName) == "string") then
@@ -269,8 +373,9 @@ function CreateModule(moduleName, enableByDefault)
             Disable = function() EnableModule(moduleName, false) end,
             dPrint = function(self, t) dPrint(t); end,
             hasWidget = false,
-            RegisterWidget = function(widgetName, createFunction) RegisterWidget(widgetName, createFunction, moduleName); end
-        }
+            RegisterWidget = function(widgetName, createFunction) RegisterWidget(widgetName, createFunction, moduleName); end,
+			DeferEvent = function(self, event, ...) enqueueDeferredEvent(self, event, ...); end
+		}
         return modules[moduleName];
     else
         return nil;
@@ -561,6 +666,15 @@ local _issecretvalue = _G.issecretvalue;
 function IsSecretValue(...)
 	if _issecretvalue then
 		return _issecretvalue(...);
+	else
+		return false;
+	end
+end
+
+local _hasanysecretvalues = _G.hasanysecretvalues;
+function HasAnySecretValues(...)
+	if _hasanysecretvalues then
+		return _hasanysecretvalues(...);
 	else
 		return false;
 	end

@@ -310,7 +310,7 @@ end
 
 function Guild.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...)) then
+	if HasAnySecretValues(...) then
 		return false
 	end
 
@@ -328,10 +328,12 @@ function Guild.ChatMessageEventFilter (frame, event, ...)
 end
 
 function Guild:CHAT_MSG_GUILD(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_GUILD", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -446,7 +448,7 @@ end
 
 function Officer.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...)) then
+	if HasAnySecretValues(...) then
 		return false
 	end
 
@@ -464,10 +466,13 @@ function Officer.ChatMessageEventFilter (frame, event, ...)
 end
 
 function Officer:CHAT_MSG_OFFICER(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
-
 	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_OFFICER", ...);
+		return;
+	end
+
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -579,7 +584,7 @@ end
 
 function Party.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...)) then
+	if HasAnySecretValues(...) then
 		return false
 	end
 
@@ -597,10 +602,12 @@ function Party.ChatMessageEventFilter (frame, event, ...)
 end
 
 function Party:CHAT_MSG_PARTY(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_PARTY", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -639,10 +646,12 @@ function Party:CHAT_MSG_PARTY(...)
 end
 
 function Party:CHAT_MSG_PARTY_LEADER(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_PARTY_LEADER", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -753,7 +762,7 @@ end
 
 function Raid.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...)) then
+	if HasAnySecretValues(...) then
 		return false
 	end
 
@@ -771,10 +780,12 @@ function Raid.ChatMessageEventFilter (frame, event, ...)
 end
 
 function Raid:CHAT_MSG_RAID(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_RAID", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -813,10 +824,12 @@ function Raid:CHAT_MSG_RAID(...)
 end
 
 function Raid:CHAT_MSG_RAID_LEADER(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_RAID_LEADER", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -855,10 +868,12 @@ function Raid:CHAT_MSG_RAID_LEADER(...)
 end
 
 function Raid:CHAT_MSG_RAID_WARNING(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_RAID_WARNING", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -958,7 +973,7 @@ end
 
 function Battleground.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...)) then
+	if HasAnySecretValues(...) then
 		return false
 	end
 
@@ -976,10 +991,12 @@ function Battleground.ChatMessageEventFilter (frame, event, ...)
 end
 
 function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_INSTANCE_CHAT", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -1016,10 +1033,12 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
 end
 
 function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_INSTANCE_CHAT_LEADER", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -1104,8 +1123,7 @@ end
 
 function Say.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...)) then
-		_G.DevTools_Dump({IsSecretValue(select(1, ...)), IsSecretValue(select(2, ...))})
+	if HasAnySecretValues(...) then
 		return false
 	end
 
@@ -1123,10 +1141,12 @@ function Say.ChatMessageEventFilter (frame, event, ...)
 end
 
 function Say:CHAT_MSG_SAY(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_SAY", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -1166,13 +1186,12 @@ function Say:CHAT_MSG_SAY(...)
 end
 
 function Say:CHAT_MSG_EMOTE(...)
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_EMOTE", ...);
+		return;
+	end
+
     local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
-
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
-
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -1212,10 +1231,12 @@ function Say:CHAT_MSG_EMOTE(...)
 end
 
 function Say:CHAT_MSG_TEXT_EMOTE(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_TEXT_EMOTE", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -1322,28 +1343,34 @@ local function updateJoinLeave(event, ...)
 end
 
 function Channel:CHAT_MSG_CHANNEL_JOIN(...)
-    local arg1, who, arg3, channelIdentifier, arg5, arg6, arg7, channelNumber, arg9 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_CHANNEL_JOIN", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(who) then return end
+    local arg1, who, arg3, channelIdentifier, arg5, arg6, arg7, channelNumber, arg9 = ...;
 
     updateJoinLeave("CHAT_MSG_CHANNEL_JOIN", ...)
 end
 
 function Channel:CHAT_MSG_CHANNEL_LEAVE(...)
-    local arg1, who, arg3, channelIdentifier, arg5, arg6, arg7, channelNumber, arg9 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_CHANNEL_LEAVE", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(who) then return end
+    local arg1, who, arg3, channelIdentifier, arg5, arg6, arg7, channelNumber, arg9 = ...;
 
     updateJoinLeave("CHAT_MSG_CHANNEL_LEAVE", ...)
 end
 
 function Channel:CHAT_MSG_CHANNEL_NOTICE(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_CHANNEL_NOTICE", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...;
 
     for _, win in pairs(Windows) do
         if(win.channelIdentifier == arg4) then
@@ -1360,10 +1387,12 @@ function Channel:CHAT_MSG_CHANNEL_NOTICE(...)
 end
 
 function Channel:CHAT_MSG_CHANNEL_NOTICE_USER(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_CHANNEL_NOTICE_USER", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = ...;
 
     for _, win in pairs(Windows) do
         if(win.channelIdentifier == arg4) then
@@ -1383,7 +1412,7 @@ end
 -- manage suppression
 function Channel.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(select(1, ...)) or IsSecretValue(select(2, ...)) then
+	if HasAnySecretValues(...) then
 		return false
 	end
 
@@ -1415,10 +1444,12 @@ function Channel.ChatMessageEventFilter (frame, event, ...)
 end
 
 function Channel:CHAT_MSG_CHANNEL(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_CHANNEL", ...);
+		return;
+	end
 
-	-- check if message or sender is secret, if so, do not process
-	if IsSecretValue(arg1) or IsSecretValue(arg2) then return end
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	-- arg7 Generic Channels (1 for General, 2 for Trade, 22 for LocalDefense, 23 for WorldDefense and 26 for LFG)
     -- arg8 Channel Number

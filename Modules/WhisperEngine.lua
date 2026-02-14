@@ -511,12 +511,13 @@ end
 WhisperEngine.processMessageEventFilters = processMessageEventFilters; -- make accessible to other modules
 
 function WhisperEngine:CHAT_MSG_WHISPER(...)
-	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
-
 	-- check if sender is secret, if so, do not process
-	if IsSecretValue(arg2) then
-		return false;
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_WHISPER", ...);
+		return;
 	end
+
+	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -562,11 +563,12 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
 end
 
 function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
-
-	if IsSecretValue(arg2) then
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_WHISPER_INFORM", ...);
 		return;
 	end
+
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	arg2 = _G.Ambiguate(arg2, "none")
 
@@ -596,11 +598,12 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
 end
 
 function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
-
-	if IsSecretValue(arg2) then
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_BN_WHISPER_INFORM", ...);
 		return;
 	end
+
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	local win, isNew = getWhisperWindowByUser(arg2, true, arg13, true);
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
@@ -616,7 +619,8 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
 
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
     win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_BN_WHISPER_INFORM", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
-    win.unreadCount = 0; -- having replied  to conversation implies the messages have been read.
+
+	win.unreadCount = 0; -- having replied  to conversation implies the messages have been read.
     win:Pop("out");
 	(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(arg2, "BN_WHISPER");
     win.online = true;
@@ -637,11 +641,12 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
 end
 
 function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
-    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
-
-	if IsSecretValue(arg2) then
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_BN_WHISPER", ...);
 		return;
 	end
+
+    local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 
 	local win, isNew = getWhisperWindowByUser(arg2, true, arg13, true);
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
@@ -665,6 +670,12 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
 end
 
 function WhisperEngine:CHAT_MSG_AFK(...)
+	-- check if sender is secret, if so, do not process
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_AFK", ...);
+		return;
+	end
+
     local color = db.displayColors.wispIn; -- color contains .r, .g & .b
     local win = Windows[safeName(select(2, ...))];
 
@@ -678,6 +689,12 @@ function WhisperEngine:CHAT_MSG_AFK(...)
 end
 
 function WhisperEngine:CHAT_MSG_DND(...)
+	-- check if sender is secret, if so, do not process
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_DND", ...);
+		return;
+	end
+
     local color = db.displayColors.wispIn; -- color contains .r, .g & .b
     local win = Windows[safeName(select(2, ...))];
     if(win) then
@@ -690,7 +707,9 @@ end
 
 local CMS_SLUG = {};
 function WhisperEngine:CHAT_MSG_SYSTEM(...)
-	if IsSecretValue(select(1, ...)) then
+	-- check if sender is secret, if so, do not process
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_SYSTEM", ...);
 		return;
 	end
 
@@ -699,8 +718,14 @@ function WhisperEngine:CHAT_MSG_SYSTEM(...)
 	processMessageEventFilters(CMS_SLUG, 'CHAT_MSG_SYSTEM', ...);
 end
 
-function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(process, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, unused, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
-	if IsSecretValue(process) then return end -- don't bother if process is a secret
+function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(...)
+	-- check if sender is secret, if so, do not process
+	if HasAnySecretValues(...) then
+		self:DeferEvent("CHAT_MSG_BN_INLINE_TOAST_ALERT", ...);
+		return;
+	end
+
+	local process, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, unused, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons = ...;
 
 	local online = process == "FRIEND_ONLINE"
 	local offline = process == "FRIEND_OFFLINE"
