@@ -422,6 +422,8 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 					local inform = (strsub(event, #event - 5) == "INFORM");
 					local modern, legacy = inform and "SetLastToldTarget" or "SetLastTellTarget", inform and "ChatEdit_SetLastToldTarget" or "ChatEdit_SetLastTellTarget";
 					(ChatFrameUtil and ChatFrameUtil[modern] or _G[legacy])(select(2, ...), chatType);
+				elseif (chatType == "AFK" or chatType == "DND") then
+					(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(select(2, ...), chatType);
 				end
 				return true
 			end
@@ -689,7 +691,6 @@ function WhisperEngine:CHAT_MSG_AFK(...)
 
         win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_AFK", ...);
         win:Pop("out");
-   		(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(select(2, ...), "AFK");
         win.online = true;
     end
 end
@@ -704,9 +705,8 @@ function WhisperEngine:CHAT_MSG_DND(...)
     local color = db.displayColors.wispIn; -- color contains .r, .g & .b
     local win = Windows[safeName(select(2, ...))];
     if(win) then
-        win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_AFK", ...);
+        win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_DND", ...);
         win:Pop("out");
-   		(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(select(2, ...), "AFK");
         win.online = true;
     end
 end
@@ -794,9 +794,7 @@ local function processChatType(editBox, msg, index, send)
 			win.widgets.msg_box:SetFocus();
 
 			if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.ClearChat then
-				-- editBox:ClearChat();
-				editBox:SetText("");
-				editBox:Hide();
+				_G.ChatFrameEditBoxMixin.OnEscapePressed(editBox)
 			else
 				_G.ChatEdit_OnEscapePressed(editBox);
 			end
@@ -878,8 +876,8 @@ end
 
 --Hook ChatFrame_ReplyTell & ChatFrame_ReplyTell2
 if ChatFrameUtil and ChatFrameUtil.ReplyTell then
-	hooksecurefunc(ChatFrameUtil, "ReplyTell", function() replyTellTarget(true) end);
-	hooksecurefunc(ChatFrameUtil, "ReplyTell2", function() replyTellTarget(false) end);
+	-- hooksecurefunc(ChatFrameUtil, "ReplyTell", function() replyTellTarget(true) end);
+	-- hooksecurefunc(ChatFrameUtil, "ReplyTell2", function() replyTellTarget(false) end);
 else
 	hooksecurefunc("ChatFrame_ReplyTell", function() replyTellTarget(true) end);
 	hooksecurefunc("ChatFrame_ReplyTell2", function() replyTellTarget(false) end);
