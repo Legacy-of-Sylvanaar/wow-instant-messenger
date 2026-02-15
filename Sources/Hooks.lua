@@ -60,9 +60,9 @@ local function hookChatFrameEditBox(editBox)
 end
 
 if ChatFrameUtil and ChatFrameUtil.ActivateChat then
-	hooksecurefunc(ChatFrameUtil, "ActivateChat", function(editBox)
-		hookChatFrameEditBox(editBox);
-	end);
+	-- hooksecurefunc(ChatFrameUtil, "ActivateChat", function(editBox)
+	-- 	hookChatFrameEditBox(editBox);
+	-- end);
 else
 	hooksecurefunc("ChatEdit_ActivateChat", function(editBox)
         hookChatFrameEditBox(editBox);
@@ -83,10 +83,10 @@ end
 
 -- linking hooks
 if ChatFrameUtil and ChatFrameUtil.GetActiveWindow then
-	ChatFrameUtil.GetActiveWindow_orig = ChatFrameUtil.GetActiveWindow
-	ChatFrameUtil.GetActiveWindow = function()
-		return WIM.EditBoxInFocus or ChatFrameUtil.GetActiveWindow_orig();
-	end
+	-- ChatFrameUtil.GetActiveWindow_orig = ChatFrameUtil.GetActiveWindow
+	-- ChatFrameUtil.GetActiveWindow = function()
+	-- 	return WIM.EditBoxInFocus or ChatFrameUtil.GetActiveWindow_orig();
+	-- end
 else
 	local ChatEdit_GetActiveWindow_orig = ChatEdit_GetActiveWindow;
 	function ChatEdit_GetActiveWindow()
@@ -129,10 +129,10 @@ end
 -- Dri: workaround for WoW build15050 whisper bug when x-realm server name contains a space.
 if ChatFrameUtil.SendTell then
 	local origSendTell = ChatFrameUtil.SendTell
-	ChatFrameUtil.SendTell = function(name, chatFrame, ...)
-		name = gsub(name," ","")
-		origSendTell(name, chatFrame, ...)
-	end
+	-- ChatFrameUtil.SendTell = function(name, chatFrame, ...)
+	-- 	name = gsub(name," ","")
+	-- 	origSendTell(name, chatFrame, ...)
+	-- end
 else
 	local origChatFrame_SendTell = _G.ChatFrame_SendTell
 	_G.ChatFrame_SendTell = function(name, chatframe, ...)
@@ -141,3 +141,12 @@ else
 	end
 end
 
+
+if _G.ChatFrameUtil and _G.ChatFrameUtil.InsertLink then
+	hooksecurefunc(_G.ChatFrameUtil, "InsertLink", function(text)
+		if not WIM.EditBoxInFocus or not text then return end
+
+		WIM.EditBoxInFocus:Insert(text);
+	end)
+
+end

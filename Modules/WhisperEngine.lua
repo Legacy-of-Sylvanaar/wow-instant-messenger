@@ -876,8 +876,8 @@ end
 
 --Hook ChatFrame_ReplyTell & ChatFrame_ReplyTell2
 if ChatFrameUtil and ChatFrameUtil.ReplyTell then
-	-- hooksecurefunc(ChatFrameUtil, "ReplyTell", function() replyTellTarget(true) end);
-	-- hooksecurefunc(ChatFrameUtil, "ReplyTell2", function() replyTellTarget(false) end);
+	hooksecurefunc(ChatFrameUtil, "ReplyTell", function() replyTellTarget(true) end);
+	hooksecurefunc(ChatFrameUtil, "ReplyTell2", function() replyTellTarget(false) end);
 else
 	hooksecurefunc("ChatFrame_ReplyTell", function() replyTellTarget(true) end);
 	hooksecurefunc("ChatFrame_ReplyTell2", function() replyTellTarget(false) end);
@@ -910,10 +910,10 @@ end
 
 
 local function editBoxUpdateHeader(self)
+	local chatType = self:GetAttribute("chatType");
 
-	local chatType = self:GetChatType();
 	if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
-		local target = self:GetTellTarget();
+		local target = self:GetAttribute("tellTarget");
 
 		-- handle the whisper interception
 		if (not InChatMessagingLockdown() and target and db and db.enabled) then
@@ -932,9 +932,8 @@ local function editBoxUpdateHeader(self)
 					win:Pop(true); -- force popup
 					win.widgets.msg_box:SetFocus();
 
-					if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.ClearChat then
-						self:SetText("");
-						self:Hide();
+					if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed then
+						_G.ChatFrameEditBoxMixin.OnEscapePressed(self)
 					else
 						_G.ChatEdit_OnEscapePressed(self);
 					end
@@ -959,13 +958,14 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 
 		local lastNonWhisperType;
 		hooksecurefunc(editBox, "Deactivate", function (self)
-			local chatType, target = self:GetChatType(), self:GetTellTarget();
+			-- Use GetAttribute() instead of :GetChatType() and GetTellTarget() to increase compatibility between versions
+			local chatType, target = self:GetAttribute("chatType"), self:GetAttribute("tellTarget");
 			if ((chatType == "WHISPER" or chatType == "BN_WHISPER")) then
 				if (target and InChatMessagingLockdown() and db and db.enabled) then
 					local curState = curState;
 					curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
 					if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-						self:SetChatType(lastNonWhisperType or 'SAY');
+						self:SetAttribute("chatType", lastNonWhisperType or 'SAY');
 					end
 				end
 			else
