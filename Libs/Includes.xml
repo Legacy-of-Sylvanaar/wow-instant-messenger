@@ -6,7 +6,6 @@
 
 <Include file="LibChatAnims\LibChatAnims.xml"/>
 <Include file="LibSharedMedia-3.0\lib.xml"/>
-<Include file="ChatThrottleLib\ChatThrottleLib.xml"/>
 <Include file="LibDropDownMenu\LibDropDownMenu.xml"/>
 
 <!-- compatibility -->

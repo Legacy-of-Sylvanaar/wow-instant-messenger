@@ -5,7 +5,6 @@ externals:
  Libs/CallbackHandler-1.0: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
  Libs/LibChatAnims: https://repos.wowace.com/wow/libchatanims/trunk/LibChatAnims
  Libs/LibSharedMedia-3.0: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
- Libs/ChatThrottleLib: https://repos.wowace.com/wow/chatthrottlelib/trunk
  Libs/LibDropDownMenu:
     url: https://github.com/HizurosWoWAddOns/LibDropDownMenu
     tag: latest

@@ -12,7 +12,6 @@
     <Script file="Hooks.lua" />
     <Script file="Stewmat.lua" />
     <Script file="Compression.lua" />
-    <Script file="Socket.lua" />
     <Script file="Clear.lua" />
     <Script file="OpCodes.lua" />
 
