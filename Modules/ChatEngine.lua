@@ -356,7 +356,7 @@ function Guild:CHAT_MSG_GUILD(...)
 
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_GUILD", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_GUILD", arg1, arg2, arg3, select(4, ...));
 
 	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -369,7 +369,7 @@ function Guild:CHAT_MSG_GUILD(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_GUILD", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_GUILD", arg1, arg2, select(3, ...));
 end
 
 
@@ -494,7 +494,7 @@ function Officer:CHAT_MSG_OFFICER(...)
 
 	self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_OFFICER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_OFFICER", arg1, arg2, arg3, select(4, ...));
 
 	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -507,7 +507,7 @@ function Officer:CHAT_MSG_OFFICER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_OFFICER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_OFFICER", arg1, arg2, select(3, ...));
 end
 
 
@@ -629,7 +629,7 @@ function Party:CHAT_MSG_PARTY(...)
 
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_PARTY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_PARTY", arg1, arg2, arg3, select(4, ...));
 
 	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -642,7 +642,7 @@ function Party:CHAT_MSG_PARTY(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY", arg1, arg2, select(3, ...));
 end
 
 function Party:CHAT_MSG_PARTY_LEADER(...)
@@ -673,7 +673,7 @@ function Party:CHAT_MSG_PARTY_LEADER(...)
 
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_PARTY_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_PARTY_LEADER", arg1, arg2, arg3, select(4, ...));
 
 	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -686,7 +686,7 @@ function Party:CHAT_MSG_PARTY_LEADER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_PARTY_LEADER", arg1, arg2, select(3, ...));
 end
 
 
@@ -807,7 +807,7 @@ function Raid:CHAT_MSG_RAID(...)
 
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID", arg1, arg2, arg3, select(4, ...));
 
 	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -820,7 +820,7 @@ function Raid:CHAT_MSG_RAID(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID", arg1, arg2, select(3, ...));
 end
 
 function Raid:CHAT_MSG_RAID_LEADER(...)
@@ -851,7 +851,7 @@ function Raid:CHAT_MSG_RAID_LEADER(...)
 
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID_LEADER", arg1, arg2, arg3, select(4, ...));
 
 	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -864,7 +864,7 @@ function Raid:CHAT_MSG_RAID_LEADER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_LEADER", arg1, arg2, select(3, ...));
 end
 
 function Raid:CHAT_MSG_RAID_WARNING(...)
@@ -895,7 +895,7 @@ function Raid:CHAT_MSG_RAID_WARNING(...)
 
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID_WARNING", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_RAID_WARNING", arg1, arg2, arg3, select(4, ...));
 
 	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -908,7 +908,7 @@ function Raid:CHAT_MSG_RAID_WARNING(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_WARNING", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_RAID_WARNING", arg1, arg2, select(3, ...));
 end
 
 
@@ -1016,7 +1016,7 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
 	self.battlegroundWindow = win;
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, arg3, select(4, ...));
 
 	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -1029,7 +1029,7 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT", arg1, arg2, select(3, ...));
 end
 
 function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
@@ -1058,7 +1058,7 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
     self.battlegroundWindow = win;
     self.chatLoaded = true;
     arg3 = CleanLanguageArg(arg3);
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, arg3, select(4, ...));
 
 	if(arg2 ~= _G.UnitName("player")) then
         win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
@@ -1071,7 +1071,7 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
         end
     end
 
-    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_INSTANCE_CHAT_LEADER", arg1, arg2, select(3, ...));
 end
 
 --------------------------------------
@@ -1166,7 +1166,7 @@ function Say:CHAT_MSG_SAY(...)
     --Don't handle say messages during encounters, when boss mods are handling them
     local fightingBoss = (_G.C_InstanceEncounter and _G.C_InstanceEncounter.IsEncounterInProgress and _G.C_InstanceEncounter.IsEncounterInProgress()) or (_G.IsEncounterInProgress and _G.IsEncounterInProgress()) or (DBM and DBM:InCombat()) or false
     if not fightingBoss then
-    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_SAY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_SAY", arg1, arg2, arg3, select(4, ...));
     end
 
     if(arg2 ~= _G.UnitName("player")) then
@@ -1181,7 +1181,7 @@ function Say:CHAT_MSG_SAY(...)
     end
 
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_SAY", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_SAY", arg1, arg2, select(3, ...));
    	end
 end
 
@@ -1211,7 +1211,7 @@ function Say:CHAT_MSG_EMOTE(...)
     --Don't handle say messages during encounters, when boss mods are handling them
     local fightingBoss = (_G.C_InstanceEncounter and _G.C_InstanceEncounter.IsEncounterInProgress and _G.C_InstanceEncounter.IsEncounterInProgress()) or (_G.IsEncounterInProgress and _G.IsEncounterInProgress()) or (DBM and DBM:InCombat()) or false
     if not fightingBoss then
-    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_EMOTE", arg1, arg2, arg3, select(4, ...));
     end
 
     if(arg2 ~= _G.UnitName("player")) then
@@ -1226,7 +1226,7 @@ function Say:CHAT_MSG_EMOTE(...)
     end
 
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_EMOTE", arg1, arg2, select(3, ...));
    	end
 end
 
@@ -1256,7 +1256,7 @@ function Say:CHAT_MSG_TEXT_EMOTE(...)
     --Don't handle say messages during encounters, when boss mods are handling them
     local fightingBoss = (_G.C_InstanceEncounter and _G.C_InstanceEncounter.IsEncounterInProgress and _G.C_InstanceEncounter.IsEncounterInProgress()) or (_G.IsEncounterInProgress and _G.IsEncounterInProgress()) or (DBM and DBM:InCombat()) or false
     if not fightingBoss then
-    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, select(4, ...));
     end
 
     if(arg2 ~= _G.UnitName("player")) then
@@ -1271,7 +1271,7 @@ function Say:CHAT_MSG_TEXT_EMOTE(...)
     end
 
     if not fightingBoss then
-   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_TEXT_EMOTE", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+   		CallModuleFunction("PostEvent_ChatMessage", "CHAT_MSG_TEXT_EMOTE", arg1, arg2, select(3, ...));
    	end
 end
 
@@ -1496,7 +1496,7 @@ function Channel:CHAT_MSG_CHANNEL(...)
     self.chatLoaded = true;
     if(arg1 and _G.strlen(arg1) > 0) then
         arg3 = CleanLanguageArg(arg3);
-        win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_CHANNEL", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+        win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_CHANNEL", arg1, arg2, arg3, select(4, ...));
         local neverPop = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].neverPop;
         if(arg2 ~= _G.UnitName("player")) then
             win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;

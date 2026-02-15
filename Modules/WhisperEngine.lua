@@ -537,7 +537,7 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
     local color = WIM.db.displayColors.wispIn; -- color contains .r, .g & .b
 
     win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_WHISPER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_WHISPER", arg1, arg2, select(3, ...));
     win:Pop("in");
 
     win.online = true;
@@ -563,7 +563,7 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
 		FlashClientIcon();
 	end
 
-    CallModuleFunction("PostEvent_Whisper", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_Whisper", arg1, arg2, select(3, ...));
 end
 
 function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
@@ -587,14 +587,14 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
 
     local color = db.displayColors.wispOut; -- color contains .r, .g & .b
 
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_WHISPER_INFORM", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_WHISPER_INFORM", arg1, arg2, select(3, ...));
     win.unreadCount = 0; -- having replied  to conversation implies the messages have been read.
     win:Pop("out");
 
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
-    CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, select(3, ...));
     addToTableUnique(recentSent, arg1);
 	if(#recentSent > maxRecent) then
 		table.remove(recentSent, 1);
@@ -622,7 +622,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
     local color = db.displayColors.BNwispOut; -- color contains .r, .g & .b
 
 	if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_BN_WHISPER_INFORM", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_BN_WHISPER_INFORM", arg1, arg2, select(3, ...));
 
 	win.unreadCount = 0; -- having replied  to conversation implies the messages have been read.
     win:Pop("out");
@@ -636,7 +636,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
 		FlashClientIcon();
 	end
 
-    CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, select(3, ...));
 
 	addToTableUnique(recentSent, arg1);
 	if(#recentSent > maxRecent) then
@@ -665,12 +665,12 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
     local color = WIM.db.displayColors.BNwispIn; -- color contains .r, .g & .b
 
     win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
-    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_BN_WHISPER", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_BN_WHISPER", arg1, arg2, select(3, ...));
     win:Pop("in");
 
     win.online = true;
     updateMinimapAlerts();
-    CallModuleFunction("PostEvent_Whisper", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    CallModuleFunction("PostEvent_Whisper", arg1, arg2, select(3, ...));
 end
 
 function WhisperEngine:CHAT_MSG_AFK(...)

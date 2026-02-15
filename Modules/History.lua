@@ -184,7 +184,7 @@ local function recordWhisper(inbound, ...)
             inbound = inbound or false,
             from = inbound and from or env.character,
             msg = msg,
-            time = _G.time();
+            time = select(29, ...) or _G.time();
         }, ...));
         if(WIM.db.history.maxPer) then
             while(WIM.db.history.maxCount < #history) do
@@ -359,7 +359,7 @@ local function recordChannelChat(recordAs, ChannelType, ...)
             type = 2, -- chat
             from = from,
             msg = msg,
-            time = _G.time();
+            time = select(29, ...) or _G.time();
         }, ...));
         if(WIM.db.history.chat.maxPer) then
             while(WIM.db.history.chat.maxCount < #history) do

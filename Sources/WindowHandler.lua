@@ -945,8 +945,11 @@ local function instantiateWindow(obj)
 
 		nextColor.r, nextColor.g, nextColor.b = r, g, b;
 
+		self.nextStamp = select(29, ...) or self.nextStamp;
+
+		local spreadArgs = {select(2, ...)}
 		local messageFormatter = function (msg)
-			return applyMessageFormatting(self.widgets.chat_display, event, msg or arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17);
+			return applyMessageFormatting(self.widgets.chat_display, event, msg or arg1, unpack(spreadArgs));
 		end
 
 		local str = messageFormatter();
