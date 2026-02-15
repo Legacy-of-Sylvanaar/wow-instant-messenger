@@ -93,7 +93,7 @@ WIM.AddLocale("zhTW", {
     ["Display tooltips."] = "顯示小秘訣",
     ["Show window when sending a message."] = "當送出訊息時跳出對話視窗",
     ["Show window when message has been received."] = "當收到訊息時跳出對話視窗",
-    ["Supress messages from default chat frame."] = true,
+    ["Supress messages from default chat frame."] = "禁止來自預設聊天框的訊息",
     ["Play sound when message is received."] = "當收到訊息播放音效",
     ["Play sound when message is sent."] = "當送出訊息播放音效",
     ["Sort alphabetically."] = "依照字母排序",
