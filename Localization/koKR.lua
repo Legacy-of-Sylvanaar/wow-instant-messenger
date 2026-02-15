@@ -377,7 +377,7 @@ WIM.AddLocale("koKR", {
     ["Maintenance"] = "관리하기",
     ["Allowing your history logs to grow too large will affect the game's performance, therefore it is reccomended that you use the following options."] = "대화 기록이 너무 많아지면 게임 성능에 영향을 줄 수 있으므로, 아래 옵션을 사용하는 것을 권장합니다.",
     ["Save a maximum number of messages per person."] = "유저당 최대 저장 메세지 갯수",
-    ["%d |4Week:Weeks;"] = "%d 주;",
+    ["%d |4Week:Weeks;"] = "%d 주",
     ["Automatically delete old messages."] = "오래된 메세지를 자동으로 지웁니다",
     ["WIM-2-WIM is a feature which allows users with WIM to interact in ways that normal whispering can not."] = "WIM-2-WIM은 기본 귓속말로는 사용할 수 없는 확장 기능을 WIM 사용자끼리 이용할 수 있게 해주는 시스템입니다.",
     ["Enable WIM-2-WIM"] = "WIM 사용자간 대화 켜기",
