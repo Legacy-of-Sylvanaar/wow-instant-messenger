@@ -19,7 +19,7 @@ WIM.AddLocale("zhCN", {
     ["OK"] = "确认",
     ["Cancel"] = "取消",
     ["Unknown"] = "未知",
-    ["Click to update..."] = "点击更新...",
+    ["Click to update..."] = "点击更新……",
     ["Usage"] = "使用方法",
 
     ["state_resting"] = "休息",
@@ -188,7 +188,7 @@ WIM.AddLocale("zhCN", {
     ["History Viewer"] = "聊天记录浏览器",
     ["Filters"] = "过滤器",
     ["Are you sure you want to delete all history saved for %s on %s?"] = "你确定要删除 %s 的 %s 所有历史记录吗？",
-    ["Search resulted in %d |4message:messages;."] = "找到 %d |4message:messages; 消息。",
+    ["Search resulted in %d |4message:messages;."] = "找到 %d 消息。",
     ["No results found!"] = "没有任何结果！",
     ["Search"] = "搜索",
     ["Show All"] = "显示全部",
@@ -213,13 +213,13 @@ WIM.AddLocale("zhCN", {
     -- ShortcutBar.lua --
     ["Player Location"] = "玩家地区",
     ["Unknown"] = "未知",
-    ["Click to update..."] = "点击更新...",
-    ["Coordinates"] = true,
+    ["Click to update..."] = "点击更新……",
+    ["Coordinates"] = "坐標",
     ["Invite to Party"] = "邀请",
     ["Add Friend"] = "添加好友",
     ["Ignore User"] = "屏蔽",
     ["Are you sure you want to\nignore %s?"] = "确定要屏蔽 %s 吗？",
-    ["Right-Click for profile links..."] = "右键查看英雄榜链接...",
+    ["Right-Click for profile links..."] = "右键查看英雄榜链接……",
 	["Profile Links"] = "英雄榜链接",
 	["Location"] = "地区",
 	["Game"] = "游戏",
@@ -231,7 +231,7 @@ WIM.AddLocale("zhCN", {
     ["Display WIM tips"] = "显示WIM提示",
 
     -- W2W.lua --
-    ["%s is typing..."] = "%s 正在输入中...",
+    ["%s is typing..."] = "%s 正在输入中……",
     ["W2W Profile"] = "W2W配置",
     ["Talent Spec"] = "查看专精",
 
@@ -358,7 +358,7 @@ WIM.AddLocale("zhCN", {
     ["Filtering"] = "过滤器",
     ["Filtering allows you to control which messages are handled as well as how they are handled by WIM."] = "设置消息过滤规则。",
     ["Enable Filtering"] = "开启过滤器",
-    ["Protected"] = true,
+    ["Protected"] = "已保护",
     ["Action:"] = "动作：",
     ["Occurrences:"] = "生效次数：",
     ["Delete Filter"] = "删除过滤器",
@@ -436,7 +436,7 @@ WIM.AddLocale("zhCN", {
     ["Fury"] = "狂怒",
     ["Guardian"] = "守护",
     ["Holy"] = "神圣",
-    ["Hybrid"] = true,
+    ["Hybrid"] = "混合",
     ["Marksmanship"] = "射击",
     ["Mistweaver"] = "织物",
     ["Protection"] = "防护",
@@ -513,5 +513,5 @@ WIM.AddLocale("zhCN", {
     ["Click to reposition."] = "点击重置位置。",
 
     --Misc
-    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = true,
+    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM 发现你正在一个私人的服务器上玩 WOW，某些私人的服务器并不完全支持 WIM 的模块，你是否仍要尝试加载 WIM 呢？",
 });
