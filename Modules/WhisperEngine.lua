@@ -419,7 +419,9 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 			if(WIM.db.pop_rules.whisper[curState].supress) then
 				local chatType = strsub(event, 10):gsub("_INFORM", "");
 				if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
-					(ChatFrameUtil and ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(select(2, ...), chatType);
+					local inform = (strsub(event, #event - 5) == "INFORM");
+					local modern, legacy = inform and "SetLastToldTarget" or "SetLastTellTarget", inform and "ChatEdit_SetLastToldTarget" or "ChatEdit_SetLastTellTarget";
+					(ChatFrameUtil and ChatFrameUtil[modern] or _G[legacy])(select(2, ...), chatType);
 				end
 				return true
 			end
@@ -803,7 +805,7 @@ local function processChatType(editBox, msg, index, send)
 end
 
 local function replyTellTarget(TellNotTold)
-	if (db.enabled) then
+	if (not InChatMessagingLockdown() and db and db.enabled) then
 		local lastTell, lastTellType;
 		local curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
 
@@ -843,7 +845,7 @@ local function replyTellTarget(TellNotTold)
 end
 
 function CF_SentBNetTell(target)
-	if (db and db.enabled) then
+	if (not InChatMessagingLockdown() and db and db.enabled) then
 		local curState = curState;
 		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
 		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
@@ -869,7 +871,7 @@ function CF_SentBNetTell(target)
 end
 
 if ChatFrameUtil and ChatFrameUtil.SendBNetTell then
-	hooksecurefunc(ChatFrameUtil, "SendBNetTell", CF_SentBNetTell);
+	-- hooksecurefunc(ChatFrameUtil, "SendBNetTell", CF_SentBNetTell);
 else
 	hooksecurefunc("ChatFrame_SendBNetTell", CF_SentBNetTell);
 end
