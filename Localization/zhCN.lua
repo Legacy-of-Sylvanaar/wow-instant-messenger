@@ -436,7 +436,7 @@ WIM.AddLocale("zhCN", {
     ["Fury"] = "狂怒",
     ["Guardian"] = "守护",
     ["Holy"] = "神圣",
-    ["Hybrid"] = true,
+    ["Hybrid"] = "混合",
     ["Marksmanship"] = "射击",
     ["Mistweaver"] = "织物",
     ["Protection"] = "防护",
@@ -513,5 +513,5 @@ WIM.AddLocale("zhCN", {
     ["Click to reposition."] = "点击重置位置。",
 
     --Misc
-    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = true,
+    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM 发现你正在一个私人的服务器上玩 WOW，某些私人的服务器并不完全支持 WIM 的模块，你是否仍要尝试加载 WIM 呢？",
 });
