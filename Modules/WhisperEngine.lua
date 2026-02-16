@@ -800,88 +800,6 @@ end
 --------------------------------------
 --          Whisper Related Hooks   --
 --------------------------------------
-local function processChatType(editBox, msg, index, send)
-	local target, chatType, targetFound, parsedMsg;
-
-	-- whispers
-	if (index == "WHISPER" or index == "SMART_WHISPER") then
-		targetFound, target, chatType, parsedMsg = (editBox.ExtractTellTarget or _G.ChatEdit_ExtractTellTarget)(editBox, msg, index);
-		if not targetFound then
-			return
-		end
-
-	-- reply
-	elseif (index == "REPLY") then
-		target, chatType = (ChatFrameUtil and ChatFrameUtil.GetLastTellTarget or _G.ChatEdit_GetLastTellTarget)();
-		if not target then
-			return
-		end
-
-	-- other unsupported
-	else
-		return
-	end
-
-	-- handle the whisper interception
-	if (target and db and db.enabled) then
-		local curState = curState;
-		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-			-- target = _G.Ambiguate(target, "none")--For good measure, ambiguate again cause it seems some mods interfere with this process
-
-			local bNetID = nil;
-			if chatType == "BN_WHISPER" then
-				bNetID = _G.BNet_GetBNetIDAccount(target);
-			end
-
-			local win = getWhisperWindowByUser(target, bNetID and true, bNetID);
-
-			if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
-
-			win.widgets.msg_box.setText = 1;
-			win:Pop(true); -- force popup
-			win.widgets.msg_box:SetFocus();
-
-			if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.ClearChat then
-				_G.ChatFrameEditBoxMixin.OnEscapePressed(editBox)
-			else
-				_G.ChatEdit_OnEscapePressed(editBox);
-			end
-		end
-	end
-end
-
-function CF_SentBNetTell(target)
-	if (not InChatMessagingLockdown() and db and db.enabled) then
-		local curState = curState;
-		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-			local bNetID = _G.BNet_GetBNetIDAccount(target);
-			target = _G.Ambiguate(target, "none")--For good measure, ambiguate again cause it seems some mods interfere with this process
-			local win = getWhisperWindowByUser(target, true, bNetID);
-			if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
-			win.widgets.msg_box.setText = 1;
-			win:Pop(true); -- force popup
-			win.widgets.msg_box:SetFocus();
-
-			local editBox = _G.LAST_ACTIVE_CHAT_EDIT_BOX;
-			if (editBox) then
-				if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed then
-					_G.ChatFrameEditBoxMixin.OnEscapePressed(editBox)
-				else
-					_G.ChatEdit_OnEscapePressed(editBox);
-				end
-				return;
-			end
-		end
-	end
-end
-
-if ChatFrameUtil and ChatFrameUtil.SendBNetTell then
-	-- hooksecurefunc(ChatFrameUtil, "SendBNetTell", CF_SentBNetTell);
-else
-	hooksecurefunc("ChatFrame_SendBNetTell", CF_SentBNetTell);
-end
 
 -- hook SendChatMessage to track sent messages
 hooksecurefunc(_G.C_ChatInfo or _G, "SendChatMessage", function(...)
@@ -954,10 +872,13 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 		-- mark it as hooked
 		editBox._WIM_WhisperEngine_Hooked = true;
 	end);
+else
+	-- fallback to hooking all edit boxes on update header, this is less efficient but ensures compatibility with older clients.
+	hooksecurefunc("ChatEdit_UpdateHeader", editBoxUpdateHeader);
 end
 
 -- ReplyTell: LastTellTarget
-hooksecurefunc(ChatFrameUtil or _G, "ReplyTell" or "ChatFrame_ReplyTell", function()
+hooksecurefunc((ChatFrameUtil and ChatFrameUtil.ReplyTell) and ChatFrameUtil or _G, (ChatFrameUtil and ChatFrameUtil.ReplyTell) and "ReplyTell" or "ChatFrame_ReplyTell", function()
 	if (not InChatMessagingLockdown() and db and db.enabled) then
 		local tellTarget, chatType = unpack(lastTellTarget);
 
@@ -966,13 +887,13 @@ hooksecurefunc(ChatFrameUtil or _G, "ReplyTell" or "ChatFrame_ReplyTell", functi
 		end
 
 		if GetLastWhisperWindow() and _G.LAST_ACTIVE_CHAT_EDIT_BOX then
-			_G.ChatFrameEditBoxMixin.OnEscapePressed(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
+			(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
 		end
 	end
 end);
 
 -- ReplyTell2: LastToldTarget
-hooksecurefunc(ChatFrameUtil or _G, "ReplyTell2" or "ChatFrame_ReplyTell2", function()
+hooksecurefunc((ChatFrameUtil and ChatFrameUtil.ReplyTell2) and ChatFrameUtil or _G, (ChatFrameUtil and ChatFrameUtil.ReplyTell2) and "ReplyTell2" or "ChatFrame_ReplyTell2", function()
 	if (not InChatMessagingLockdown() and db and db.enabled) then
 		local tellTarget, chatType = unpack(lastToldTarget);
 
@@ -981,21 +902,11 @@ hooksecurefunc(ChatFrameUtil or _G, "ReplyTell2" or "ChatFrame_ReplyTell2", func
 		end
 
 		if GetLastWhisperWindow(true) and _G.LAST_ACTIVE_CHAT_EDIT_BOX then
-			_G.ChatFrameEditBoxMixin.OnEscapePressed(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
+			(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
 		end
 	end
 end);
 
--- Legacy hooks
-if not _G.ChatFrameEditBoxBaseMixin or not _G.ChatFrameEditBoxBaseMixin.ExtractTellTarget then
-	hooksecurefunc("ChatEdit_HandleChatType", function(self, msg, command, send)
-		local channel = _G.strmatch(command, "/([0-9]+)");
-		if not channel then
-			local index = _G.hash_ChatTypeInfoList[command];
-			processChatType(self, msg, index, send);
-		end
-	end);
-end
 
 -- global reference
 GetWhisperWindowByUser = getWhisperWindowByUser;
