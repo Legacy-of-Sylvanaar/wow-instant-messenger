@@ -24,13 +24,15 @@ setmetatable(L, {
 });
 
 local function initKeyBindingStrings()
-    setglobal("BINDING_HEADER_WIM",       L["WIM (WoW Instant Messenger)"]);
+    setglobal("BINDING_NAME_HEADER_WIM",  L["WIM (WoW Instant Messenger)"]);
     setglobal("BINDING_NAME_WIMSHOWALL",  L["Show All Windows"]);
     setglobal("BINDING_NAME_WIMHIDEALL",  L["Hide All Windows"]);
     setglobal("BINDING_NAME_WIMUNREAD",   L["Show Unread Messages"]);
     setglobal("BINDING_NAME_WIMVISIBLE",  L["Expose"]);
     setglobal("BINDING_NAME_WIMHISTORY",  L["History Viewer"]);
     setglobal("BINDING_NAME_WIMOPTIONS",  L["Options"]);
+	setglobal("BINDING_NAME_WIMREPLY",    _G.BINDING_NAME_REPLY);
+	setglobal("BINDING_NAME_WIMREPLY2",   _G.BINDING_NAME_REPLY2);
 end
 
 function getLocale()

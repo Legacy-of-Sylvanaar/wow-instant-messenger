@@ -8,6 +8,12 @@
 	<Binding name="WIMUNREAD">
 			WIM.ShowAllUnreadWindows();
 	</Binding>
+	<Binding name="WIMREPLY">
+			WIM.GetLastWhisperWindow();
+	</Binding>
+	<Binding name="WIMREPLY2">
+			WIM.GetLastWhisperWindow(true);
+	</Binding>
 	<Binding name="WIMVISIBLE">
 			WIM.ToggleContainer(WIM.db.winAnimation);
 	</Binding>
