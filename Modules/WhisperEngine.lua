@@ -880,7 +880,7 @@ end
 -- ReplyTell: LastTellTarget
 hooksecurefunc((ChatFrameUtil and ChatFrameUtil.ReplyTell) and ChatFrameUtil or _G, (ChatFrameUtil and ChatFrameUtil.ReplyTell) and "ReplyTell" or "ChatFrame_ReplyTell", function()
 	if (not InChatMessagingLockdown() and db and db.enabled) then
-		local tellTarget, chatType = unpack(lastTellTarget);
+		local tellTarget, chatType = unpack(lastTellTarget or {});
 
 		if (HasAnySecretValues(tellTarget, chatType)) then
 			return;
@@ -895,7 +895,7 @@ end);
 -- ReplyTell2: LastToldTarget
 hooksecurefunc((ChatFrameUtil and ChatFrameUtil.ReplyTell2) and ChatFrameUtil or _G, (ChatFrameUtil and ChatFrameUtil.ReplyTell2) and "ReplyTell2" or "ChatFrame_ReplyTell2", function()
 	if (not InChatMessagingLockdown() and db and db.enabled) then
-		local tellTarget, chatType = unpack(lastToldTarget);
+		local tellTarget, chatType = unpack(lastToldTarget or {});
 
 		if (HasAnySecretValues(tellTarget, chatType)) then
 			return;
