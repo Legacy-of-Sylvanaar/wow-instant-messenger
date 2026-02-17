@@ -456,12 +456,6 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 			local curState = curState;
 			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
 			if(WIM.db.pop_rules.whisper[curState].supress) then
-				local chatType = strsub(event, 10):gsub("_INFORM", "");
-				-- if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
-				-- 	local inform = (strsub(event, #event - 5) == "INFORM");
-				-- 	local modern, legacy = inform and "SetLastToldTarget" or "SetLastTellTarget", inform and "ChatEdit_SetLastToldTarget" or "ChatEdit_SetLastTellTarget";
-				-- 	(ChatFrameUtil and ChatFrameUtil[modern] or _G[legacy])(select(2, ...), chatType);
-				-- end
 				return true
 			end
 		elseif (frame._isWIM and ignore or block) then
@@ -815,12 +809,29 @@ hooksecurefunc(_G.C_ChatInfo or _G, "SendChatMessage", function(...)
 	end
 end);
 
-local function editBoxUpdateHeader(self, tellTarget, chatType)
-	chatType, tellTarget = chatType or self:GetAttribute("chatType"),  tellTarget or self:GetAttribute("tellTarget");
+local stickyTypes = {};
+local function setSticky (sticky)
+	for i = 1, #stickyTypes do
+		local chatTypeInfo = _G.ChatTypeInfo[stickyTypes[i]] or {};
+		chatTypeInfo.sticky = sticky and 1 or 0;
+	end
+end
 
-	if HasAnySecretValues(chatType, tellTarget) then
+local prevChatType, prevTellTarget;
+local function editBoxUpdateHeader(self, internalCall)
+	local chatType, tellTarget = self:GetAttribute("chatType"),  self:GetAttribute("tellTarget");
+
+	if HasAnySecretValues(chatType, tellTarget) or not db or not db.enabled then
+		prevChatType, prevTellTarget = nil, nil;
+		setSticky(true);
 		return;
 	end
+
+	-- prevent duplicates
+	if internalCall or (prevChatType == chatType and prevTellTarget == tellTarget) then
+		return;
+	end
+	prevChatType, prevTellTarget = chatType, tellTarget;
 
 	if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
 		local target = tellTarget;
@@ -842,7 +853,18 @@ local function editBoxUpdateHeader(self, tellTarget, chatType)
 					win:Pop(true); -- force popup
 					win.widgets.msg_box:SetFocus();
 
+					if (_G.ChatTypeInfo[chatType] and _G.ChatTypeInfo[chatType].sticky) then
+						table.insert(stickyTypes, chatType);
+						setSticky(false);
+					end
+
 					_G.C_Timer.After(0, function()
+						if self:GetAttribute("chatType"):find("WHISPER") then
+							self:SetAttribute("chatType", "SAY");
+							self:SetAttribute("tellTarget", nil);
+							(self.UpdateHeader or ChatEdit_UpdateHeader)( self, true );
+						end
+
 						if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed then
 							_G.ChatFrameEditBoxMixin.OnEscapePressed(self)
 						else
@@ -851,7 +873,11 @@ local function editBoxUpdateHeader(self, tellTarget, chatType)
 
 					end);
 				end
+			else
+				setSticky(true);
 			end
+		else
+			setSticky(true);
 		end
 	end
 
