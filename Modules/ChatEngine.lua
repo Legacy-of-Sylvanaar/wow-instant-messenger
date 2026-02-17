@@ -310,7 +310,7 @@ end
 
 function Guild.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if HasAnySecretValues(...) then
+	if HasAnySecretValues(...) or not db or not db.enabled then
 		return false
 	end
 
@@ -448,7 +448,7 @@ end
 
 function Officer.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if HasAnySecretValues(...) then
+	if HasAnySecretValues(...) or not db or not db.enabled then
 		return false
 	end
 
@@ -584,7 +584,7 @@ end
 
 function Party.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if HasAnySecretValues(...) then
+	if HasAnySecretValues(...) or not db or not db.enabled then
 		return false
 	end
 
@@ -762,7 +762,7 @@ end
 
 function Raid.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if HasAnySecretValues(...) then
+	if HasAnySecretValues(...) or not db or not db.enabled then
 		return false
 	end
 
@@ -973,7 +973,7 @@ end
 
 function Battleground.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if HasAnySecretValues(...) then
+	if HasAnySecretValues(...) or not db or not db.enabled then
 		return false
 	end
 
@@ -1123,7 +1123,7 @@ end
 
 function Say.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if HasAnySecretValues(...) then
+	if HasAnySecretValues(...) or not db or not db.enabled then
 		return false
 	end
 
@@ -1412,7 +1412,7 @@ end
 -- manage suppression
 function Channel.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if HasAnySecretValues(...) then
+	if HasAnySecretValues(...) or not db or not db.enabled then
 		return false
 	end
 

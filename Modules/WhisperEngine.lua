@@ -443,7 +443,7 @@ local CMS_PATTERNS = {
 
 function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
-	if HasAnySecretValues(...) then
+	if HasAnySecretValues(...) or not db or not db.enabled then
 		return false
 	end
 
