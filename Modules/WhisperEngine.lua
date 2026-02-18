@@ -870,7 +870,7 @@ local function editBoxUpdateHeader(self, internalCall)
 						if self:GetAttribute("chatType"):find("WHISPER") then
 							self:SetAttribute("chatType", "SAY");
 							self:SetAttribute("tellTarget", nil);
-							(self.UpdateHeader or ChatEdit_UpdateHeader)( self, true );
+							(self.UpdateHeader or _G.ChatEdit_UpdateHeader)( self, true );
 						end
 
 						if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed then
