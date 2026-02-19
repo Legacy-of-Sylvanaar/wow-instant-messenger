@@ -891,6 +891,40 @@ local function editBoxUpdateHeader(self, internalCall)
 
 end
 
+-- ReplyTell and ReplyTell2 hooking
+local function replyTellHook (reTell, msg)
+	if (not InChatMessagingLockdown() and db and db.enabled) then
+		local _tellTarget, _chatType = unpack(reTell and lastToldTarget or lastTellTarget or {});
+
+		if (HasAnySecretValues(_tellTarget, _chatType)) then
+			return;
+		end
+
+		local target, chatType = GetLastWhisperTarget(reTell);
+
+		if target and chatType then
+			local curState = curState;
+			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
+			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+				if GetLastWhisperWindow(reTell) and _G.LAST_ACTIVE_CHAT_EDIT_BOX then
+					(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
+				end
+
+			-- have default UI handle the reply
+			elseif _G.LAST_ACTIVE_CHAT_EDIT_BOX then
+				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("chatType", chatType);
+				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("tellTarget", target);
+
+				(ChatFrameUtil and ChatFrameUtil.ActivateChat or _G.ChatEdit_ActivateChat)(_G.LAST_ACTIVE_CHAT_EDIT_BOX);
+
+				_G.LAST_ACTIVE_CHAT_EDIT_BOX.text = msg or "";
+				_G.LAST_ACTIVE_CHAT_EDIT_BOX.setText = 1;
+				(_G.LAST_ACTIVE_CHAT_EDIT_BOX.UpdateHeader or _G.ChatEdit_UpdateHeader)(_G.LAST_ACTIVE_CHAT_EDIT_BOX, true);
+			end
+		end
+	end
+end
+
 -- ChatEditBoxMixin hooking
 if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 	-- each time a chat edit box is activated, check if it is hooked accordingly.
@@ -902,78 +936,61 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 		end
 
 		hooksecurefunc(editBox, "UpdateHeader", editBoxUpdateHeader);
+		hooksecurefunc(editBox, "ProcessChatType", function(self, msg, index, send)
+			if index == "REPLY" then
+				replyTellHook(false, msg)
+			end
+		end);
 
 		-- mark it as hooked
 		editBox._WIM_WhisperEngine_Hooked = true;
 	end);
 else
+	-- build list of reply commands
+	local replyCommands = {};
+	local function buildReplyCommandList()
+		local i, cmd = 1, _G["SLASH_REPLY"..1];
+		while cmd do
+			replyCommands[strupper(cmd)] = true;
+			i = i + 1;
+			cmd = _G["SLASH_REPLY"..i];
+		end
+	end
+	buildReplyCommandList();
+
 	-- fallback to hooking all edit boxes on update header, this is less efficient but ensures compatibility with older clients.
 	hooksecurefunc("ChatEdit_UpdateHeader", editBoxUpdateHeader);
+	hooksecurefunc(
+		_G, "ChatEdit_HandleChatType",
+		function(editBox, msg, command, send)
+			command = replyCommands[strupper(command)] and "REPLY" or strupper(command);
+			if command == "REPLY" then
+				replyTellHook(false, msg)
+				return true;
+			end
+		end
+	)
 end
 
+
 -- ReplyTell: LastTellTarget
-hooksecurefunc((ChatFrameUtil and ChatFrameUtil.ReplyTell) and ChatFrameUtil or _G, (ChatFrameUtil and ChatFrameUtil.ReplyTell) and "ReplyTell" or "ChatFrame_ReplyTell", function()
-	if (not InChatMessagingLockdown() and db and db.enabled) then
-		local _tellTarget, _chatType = unpack(lastTellTarget or {});
-
-		if (HasAnySecretValues(_tellTarget, _chatType)) then
-			return;
-		end
-
-		local target, chatType = GetLastWhisperTarget();
-
-		if target and chatType then
-			local curState = curState;
-			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-				if GetLastWhisperWindow() and _G.LAST_ACTIVE_CHAT_EDIT_BOX then
-					(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
-				end
-
-			-- have default UI handle the reply
-			elseif _G.LAST_ACTIVE_CHAT_EDIT_BOX then
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("chatType", chatType);
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("tellTarget", target);
-				(ChatFrameUtil and ChatFrameUtil.ActivateChat or _G.ChatEdit_ActivateChat)(_G.LAST_ACTIVE_CHAT_EDIT_BOX);
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX.text = "";
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX.setText = 1;
-				(_G.LAST_ACTIVE_CHAT_EDIT_BOX.UpdateHeader or _G.ChatEdit_UpdateHeader)(_G.LAST_ACTIVE_CHAT_EDIT_BOX, true);
-			end
-		end
+hooksecurefunc(
+	(ChatFrameUtil and ChatFrameUtil.ReplyTell) and ChatFrameUtil or _G,
+	(ChatFrameUtil and ChatFrameUtil.ReplyTell) and "ReplyTell" or "ChatFrame_ReplyTell",
+	function()
+		replyTellHook()
 	end
-end);
+)
 
 -- ReplyTell2: LastToldTarget
-hooksecurefunc((ChatFrameUtil and ChatFrameUtil.ReplyTell2) and ChatFrameUtil or _G, (ChatFrameUtil and ChatFrameUtil.ReplyTell2) and "ReplyTell2" or "ChatFrame_ReplyTell2", function()
-	if (not InChatMessagingLockdown() and db and db.enabled) then
-		local _tellTarget, _chatType = unpack(lastTellTarget or {});
-
-		if (HasAnySecretValues(_tellTarget, _chatType)) then
-			return;
-		end
-
-		local target, chatType = GetLastWhisperTarget(true);
-
-		if target and chatType then
-			local curState = curState;
-			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-				if GetLastWhisperWindow(true) and _G.LAST_ACTIVE_CHAT_EDIT_BOX then
-					(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
-				end
-
-			-- have default UI handle the re-tell
-			elseif _G.LAST_ACTIVE_CHAT_EDIT_BOX then
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("chatType", chatType);
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("tellTarget", target);
-				(ChatFrameUtil and ChatFrameUtil.ActivateChat or _G.ChatEdit_ActivateChat)(_G.LAST_ACTIVE_CHAT_EDIT_BOX);
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX.text = "";
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX.setText = 1;
-				(_G.LAST_ACTIVE_CHAT_EDIT_BOX.UpdateHeader or _G.ChatEdit_UpdateHeader)(_G.LAST_ACTIVE_CHAT_EDIT_BOX, true);
-			end
-		end
+hooksecurefunc(
+	(ChatFrameUtil and ChatFrameUtil.ReplyTell2) and ChatFrameUtil or _G,
+	(ChatFrameUtil and ChatFrameUtil.ReplyTell2) and "ReplyTell2" or "ChatFrame_ReplyTell2",
+	function()
+		replyTellHook(true)
 	end
-end);
+)
+
 
 
 -- global reference
