@@ -2073,19 +2073,7 @@ end
 local myself = _G.UnitName("player")
 RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", function(self, link, text, button)
 	local t,n,i = string.split(":", link)
-
-	if n == myself then
-		return
-    end
-
-	if t == 'player' then
-		if (_G.ChatFrameMixin and _G.ChatFrameMixin.OnHyperlinkClick) then
-			_G.ChatFrameMixin.OnHyperlinkClick(_G.DEFAULT_CHAT_FRAME, link, text, button);
-		else
-			_G.ChatFrame_OnHyperlinkShow(_G.DEFAULT_CHAT_FRAME, link, text, button);
-		end
-		return;
-	end
+	local winType = self:GetParent().type
 
 	if t == 'censoredmessage' then
 		local hyperlinkLineID = _G.tonumber(n);
@@ -2136,11 +2124,24 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 		end
 	end
 
-	if (_G.ChatFrameMixin and _G.ChatFrameMixin.OnHyperlinkClick) then
-		_G.ChatFrameMixin.OnHyperlinkClick(self, link, text, button);
-	else
-		_G.ChatFrame_OnHyperlinkShow(self, link, text, button);
+	if t == 'player' then
+		-- allow player click if shit-clicking to insert into WIM
+		if EditBoxInFocus and button == "LeftButton" and _G.IsModifiedClick() then
+			EditBoxInFocus:Insert(n);
+			return;
+
+		-- or if shift-clicking into another editbox or doing a who lookup
+		elseif not _G.IsModifiedClick() and button == "LeftButton" and winType == "whisper" then
+			return;
+
+		elseif button == "RightButton" and n == myself then
+			return;
+		end
+
 	end
+
+	-- pass all other clicks to SetItemRef
+	_G.SetItemRef(link, text, button);
 end);
 --RegisterWidgetTrigger("chat_display", "whisper,chat,w2w","OnMessageScrollChanged", function(self) updateScrollBars(self:GetParent()); end);
 
