@@ -417,7 +417,7 @@ local function setLastToldTarget(name, chatType, ...)
 end
 
 function GetLastWhisperTarget (sent)
-	local target, chatType, extra = unpack(sent and lastTellTarget or lastToldTarget or {});
+	local target, chatType, extra = unpack(sent and lastToldTarget or lastTellTarget or {});
 	if target and chatType and (chatType == "WHISPER" or chatType == "BN_WHISPER") then
 		return target, chatType, extra;
 	end
