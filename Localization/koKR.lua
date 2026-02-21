@@ -290,6 +290,7 @@ WIM.AddLocale("koKR", {
     ["Enable WIM"] = "WIM 사용",
     ["Display Minimap Icon"] = "미니맵 아이콘 표시",
     ["<Right-Click> to show unread messages."] = "오른쪽 클릭으로 읽지 않은 메시지를 표시합니다",
+	["Display Addon Compartment Icon"] = "애드온 구획 아이콘 표시",
     ["Display Tutorials"] = "튜토리얼 표시",
     ["Reset Tutorials"] = "튜토리얼 초기화",
     ["Credits"] = "제작자 명단",
