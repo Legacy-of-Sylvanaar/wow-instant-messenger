@@ -279,6 +279,7 @@ WIM.AddLocale("zhTW", {
     ["Enable WIM"] = "啟用 WIM",
     ["Display Minimap Icon"] = "顯示小地圖按鈕",
     ["<Right-Click> to show unread messages."] = "<右鍵> 顯示未讀密語",
+	["Display Addon Compartment Icon"] = "顯示插件隔間圖示",
     ["Display Tutorials"] = "顯示教學",
     ["Reset Tutorials"] = "重設教學",
     ["Credits"] = "榮譽",
