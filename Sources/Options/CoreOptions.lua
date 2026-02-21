@@ -36,7 +36,15 @@ local function General_Main()
     frame.welcome.cb2 = frame.welcome:CreateCheckButton(L["Display Minimap Icon"], WIM.modules.MinimapIcon, "enabled", nil, function(self, button) EnableModule("MinimapIcon", self:GetChecked()); end);
     frame.welcome.cb2:CreateCheckButton(L["Unlock from Minimap"], db.minimap, "free", nil, function(self, button) modules.MinimapIcon:OnEnable() end);
     frame.welcome.cb2:CreateCheckButton(L["<Right-Click> to show unread messages."], db.minimap, "rightClickNew");
-    frame.welcome.nextOffSetY = -75;
+
+	frame.welcome.nextOffSetY = -75;
+
+	if _G.AddonCompartmentFrame then
+		frame.welcome.nextOffSetY = -60;
+		frame.welcome.ac = frame.welcome:CreateCheckButton(L["Display Addon Compartment Icon"], WIM.modules.AddonCompartment, "enabled", nil, function(self, button) EnableModule("AddonCompartment", self:GetChecked()); end);
+		frame.welcome.nextOffSetY = -25;
+	end
+
     frame.welcome.tabFun = frame.welcome:CreateCheckButton(L["Press <Tab> to advance to next tell target."], WIM.db, "tabAdvance");
 
     local sensitivity = {};

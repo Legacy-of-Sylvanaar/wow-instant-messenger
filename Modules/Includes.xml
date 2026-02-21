@@ -18,5 +18,6 @@
     <Script file="ClickControl.lua"/>
     <Script file="OffScreenTracker.lua"/>
     <Script file="alias.lua"/>
+    <Script file="AddonCompartment.lua"/>
 
 </Ui>
