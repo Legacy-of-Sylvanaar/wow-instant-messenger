@@ -32,7 +32,6 @@ WIM.AddLocale("ptBR", {
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = "Uma nova versão do WIM está disponível!\nVocê poderá fazer o download da nova versão indo em curse",
 
     ["Options"] = "Opções",
-F
     ["Icon Position"] = "Posição do icone",
     ["Font Size"] = "Tamanho da fonte",
     ["Window Scale (Percent)"] = "Escala da janela (porcentagem)",
