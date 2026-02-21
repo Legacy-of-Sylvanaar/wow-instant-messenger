@@ -302,12 +302,13 @@ local function General_WindowSettings()
 
     -- window strata
     local stratas = {"BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "TOOLTIP"};
+	local strataNames = {L["Background"], L["Low"], L["Medium"], L["High"], L["Dialog"], L["Tooltip"]};
     local strataList = {};
     frame.menu.strataText = frame.menu:CreateText();
     frame.menu.strataText:SetText(L["Window Strata:"]);
     for i=1, #stratas do
         table.insert(strataList, {
-            text = stratas[i],
+            text = strataNames[i],
             value = stratas[i],
             justifyH = "LEFT",
             func = function(self)
