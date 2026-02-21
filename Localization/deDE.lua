@@ -377,6 +377,12 @@ WIM.AddLocale("deDE", {
     ["General"] = "Allgemein",
     ["User Level"] = "Spielerlevel",
     ["Windows will also be hidden when frames such as the world map are shown."] = "Fenster werden ebenfalls versteckt, sobald andere Fenster, wie etwa die Weltkarte, angezeigt werden.",
+	["Background"] = BACKGROUND,
+	["Low"] = LOW,
+	["Medium"] = "Mittel",
+	["High"] = "Hoch",
+	["Dialog"] = ENABLE_DIALOG,
+	["Tooltip"] = true,
 
     -- TabManagement.lua --
     ["Tab Management"] = true,
