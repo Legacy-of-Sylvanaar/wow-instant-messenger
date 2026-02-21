@@ -32,7 +32,7 @@ WIM.AddLocale("ptBR", {
     ["A new version of WIM is available!\nYou can download the latest version from curse"] = "Uma nova versão do WIM está disponível!\nVocê poderá fazer o download da nova versão indo em curse",
 
     ["Options"] = "Opções",
-
+F
     ["Icon Position"] = "Posição do icone",
     ["Font Size"] = "Tamanho da fonte",
     ["Window Scale (Percent)"] = "Escala da janela (porcentagem)",
@@ -288,6 +288,7 @@ WIM.AddLocale("ptBR", {
     ["Enable WIM"] = "Ativar WIM",
     ["Display Minimap Icon"] = "Exibir ícone no minimapa",
     ["<Right-Click> to show unread messages."] = "<Clique-Direita> para exibir mensagens não lidas",
+	["Display Addon Compartment Icon"] = "Exibir ícone do compartimento de addons",
     ["Display Tutorials"] = "Exibir tutoriais",
     ["Reset Tutorials"] = "Resetar tutoriais",
     ["Credits"] = "Créditos",
