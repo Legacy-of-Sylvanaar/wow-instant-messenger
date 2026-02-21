@@ -282,6 +282,7 @@ WIM.AddLocale("ruRU", {
 	["Enable WIM"] = "Включить WIM",
 	["Display Minimap Icon"] = "Отображать иконку у мини-карты",
 	["<Right-Click> to show unread messages."] = "<Правый-Клик> открывает непрочитанные сообщения.",
+	["Display Addon Compartment Icon"] = "Показывать значок панели аддонов",
 	["Display Tutorials"] = "Показывать руководство",
 	["Reset Tutorials"] = "Сброс руководства",
 	["Credits"] = "Титры",
