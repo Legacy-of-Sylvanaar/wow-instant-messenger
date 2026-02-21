@@ -289,6 +289,7 @@ WIM.AddLocale("frFR", {
     ["Enable WIM"] = "Activer WIM",
     ["Display Minimap Icon"] = "Afficher l'icône sur la minicarte",
     ["<Right-Click> to show unread messages."] = "<Clic-droit> Pour afficher les messages non lus",
+	["Display Addon Compartment Icon"] = "Afficher l’icône du compartiment des addons",
     ["Display Tutorials"] = "Afficher le tutorial",
     ["Reset Tutorials"] = "Réinitialiser le tutorial",
     ["Credits"] = "Crédits",
