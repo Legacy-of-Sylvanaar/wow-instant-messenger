@@ -290,6 +290,7 @@ local translations = {
     ["Enable WIM"] = "Activar WIM",
     ["Display Minimap Icon"] = "Mostrar icono del minimapa",
     ["<Right-Click> to show unread messages."] = "<Haz clic derecho> para mostrar mensajes no leídos",
+	["Display Addon Compartment Icon"] = "Mostrar icono del compartimento de addons",
     ["Display Tutorials"] = "Mostrar tutoriales",
     ["Reset Tutorials"] = "Restablecer tutoriales",
     ["Credits"] = "Créditos",
