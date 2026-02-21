@@ -288,6 +288,7 @@ WIM.AddLocale("zhCN", {
     ["Enable WIM"] = "开启WIM",
     ["Display Minimap Icon"] = "显示小地图图标",
     ["<Right-Click> to show unread messages."] = "右键点击显示未读消息。",
+	["Display Addon Compartment Icon"] = "显示插件隔间图标",
     ["Display Tutorials"] = "显示教程",
     ["Reset Tutorials"] = "重置教程",
     ["Credits"] = "感谢",
