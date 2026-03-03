@@ -94,6 +94,7 @@ db_defaults.pop_rules.whisper = {
         alwaysOther = false,
         intercept = true,
 		obeyAutoFocusRules = false,
+		replyIncludesSent = false,
 }
 
 db_defaults.displayColors.wispIn = {
@@ -393,27 +394,31 @@ RegisterWidgetTrigger("msg_box", "whisper", "OnEnterPressed", function(self)
 --------------------------------------
 --		  Tell & Told Targets       --
 --------------------------------------
-local lastTellTarget = nil;
-local lastToldTarget = nil;
+local lastTellTarget, lastTellTargetUpdated = nil, time();
+local lastToldTarget, lastToldTargetUpdated = nil, time();
 
 local function setLastTellTarget(name, chatType, ...)
 	if (lastTellTarget ~= nil) then
 		if lastTellTarget[1] == name and lastTellTarget[2] == chatType then
+			lastTellTargetUpdated = time();
 			return;
 		end
 	end
 
 	lastTellTarget = { name, chatType, ... };
+	lastTellTargetUpdated = time();
 end
 
 local function setLastToldTarget(name, chatType, ...)
 	if (lastToldTarget ~= nil) then
 		if lastToldTarget[1] == name and lastToldTarget[2] == chatType then
+			lastToldTargetUpdated = time();
 			return;
 		end
 	end
 
 	lastToldTarget = { name, chatType, ... };
+	lastToldTargetUpdated = time();
 end
 
 function GetLastWhisperTarget (sent)
@@ -938,7 +943,10 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 		hooksecurefunc(editBox, "UpdateHeader", editBoxUpdateHeader);
 		hooksecurefunc(editBox, "ProcessChatType", function(self, msg, index, send)
 			if index == "REPLY" then
-				replyTellHook(false, msg)
+				replyTellHook(
+					db.pop_rules.whisper.replyIncludesSent and lastToldTargetUpdated > lastTellTargetUpdated,
+					msg
+				)
 			end
 		end);
 
@@ -965,7 +973,10 @@ else
 		function(editBox, msg, command, send)
 			command = replyCommands[strupper(command)] and "REPLY" or strupper(command);
 			if command == "REPLY" then
-				replyTellHook(false, msg)
+				replyTellHook(
+					db.pop_rules.whisper.replyIncludesSent and lastToldTargetUpdated > lastTellTargetUpdated,
+					msg
+				)
 				return true;
 			end
 		end

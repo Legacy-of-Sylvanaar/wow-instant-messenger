@@ -178,6 +178,12 @@ local function createPopRuleFrame(winType)
     frame.main = frame:CreateSection((winType == "chat" and _G.CHAT..": " or "")..L["Window Behavior"], L["You can control how windows behave while you are in different situations."]);
  --   frame.main.nextOffSetY = -20;
     frame.main.intercept = frame.main:CreateCheckButton(L["Intercept Slash Commands"], db.pop_rules[frame.type], "intercept");
+
+	if (winType == "whisper") then
+		frame.main.replyIncludesSent = frame.main.intercept:CreateCheckButton(L["Include sent messages in /REPLY."], db.pop_rules[frame.type], "replyIncludesSent");
+		frame.main.nextOffSetY = -20;
+	end
+
 	frame.main.obeyAutoFocusRules = frame.main:CreateCheckButton(L["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"], db.pop_rules[frame.type], "obeyAutoFocusRules");
  --   frame.main.nextOffSetY = -20;
     frame.main.alwaysOther = frame.main:CreateCheckButton(L["Use the same rules for all states."], db.pop_rules[frame.type], "alwaysOther", nil, function(self)

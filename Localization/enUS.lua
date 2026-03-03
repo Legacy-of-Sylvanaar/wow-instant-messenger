@@ -99,6 +99,7 @@ WIM.AddLocale("enUS", {
     ["Use <Escape> to close windows."] = true,
     ["Windows will close when opening the world map."] = true,
     ["Intercept slash commands."] = true,
+	["Include sent messages in /REPLY."] = true,
     ["Ignore arrow keys while typing."] = true,
     ["Requires using <Alt> to navigate text."] = true,
     ["Display emoticons."] = true,
