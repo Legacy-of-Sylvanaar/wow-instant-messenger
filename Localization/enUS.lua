@@ -524,6 +524,7 @@ WIM.AddLocale("enUS", {
     ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = true,
 
 	-- Whisper Mode Warnings
+	["Whisper Mode: In-line"] = true,
 	["Set whispers to In-line"] = true,
 	["Message suppression requires whispers to be set to 'In-line'."] = true,
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = true,
