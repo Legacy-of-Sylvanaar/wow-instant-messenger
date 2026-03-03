@@ -925,6 +925,12 @@ local function instantiateWindow(obj)
     widgets.msg_box:EnableMouse(true);
     widgets.msg_box.widgetName = "msg_box";
 
+	-- because we're pretending to be the default chat edit box at times, we need to make sure that any calls are covered.
+	local _ghostFun = function() end;
+	for _, slug in pairs({"Deactivate"}) do
+		widgets.msg_box[slug] = _ghostFun;
+	end
+
     -- Addmessage functions
     obj.AddMessage = function(self, msg, ...)
 		-- check that msg exists
