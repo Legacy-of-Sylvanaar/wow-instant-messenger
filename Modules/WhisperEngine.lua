@@ -884,6 +884,7 @@ local function editBoxUpdateHeader(self, internalCall)
 							_G.ChatEdit_OnEscapePressed(self);
 						end
 
+						win.widgets.msg_box:SetFocus();
 					end);
 				end
 			else
