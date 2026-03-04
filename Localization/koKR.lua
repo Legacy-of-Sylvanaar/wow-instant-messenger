@@ -306,6 +306,7 @@ WIM.AddLocale("koKR", {
     ["Window Behavior"] = "창 동작",
     ["You can control how windows behave while you are in different situations."] = "상황에 따라 창이 어떻게 동작할지 설정할 수 있습니다.",
     ["Intercept Slash Commands"] = "/명령어 가로채기",
+    ["Include sent messages in /REPLY."] = "보낸 메시지를 /r에 포함합니다",
     ["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "메뉴를 통해 창을 열 때 자동 포커스 규칙을 따릅니다",
     ["Use the same rules for all states."] = "모든 상황에서 동일한 규칙을 사용합니다",
     ["Behaviors for state:"] = "상태에 따른 동작:",
@@ -524,6 +525,7 @@ WIM.AddLocale("koKR", {
     ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM이 현재 프라이빗 서버에서 플레이 중임을 감지했습니다. 일부 서버는 ChatAddonMessages를 처리하지 못할 수 있습니다. 그래도 활성화하시겠습니까?",
 
     -- Whisper Mode Warnings
+    ["Whisper Mode: In-line"] = "귓속말 모드: 인라인"
     ["Set whispers to In-line"] = "귓속말을 인라인으로 설정",
     ["Message suppression requires whispers to be set to 'In-line'."] = "메시지 숨김 기능을 사용하려면 귓속말이 '인라인'으로 설정되어 있어야 합니다.",
     ["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "귓속말의 동작을 올바르게 처리하려면 인라인 설정을 권장합니다.",

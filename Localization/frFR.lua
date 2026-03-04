@@ -305,6 +305,7 @@ WIM.AddLocale("frFR", {
     ["Window Behavior"] = "Comportement",
     ["You can control how windows behave while you are in different situations."] = "Vous pouvez contrôler la façon dont se comportent les fenêtres lorsque vous êtes dans des situations différentes.",
     ["Intercept Slash Commands"] = "Intercepter les commandes slash",
+    ["Include sent messages in /REPLY."] = "Inclure les messages envoyés dans /r",
 	["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "Respecter les règles d'autofocus lors de l'ouverture des fenêtres",
     ["Use the same rules for all states."] = "Utilisez les mêmes règles pour tous les etats",
     ["Behaviors for state:"] = "Comportements pour l'etat :",
@@ -517,6 +518,7 @@ WIM.AddLocale("frFR", {
 	["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM a détecté que vous jouez sur un serveur privé. Certains serveurs ne peuvent pas traiter les ChatAddonMessages. Voulez-vous les activer quand même ?",
 
 	-- Whisper Mode Warnings
+    ["Whisper Mode: In-line"] = "Mode de chuchotement : En ligne"
 	["Set whispers to In-line"] = "Régler les chuchotements sur En ligne",
 	["Message suppression requires whispers to be set to 'In-line'."] = "La suppression des messages nécessite que les chuchotements soient réglés sur 'En ligne'.",
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "Il est recommandé de régler les chuchotements sur En ligne afin de gérer correctement leur comportement.",
