@@ -518,8 +518,8 @@ WIM.AddLocale("frFR", {
 	["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM a détecté que vous jouez sur un serveur privé. Certains serveurs ne peuvent pas traiter les ChatAddonMessages. Voulez-vous les activer quand même ?",
 
 	-- Whisper Mode Warnings
-    ["Whisper Mode: In-line"] = "Mode de chuchotement : En ligne"
-	["Set whispers to In-line"] = "Régler les chuchotements sur En ligne",
+    ["Whisper Mode: In-line"] = "Mode de chuchotement : en ligne"
+	["Set whispers to In-line"] = "Régler les chuchotements sur en ligne",
 	["Message suppression requires whispers to be set to 'In-line'."] = "La suppression des messages nécessite que les chuchotements soient réglés sur 'En ligne'.",
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "Il est recommandé de régler les chuchotements sur En ligne afin de gérer correctement leur comportement.",
 });
