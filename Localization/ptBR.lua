@@ -303,6 +303,7 @@ WIM.AddLocale("ptBR", {
     ["Window Behavior"] = "Comportamento",
     ["You can control how windows behave while you are in different situations."] = "Você pode controlar como as jenelas se comportam enquanto você está em diferentes situações.",
     ["Intercept Slash Commands"] = "Interceptar comandos de barra",
+    ["Include sent messages in /REPLY."] = "Incluir mensagens enviadas em /r",
 	["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "Obedecer as regras de foco automático ao abrir janelas",
     ["Use the same rules for all states."] = "Usar as mesmas regras para todos os estados",
     ["Behaviors for state:"] = "Comportamentos de estado:",
@@ -520,6 +521,7 @@ WIM.AddLocale("ptBR", {
     ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "O WIM detectou que você está jogando em um servidor privado. Alguns servidores não podem processar o ChatAddonMessages. Deseja ativá-los de qualquer maneira?",
 
 	-- Whisper Mode Warnings
+    ["Whisper Mode: In-line"] = "Modo de susurro: em linha",
 	["Set whispers to In-line"] = "Definir sussurros como Em linha",
 	["Message suppression requires whispers to be set to 'In-line'."] = "A supressão de mensagens requer que os sussurros estejam configurados como 'Em linha'.",
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "Recomenda-se configurar os sussurros como Em linha para lidar corretamente com seu comportamento.",
