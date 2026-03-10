@@ -912,12 +912,12 @@ local function replyTellHook (reTell, msg)
 			local curState = curState;
 			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
 			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-				if GetLastWhisperWindow(reTell) and _G.LAST_ACTIVE_CHAT_EDIT_BOX then
+				if GetLastWhisperWindow(reTell) and _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
 					(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
 				end
 
 			-- have default UI handle the reply
-			elseif _G.LAST_ACTIVE_CHAT_EDIT_BOX then
+			elseif _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
 				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("chatType", chatType);
 				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("tellTarget", target);
 
