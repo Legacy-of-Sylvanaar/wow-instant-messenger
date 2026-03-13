@@ -2223,14 +2223,14 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnUpdate", function(s
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusGained", function(self)
                                 EditBoxInFocus = self;
-                                _G.ACTIVE_CHAT_EDIT_BOX = self; -- preserve linking abilities.
+                                -- _G.ACTIVE_CHAT_EDIT_BOX = self; -- preserve linking abilities.
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusLost", function(self)
 								_EditBoxInFocus = EditBoxInFocus -- temporary reference
                                 EditBoxInFocus = nil;
-								if _G.ACTIVE_CHAT_EDIT_BOX == self then
-	                                _G.ACTIVE_CHAT_EDIT_BOX = nil;
-								end
+								-- if _G.ACTIVE_CHAT_EDIT_BOX == self then
+	                            --     _G.ACTIVE_CHAT_EDIT_BOX = nil;
+								-- end
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnMouseUp", function(self, button)
                                 libs.DropDownMenu.CloseDropDownMenus();
