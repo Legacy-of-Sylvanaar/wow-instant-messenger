@@ -13,6 +13,18 @@ function WIM.getVisibleChatFrameEditBox()
     -- end
 end
 
+-- linking hooks - MIGHT cause tainting issues, but I don't see any other way to do this without adding support for every addon individually.
+if ChatFrameUtil and ChatFrameUtil.GetActiveWindow then
+	ChatFrameUtil.GetActiveWindow_orig = ChatFrameUtil.GetActiveWindow
+	ChatFrameUtil.GetActiveWindow = function()
+		return WIM.EditBoxInFocus or ChatFrameUtil.GetActiveWindow_orig();
+	end
+else
+	local ChatEdit_GetActiveWindow_orig = ChatEdit_GetActiveWindow;
+	function ChatEdit_GetActiveWindow()
+		return WIM.EditBoxInFocus or ChatEdit_GetActiveWindow_orig();
+	end
+end
 
 -------------------------------------------------------------------------------------------
 
