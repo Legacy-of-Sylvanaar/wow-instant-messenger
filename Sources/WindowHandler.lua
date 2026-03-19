@@ -962,13 +962,11 @@ local function instantiateWindow(obj)
 
 		-- if censoring is supported by client
 		if (
-			false and
 			_G.C_ChatInfo and
 			_G.C_ChatInfo.IsChatLineCensored and
 			_G.ChatHistory_GetAccessID and
-			_G.ChatHistory_GetAccessID and
 			_G.Chat_GetChatCategory and
-			arg11 and _G.C_ChatInfo.IsChatLineCensored(arg11)
+			arg11 and not ChatLineHasSecrets[arg11] and _G.C_ChatInfo.IsChatLineCensored(arg11)
 		) then
 
 			local infoType = strsub(event, 10);
@@ -982,15 +980,9 @@ local function instantiateWindow(obj)
 				chatTarget = arg2;
 			end
 
+			local isChatLineCensored = _G.C_ChatInfo.IsChatLineCensored(arg11);
 			local accessID = _G.ChatHistory_GetAccessID(chatGroup, chatTarget);
 			local typeID = _G.ChatHistory_GetAccessID(infoType, chatTarget, arg12 or arg13);
-
-			_G.DevTools_Dump({
-				isChatLineCensored = isChatLineCensored,
-				accessID = accessID,
-				typeID = typeID,
-			})
-
 
 			local eventArgs;
 			if isChatLineCensored then
@@ -2105,8 +2097,7 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 			local formattedText = MessageFormatter(text);
 
 			-- Report hyperlink is appended to the display message.
-			local reportHyperlink = _G.CENSORED_MESSAGE_REPORT:format(lineID);
-			formattedText = formattedText..reportHyperlink;
+			local formattedTextReport = _G.CENSORED_MESSAGE_REPORT:format(formattedText, lineID);
 
 			-- edit history entry.
 			if (modules.History and modules.History.ReplaceCensoredMessage) then
@@ -2114,7 +2105,7 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 			end
 
 			eventArgs[1] = text
-			return formattedText, r, g, b, infoID, accessID, typeID, event, eventArgs, MessageFormatter, ...;
+			return formattedTextReport, r, g, b, infoID, accessID, typeID, event, eventArgs, MessageFormatter, ...;
 		end
 
 		self:TransformMessages(DoesMessageLineIDMatch, SetMessage)
