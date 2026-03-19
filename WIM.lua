@@ -268,12 +268,17 @@ end
 
 -- defer an event to be called on a next cycle. This is used to defer events that may cause taint if called during combat or during certain protected function calls.
 local deferredEvents = {};
+ChatLineHasSecrets = {};
 
 local function sanitizeDeferredEventArgs (...)
 	local args = {...};
 	for i = 1, 29 do
 		if IsSecretValue(args[i]) then
 			args[i] = "";
+
+			if args[11] then
+				ChatLineHasSecrets[args[11]] = true; -- mark which chatLines have secrets.
+			end
 		else
 			if type(args[i]) == "nil" then
 				args[i] = "";
