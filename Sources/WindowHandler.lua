@@ -962,34 +962,28 @@ local function instantiateWindow(obj)
 
 		-- if censoring is supported by client
 		if (
+			arg11 and
 			_G.C_ChatInfo and
 			_G.C_ChatInfo.IsChatLineCensored and
-			_G.ChatHistory_GetAccessID and
-			_G.Chat_GetChatCategory and
-			arg11 and not ChatLineHasSecrets[arg11] and _G.C_ChatInfo.IsChatLineCensored(arg11)
+			_G.C_ChatInfo.IsChatLineCensored(arg11)
 		) then
 
 			local infoType = strsub(event, 10);
-			local chatGroup = (_G.ChatFrameUtil and _G.ChatFrameUtil.GetChatCategory or _G.Chat_GetChatCategory)(infoType);
 			local info = _G.ChatTypeInfo[infoType];
 
-			local chatTarget;
-			if chatType == 'CHANNEL' then
-				chatTarget = infoType .. arg8;
-			elseif chatType == 'WHISPER' then
-				chatTarget = arg2;
-			end
-
 			local isChatLineCensored = _G.C_ChatInfo.IsChatLineCensored(arg11);
-			local accessID = _G.ChatHistory_GetAccessID(chatGroup, chatTarget);
-			local typeID = _G.ChatHistory_GetAccessID(infoType, chatTarget, arg12 or arg13);
+
+			-- deferred events that are censored will not have a message, so we need to check for that and use the default censored message if needed.
+			if not msg and isChatLineCensored then
+				str = messageFormatter(_G.CENSORED_MESSAGE_HIDDEN:format(arg2, arg11));
+			end
 
 			local eventArgs;
 			if isChatLineCensored then
 				eventArgs = packTable(...)
 			end
 
-			self:AddMessage(str, r, g, b, info.id, accessID, typeID, event, eventArgs, messageFormatter);
+			self:AddMessage(str, r, g, b, info.id, undef, undef, event, eventArgs, messageFormatter);
 		else
 			-- otherwise use old method
 			self:AddMessage(str, r, g, b);
@@ -997,8 +991,9 @@ local function instantiateWindow(obj)
 
 		self.msgWaiting = true;
 		self.lastActivity = _G.GetTime();
-        if(self.tabStrip) then
-                self.tabStrip:UpdateTabs();
+
+		if(self.tabStrip) then
+            self.tabStrip:UpdateTabs();
         end
     end
 
@@ -2094,14 +2089,14 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 			local text = _G.C_ChatInfo.GetChatLineText(lineID);
 
 			-- The displayed message
-			local formattedText = MessageFormatter(text);
+			local formattedText = MessageFormatter(applyStringModifiers(text, self));
 
 			-- Report hyperlink is appended to the display message.
 			local formattedTextReport = _G.CENSORED_MESSAGE_REPORT:format(formattedText, lineID);
 
 			-- edit history entry.
 			if (modules.History and modules.History.ReplaceCensoredMessage) then
-				modules.History:ReplaceCensoredMessage(lineID, formattedText);
+				modules.History:ReplaceCensoredMessage(lineID, text);
 			end
 
 			eventArgs[1] = text
