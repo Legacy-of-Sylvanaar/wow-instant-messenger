@@ -954,6 +954,9 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 		-- mark it as hooked
 		editBox._WIM_WhisperEngine_Hooked = true;
 	end);
+
+	-- by not allowing Blizzard to keep its own log of lastTellTargets, it prevents secret issues.
+	_G.ChatFrameUtil.SetLastTellTarget = function (target, chatType) end
 else
 	-- build list of reply commands
 	local replyCommands = {};
