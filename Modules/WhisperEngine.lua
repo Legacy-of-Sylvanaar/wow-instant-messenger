@@ -21,11 +21,13 @@ local gsub = gsub;
 local strlen = strlen;
 local strsub = strsub;
 local string = string;
+local tostring = tostring;
 local IsShiftKeyDown = IsShiftKeyDown;
 local select = select;
 local unpack = unpack;
 local math = math;
 local time = time;
+local type = type;
 local playerRealm = GetRealmName();
 local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
 local FlashClientIcon = FlashClientIcon;
@@ -457,7 +459,7 @@ local CMS_PATTERNS = {
 function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 	-- check if message or sender is secret, if so, do not process
 	if HasAnySecretValues(...) or not db or not db.enabled then
-		return false
+		return
 	end
 
 	-- Process all events except for CHAT_MSG_SYSTEM
@@ -645,9 +647,13 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
 
     win.online = true;
     win.msgSent = false;
+
     updateMinimapAlerts();
-    CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, select(3, ...));
-    addToTableUnique(recentSent, arg1);
+
+	CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, select(3, ...));
+
+	-- keep track of recently sent
+	addToTableUnique(recentSent, arg1:gsub("^%s+", ""):gsub("%s+$", ""));
 	if(#recentSent > maxRecent) then
 		table.remove(recentSent, 1);
 	end
@@ -692,7 +698,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
 
     CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, select(3, ...));
 
-	addToTableUnique(recentSent, arg1);
+	addToTableUnique(recentSent, arg1:gsub("^%s+", ""):gsub("%s+$", ""));
 	if(#recentSent > maxRecent) then
 		table.remove(recentSent, 1);
 	end
@@ -807,6 +813,30 @@ end
 --------------------------------------
 --          Whisper Related Hooks   --
 --------------------------------------
+local hookedChatFrameEditBoxes = {};
+local function isChatFrameEditBox(editBox)
+	return editBox and hookedChatFrameEditBoxes[tostring(editBox)] == true;
+end
+
+local closeChatFrameEditBox = function(editBox, options)
+	if not isChatFrameEditBox(editBox) then return end
+
+	_G.C_Timer.After(0.001, function()
+		if type(options) == "table" and type(options.before) == "function" then
+			options.before();
+		end
+
+		if _G.ChatEdit_OnEscapePressed then
+			_G.ChatEdit_OnEscapePressed(editBox)
+		else
+			editBox:OnEscapePressed();
+		end
+
+		if type(options) == "table" and type(options.after) == "function" then
+			options.after();
+		end
+	end);
+end
 
 -- hook SendChatMessage to track sent messages
 hooksecurefunc(_G.C_ChatInfo or _G, "SendChatMessage", function(...)
@@ -824,10 +854,10 @@ end);
 
 local stickyTypes = {};
 local function setSticky (sticky)
-	for i = 1, #stickyTypes do
-		local chatTypeInfo = _G.ChatTypeInfo[stickyTypes[i]] or {};
-		chatTypeInfo.sticky = sticky and 1 or 0;
-	end
+	-- for i = 1, #stickyTypes do
+	-- 	local chatTypeInfo = _G.ChatTypeInfo[stickyTypes[i]] or {};
+	-- 	-- chatTypeInfo.sticky = sticky and 1 or 0;
+	-- end
 end
 
 local prevChatType, prevTellTarget;
@@ -864,37 +894,71 @@ local function editBoxUpdateHeader(self, internalCall)
 				if win then
 					win.widgets.msg_box.setText = 1;
 					win:Pop(true); -- force popup
+
+					self:SetAttribute("chatType", nil);
 					win.widgets.msg_box:SetFocus();
+					-- if chatType == self:GetAttribute("stickyType") then
+					-- 	self:SetAttribute("stickyType", 'SAY');
+					-- 	-- self:SetAttribute("chatType", 'SAY');
+					-- 	-- self:SetAttribute("tellTarget", nil);
+					-- 	-- table.insert(stickyTypes, chatType);
+					-- 	-- setSticky(false);
+					-- end
 
-					if (_G.ChatTypeInfo[chatType] and _G.ChatTypeInfo[chatType].sticky) then
-						table.insert(stickyTypes, chatType);
-						setSticky(false);
-					end
-
-					_G.C_Timer.After(0, function()
-						if self:GetAttribute("chatType"):find("WHISPER") then
-							self:SetAttribute("chatType", "SAY");
-							self:SetAttribute("tellTarget", nil);
-							(self.UpdateHeader or _G.ChatEdit_UpdateHeader)( self, true );
-						end
-
-						if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed then
-							_G.ChatFrameEditBoxMixin.OnEscapePressed(self)
-						else
-							_G.ChatEdit_OnEscapePressed(self);
-						end
-
-						win.widgets.msg_box:SetFocus();
-					end);
+					-- closeChatFrameEditBox(self, {
+					-- 	before = function ()
+					-- 		if self:GetAttribute("chatType"):find("WHISPER") then
+					-- 			self:SetAttribute("chatType", "SAY");
+					-- 			self:SetAttribute("tellTarget", nil);
+					-- 			(_G.ChatEdit_UpdateHeader or self.UpdateHeader)( self, true );
+					-- 		end
+					-- 	end,
+					-- 	after = function()
+					-- 		win.widgets.msg_box:SetFocus();
+					-- 	end
+					-- });
 				end
 			else
-				setSticky(true);
+				-- setSticky(true);
 			end
 		else
-			setSticky(true);
+			-- setSticky(true);
 		end
 	end
 
+end
+
+-- SendBNetTell hooking
+function sendBNetTell (tokenizedName)
+	if not tokenizedName or not db or not db.enabled or InChatMessagingLockdown() or HasAnySecretValues(tokenizedName) then
+		return;
+	end
+
+	local bNetID = _G.BNet_GetBNetIDAccount(tokenizedName);
+	if (bNetID) then
+		local curState = curState;
+		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
+		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+			local win = getWhisperWindowByUser(tokenizedName, bNetID and true, bNetID);
+
+			if win then
+				win.widgets.msg_box.setText = 1;
+				win.widgets.msg_box:SetText(parsedMsg or "");
+
+				win:Pop(true); -- force popup
+
+				win.widgets.msg_box:SetFocus();
+
+				if ( isChatFrameEditBox(_G.LAST_ACTIVE_CHAT_EDIT_BOX) ) then
+					if ( _G.LAST_ACTIVE_CHAT_EDIT_BOX:GetAttribute("stickyType"):find("WHISPER") ) then
+						_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("stickyType", 'SAY');
+					end
+
+					(_G.ChatEdit_ClearChat or _G.LAST_ACTIVE_CHAT_EDIT_BOX.ClearChat)(_G.LAST_ACTIVE_CHAT_EDIT_BOX);
+				end
+			end
+		end
+	end
 end
 
 -- ReplyTell and ReplyTell2 hooking
@@ -908,16 +972,16 @@ local function replyTellHook (reTell, msg)
 
 		local target, chatType = GetLastWhisperTarget(reTell);
 
-		if target and chatType then
+		if ( target and chatType ) then
 			local curState = curState;
 			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
 			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-				if GetLastWhisperWindow(reTell) and _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
-					(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
+				if ( GetLastWhisperWindow(reTell) and isChatFrameEditBox(_G.LAST_ACTIVE_CHAT_EDIT_BOX) ) then
+					(_G.ChatEdit_ClearChat or _G.LAST_ACTIVE_CHAT_EDIT_BOX.ClearChat)(_G.LAST_ACTIVE_CHAT_EDIT_BOX);
 				end
 
 			-- have default UI handle the reply
-			elseif _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
+			elseif isChatFrameEditBox(_G.LAST_ACTIVE_CHAT_EDIT_BOX) then
 				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("chatType", chatType);
 				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("tellTarget", target);
 
@@ -931,29 +995,73 @@ local function replyTellHook (reTell, msg)
 	end
 end
 
+-- processChatType hooking
+local processChatType = function(self, msg, index, send)
+	if not db or not db.enabled or InChatMessagingLockdown() or HasAnySecretValues(msg, index) then
+		return;
+	end
+
+	local info = _G.ChatTypeInfo[index];
+	if ( info and not info.ignoreChatTypeProcessing ) then
+		if ( index == "WHISPER" or index == "SMART_WHISPER" ) then
+			local targetFound, target, chatType, parsedMsg = self:ExtractTellTarget(msg, index);
+			if ( targetFound ) then
+				local curState = curState;
+				curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
+				if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+
+					local bNetID;
+					if (chatType == "BN_WHISPER" or target:find("^|K")) then
+						bNetID = _G.BNet_GetBNetIDAccount(target);
+					end
+
+					local win = getWhisperWindowByUser(target, bNetID and true, bNetID);
+					if win then
+						win.widgets.msg_box.setText = 1;
+						win.widgets.msg_box:SetText(parsedMsg or "");
+
+						win:Pop(true); -- force popup
+
+						if ( self:GetAttribute("stickyType"):find("WHISPER") ) then
+							self:SetAttribute("stickyType", 'SAY');
+						end
+						(_G.ChatEdit_ClearChat or self.ClearChat)(self);
+
+						win.widgets.msg_box:SetFocus();
+					end
+				end
+			end
+
+		elseif ( index == "REPLY" ) then
+			replyTellHook(
+				db.pop_rules.whisper.replyIncludesSent and lastToldTargetUpdated > lastTellTargetUpdated,
+				msg
+			)
+		end
+	end
+end
+
 -- ChatEditBoxMixin hooking
 if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 	-- each time a chat edit box is activated, check if it is hooked accordingly.
 	hooksecurefunc(ChatFrameUtil, "ActivateChat", function(editBox)
+		local ebName = tostring(editBox);
 
 		-- first check that the editBox is not WIM's msg_box, if it is, then do nothing.
-		if(editBox._WIM_WhisperEngine_Hooked or editBox.widgetName == "msg_box") then
+		if(hookedChatFrameEditBoxes[ebName] or editBox.widgetName == "msg_box") then
 			return;
 		end
 
-		hooksecurefunc(editBox, "UpdateHeader", editBoxUpdateHeader);
-		hooksecurefunc(editBox, "ProcessChatType", function(self, msg, index, send)
-			if index == "REPLY" then
-				replyTellHook(
-					db.pop_rules.whisper.replyIncludesSent and lastToldTargetUpdated > lastTellTargetUpdated,
-					msg
-				)
-			end
-		end);
+		-- hooksecurefunc(editBox, "UpdateHeader", editBoxUpdateHeader);
+		hooksecurefunc(editBox, "ProcessChatType", processChatType);
 
 		-- mark it as hooked
-		editBox._WIM_WhisperEngine_Hooked = true;
+		hookedChatFrameEditBoxes[ebName] = true;
 	end);
+
+	hooksecurefunc(ChatFrameUtil, "SendBNetTell", sendBNetTell);
+
+	_G.ChatFrameUtil.SetLastTellTarget = function (target, chatType) end
 
 	-- by not allowing Blizzard to keep its own log of lastTellTargets, it prevents secret issues.
 	_G.ChatFrameUtil.SetLastTellTarget = function (target, chatType) end
@@ -970,8 +1078,21 @@ else
 	end
 	buildReplyCommandList();
 
+	-- used to build table of chat edit boxes that aren't WIM that have been hooked.
+	hooksecurefunc(_G, "ChatEdit_ActivateChat", function (editBox)
+		local ebName = tostring(editBox);
+
+		-- first check that the editBox is not WIM's msg_box, if it is, then do nothing.
+		if(hookedChatFrameEditBoxes[ebName] or editBox.widgetName == "msg_box") then
+			return;
+		end
+
+		hookedChatFrameEditBoxes[tostring(editBox)] = true;
+	end);
+
 	-- fallback to hooking all edit boxes on update header, this is less efficient but ensures compatibility with older clients.
-	hooksecurefunc("ChatEdit_UpdateHeader", editBoxUpdateHeader);
+	-- hooksecurefunc("ChatEdit_UpdateHeader", editBoxUpdateHeader);
+	hooksecurefunc(ChatFrameUtil, "SendBNetTell", sendBNetTell);
 	hooksecurefunc(
 		_G, "ChatEdit_HandleChatType",
 		function(editBox, msg, command, send)
