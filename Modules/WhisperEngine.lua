@@ -871,21 +871,19 @@ local function editBoxUpdateHeader(self, internalCall)
 						setSticky(false);
 					end
 
-					_G.C_Timer.After(0, function()
-						if self:GetAttribute("chatType"):find("WHISPER") then
-							self:SetAttribute("chatType", "SAY");
-							self:SetAttribute("tellTarget", nil);
-							(self.UpdateHeader or _G.ChatEdit_UpdateHeader)( self, true );
-						end
+					if self:GetAttribute("chatType"):find("WHISPER") then
+						self:SetAttribute("chatType", "SAY");
+						self:SetAttribute("tellTarget", nil);
+						(self.UpdateHeader or _G.ChatEdit_UpdateHeader)( self, true );
+					end
 
-						if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed then
-							_G.ChatFrameEditBoxMixin.OnEscapePressed(self)
-						else
-							_G.ChatEdit_OnEscapePressed(self);
-						end
+					if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed then
+						_G.ChatFrameEditBoxMixin.OnEscapePressed(self)
+					else
+						_G.ChatEdit_OnEscapePressed(self);
+					end
 
-						win.widgets.msg_box:SetFocus();
-					end);
+					win.widgets.msg_box:SetFocus();
 				end
 			else
 				setSticky(true);
@@ -931,6 +929,15 @@ local function replyTellHook (reTell, msg)
 	end
 end
 
+local function sendBNetTell (tokenizedName)
+	-- used to close the editbox that is open.
+	if not InChatMessagingLockdown() then
+		if _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
+			(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
+		end
+	end
+end
+
 -- ChatEditBoxMixin hooking
 if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 	-- each time a chat edit box is activated, check if it is hooked accordingly.
@@ -954,6 +961,8 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 		-- mark it as hooked
 		editBox._WIM_WhisperEngine_Hooked = true;
 	end);
+
+	hooksecurefunc(_G.ChatFrameUtil, "SendBNetTell", sendBNetTell);
 
 	-- by not allowing Blizzard to keep its own log of lastTellTargets, it prevents secret issues.
 	_G.ChatFrameUtil.SetLastTellTarget = function (target, chatType) end
@@ -985,6 +994,9 @@ else
 			end
 		end
 	)
+
+	hooksecurefunc(_G, "ChatFrame_SendBNetTell", sendBNetTell);
+	_G.ChatEdit_SetLastTellTarget = function (target, chatType) end
 end
 
 
