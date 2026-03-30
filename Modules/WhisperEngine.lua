@@ -577,8 +577,10 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_WHISPER', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -630,8 +632,10 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_WHISPER_INFORM', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -666,8 +670,10 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_BN_WHISPER_INFORM', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -711,8 +717,10 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_BN_WHISPER', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
