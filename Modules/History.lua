@@ -405,7 +405,7 @@ function ChatHistory:PostEvent_ChatMessage(event, ...)
         elseif((event == "PARTY" or event == "PARTY_LEADER") and db.history.chat.party) then
             recordAs = _G.PARTY;
             chatType = "party";
-        elseif((event == "RAID" or event == "RAID_LEADER") and db.history.chat.raid) then
+        elseif((event == "RAID" or event == "RAID_LEADER" or event == "RAID_WARNING") and db.history.chat.raid) then
             recordAs = _G.RAID;
             chatType = "raid";
         elseif((event == "INSTANCE_CHAT" or event == "INSTANCE_CHAT_LEADER") and db.history.chat.battleground) then
