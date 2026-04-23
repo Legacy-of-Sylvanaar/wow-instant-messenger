@@ -925,9 +925,24 @@ end
 
 local function sendBNetTell (tokenizedName)
 	-- used to close the editbox that is open.
-	if not InChatMessagingLockdown() then
-		if _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
-			(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
+	if not InChatMessagingLockdown() and db and db.enabled then
+
+		local curState = curState;
+		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
+
+		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+			local bNetID = _G.BNet_GetBNetIDAccount(tokenizedName);
+			local win = getWhisperWindowByUser(tokenizedName, true, bNetID);
+
+			if not win then return end	--due to a client bug, we can not receive the other player's name, so do nothing
+
+			win.widgets.msg_box.setText = 1;
+			win:Pop(true); -- force popup
+			win.widgets.msg_box:SetFocus();
+
+			if _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
+				(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
+			end
 		end
 	end
 end
