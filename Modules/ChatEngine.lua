@@ -341,8 +341,10 @@ function Guild:CHAT_MSG_GUILD(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_GUILD', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -480,8 +482,10 @@ function Officer:CHAT_MSG_OFFICER(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_OFFICER', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -615,8 +619,10 @@ function Party:CHAT_MSG_PARTY(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_PARTY', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -659,8 +665,10 @@ function Party:CHAT_MSG_PARTY_LEADER(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_PARTY_LEADER', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -793,8 +801,10 @@ function Raid:CHAT_MSG_RAID(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_RAID', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -837,8 +847,10 @@ function Raid:CHAT_MSG_RAID_LEADER(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_RAID_LEADER', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -881,8 +893,10 @@ function Raid:CHAT_MSG_RAID_WARNING(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_RAID_WARNING', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -1004,8 +1018,10 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_INSTANCE_CHAT', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -1046,8 +1062,10 @@ function Battleground:CHAT_MSG_INSTANCE_CHAT_LEADER(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_INSTANCE_CHAT_LEADER', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -1154,8 +1172,10 @@ function Say:CHAT_MSG_SAY(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_SAY', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -1199,8 +1219,10 @@ function Say:CHAT_MSG_EMOTE(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_EMOTE', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -1244,8 +1266,10 @@ function Say:CHAT_MSG_TEXT_EMOTE(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_TEXT_EMOTE', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -1473,8 +1497,10 @@ function Channel:CHAT_MSG_CHANNEL(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_CHANNEL', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 

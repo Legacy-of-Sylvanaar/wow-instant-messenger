@@ -579,8 +579,10 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_WHISPER', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -632,8 +634,10 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_WHISPER_INFORM', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -672,8 +676,10 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_BN_WHISPER_INFORM', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -717,8 +723,10 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
 
 	local filter, _;
 	filter, arg1, _, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = processMessageEventFilters(win, 'CHAT_MSG_BN_WHISPER', ...);
-	if (filter and isNew) then
-		win:close();
+	if (filter) then
+		if (isNew) then
+			win:close();
+		end
 		return true;
 	end
 
@@ -905,60 +913,28 @@ local function editBoxUpdateHeader(self, internalCall)
 					-- 	-- setSticky(false);
 					-- end
 
-					-- closeChatFrameEditBox(self, {
-					-- 	before = function ()
-					-- 		if self:GetAttribute("chatType"):find("WHISPER") then
-					-- 			self:SetAttribute("chatType", "SAY");
-					-- 			self:SetAttribute("tellTarget", nil);
-					-- 			(_G.ChatEdit_UpdateHeader or self.UpdateHeader)( self, true );
-					-- 		end
-					-- 	end,
-					-- 	after = function()
-					-- 		win.widgets.msg_box:SetFocus();
-					-- 	end
-					-- });
-				end
-			else
-				-- setSticky(true);
-			end
-		else
-			-- setSticky(true);
-		end
-	end
-
-end
-
--- SendBNetTell hooking
-function sendBNetTell (tokenizedName)
-	if not tokenizedName or not db or not db.enabled or InChatMessagingLockdown() or HasAnySecretValues(tokenizedName) then
-		return;
-	end
-
-	local bNetID = _G.BNet_GetBNetIDAccount(tokenizedName);
-	if (bNetID) then
-		local curState = curState;
-		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-			local win = getWhisperWindowByUser(tokenizedName, bNetID and true, bNetID);
-
-			if win then
-				win.widgets.msg_box.setText = 1;
-				win.widgets.msg_box:SetText(parsedMsg or "");
-
-				win:Pop(true); -- force popup
-
-				win.widgets.msg_box:SetFocus();
-
-				if ( isChatFrameEditBox(_G.LAST_ACTIVE_CHAT_EDIT_BOX) ) then
-					if ( _G.LAST_ACTIVE_CHAT_EDIT_BOX:GetAttribute("stickyType"):find("WHISPER") ) then
-						_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("stickyType", 'SAY');
+					if self:GetAttribute("chatType"):find("WHISPER") then
+						self:SetAttribute("chatType", "SAY");
+						self:SetAttribute("tellTarget", nil);
+						(self.UpdateHeader or _G.ChatEdit_UpdateHeader)( self, true );
 					end
 
-					(_G.ChatEdit_ClearChat or _G.LAST_ACTIVE_CHAT_EDIT_BOX.ClearChat)(_G.LAST_ACTIVE_CHAT_EDIT_BOX);
+					if _G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed then
+						_G.ChatFrameEditBoxMixin.OnEscapePressed(self)
+					else
+						_G.ChatEdit_OnEscapePressed(self);
+					end
+
+					win.widgets.msg_box:SetFocus();
 				end
+			else
+				setSticky(true);
 			end
+		else
+			setSticky(true);
 		end
 	end
+
 end
 
 -- ReplyTell and ReplyTell2 hooking
@@ -995,48 +971,11 @@ local function replyTellHook (reTell, msg)
 	end
 end
 
--- processChatType hooking
-local processChatType = function(self, msg, index, send)
-	if not db or not db.enabled or InChatMessagingLockdown() or HasAnySecretValues(msg, index) then
-		return;
-	end
-
-	local info = _G.ChatTypeInfo[index];
-	if ( info and not info.ignoreChatTypeProcessing ) then
-		if ( index == "WHISPER" or index == "SMART_WHISPER" ) then
-			local targetFound, target, chatType, parsedMsg = self:ExtractTellTarget(msg, index);
-			if ( targetFound ) then
-				local curState = curState;
-				curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-				if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
-
-					local bNetID;
-					if (chatType == "BN_WHISPER" or target:find("^|K")) then
-						bNetID = _G.BNet_GetBNetIDAccount(target);
-					end
-
-					local win = getWhisperWindowByUser(target, bNetID and true, bNetID);
-					if win then
-						win.widgets.msg_box.setText = 1;
-						win.widgets.msg_box:SetText(parsedMsg or "");
-
-						win:Pop(true); -- force popup
-
-						if ( self:GetAttribute("stickyType"):find("WHISPER") ) then
-							self:SetAttribute("stickyType", 'SAY');
-						end
-						(_G.ChatEdit_ClearChat or self.ClearChat)(self);
-
-						win.widgets.msg_box:SetFocus();
-					end
-				end
-			end
-
-		elseif ( index == "REPLY" ) then
-			replyTellHook(
-				db.pop_rules.whisper.replyIncludesSent and lastToldTargetUpdated > lastTellTargetUpdated,
-				msg
-			)
+local function sendBNetTell (tokenizedName)
+	-- used to close the editbox that is open.
+	if not InChatMessagingLockdown() then
+		if _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
+			(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
 		end
 	end
 end
@@ -1059,9 +998,7 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 		hookedChatFrameEditBoxes[ebName] = true;
 	end);
 
-	hooksecurefunc(ChatFrameUtil, "SendBNetTell", sendBNetTell);
-
-	_G.ChatFrameUtil.SetLastTellTarget = function (target, chatType) end
+	hooksecurefunc(_G.ChatFrameUtil, "SendBNetTell", sendBNetTell);
 
 	-- by not allowing Blizzard to keep its own log of lastTellTargets, it prevents secret issues.
 	_G.ChatFrameUtil.SetLastTellTarget = function (target, chatType) end
@@ -1106,6 +1043,9 @@ else
 			end
 		end
 	)
+
+	hooksecurefunc(_G, "ChatFrame_SendBNetTell", sendBNetTell);
+	_G.ChatEdit_SetLastTellTarget = function (target, chatType) end
 end
 
 
