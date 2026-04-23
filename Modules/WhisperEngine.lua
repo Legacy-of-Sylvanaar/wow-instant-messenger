@@ -830,21 +830,12 @@ hooksecurefunc(_G.C_ChatInfo or _G, "SendChatMessage", function(...)
 	end
 end);
 
-local stickyTypes = {};
-local function setSticky (sticky)
-	for i = 1, #stickyTypes do
-		local chatTypeInfo = _G.ChatTypeInfo[stickyTypes[i]] or {};
-		chatTypeInfo.sticky = sticky and 1 or 0;
-	end
-end
-
 local prevChatType, prevTellTarget;
 local function editBoxUpdateHeader(self, internalCall)
 	local chatType, tellTarget = self:GetAttribute("chatType"),  self:GetAttribute("tellTarget");
 
 	if HasAnySecretValues(chatType, tellTarget) or not db or not db.enabled then
 		prevChatType, prevTellTarget = nil, nil;
-		setSticky(true);
 		return;
 	end
 
@@ -876,7 +867,6 @@ local function editBoxUpdateHeader(self, internalCall)
 
 					if (_G.ChatTypeInfo[chatType] and _G.ChatTypeInfo[chatType].sticky) then
 						table.insert(stickyTypes, chatType);
-						setSticky(false);
 					end
 
 					if self:GetAttribute("chatType"):find("WHISPER") then
@@ -893,11 +883,7 @@ local function editBoxUpdateHeader(self, internalCall)
 
 					win.widgets.msg_box:SetFocus();
 				end
-			else
-				setSticky(true);
 			end
-		else
-			setSticky(true);
 		end
 	end
 
