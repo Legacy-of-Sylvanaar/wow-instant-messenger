@@ -5,7 +5,7 @@
 
 WIM.AddLocale("deDE", {
     ["WIM (WoW Instant Messenger)"] = true,
-    ["_Description"] = "WIM ist ein AddOn, welches einem das vertraute Gefühl über ein Chatsystem zu kommunizieren zurückbringt. In diesem Fenster kannst du WIM individualisieren, um es deinen Bedürfnissen anzupassen. Wenn du Fragen, Kommentare oder Vorschläge hast, dann besuche doch bitte die Seite http://www.WIMAddon.com.",
+    ["_Description"] = "WIM ist ein AddOn, welches einem das vertraute Gefühl über ein Chatsystem zu kommunizieren zurückbringt. In diesem Fenster kannst du WIM individualisieren, um es deinen Bedürfnissen anzupassen.",
 
     ["_DemoText"] = "Dies ist ein Demonstrationsfenster und ist nicht voll funktionsfähig. Platziere dieses Fenster an die Stelle, an der du alle anderen Fenster erzeugen möchtest. Sobald du fertig bist kannst du das Fenster schließen, um die Einstellungen zu speichern.",
 
@@ -117,7 +117,7 @@ WIM.AddLocale("deDE", {
     ["Keep windows on top of your UI."] = "Fenster im Vordergrund des Interface halten.",
 
     ["Enable/Disable addon messages."] = "Addon-Nachrichten aktivieren/deaktivieren.",
-    
+
     -- Class Names --
     ["Druid"] = LOCALIZED_CLASS_NAMES_MALE.DRUID,
     ["Hunter"] = LOCALIZED_CLASS_NAMES_MALE.HUNTER,
