@@ -92,7 +92,7 @@ WIM.AddLocale("enUS", {
     ["Display tooltips."] = true,
     ["Show window when sending a message."] = true,
     ["Show window when message has been received."] = true,
-    ["Supress messages from default chat frame."] = true,
+    ["Suppress messages from default chat frame."] = true,
     ["Play sound when message is received."] = true,
     ["Play sound when message is sent."] = true,
     ["Sort alphabetically."] = true,
@@ -277,7 +277,6 @@ WIM.AddLocale("enUS", {
     ["%s does not wish to be disturbed: %s"] = true,
     ["Right-Mouse Click!"] = true,
     ["There might be useful tools hidden under the message box. Right-Click to see them!"] = true,
-
 
     -- Options.lua --
     ["Display WIM's options."] = true,
@@ -500,7 +499,7 @@ WIM.AddLocale("enUS", {
     ["Have WIM monitor this channel."] = true,
     ["Never Pop"] = true,
     ["Never have this window pop-up on my screen."] = true,
-    ["Never Supress"] = "Never Suppress",
+    ["Never Suppress"] = true,
     ["Never suppress messages from the default chat frame."] = true,
     ["Show unread message alert on minimap."] = true,
     ["No History"] = true,
