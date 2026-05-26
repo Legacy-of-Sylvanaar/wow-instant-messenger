@@ -1773,7 +1773,7 @@ local function loadChatOptions()
             button.neverSuppress:SetScale(.75);
             button.neverSuppress.text = button.neverSuppress:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
             button.neverSuppress.text:SetPoint("LEFT", button.neverSuppress, "RIGHT", 0, 0);
-            button.neverSuppress.text:SetText(L["Never Supress"]);
+            button.neverSuppress.text:SetText(L["Never Suppress"]);
             button.neverSuppress:SetScript("OnClick", function(self)
                     local name = self:GetParent().channelName;
                     db.chat[channelType].channelSettings[name].neverSuppress = self:GetChecked();
