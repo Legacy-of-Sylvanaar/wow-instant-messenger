@@ -846,7 +846,7 @@ local function editBoxUpdateHeader(self, internalCall)
 	prevChatType, prevTellTarget = chatType, tellTarget;
 
 	if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
-		local target = tellTarget;
+		local target = _G.Ambiguate(tellTarget, "none");
 
 		-- handle the whisper interception
 		if (not InChatMessagingLockdown() and target and db and db.enabled) then
