@@ -148,6 +148,14 @@ function GetBNGetFriendInfo(friendIndex)
 end
 
 function GetBNGetFriendInfoByID(id)
+	-- if id is a table, refactor to used the first value (the expected id).
+	if type(id) == "table" then id = id[1] end
+
+	-- if unexpected value is passed, return nothing preventing possible errors.
+	if type(id) ~= "number" or id < -2147483648 or id > 2147483647 then
+		return
+	end
+
 	local accountInfo = _G.C_BattleNet.GetAccountInfoByID(id) or {};
 	if accountInfo and accountInfo.gameAccountInfo then
 		local wowProjectID = accountInfo.gameAccountInfo.wowProjectID or 0;
@@ -312,7 +320,8 @@ local function dequeueDeferredEvent ()
 			if event.event == "CHAT_MSG_BN_WHISPER_INFORM" then
 				event.args[13] = GetBNGetFriendInfo(0) or 0;
 			elseif event.event == "CHAT_MSG_BN_WHISPER" or event.event == "CHAT_MSG_BN_INLINE_TOAST_ALERT" then
-				event.args[13] = GetBNGetGameAccountInfoByKName(event.args[2]) or 0;
+				local bnInfo = GetBNGetGameAccountInfoByKName(event.args[2]);
+				event.args[13] = (bnInfo and bnInfo[1]) or 0;
 			end
 
 			event.args[29] = event.time; -- add original event time as arg29 for modules to use if they want.
