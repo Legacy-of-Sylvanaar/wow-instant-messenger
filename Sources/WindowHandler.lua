@@ -1333,7 +1333,8 @@ local function instantiateWindow(obj)
                                 widgetObj:Show();
                                 local w, h = widgetObj:GetWidth(), widgetObj:GetHeight();
                                 minWidth = _G.math.max(minWidth, (self:SafeGetLeft() - widgetObj:GetLeft()) + w + (widgetObj:GetRight() - self:SafeGetRight()));
-                                minHeight = _G.math.max(minHeight, (self:SafeGetTop() - widgetObj:GetTop() - WindowParent:GetBottom()) + h + (widgetObj:GetBottom() - self:SafeGetBottom() - WindowParent:GetBottom()));
+                                -- Commenting this line out so widgets don't limit the min height.
+								-- minHeight = _G.math.max(minHeight, (self:SafeGetTop() - widgetObj:GetTop() - WindowParent:GetBottom()) + h + (widgetObj:GetBottom() - self:SafeGetBottom() - WindowParent:GetBottom()));
                         else
                                 widgetObj:Hide()
                         end

@@ -309,7 +309,7 @@ local function General_WindowSettings()
     frame.menu.nextOffSetY = -35;
     frame.menu.width = frame.menu:CreateSlider(L["Default Width"], "150", "800", 150, 800, 1, db.winSize, "width", function(self) UpdateAllWindowProps(); end);
     frame.menu.nextOffSetY = -45;
-    frame.menu.height = frame.menu:CreateSlider(L["Default Height"], "150", "600", 150, 600, 1, db.winSize, "height", function(self) UpdateAllWindowProps(); end);
+    frame.menu.height = frame.menu:CreateSlider(L["Default Height"], "80", "600", 80, 600, 1, db.winSize, "height", function(self) UpdateAllWindowProps(); end);
     frame.menu.nextOffSetY = -45;
     frame.menu.scale = frame.menu:CreateSlider(L["Window Scale"], "10", "400", 10, 400, 1, db.winSize, "scale", function(self) UpdateAllWindowProps(); end);
     frame.menu.nextOffSetY = -25;
