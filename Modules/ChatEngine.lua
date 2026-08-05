@@ -88,6 +88,10 @@ db_defaults.chat = {
         enabled = false,
         channelSettings = {}
     },
+	community = {
+        enabled = false,
+        channelSettings = {}
+    },
     guild = {
         showAlerts = true,
     },
@@ -179,6 +183,9 @@ local function getChatWindow(ChatName, chatType)
         if(chatType == "guild" or chatType == "officer" or chatType == "party" or chatType == "raid") then
             Windows[ChatName].CHAT_listCount = function () return #Windows[ChatName].chatList end
             Windows[ChatName].CHAT_listFun = function (index) return Windows[ChatName].chatList[index] end
+		elseif(chatType == "community") then
+			Windows[ChatName].CHAT_listCount = function () return #GetClubStreamMembers(Windows[ChatName].clubId, Windows[ChatName].streamId); end
+			Windows[ChatName].CHAT_listFun = function (index) return GetClubStreamMembers(Windows[ChatName].clubId, Windows[ChatName].streamId)[index]; end
 		else
             Windows[ChatName].CHAT_listCount = nil;
             Windows[ChatName].CHAT_listFun = nil;
@@ -222,6 +229,10 @@ RegisterWidgetTrigger("msg_box", "chat", "OnEnterPressed", function(self)
 	elseif(obj.chatType == "channel") then
 		TARGET = "CHANNEL";
 		NUMBER = obj.channelNumber;
+	elseif(obj.chatType == "community" and obj.clubId and obj.streamId) then
+		_G.C_Club.SendMessage(obj.clubId, obj.streamId, msg);
+		self:SetText("");
+		return;
 	else
 		return;
 	end
@@ -1314,19 +1325,24 @@ function Channel:OnEnable()
     self:RegisterEvent("CHAT_MSG_CHANNEL_LEAVE");
     self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE");
     self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE_USER");
+	self:RegisterEvent("CLUB_MESSAGE_ADDED");
 
 	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
 		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_COMMUNITIES_CHANNEL', Channel.ChatMessageCommunitiesEventFilter);
 	else
 		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+		_G.ChatFrame_AddMessageEventFilter('CHAT_MSG_COMMUNITIES_CHANNEL', Channel.ChatMessageCommunitiesEventFilter);
 	end
 end
 
 function Channel:OnDisable()
 	if ChatFrameUtil and ChatFrameUtil.RemoveMessageEventFilter then
 		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+		ChatFrameUtil.RemoveMessageEventFilter('CHAT_MSG_COMMUNITIES_CHANNEL', Channel.ChatMessageCommunitiesEventFilter);
 	else
 		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
+		_G.ChatFrame_RemoveMessageEventFilter('CHAT_MSG_COMMUNITIES_CHANNEL', Channel.ChatMessageCommunitiesEventFilter);
 	end
 end
 
@@ -1430,7 +1446,16 @@ end
 function Channel:OnWindowShow(win)
     if(win.type == "chat" and win.chatType == "channel") then
         win.widgets.chat_info:SetText(GetChannelCount(win.channelNumber));
+	elseif (win.type == "chat" and win.chatType == "community") then
+		win.widgets.chat_info:SetText(#GetClubStreamMembers(win.clubId, win.streamId));
     end
+end
+
+function Channel:OnWindowDestroyed(win)
+	win.clubId = nil;
+	win.streamId = nil;
+	win.channelNumber = nil;
+	win.channelSpecial = nil;
 end
 
 -- manage suppression
@@ -1465,6 +1490,69 @@ function Channel.ChatMessageEventFilter (frame, event, ...)
 	end
 
 	return false
+end
+
+-- Community messages are handled a little bit different so we will have a separate filter for them.
+function Channel.ChatMessageCommunitiesEventFilter (frame, event, ...)
+	if (not db or not db.chat.community.enabled) then
+		return
+	end
+
+	local name = select(9, ...):gsub('Community:', '');
+
+	local neverSuppress = db.chat.community.channelSettings[name] and db.chat.community.channelSettings[name].neverSuppress;
+
+	if (not neverSuppress and getRuleSet().supress and db.chat.community.channelSettings[name] and db.chat.community.channelSettings[name].monitor) then
+		return true
+	end
+
+	return
+end
+
+function Channel:CLUB_MESSAGE_ADDED(clubId, streamId, messageId)
+	-- if not enabled, do nothing
+	local name = clubId .. ":" .. streamId;
+	if (not db or not db.chat.community.enabled or not db.chat.community.channelSettings[name] or not db.chat.community.channelSettings[name].monitor) then
+		return
+	end
+
+	local message = _G.C_Club.GetMessageInfo(clubId, streamId, messageId);
+	local from = _G.Ambiguate(message.author.name, "none");
+	local fromSelf = message.author.isSelf;
+	local fromBNetID = message.author.bnetAccountId;
+	local content = message.content;
+
+	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11 = content, from, fromSelf, name, nil, nil, nil, nil, name, nil, nil;
+
+	local win, isNew = getChatWindow(name, "community");
+
+	if (isNew) then
+		win.user = name;
+		win.clubId = clubId;
+		win.streamId = streamId;
+
+		win:UpdateIcon();
+	end
+
+	local r, g, b = ChatFrameUtil.GetCommunitiesChannelColor(clubId, streamId)
+	local color = { r = r, g = g, b = b };
+
+	local neverPop = db.chat.community.channelSettings[name] and db.chat.community.channelSettings[name].neverPop;
+
+	win:AddEventMessage(color.r, color.g, color.b, "CHAT_MSG_CHANNEL", arg1, arg2, arg3);
+
+	if(not fromSelf) then
+		win.unreadCount = win.unreadCount and (win.unreadCount + 1) or 1;
+		if(not neverPop) then
+			win:Pop("in");
+		end
+	else
+		if(not neverPop) then
+			win:Pop("out");
+		end
+	end
+
+	CallModuleFunction("PostEvent_ChatMessage", "CLUB_MESSAGE_ADDED", arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
 end
 
 function Channel:CHAT_MSG_CHANNEL(...)
@@ -1576,6 +1664,25 @@ function ChatAlerts:PostEvent_ChatMessage(event, ...)
             local color = _G.ChatTypeInfo["CHANNEL"..arg8] or _G.NORMAL_FONT_COLOR;
             MinimapPushAlert(win.theUser, RGBPercentToHex(color.r, color.g, color.b), win.unreadCount);
         end
+	elseif(event == "CLUB_MESSAGE_ADDED") then
+		if (arg3) then
+			return; -- we don't count our own messages as new.
+		end
+		-- alert support
+		local name = arg9;
+		local showAlert = db.chat.community.channelSettings[name] and db.chat.community.channelSettings[name].showAlerts;
+		local win = getChatWindow(name, "community");
+
+		if (not win) then
+			return;
+		end
+
+		local r, g, b = _G.ChatFrameUtil.GetCommunitiesChannelColor(win.clubId, win.streamId)
+		local color = { r = r, g = g, b = b };
+
+		if(showAlert and not win:IsVisible() and win.unreadCount) then
+			MinimapPushAlert(win.theUser, RGBPercentToHex(color.r, color.g, color.b), win.unreadCount);
+		end
     else
         local win;
         if(event == "GUILD" and db.chat.guild.showAlerts) then
@@ -1641,11 +1748,50 @@ local function loadChatOptions()
         for i=1, 20 do
             local name, header, collapsed, channelNumber, count, active, category, voiceEnabled, voiceActive = _G.GetChannelDisplayInfo(i);
             if((world and category == "CHANNEL_CATEGORY_WORLD") or (not world and category == "CHANNEL_CATEGORY_CUSTOM")) then
-                table.insert(channelList, name.."*"..(active and "1" or "0").."*"..(channelNumber or "0"));
+                if (not header) then
+                    table.insert(channelList, name.."*"..(active and "1" or "0").."*"..(channelNumber or "0"));
+                end
             end
         end
         return channelList;
     end
+
+	local function getCommunityGroupList()
+		--clear list
+        for k, _ in pairs (channelList) do
+            channelList[k] = nil;
+        end
+
+		-- create a map to get channel numbers for community channels
+		local channels = {_G.GetChannelList()}
+		local channelMap = {};
+		for i = 1, #channels, 3 do
+			local id, name, disabled = channels[i], channels[i+1], channels[i+2]
+			if not disabled then
+				channelMap[name] = id
+			end
+		end
+
+		local clubs = _G.C_Club.GetSubscribedClubs();
+
+		for _, clubInfo in pairs(clubs) do
+			local clubId = clubInfo.clubId;
+			local clubName = clubInfo.name;
+			local streams = _G.C_Club.GetStreams(clubInfo.clubId);
+			for _, streamInfo in pairs(streams) do
+				local streamId = streamInfo.streamId;
+				local streamName = streamInfo.name;
+				local channelNumber = nil;
+				if (streamInfo.streamType == _G.Enum.ClubStreamType.Other) then
+					channelNumber = channelMap["Community:"..clubId..":"..streamId];
+					local active = "1";
+					table.insert(channelList, clubId..":"..streamId.."*"..active.."*"..(channelNumber or "0"));
+				end
+			end
+		end
+
+		return channelList;
+	end
 
 
     local channelScrollCount = 1;
@@ -1673,19 +1819,46 @@ local function loadChatOptions()
                 local index = i+offset;
                 if(index <= #channelList) then
                     local name, active, channelNumber = string.split("*", channelList[index]);
+					local nameText = name;
+					local isCommunityChannel = name:find("%d+:%d+");
+
+					-- format if stream or community channel
+					if (isCommunityChannel and _G.ChatFrameUtil and _G.ChatFrameUtil.ResolveChannelName) then
+						nameText = _G.ChatFrameUtil.ResolveChannelName(name);
+					end
+
                     active = active == "1";
                     f.sub.list.buttons[i]:Show();
                     f.sub.list.buttons[i].channelName = name;
                     if(not db.chat[channelType].channelSettings[name]) then
                         db.chat[channelType].channelSettings[name] = {};
                     end
-                    f.sub.list.buttons[i].title:SetText("|cffffffff"..channelNumber..". |r"..name);
+
+					local channelNumberText = "";
+					if (channelNumber and channelNumber ~= "0") then
+						channelNumberText = "|cffffffff"..channelNumber..". |r"
+					end
+
+                    f.sub.list.buttons[i].title:SetText(channelNumberText..nameText);
                     f.sub.list.buttons[i].cb1:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].monitor);
                     f.sub.list.buttons[i].neverPop:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].neverPop);
                     f.sub.list.buttons[i].neverSuppress:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].neverSuppress);
                     f.sub.list.buttons[i].showAlerts:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].showAlerts);
                     f.sub.list.buttons[i].noHistory:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].noHistory);
                     local color = _G.ChatTypeInfo["CHANNEL"..channelNumber] or _G.NORMAL_FONT_COLOR;
+
+					if (isCommunityChannel) then
+						local clubId, streamId = ChatFrameUtil.GetCommunityAndStreamFromChannel(name);
+						local r, g, b = ChatFrameUtil.GetCommunitiesChannelColor(clubId, streamId)
+						color = { r = r, g = g, b = b };
+						f.sub.list.buttons[i].noHistory:Disable();
+						f.sub.list.buttons[i].noHistory:SetAlpha(.4);
+						f.sub.list.buttons[i].noHistory:SetChecked(true);
+					else
+						f.sub.list.buttons[i].noHistory:Enable();
+						f.sub.list.buttons[i].noHistory:SetAlpha(1);
+					end
+
                     f.sub.list.buttons[i].title:SetTextColor(color.r, color.g, color.b);
                     if(active) then
                         f.sub.list.buttons[i].title:SetAlpha(1);
@@ -1922,6 +2095,11 @@ local function loadChatOptions()
         return f;
     end
 
+	local function createCommunityChat()
+        local f = createChannelChatTemplate(L["Community Chat"], "community", getCommunityGroupList);
+        return f;
+    end
+
     RegisterOptionFrame(L["Chat"], _G.GUILD, createGuildChat);
     RegisterOptionFrame(L["Chat"], _G.GUILD_RANK1_DESC, createOfficerChat);
     RegisterOptionFrame(L["Chat"], _G.PARTY, createPartyChat);
@@ -1930,6 +2108,10 @@ local function loadChatOptions()
     RegisterOptionFrame(L["Chat"], _G.SAY, createSayChat);
     RegisterOptionFrame(L["Chat"], L["World Chat"], createWorldChat);
     RegisterOptionFrame(L["Chat"], L["Custom Chat"], createCustomChat);
+
+	if (_G.C_Club and _G.C_Club.GetSubscribedClubs) then
+    	RegisterOptionFrame(L["Chat"], L["Community Chat"], createCommunityChat);
+	end
 
     dPrint("Chat Options Initialized...");
     ChatOptions.optionsLoaded = true;
@@ -2128,4 +2310,27 @@ function GetChannelCount(id)
         end
     end
     return 0;
+end
+
+function GetClubStreamMembers(clubId, streamId)
+	if (not clubId or not streamId) then
+		return {};
+	end
+
+	local name = clubId..":"..streamId;
+
+	local members = _G.C_Club.GetClubMembers(clubId, streamId);
+
+	if (members) then
+		for i, member in pairs(members) do
+			local memberInfo = _G.C_Club.GetMemberInfo(clubId, member);
+			if (memberInfo) then
+				members[i] = memberInfo.name or member;
+			end
+		end
+
+		return members;
+	end
+
+	return {};
 end

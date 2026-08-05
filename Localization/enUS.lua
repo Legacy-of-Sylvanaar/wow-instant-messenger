@@ -506,6 +506,7 @@ WIM.AddLocale("enUS", {
     ["Do not record history for this channel."] = true,
     ["World Chat"] = true,
     ["Custom Chat"] = true,
+	["Community Chat"] = true,
     ["Chat"] = true,
     ["Play special sound for %s."] = true,
     ["Play sound when a message is received."] = true,

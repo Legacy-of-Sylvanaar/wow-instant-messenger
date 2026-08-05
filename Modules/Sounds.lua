@@ -41,6 +41,7 @@ db_defaults.sounds = {
         say_sml = "Chat Blip",
         world_sml = "Chat Blip",
         custom_sml = "Chat Blip",
+        community_sml = "Chat Blip",
     },
     force_game_sound = false
 };
@@ -178,6 +179,18 @@ function ChatSounds:PostEvent_ChatMessage(event, ...)
                 if(not noSound) then
                     if(d.custom) then
                         playSound(db.sounds.chat.custom_sml);
+                    else
+                        playSound(db.sounds.chat.msgin_sml);
+                    end
+                end
+			elseif(event == "CLUB_MESSAGE_ADDED") then
+                local channelName = arg9;
+                local noSound = db.chat["community"] and db.chat["community"].channelSettings and
+                                db.chat["community"].channelSettings[channelName] and
+                                db.chat["community"].channelSettings[channelName].noSound;
+                if(not noSound) then
+                    if(d.community) then
+                        playSound(db.sounds.chat.community_sml);
                     else
                         playSound(db.sounds.chat.msgin_sml);
                     end

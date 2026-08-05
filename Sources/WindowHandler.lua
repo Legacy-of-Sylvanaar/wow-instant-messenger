@@ -1000,17 +1000,36 @@ local function instantiateWindow(obj)
     obj.UpdateIcon = function(self)
         local icon = self.widgets.class_icon;
         if(self.type == "chat" and self.chatType) then
-                icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
-                local chat_type = self.chatType == "battleground" and "INSTANCE_CHAT" or string.upper(self.chatType);
-                local color = _G.ChatTypeInfo[chat_type]; -- Drii: ticket 344
-                icon:SetTexCoord(0,1,0,1);
-				icon:SetGradient("VERTICAL",
-					{ r = color.r, g = color.g, b = color.b, a = 1},
-					{ r = color.r, g = color.g, b = color.b, a = 1 }
-				);
-                if(GetSelectedSkin().message_window.widgets.from.use_class_color) then
-                                self.widgets.from:SetTextColor(color.r, color.g, color.b);
-                end
+				if (self.chatType == "community") then
+					if (self.clubId and self.streamId) then
+						local r, g, b = _G.ChatFrameUtil.GetCommunitiesChannelColor(self.clubId, self.streamId)
+						local color = { r = r, g = g, b = b };
+
+						icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
+						icon:SetTexCoord(0,1,0,1);
+						icon:SetGradient("VERTICAL",
+							{ r = color.r, g = color.g, b = color.b, a = 1},
+							{ r = color.r, g = color.g, b = color.b, a = 1 }
+						);
+
+
+						self.theUser = _G.ChatFrameUtil.GetCommunityAndStreamName(self.clubId, self.streamId)
+						self.widgets.from:SetText(self.theUser);
+						self.widgets.from:SetTextColor(color.r, color.g, color.b);
+					end
+				else
+					icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
+					local chat_type = self.chatType == "battleground" and "INSTANCE_CHAT" or string.upper(self.chatType);
+					local color = _G.ChatTypeInfo[chat_type]; -- Drii: ticket 344
+					icon:SetTexCoord(0,1,0,1);
+					icon:SetGradient("VERTICAL",
+						{ r = color.r, g = color.g, b = color.b, a = 1},
+						{ r = color.r, g = color.g, b = color.b, a = 1 }
+					);
+					if(GetSelectedSkin().message_window.widgets.from.use_class_color) then
+									self.widgets.from:SetTextColor(color.r, color.g, color.b);
+					end
+				end
         else
                 local classTag = obj.class;
 				icon:SetGradient("VERTICAL",
@@ -1594,12 +1613,15 @@ local function destroyWindow(userNameOrObj)
         obj, index = getWindowByName(userNameOrObj);
     else
 		obj, index = getWindowByName(userNameOrObj.theUser);
+		if (not obj) then
+			obj, index = getWindowByName(userNameOrObj.user);
+		end
     end
 
     if(obj) then
-	if(obj.tabStrip) then
-		obj.tabStrip:Detach(obj);
-	end
+		if(obj.tabStrip) then
+			obj.tabStrip:Detach(obj);
+		end
         WindowSoupBowl.windows[index].inUse = false;
         WindowSoupBowl.windows[index].user = "";
         WindowSoupBowl.available = WindowSoupBowl.available + 1;
@@ -1609,8 +1631,8 @@ local function destroyWindow(userNameOrObj)
         obj.widgets.chat_display:Clear();
         obj:Hide();
         obj.initialized = nil;
-	dPrint("Window '"..obj:GetName().."' destroyed.");
-	CallModuleFunction("OnWindowDestroyed", obj);
+		dPrint("Window '"..obj:GetName().."' destroyed.");
+		CallModuleFunction("OnWindowDestroyed", obj);
         removeFromTable(windowsByAge, obj);
     end
 end
