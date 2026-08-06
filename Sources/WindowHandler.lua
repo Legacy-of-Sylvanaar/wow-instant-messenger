@@ -776,7 +776,7 @@ local function loadRegisteredWidgets(obj)
 	for widget, createFun in pairs(RegisteredWidgets) do
 		if(widgets[widget] == nil) then
 			if(type(createFun) == "function") then
-				widgets[widget]  = createFun();
+				widgets[widget]  = createFun(obj);
                                 widgets[widget]:SetParent(obj);
                                 widgets[widget].widgetName = widget;
                                 widgets[widget].parentWindow = obj;
@@ -1253,13 +1253,13 @@ local function instantiateWindow(obj)
 	if(forceResult == true) then
 		-- go by forceResult and ignore rules
 		if(self.tabStrip) then
-                                -- if(not EditBoxInFocus) then
-                                                ShowContainer();
-                                                self.tabStrip:JumpToTab(self);
-                                                if(not getVisibleChatFrameEditBox() and (rules.autofocus or forceFocus)) then
-                                                        self.widgets.msg_box:SetFocus();
-                                                end
-                                -- end
+			-- if(not EditBoxInFocus) then
+					ShowContainer();
+					self.tabStrip:JumpToTab(self);
+					if(not getVisibleChatFrameEditBox() and (rules.autofocus or forceFocus)) then
+							self.widgets.msg_box:SetFocus();
+					end
+			-- end
 		else
                                 ShowContainer();
 				self:ResetAnimation();
@@ -1347,17 +1347,18 @@ local function instantiateWindow(obj)
 		if(type(widgetObj.UpdateProps) == "function") then
 			widgetObj:UpdateProps();
 		end
-                if(widgetObj.type) then
-                        if(widgetObj.enabled and string.match(widgetObj.type, obj.type)) then
-                                widgetObj:Show();
-                                local w, h = widgetObj:GetWidth(), widgetObj:GetHeight();
-                                minWidth = _G.math.max(minWidth, (self:SafeGetLeft() - widgetObj:GetLeft()) + w + (widgetObj:GetRight() - self:SafeGetRight()));
-                                -- Commenting this line out so widgets don't limit the min height.
-								-- minHeight = _G.math.max(minHeight, (self:SafeGetTop() - widgetObj:GetTop() - WindowParent:GetBottom()) + h + (widgetObj:GetBottom() - self:SafeGetBottom() - WindowParent:GetBottom()));
-                        else
-                                widgetObj:Hide()
-                        end
-                end
+
+		if(widgetObj.type) then
+				if(widgetObj.enabled and string.match(widgetObj.type, obj.type)) then
+						widgetObj:Show();
+						local w, h = widgetObj:GetWidth(), widgetObj:GetHeight();
+						minWidth = _G.math.max(minWidth, (self:SafeGetLeft() - widgetObj:GetLeft()) + w + (widgetObj:GetRight() - self:SafeGetRight()));
+						-- Commenting this line out so widgets don't limit the min height.
+						-- minHeight = _G.math.max(minHeight, (self:SafeGetTop() - widgetObj:GetTop() - WindowParent:GetBottom()) + h + (widgetObj:GetBottom() - self:SafeGetBottom() - WindowParent:GetBottom()));
+				else
+						widgetObj:Hide()
+				end
+		end
 	end
 		if self.SetResizeBounds then -- WoW 10.0
 			self:SetResizeBounds(minWidth, minHeight);
@@ -1537,7 +1538,7 @@ local function createWindow(userName, wtype, onBeforeReturn)
     local func = function ()
                         if(WindowSoupBowl.available > 0) then
                             for i=1,#WindowSoupBowl.windows do
-                                if(WindowSoupBowl.windows[i].inUse == false) then
+                                if(WindowSoupBowl.windows[i].inUse == false and WindowSoupBowl.windows[i].obj.type == wtype) then
                                     return WindowSoupBowl.windows[i].obj, i;
                                 end
                             end
@@ -1568,6 +1569,7 @@ local function createWindow(userName, wtype, onBeforeReturn)
         WindowSoupBowl.used = WindowSoupBowl.used + 1;
         WindowSoupBowl.windowToken = WindowSoupBowl.windowToken + 1; -- increment token for propper frame name creation.
         local fName = "WIM3_msgFrame"..WindowSoupBowl.windowToken;
+		dPrint("Window created '"..fName.."'");
         local f = CreateFrame("Frame",fName, WindowParent);
         local winTable = {
             user = userName,
