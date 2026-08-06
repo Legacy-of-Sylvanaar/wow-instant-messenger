@@ -82,8 +82,8 @@ WIM.AddLocale("itIT", {
     ["Game Master"] = "Master di gioco",
 
     -- WIM.lua --
-    ["Toggle WIM 'On' and 'Off'."] = "Attiva/disattiva WIM 'On' e 'Off'.",
-    ["Toggle Debugging Mode 'On' and 'Off'."] = "Attiva/disattiva la modalità di debug 'On' e 'Off'.",
+    ["Toggle WIM 'On' and 'Off'."] = "Attiva/disattiva WIM",
+    ["Toggle Debugging Mode 'On' and 'Off'."] = "Attiva/disattiva la modalità di debug",
 
     -- Filters.lua --
     ["Whispers Sent by Addons"] = "Sussurri inviati dagli addon",
