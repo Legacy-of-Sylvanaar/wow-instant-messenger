@@ -1628,7 +1628,7 @@ function Channel:CHAT_MSG_CHANNEL(...)
 end
 
 function Channel:SettingsChanged()
-    if(db.chat.world.enabled or db.chat.custom.enabled) then
+    if(db.chat.world.enabled or db.chat.custom.enabled or db.chat.community.enabled) then
         self:Enable();
     else
         self:Disable();
