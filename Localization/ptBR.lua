@@ -391,7 +391,7 @@ WIM.AddLocale("ptBR", {
     ["No History"] = "Sem histórico",
     ["Do not record history for this channel."] = "Não grave histórico para este canal.",
     ["World Chat"] = "Bate-papo mundial",
-    ["Custom Chat"] = "Personalizado",
+    ["Custom Chat"] = "Bate-papo personalizado",
     ["Community Chat"] = "Bate-papo da comunidade",
     ["Chat"] = "Bate-papo",
     ["Play special sound for %s."] = "Reproduzir som especial para %s",
