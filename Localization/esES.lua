@@ -14,9 +14,6 @@ local translations = {
     ["Yes"] = "Sí",
     ["No"] = "No",
     ["None"] = "Ninguno",
-    ["<Right-Click>"] = "<Haz clic derecho>",
-    ["<Left-Click>"] = "<Haz clic izquierdo>",
-    ["OK"] = "OK",
     ["Cancel"] = "Cancelar",
     ["Unknown"] = "Desconocido",
     ["Click to update..."] = "Haz clic para actualizar...",
@@ -30,28 +27,8 @@ local translations = {
     ["state_raid"] = "Grupo de banda",
     ["state_other"] = "Normal (otro)",
 
-    ["A new version of WIM is available!\nYou can download the latest version from curse"] = "¡Una nueva versión de WIM está disponible!\nPuedes descargar la última versión en Curse",
-
     ["Options"] = "Opciones",
 
-    ["Icon Position"] = "Posición del icono",
-    ["Font Size"] = "Tamaño de la fuente",
-    ["Window Scale (Percent)"] = "Escala de la ventana (porcentaje)",
-    ["Transparency (Percent)"] = "Transparencia (porcentaje)",
-    ["Window Width"] = "Anchura de la ventana",
-    ["Window Height"] = "Altura de la ventana",
-    ["(Limited by shortcut bar)"] = "(Limitado por barra de acceso directo)",
-    ["ERROR"] = "ERROR",
-    ["Invalid Name!"] = "¡Nombre inválido!",
-    ["Name is already used!"] = "¡Nombre ya en uso!",
-    ["Invalid Alias!"] = "¡Alias inválido!",
-    ["Invalid Keyword/Phrase!"] = "¡Palabra clave/frase inválida!",
-    ["Keyword/Phrase is already used!"] = "¡La palabra clave/frase ya está en uso!",
-
-    ["Day"] = "Día",
-    ["Week"] = "Semana",
-    ["Month"] = "Mes",
-    ["Drag to set default spawn/position for message windows."] = "Arrastra para establecer la posición predeterminada para las ventanas de mensajes.",
     ["Up"] = "Arriba",
     ["Down"] = "Abajo",
     ["Left"] = "Izquierda",
@@ -60,63 +37,20 @@ local translations = {
     ["Block"] = "Bloquear",
     ["Enable WIM"] = "Activar WIM",
 
-    ["Auto Close Friends after:"] = "Cerrar automáticamente amigos después de:",
-    ["Auto Close Non-Friends after:"] = "Cerrar automáticamente no amigos después de:",
-
-    ["Display"] = "Visualización",
-    ["Incoming Messages"] = "Mensajes entrantes",
-    ["Outgoing Messages"] = "Mensajes salientes",
-    ["System Messages"] = "Mensajes de sistema",
-    ["Error Messages"] = "Mensajes de error",
-    ["Web URLs"] = "URLs de web",
     ["Enable"] = "Activar",
     ["Disable"] = "Desactivar",
-    ["Enabled"] = "Activado",
-    ["Disabled"] = "Desactivado",
-    ["Display character information."] = "Mostrar información sobre personaje",
-    ["Display time stamps"] = "Mostrar sellos de tiempo",
-    ["This setting limits the\nwindow's minimum height."] = "Esta configuración limita\nla altura mínima de la ventana.",
-    ["Requires /who querying."] = "Requiere consulta de /quien",
     ["Enable window fading effects."] = "Activar efectos de desvanecimiento de ventana",
-    ["Enable window animations."] = "Activar animaciones de ventana",
-
-    ["Display minimap icon."] = "Mostrar icono de minimapa",
 
     ["General"] = "General",
     ["History"] = "Historial",
     ["Filters"] = "Filtros",
-    ["Plugins"] = "Plugins",
 
-    ["Auto focus when window is shown."] = "Enfoque automático cuando se muestra la ventana",
-    ["Preserve focus after sending messages."] = "Preservar enfoque después de enviar mensajes",
-    ["Display tooltips."] = "Mostrar tooltips.",
-    ["Show window when sending a message."] = "Mostrar ventana al enviar un mensaje",
-    ["Show window when message has been received."] = "Mostrar ventana cuando se ha recibido el mensaje",
-    ["Suppress messages from default chat frame."] = "Suprimir los mensajes del marco de chat predeterminado",
-    ["Play sound when message is received."] = "Reproducir sonido cuando se recibe el mensaje",
-    ["Play sound when message is sent."] = "Reproducir sonido cuando se envía un mensaje",
-    ["Sort alphabetically."] = "Ordenar alfabéticamente",
-    ["Use <Escape> to close windows."] = "Usa <Escape> para cerrar ventanas.",
-    ["Windows will close when opening the world map."] = "Ventanas se cerrarán al abrir el mapa del mundo.",
-    ["Intercept slash commands."] = "Interceptar comandos de barra diagonal",
     ["Include sent messages in /REPLY."] = "Incluir mensajes enviados en /r",
-    ["Ignore arrow keys while typing."] = "Ignora las teclas de flecha mientras escribes.",
-    ["Requires using <Alt> to navigate text."] = "Requiere usar <Alt> para navegar por el texto.",
-    ["Display emoticons."] = "Mostrar emoticonos.",
-    ["Display URLs as item links."] = "Mostrar URL como enlaces de objeto",
-    ["Display floating item links."] = "Mostrar enlaces de objeto flotantes",
 
-    ["Cascade windows."] = "Ventanas en cascada",
-    ["Direction:"] = "Dirección:",
-    ["Tabs"] = "Pestañas",
     ["Sort tabs by:"] = "Ordenar pestañas por:",
 	["Window Created"] = "Ventana creada",
 	["Last Activity"] = "Última actividad",
     ["Alphabetical"] = "Alfabético",
-    ["Recent Activity"] = "Actividad reciente",
-    ["Keep windows on top of your UI."] = "Mantén las ventanas encima de tu IU.",
-
-    ["Enable/Disable addon messages."] = "Activar/Desactivar mensajes de addons.",
 
     -- Class Names --
     ["Druid"] = LOCALIZED_CLASS_NAMES_MALE.DRUID,
@@ -153,7 +87,6 @@ local translations = {
     -- WIM.lua --
     ["Toggle WIM 'On' and 'Off'."] = "Alternar WIM 'Activado' y 'Desactivado'.",
     ["Toggle Debugging Mode 'On' and 'Off'."] = "Activar y desactivar el modo de depuración.",
-    ["WIM is currently running. To access WIM's wide array of options type:"] = "WIM se está ejecutando actualmente. Para acceder a la amplia gama de opciones de WIM, escribe:",
 
     -- Filters.lua --
     ["Whispers Sent by Addons"] = "Susurros enviados por addons",
@@ -174,6 +107,8 @@ local translations = {
     ["User must be at least level:"] = "El jugador debe tener al menos un nivel:",
     ["Apply to messages received."] = "Aplicar a los mensajes recibidos.",
     ["Apply to messages sent."] = "Aplicar a los mensajes enviados.",
+    ["Apply to:"] = "Aplicar a:",
+    ["All Classes"] = "Todas las clases",
     ["Action to Perform:"] = "Acción a realizar:",
     ["Allow"] = "Permitir",
     ["Ignore"] = "Ignorar",
@@ -185,7 +120,6 @@ local translations = {
 
     -- History.lua --
     ["WIM History Button"] = "Botón de historial de WIM",
-    ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Al hacer clic en el botón %s en la ventana del mensaje, se mostrará el historial de ese jugador en el visor de historial de WIM.",
     ["Click to view message history."] = "Haz clic para ver el historial de mensajes.",
     ["WIM pruned %d |4message:messages; from your history."] = "WIM eliminó %d |4mensaje:mensajes; de tu historial.",
     ["History Viewer"] = "Visor de historial",
@@ -198,6 +132,7 @@ local translations = {
     ["Loading History"] = "Cargando historial",
     ["Chat View"] = "Vista de chat",
     ["Text View"] = "Vista de texto",
+    ["BBCode"] = "BBCode",
     ["WIM History Viewer can be accessed any time by typing:"] = "Se puede acceder al visor de historial de WIM en cualquier momento escribiendo:",
     ["WIM History Viewer"] = "Visor de historial de WIM",
     ["Display history viewer."] = "Mostrar visor de historial",
@@ -211,13 +146,11 @@ local translations = {
 
     -- Negotiate.lua --
     ["WIM Update Available!"] = "¡Actualización WIM disponible!",
-    ["There is a newer version of WIM available for download. You can download it at %s."] = "Hay una versión más nueva de WIM disponible para descargar. Puedes descargarla en %s.",
 
     -- ShortcutBar.lua --
     ["Player Location"] = "Zona del jugador",
     ["Unknown"] = "Desconocido",
     ["Click to update..."] = "Haz clic para actualizar...",
-    ["Coordinates"] = "Coordenadas",
     ["Invite to Party"] = "Invitar al grupo",
     ["Add Friend"] = "Añadir amigo",
     ["Ignore User"] = "Ignorar jugador",
@@ -231,17 +164,12 @@ local translations = {
 	["Copy Name"] = "Copiar nombre",
 
     -- Tutorials.lua --
-    ["Display WIM tips"] = "Mostrar consejos de WIM",
-
-    -- W2W.lua --
-    ["%s is typing..."] = "%s está escribiendo...",
-    ["W2W Profile"] = "Perfil de W2W",
-    ["Talent Spec"] = "Especialización de talentos",
+    ["View Updates"] = "Ver actualizaciones",
 
     -- WhisperEngine.lua --
     ["Whisper Received!"] = "¡Susurro recibido!",
-    ["You received a whisper which was hidden due to your current activity. You can change how whispers behave in WIM's options by typing"] = "Recibió un susurro que estaba oculto debido a su actividad actual. Puede cambiar el comportamiento de los susurros en las opciones de WIM escribiendo",
     ["Recently Sent Messages"] = "Mensajes enviados recientemente",
+    ["Users in %s"] = "Usuarios en %s",
 
     -- Clear.lua --
     ["You are about to clear all of WIM's history!"] = "¡Estás a punto de borrar toda la historia de WIM!",
@@ -253,17 +181,16 @@ local translations = {
 
     -- SlashHandler.lua --
     ["WIM Slash Commands"] = "Comandos de barra diagonal WIM",
+    ["Hide or show {all, whisper, chat} windows."] = "Ocultar o mostrar ventanas {todas, de susurro, de chat}.",
     ["To see a list of available WIM slash commands type:"] = "Para ver una lista de comandos de barra diagonal WIM, escribe:",
     ["Display available slash commands."] = "Mostrar los comandos de barra diagonal disponibles.",
     ["Reload User Interface."] = "Recargar la interfaz del usuario",
 
     -- TabHandler.lua --
     ["Manipulating Tabs"] = "Manipular pestañas",
-    ["You can <Shift-Click> a tab and drag it out into it's own window."] = "Puedes <Mayús-clic> una pestaña y arrastrarla a su propia ventana.",
 
     -- WindowHandler.lua --
     ["Window Resized!"] = "¡Ventana redimensionada!",
-    ["If you want all windows to be this size, you can set the default window size within WIM's options."] = "Si deseas que todas las ventanas tengan este tamaño, puedes establecer el tamaño de ventana predeterminado dentro de las opciones de WIM.",
     ["Creating Tab Groups"] = "Crear grupos de pestañas",
     ["You can group two or many windows together by <Shift-Clicking> a window and dragging it on top of another."] = "Puedes agrupar dos o muchas ventanas juntas por <Mayús-clic> en una ventana y arrastrándola encima de otra.",
     ["Resizing Windows"] = "Redimensionar Ventanas",
@@ -271,17 +198,16 @@ local translations = {
     ["Demo Window"] = "Ventana de demonstración",
     ["<Shift-Click> to close window."] = "<Mayús-clic> para cerrar la ventana.",
     ["Message Window Hidden"] = "Ventana de mensaje oculta",
-    ["WIM's message window has been hidden to WIM's Minimap Icon. If you want to end a conversation, you may do so by <Shift-Clicking> the close button."] = "La ventana de mensajes de WIM se ha ocultado al ícono de minimapa de WIM. Si deseas finalizar una conversación, puedes hacerlo presionando <Mayús-Clic> en el botón de cierre.",
     ["Default"] = "Predeterminado",
     ["%s is Away From Keyboard: %s"] = "%s está ausente: %s",
     ["%s does not wish to be disturbed: %s"] = "%s no desea ser molestrado: %s",
     ["Right-Mouse Click!"] = "¡Haz clic derecho!",
     ["There might be useful tools hidden under the message box. Right-Click to see them!"] = "Se puede haber herramientas útiles ocultas debajo del cuadro de mensaje. ¡Haz clic derecho para verlas!",
 
-
     -- Options.lua --
     ["Display WIM's options."] = "Mostrar opciones de WIM",
     ["Resetting WIM will clear all of your settings!"] = "¡Al restablecer WIM se borrarán todas las configuraciones!",
+    ["A reset will reload your user interface."] = "Un restablecimiento recargará tu interfaz de usuario.",
     ["Reset all options to default."] = "Restablecer todas las opciones a las predeterminadas.",
 
     -- CoreOptions --
@@ -298,7 +224,7 @@ local translations = {
     ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "Este es un mensaje largo que contiene emoticonos y urls 8). La página de WIM es www.WIMAddon.com.",
     ["Message Formatting"] = "Formato de mensaje",
     ["Manipulate how WIM displays messages."] = "Manipula cómo WIM muestra los mensajes.",
-    ["Preview"] = "Previsualización",
+    ["Preview"] = "Vista previa",
     ["Display Time Stamps"] = "Mostrar sellos de tiempo",
     ["Display Emoticons"] = "Mostrar emoticonos",
     ["Display URLs as Links"] = "Mostrar URLs como enlaces",
@@ -310,7 +236,6 @@ local translations = {
     ["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "Obedecer las reglas de enfoque automático al abrir marcos",
     ["Use the same rules for all states."] = "Usar las mismas reglas para todos los estados",
     ["Behaviors for state:"] = "Comportamientos de estado:",
-    ["Behaviors per current state:"] = "Comportamientos de estado actual:",
     ["Pop-Up window when message is sent."] = "Ventana emergente cuando se envía un mensaje",
     ["Pop-Up window when message is received."] = "Ventana emergente cuando se recibe el mensaje",
     ["Auto focus a window when it is shown."] = "Autoenfocar una ventana cuando se muestra",
@@ -373,10 +298,10 @@ local translations = {
     ["Enable History"] = "Activar historial",
     ["Messages"] = "Mensajes",
     ["Preview history inside message windows."] = "Previsualización del historial",
-    ["Record Whispers"] = "Grabar susurros",
     ["Record Friends"] = "Grabar amigos",
     ["Record Guild"] = "Grabar hermandad",
     ["Record Everyone"] = "Grabar todos",
+    ["Record Chat"] = "Grabar chat",
     ["Maintenance"] = "Mantenimiento",
     ["Allowing your history logs to grow too large will affect the game's performance, therefore it is reccomended that you use the following options."] = "Permite que tus registros de historial crezcan demasiado afectará el rendimiento del juego, por lo tanto, se recomienda que uses las siguientes opciones.",
     ["Save a maximum number of messages per person."] = "Guardar un número máximo de mensajes por persona",
@@ -424,44 +349,7 @@ local translations = {
     ["Does not apply to windows already opened."] = "No se aplica a las ventanas ya abiertas.",
 
     -- Talent Specs --
-    ["Affliction"] = "Aflicción",
-    ["Arcane"] = "Arcano",
-    ["Arms"] = "Armas",
-    ["Assassination"] = "Asesinato",
-    ["Balance"] = "Equilibrio",
-    ["Beast Mastery"] = "Dominio de bestias",
-    ["Blood"] = "Sangre",
-    ["Brewmaster"] = "Maestro cervecero",
-    ["Combat"] = "Combate",
-    ["Demonology"] = "Demonología",
-    ["Destruction"] = "Destrucción",
-    ["Discipline"] = "Disciplina",
-    ["Elemental"] = "Elemental",
-    ["Enhancement"] = "Mejora",
-    ["Feral Combat"] = "Combate feral",
-    ["Fire"] = "Fuego",
-    ["Frost"] = "Escarcha",
-    ["Fury"] = "Furia",
-    ["Guardian"] = "Guardián",
-    ["Holy"] = "Sagrado",
     ["Hybrid"] = "Híbrido",
-    ["Marksmanship"] = "Puntería",
-    ["Mistweaver"] = "Tejedor de niebla",
-    ["Protection"] = "Protección",
-    ["Restoration"] = "Recuperación",
-    ["Retribution"] = "Reprensión",
-    ["Shadow"] = "Sombra",
-    ["Subtlety"] = "Sutileza",
-    ["Survival"] = "Supervivencia",
-    ["Unholy"] = "Profano",
-    ["Windwalker"] = "Viajero del viento",
-    ["Havok"] = "Devastación",
-    ["Vengeance"] = "Venganza",
-
-    -- ChangeLog.lua --
-    ["Change Log"] = "Registro de cambios",
-    ["View WIM's change log."] = "Ver el registro de cambios de WIM.",
-    ["Available For Download!"] = "¡Disponible para descarga!",
 
     -- Filters.lua --
     ["Show Alert"] = "Mostrar alerta",
@@ -506,6 +394,7 @@ local translations = {
     ["Do not record history for this channel."] = "No grabar el historial de este canal.",
     ["World Chat"] = "Chat del mundo",
     ["Custom Chat"] = "Chat personalizado",
+    ["Community Chat"] = "Chat de comunidad",
     ["Chat"] = "Chat",
     ["Play special sound for %s."] = "Reproducir sonido especial para %s",
     ["Play sound when a message is received."] = "Reproducir sonido cuando se recibe un mensaje",
@@ -514,20 +403,22 @@ local translations = {
     ["No Sound"] = "Sin sonido",
     ["Sensitivity"] = "Sensibilidad",
     ["Enable WorldFrame Click Detection."] = "Activar detección de clic WorldFrame",
-    ["The UI must be reloaded in order to disable this module fully. Reload UI now?"] = "La IU debe recargarse para desactivar este módulo por completo. ¿Recargar la IU ahora?",
 
     --OffScreenTracker.lua
     ["WIM Window Off Screen"] = "Ventana WIM fuera de pantalla",
     ["Click to reposition."] = "Haz clic para reposicionar.",
-
-    --Misc
-    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM ha detectado que estás jugando en un servidor privado. Algunos servidores no pueden procesar ChatAddonMessages. ¿Quieres activarlos de todos modos?",
 
 	-- Whisper Mode Warnings
     ["Whisper Mode: In-line"] = "Modo de susurro: en línea",
 	["Set whispers to In-line"] = "Establecer susurros en línea",
 	["Message suppression requires whispers to be set to 'In-line'."] = "La supresión de mensajes requiere que los susurros estén configurados en 'en línea'.",
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "Se recomienda configurar los susurros en línea para manejar su comportamiento correctamente.",
+
+	-- Skins --
+	["Blue"] = "Azul",
+	["Green"] = "Verde",
+	["Red"] = "Rojo",
+	["Yellow"] = "Amarillo",
 };
 
 if WIM.getLocale() == "esES" then
