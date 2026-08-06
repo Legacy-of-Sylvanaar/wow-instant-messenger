@@ -7,17 +7,27 @@ local CreateFrame = CreateFrame;
 local string = string;
 local select = select;
 local tonumber = tonumber
+local type = type;
 
 --set namespace
 setfenv(1, WIM);
 
 local buttons = {};
 
+local function getButtonTable (winType)
+	local _buttons = buttons[winType] or {};
+	buttons[winType] = _buttons;
+
+	return buttons[winType];
+end
+
 -- create WIM Module
 local ShortcutBar = CreateModule("ShortcutBar", true);
 
-local buttonCount = 1;
+-- local buttonCount = 1;
 local function createButton(parent)
+	local buttonCount = #parent.buttons + 1;
+
 	local button = CreateFrame("Button", "WIM_ShortcutBarButton"..buttonCount, parent);
 	button.icon = button:CreateTexture(nil, "BACKGROUND");
 	button.icon:SetAllPoints();
@@ -33,6 +43,8 @@ local function createButton(parent)
 			parent:UpdateButtons();
 		end
 	button:SetScript("OnEnter", function(self)
+			local buttons = getButtonTable(parent.type);
+
 			if(buttons[self.index].scripts and buttons[self.index].scripts.OnEnter) then
 				buttons[self.index].scripts.OnEnter(self);
 			else
@@ -43,17 +55,23 @@ local function createButton(parent)
 			end
 		end);
 	button:SetScript("OnLeave", function(self)
+			local buttons = getButtonTable(parent.type);
+
 			_G.GameTooltip:Hide();
 			if(buttons[self.index].scripts and buttons[self.index].scripts.OnLeave) then
 				buttons[self.index].scripts.OnLeave(self, button);
 			end
 		end);
 	button:SetScript("OnClick", function(self, button)
+			local buttons = getButtonTable(parent.type);
+
 			if(buttons[self.index].scripts and buttons[self.index].scripts.OnClick) then
 				buttons[self.index].scripts.OnClick(self, button);
 			end
 		end);
 	button.SetDefaults = function(self)
+			local buttons = getButtonTable(parent.type);
+
 			if(buttons[self.index].scripts and buttons[self.index].scripts.SetDefaults) then
 				buttons[self.index].scripts.SetDefaults(self);
 			end
@@ -67,11 +85,14 @@ end
 
 
 
-local function createShortCutBar()
+local function createShortCutBar(win)
 	local frame = CreateFrame("Frame");
 
 	--widget info
-	frame.type = "whisper"; -- will only show on whisper windows.
+	frame.type = win.type or '-unknown-'; -- will only show on whisper windows.
+
+	-- init reference to buttons table.
+	local buttons = getButtonTable(frame.type);
 
 	-- test texture so you can see the frame to be placed.
 	--frame.test = frame:CreateTexture(nil, "BACKGROUND");
@@ -80,6 +101,8 @@ local function createShortCutBar()
 	frame.visibleCount = 0;
 	frame.buttons = {};
 	frame.UpdateSkin = function(self)
+			local buttons = getButtonTable(frame.type);
+
 			-- make sure all the button objects needed are available.
 			local buttonsToCreate = #buttons - #frame.buttons;
 			for i=1, buttonsToCreate do
@@ -249,6 +272,8 @@ local function canInviteBN(id)
 end
 
 function ShortcutBar:OnWindowShow(obj)
+	local buttons = getButtonTable(obj.type);
+
 	if (obj.widgets.shortcuts) then
 		for i=1, #buttons do
 			if (buttons[i].id == "invite") then
@@ -270,6 +295,8 @@ function ShortcutBar:OnWindowShow(obj)
 end
 
 function ShortcutBar:FRIENDLIST_UPDATE()
+	local buttons = getButtonTable("whisper");
+
 	local friend = nil;
 	for i=1, #buttons do
 		if(buttons[i].id == "friend") then
@@ -290,18 +317,39 @@ function ShortcutBar:FRIENDLIST_UPDATE()
 end
 
 -- WIM Global API for Shortcut buttons.
-function RegisterShortcut(id, title, scripts)
-	table.insert(buttons, {
+function RegisterShortcut(id, title, options)
+	options = options or {};
+
+	-- defaults
+	options.type = options.type or "whisper"; -- default to whisper windows.
+
+	local scripts = {};
+	local info = {
 		id = id,
 		title = title,
 		scripts = scripts
-	});
+	}
+
+	-- load info table
+	for k, v in pairs(options) do
+		if(type(v) == "function") then
+			scripts[k] = v;
+		else
+			info[k] = v;
+		end
+	end
+
+	for winType in info.type:gmatch("[^,%s]+") do
+		local buttons = getButtonTable(winType);
+		table.insert(buttons, info);
+	end
 end
 
 
 
 -- Register default buttons.
 RegisterShortcut("location", L["Player Location"], {
+		type = "whisper",
 		OnClick = function(self, button)
 			libs.DropDownMenu.CloseDropDownMenus();
 			if(button == "LeftButton") then
