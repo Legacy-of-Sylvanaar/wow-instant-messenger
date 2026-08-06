@@ -233,7 +233,7 @@ WIM.AddLocale("zhCN", {
     ["Window Behavior"] = "窗口行为",
     ["You can control how windows behave while you are in different situations."] = "你可以控制在不同状态下的窗口的行为。",
     ["Intercept Slash Commands"] = "拦截斜杠（/）命令",
-	["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "通过菜单打开窗口时遵从自动激活输入框规则\n（取消选择将自动激活输入框）。",
+	["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "通过菜单打开窗口时遵从自动激活输入框规则（取消选择将自动激活输入框）。",
     ["Use the same rules for all states."] = "所有状态使用相同规则。",
     ["Behaviors for state:"] = "此状态的行为：",
     ["Pop-Up window when message is sent."] = "发送消息时弹出窗口。",

@@ -238,7 +238,7 @@ WIM.AddLocale("zhTW", {
     ["Pop-Up window when message is received."] = "當收到密語時彈出對話視窗",
     ["Auto focus a window when it is shown."] = "當視窗彈出時自動獲得焦點",
     ["Keep focus on window after sending a message."] = "發送訊息後視窗保持獲得焦點狀態",
-    ["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "從選單開啟視窗時遵守自動對焦規則。\n（取消選取將自動對焦。）",
+    ["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "從選單開啟視窗時遵守自動對焦規則。（取消選取將自動對焦。）",
     ["Suppress messages from the default chat frame."] = "過濾系統內建對話框中的密語訊息",
     ["Window Settings"] = "視窗設定",
     ["Some settings may be limited by certain skins."] = "部份設定將會因為套用的佈景受到限制",
