@@ -15,9 +15,6 @@ WIM.AddLocale("frFR", {
     ["Yes"] = "Oui",
     ["No"] = "Non",
     ["None"] = "Aucun",
-    ["<Right-Click>"] = "<Clic-droit>",
-    ["<Left-Click>"] = "<Clic-gauche>",
-    ["OK"] = "Ok",
     ["Cancel"] = "Annuler",
     ["Unknown"] = "Inconnu",
     ["Click to update..."] = "Cliquez pour mettre à jour ...",
@@ -31,28 +28,8 @@ WIM.AddLocale("frFR", {
     ["state_raid"] = "Groupe de raid",
     ["state_other"] = "Normal (Divers)",
 
-    ["A new version of WIM is available!\nYou can download the latest version from curse"] = "Une nouvelle version de WIM est disponible !\nVous pouvez télécharger la dernière version sur Curse.",
-
     ["Options"] = true,
 
-    ["Icon Position"] = "Position de l'icône",
-    ["Font Size"] = "Taille de la police",
-    ["Window Scale (Percent)"] = "Échelle de la fenêtre (en pourcentage)",
-    ["Transparency (Percent)"] = "Transparence (en pourcentage)",
-    ["Window Width"] = "Largeur de la fenêtre",
-    ["Window Height"] = "Hauteur de la fenêtre",
-    ["(Limited by shortcut bar)"] = "(Limité par la barre de raccourcis)",
-    ["ERROR"] = "Erreur",
-    ["Invalid Name!"] = "Nom incorrect !",
-    ["Name is already used!"] = "Nom est déjà utilisé!",
-    ["Invalid Alias!"] = "Alias incorrect !",
-    ["Invalid Keyword/Phrase!"] = "Mot-clé / phrase incorrect !",
-    ["Keyword/Phrase is already used!"] = "Mot-cle / phrase est déjà utilisé !",
-
-    ["Day"] = "Jour",
-    ["Week"] = "Semaine",
-    ["Month"] = "Mois",
-    ["Drag to set default spawn/position for message windows."] = "Faites glisser pour régler par défaut la multitude / position pour les fenêtres de message.",
     ["Up"] = "Haut",
     ["Down"] = "Bas",
     ["Left"] = "Gauche",
@@ -61,60 +38,18 @@ WIM.AddLocale("frFR", {
     ["Block"] = "Bloquer",
     ["Enable WIM"] = "Activer WIM",
 
-    ["Auto Close Friends after:"] = "Ferme automatiquement les amis après :",
-    ["Auto Close Non-Friends after:"] = "Ferme automatiquement non amis après :",
-
-    ["Display"] = "Affichage",
-    ["Incoming Messages"] = "Les messages entrants",
-    ["Outgoing Messages"] = "Les messages sortants",
-    ["System Messages"] = "Messages du système",
-    ["Error Messages"] = "Messages d'erreur",
-    ["Web URLs"] = "Lien web",
     ["Enable"] = "Activer",
     ["Disable"] = "Désactiver",
-    ["Enabled"] = "Activé",
-    ["Disabled"] = "Désactivé",
-    ["Display character information."] = "Afficher les informations du personnage",
-    ["Display time stamps"] = "Afficher les temps",
-    ["This setting limits the\nwindow's minimum height."] = "Ce paramètre limite\nla hauteur minimale de la fenêtre.",
-    ["Requires /who querying."] = "Nécessite /qui interroge.",
     ["Enable window fading effects."] = "Activer les effets.",
-    ["Enable window animations."] = "Activer les animations de la fenêtre.",
-
-    ["Display minimap icon."] = "Affiche l'icône sur la minicarte",
 
     ["General"] = "Général",
     ["History"] = "Historique",
     ["Filters"] = "Filtres",
-    ["Plugins"] = "Plugins",
 
-    ["Auto focus when window is shown."] = "Auto focus lorsque la fenêtre est affichée.",
-    ["Preserve focus after sending messages."] = "Préserver le focus après envoi de messages.",
-    ["Display tooltips."] = "Afficher les info-bulles.",
-    ["Show window when sending a message."] = "Afficher la fenêtre lors de l'envoi d'un message",
-    ["Show window when message has been received."] = "Afficher la fenêtre lorsque le message a été reçu.",
-    ["Suppress messages from default chat frame."] = "Supprimer les messages de discussion par défaut du cadre.",
-    ["Play sound when message is received."] = "Jouer un son lorsque le message est reçu.",
-    ["Play sound when message is sent."] = "Jouer un son lorsque le message est envoyé.",
-    ["Sort alphabetically."] = "Tri par ordre alphabétique.",
-    ["Use <Escape> to close windows."] = "Utilisez <Escape> pour fermer les fenêtres.",
-    ["Windows will close when opening the world map."] = "La fenêtre se ferme lorsque vous ouvrez la carte du monde.",
-    ["Intercept slash commands."] = "Intercepter les commandes slash.",
-    ["Ignore arrow keys while typing."] = "Ignorer les touches fléchées lors de la saisie.",
-    ["Requires using <Alt> to navigate text."] = "Nécessite l'utilisation de <Alt> pour naviguer sur le texte",
-    ["Display emoticons."] = "Afficher les émoticônes.",
-    ["Display URLs as item links."] = "Afficher l'URL des objets sous forme de lien",
-    ["Display floating item links."] = "Afficher les liens d'objets flottant",
-
-    ["Cascade windows."] = "Fenêtres en cascade.",
-    ["Direction:"] = "Direction :",
-    ["Tabs"] = "Onglets",
     ["Sort tabs by:"] = "Trier les onglets par :",
 	["Window Created"] = "Fenêtre créée",
 	["Last Activity"] = "Dernière activité",
     ["Alphabetical"] = "Alphabétique",
-    ["Recent Activity"] = "Activité récente",
-    ["Keep windows on top of your UI."] = "Gardez les fenêtres en haut de votre interface d'utilisateur.",
 
   -- Class Names --
 	["Druid"] = LOCALIZED_CLASS_NAMES_MALE.DRUID,
@@ -151,7 +86,6 @@ WIM.AddLocale("frFR", {
     -- WIM.lua --
     ["Toggle WIM 'On' and 'Off'."] = "Basculer WIM 'Activé' et 'Désactivé'.",
     ["Toggle Debugging Mode 'On' and 'Off'."] = "Basculer en débogage 'Activé' et 'Désactivé'.",
-    ["WIM is currently running. To access WIM's wide array of options type:"] = "WIM est en cours d'exécution. Accéder aux options de WIM :",
 
     -- Filters.lua --
     ["Whispers Sent by Addons"] = "Chuchotements envoyés par l'addons",
@@ -172,6 +106,8 @@ WIM.AddLocale("frFR", {
     ["User must be at least level:"] = "L'utilisateur doit être au moins au niveau : ",
     ["Apply to messages received."] = "S'appliquent aux messages reçus.",
     ["Apply to messages sent."] = "S'appliquent aux messages envoyés.",
+    ["Apply to:"] = "Appliquer à :",
+    ["All Classes"] = "Toutes les classes",
     ["Action to Perform:"] = "Action à exécuter :",
     ["Allow"] = "Autoriser",
     ["Ignore"] = "Ignorer",
@@ -183,7 +119,6 @@ WIM.AddLocale("frFR", {
 
     -- History.lua --
     ["WIM History Button"] = "Bouton de l'historique",
-    ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Cliquer sur %s le bouton de la fenêtre du message, indiquera que l'historique du chuchotement de l'utilisateur sera gardé",
     ["Click to view message history."] = "Cliquez pour voir l'historique des messages.",
     ["WIM pruned %d |4message:messages; from your history."] = "WIM taille %d |4message:messages, à partir de votre histoire.",
     ["History Viewer"] = "L'historique",
@@ -196,6 +131,7 @@ WIM.AddLocale("frFR", {
     ["Loading History"] = "Chargement de l'historique",
     ["Chat View"] = "Vue de la discussion",
     ["Text View"] = "Vue du texte",
+    ["BBCode"] = "BBCode",
     ["WIM History Viewer can be accessed any time by typing:"] = "L'historique peut être accessible à tout moment en tapant :",
     ["WIM History Viewer"] = "L'historique",
     ["Display history viewer."] = "Afficher l'historique",
@@ -209,13 +145,11 @@ WIM.AddLocale("frFR", {
 
     -- Negotiate.lua --
     ["WIM Update Available!"] = "Mise à jour disponible !",
-    ["There is a newer version of WIM available for download. You can download it at %s."] = "Il existe une version plus récente de WIM disponible en téléchargement. Vous pouvez le télécharger à %s.",
 
     -- ShortcutBar.lua --
     ["Player Location"] = "Zone du joueur",
     ["Unknown"] = "Inconnu",
     ["Click to update..."] = "Cliquez pour mettre à jour...",
-    ["Coordinates"] = "Coordonnées",
     ["Invite to Party"] = "Inv. groupe",
     ["Add Friend"] = "Ajouter un ami",
     ["Ignore User"] = "Ignorer le joueur",
@@ -229,17 +163,12 @@ WIM.AddLocale("frFR", {
 	["Copy Name"] = "Copier le nom",
 
     -- Tutorials.lua --
-    ["Display WIM tips"] = "Afficher les astuces",
-
-    -- W2W.lua --
-    ["%s is typing..."] = "%s tape...",
-    ["W2W Profile"] = "W2W profil",
-    ["Talent Spec"] = "Spécialisation de talent",
+    ["View Updates"] = "Voir les mises à jour",
 
     -- WhisperEngine.lua --
     ["Whisper Received!"] = "Chuchoetment reçu !",
-    ["You received a whisper which was hidden due to your current activity. You can change how whispers behave in WIM's options by typing"] = "Vous avez reçu un chuchotement qui était caché en raison de votre activité actuelle. Vous pouvez changer la façon de se comportent dans les options de chuchotements WIM en tapant",
     ["Recently Sent Messages"] = "Messages récemment envoyés",
+    ["Users in %s"] = "Utilisateurs dans %s",
 
     -- Clear.lua --
     ["You are about to clear all of WIM's history!"] = "Vous êtes sur le point d'effacer toutes l'historiques !",
@@ -251,18 +180,16 @@ WIM.AddLocale("frFR", {
 
     -- SlashHandler.lua --
     ["WIM Slash Commands"] = "WIM commandes slash",
+    ["Hide or show {all, whisper, chat} windows."] = "Masquer ou afficher les fenêtres {toutes, de chuchotement, de discussion}.",
     ["To see a list of available WIM slash commands type:"] = "Pour voir une liste des commandes slash WIM disponibles, tapez :",
     ["Display available slash commands."] = "Afficher les commandes slash disponibles.",
     ["Reload User Interface."] = "Recharger l'interface utilisateur.",
 
     -- TabHandler.lua --
     ["Manipulating Tabs"] = "Manipulation des onglets",
-    ["You can <Shift-Click> a tab and drag it out into it's own window."] = "Vous pouvez faire <Maj-clic> sur un onglet et faites-la glisser sur sa propre fenêtre.",
-
 
     -- WindowHandler.lua --
     ["Window Resized!"] = "Fenêtre redimensionnée !",
-    ["If you want all windows to be this size, you can set the default window size within WIM's options."] = "Si vous souhaitez que toutes les fenêtres aient cette taille, vous pouvez définir la taille par défaut dans les options de WIM.",
 	["Creating Tab Groups"] = "Création de groupes d'onglets",
 	["You can group two or many windows together by <Shift-Clicking> a window and dragging it on top of another."] = "Vous pouvez regrouper deux fenêtres ou plus en maintenant <Maj> enfoncé et en faisant glisser une fenêtre sur une autre.",
 	["Resizing Windows"] = "Redimensionner les fenêtres",
@@ -270,7 +197,6 @@ WIM.AddLocale("frFR", {
 	["Demo Window"] = "Fenêtre de démonstration",
 	["<Shift-Click> to close window."] = "<Maj-clic> pour fermer la fenêtre.",
 	["Message Window Hidden"] = "Fenêtre de message masquée",
-	["WIM's message window has been hidden to WIM's Minimap Icon. If you want to end a conversation, you may do so by <Shift-Clicking> the close button."] = "La fenêtre de message de WIM a été masquée sous l'icône de la minicarte. Pour mettre fin à une conversation, vous pouvez cliquer sur le bouton de fermeture en maintenant <Maj> enfoncé.",
 	["Default"] = "Par défaut",
 	["%s is Away From Keyboard: %s"] = "%s est absent : %s",
 	["%s does not wish to be disturbed: %s"] = "%s ne souhaite pas être dérangé : %s",
@@ -280,6 +206,7 @@ WIM.AddLocale("frFR", {
     -- Options.lua --
     ["Display WIM's options."] = "Afficher les options de WIM.",
     ["Resetting WIM will clear all of your settings!"] = "Réinitialisation de WIM et efface la totalité des paramètres !",
+    ["A reset will reload your user interface."] = "Une réinitialisation rechargera votre interface.",
     ["Reset all options to default."] = "Réinitialiser toutes les options par défaut.",
 
     -- CoreOptions --
@@ -372,7 +299,6 @@ WIM.AddLocale("frFR", {
     ["Enable History"] = "Activer l'historique",
     ["Messages"] = "Messages",
     ["Preview history inside message windows."] = "Aperçu de l'historique à l'intérieur des fenêtres de message",
-    ["Record Whispers"] = "Enregister les chuchotements",
     ["Record Friends"] = "Enregistrer les amis",
     ["Record Guild"] = "Enregistrer la guilde",
     ["Record Everyone"] = "Enregistrer tout le monde",
@@ -424,38 +350,7 @@ WIM.AddLocale("frFR", {
     ["Does not apply to windows already opened."] = "Ne s'applique pas à la fenêtre déjà ouverte",
 
     -- Talent Specs --
-    ["Affliction"] = "Affliction",
-    ["Arcane"] = "Arcane",
-    ["Arms"] = "Armes",
-    ["Assassination"] = "Assassinat",
-    ["Balance"] = "Equilibre",
-    ["Beast Mastery"] = "Maîtrise des bêtes",
-    ["Blood"] = "Sang",
-    ["Combat"] = "Combat",
-    ["Demonology"] = "Démonologie",
-    ["Destruction"] = "Destruction",
-    ["Discipline"] = "Discipline",
-    ["Elemental"] = "Elémentaire",
-    ["Enhancement"] = "Amélioration",
-    ["Feral Combat"] = "Combat farouche",
-    ["Fire"] = "Feu",
-    ["Frost"] = "Givre",
-    ["Fury"] = "Fureur",
-    ["Holy"] = "Sacré",
     ["Hybrid"] = "Hybride",
-    ["Marksmanship"] = "Précision",
-    ["Protection"] = "Protection",
-    ["Restoration"] = "Restauration",
-    ["Retribution"] = "Vindicte",
-    ["Shadow"] = "Ombre",
-    ["Subtlety"] = "Finesse",
-    ["Survival"] = "Survie",
-    ["Unholy"] = "Impie",
-
--- ChangeLog.lua --
-	["Change Log"] = "Journal des modifications",
-	["View WIM's change log."] = "Consultez le journal des modifications de WIM.",
-    ["Available For Download!"] = "Disponible en téléchargement !",
 
     -- Filters.lua --
     ["Show Alert"] = "Afficher une alerte",
@@ -474,7 +369,7 @@ WIM.AddLocale("frFR", {
     ["Emoticons"] = "Émoticônes",
 
     --Expose.lua
-    ["Your conversations have been hidden in order to clear your screen while in combat.To disable this feature type"] = "Vos conversations ont été cachés afin de vider votre écran tout en combat. Mettre hors de service ce type de fonction",
+    ["Your conversations have been hidden in order to clear your screen while in combat. To disable this feature type"] = "Vos conversations ont été cachés afin de vider votre écran tout en combat. Pour désactiver cette fonction, tapez :",
     ["Expose"] = "Exposé",
     ["Expose is a Mac OS X inspired feature which enables you to quickly clear your screen of windows and then restore them back to their original position."] = "Exposé est inspiré d'une application Mac OS X, fonction qui permet de masquer temporairement toutes les fenêtres, puis les remets à leurs position initiale.",
     ["Auto hide/restore windows during combat."] = "Auto masquer / restaurer les fenêtres pendant le combat",
@@ -499,7 +394,8 @@ WIM.AddLocale("frFR", {
     ["No History"] = "Aucun historique",
     ["Do not record history for this channel."] = "Ne pas enregistrer l'historique de ce canal",
     ["World Chat"] = "Discussion du monde",
-    ["Custom Chat"] = "Personnalisé",
+    ["Custom Chat"] = "Discussion personnalisé",
+    ["Community Chat"] = "Discussion de communauté",
     ["Chat"] = "Discussion",
     ["Play special sound for %s."] = "Jouer le son spécial pour %s",
     ["Play sound when a message is received."] = "Jouer un son quand un message est reçu",
@@ -508,18 +404,20 @@ WIM.AddLocale("frFR", {
 	["No Sound"] = "Pas de son",
 	["Sensitivity"] = "Sensibilité",
 	["Enable WorldFrame Click Detection."] = "Activer la détection des clics WorldFrame",
-	["The UI must be reloaded in order to disable this module fully. Reload UI now?"] = "L'interface utilisateur doit être rechargée afin de désactiver complètement ce module. Recharger l'interface utilisateur maintenant ?",
 
 	--OffScreenTracker.lua
 	["WIM Window Off Screen"] = "Fenêtre WIM hors écran",
 	["Click to reposition."] = "Cliquez pour repositionner.",
-
-	--Misc
-	["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM a détecté que vous jouez sur un serveur privé. Certains serveurs ne peuvent pas traiter les ChatAddonMessages. Voulez-vous les activer quand même ?",
 
 	-- Whisper Mode Warnings
     ["Whisper Mode: In-line"] = "Mode de chuchotement : en ligne",
 	["Set whispers to In-line"] = "Régler les chuchotements sur en ligne",
 	["Message suppression requires whispers to be set to 'In-line'."] = "La suppression des messages nécessite que les chuchotements soient réglés sur 'En ligne'.",
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "Il est recommandé de régler les chuchotements sur En ligne afin de gérer correctement leur comportement.",
+
+	-- Skins --
+	["Blue"] = "Bleu",
+	["Green"] = "Vert",
+	["Red"] = "Rouge",
+	["Yellow"] = "Jaune",
 });

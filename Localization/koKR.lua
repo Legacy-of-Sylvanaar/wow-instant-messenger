@@ -14,9 +14,6 @@ WIM.AddLocale("koKR", {
     ["Yes"] = "예",
     ["No"] = "아니오",
     ["None"] = "없음",
-    ["<Right-Click>"] = "오른쪽 클릭",
-    ["<Left-Click>"] = "왼쪽 클릭",
-    ["OK"] = "확인",
     ["Cancel"] = "취소",
     ["Unknown"] = "알 수 없음",
     ["Click to update..."] = "클릭 - 위치 정보 갱신",
@@ -30,28 +27,8 @@ WIM.AddLocale("koKR", {
     ["state_raid"] = "레이드",
     ["state_other"] = "일반 (기타)",
 
-    ["A new version of WIM is available!\nYou can download the latest version from curse"] = "새로운 버전의 WIM이 이용 가능합니다!\n최신 버전은 Curse에서 다운로드할 수 있습니다.",
-
     ["Options"] = "옵션",
 
-    ["Icon Position"] = "아이콘 위치",
-    ["Font Size"] = "글자 크기",
-    ["Window Scale (Percent)"] = "창 크기 (%)",
-    ["Transparency (Percent)"] = "창 투명도 (%)",
-    ["Window Width"] = "창 넓이",
-    ["Window Height"] = "창 높이",
-    ["(Limited by shortcut bar)"] = "(단축바에 따른 제약이 있습니다.)",
-    ["ERROR"] = "에러",
-    ["Invalid Name!"] = "오류: 이름이 정확하지 않습니다.!",
-    ["Name is already used!"] = "오류: 이미 사용 중인 이름입니다.!",
-    ["Invalid Alias!"] = "오류: 별명이 정확하지 않습니다.!",
-    ["Invalid Keyword/Phrase!"] = "오류: 키워드/어구가 정확하지 않습니다.!",
-    ["Keyword/Phrase is already used!"] = "오류: 이미 사용 중인 키워드/어구 입니다.!",
-
-    ["Day"] = "하루",
-    ["Week"] = "일주일",
-    ["Month"] = "한 달",
-    ["Drag to set default spawn/position for message windows."] = "드래그해서 대화창이 생성될 \n기본 위치를 정하십시오.",
     ["Up"] = "위",
     ["Down"] = "아래",
     ["Left"] = "왼쪽",
@@ -60,62 +37,18 @@ WIM.AddLocale("koKR", {
     ["Block"] = "차단",
     ["Enable WIM"] = "WIM 사용",
 
-    ["Auto Close Friends after:"] = "친구와의 대화창 자동 종료 :",
-    ["Auto Close Non-Friends after:"] = "친구 이외의 대화창 자동 종료 :",
-
-    ["Display"] = "대화창 설정",
-    ["Incoming Messages"] = "받은 메세지",
-    ["Outgoing Messages"] = "보낸 메세지",
-    ["System Messages"] = "시스템 메세지",
-    ["Error Messages"] = "에러 메세지",
-    ["Web URLs"] = "Web URLs",
     ["Enable"] = "켜기",
     ["Disable"] = "끄기",
-    ["Enabled"] = "켜기",
-    ["Disabled"] = "끄기",
-    ["Display character information."] = "캐릭터 정보 보기",
-    ["Display time stamps"] = "도착 시간 보기",
-    ["This setting limits the\nwindow's minimum height."] = "이 설정은 대화창의 최대 높이에 제한을 줍니다.",
-    ["Requires /who querying."] = "/who 질의 포함",
     ["Enable window fading effects."] = "창 투명화 효과 기능",
-    ["Enable window animations."] = "창 애니메이션 기능",
-
-    ["Display minimap icon."] = "미니맵 아이콘 표시",
 
     ["General"] = "일반",
     ["History"] = "대화기록",
     ["Filters"] = "필터",
-    ["Plugins"] = "플러그인",
 
-    ["Auto focus when window is shown."] = "대화창 팝업 시 자동으로 커서를 입력창에 위치",
-    ["Preserve focus after sending messages."] = "메시지 전송 후 입력창에 커서 유지",
-    ["Display tooltips."] = "툴팁을 표시합니다.",
-    ["Show window when sending a message."] = "새 귓속말을 받을 때 대화창을 표시합니다",
-    ["Show window when message has been received."] = "답변을 받을 때 대화창을 표시합니다",
-    ["Suppress messages from default chat frame."] = "기본 채팅창의 대화 메세지를 막습니다",
-    ["Play sound when message is received."] = "메시지 도착 시 효과음 재생",
-    ["Play sound when message is sent."] = "메시지 보낼 때 효과음 재생",
-    ["Sort alphabetically."] = "대화 목록을 가나다순으로 정렬",
-    ["Use <Escape> to close windows."] = "ESC 키로 대화창 종료",
-    ["Windows will close when opening the world map."] = "지도를 열어 두고 ESC 키 사용 시 대화창도 함께 종료됩니다.",
-    ["Intercept slash commands."] = "귓속말 슬래시 명령어 사용 시 대화창 팝업",
-    ["Ignore arrow keys while typing."] = "타이핑중 화살표키 사용을 무시합니다",
-    ["Requires using <Alt> to navigate text."] = "<Alt>키를 사용하여 텍스트 이동",
-    ["Display emoticons."] = "이모티콘을 표시합니다",
-    ["Display URLs as item links."] = "웹 링크를 표시합니다",
-    ["Display floating item links."] = "아이템 링크를 표시합니다",
-
-    ["Cascade windows."] = "대화창 계단식 배열 사용",
-    ["Direction:"] = "방향:",
-    ["Tabs"] = "탭",
     ["Sort tabs by:"] = "탭 정렬 방식 :",
 	["Window Created"] = "창 생성됨",
 	["Last Activity"] = "마지막 활동",
     ["Alphabetical"] = "가나다순",
-    ["Recent Activity"] = "최근 대화 순",
-    ["Keep windows on top of your UI."] = "대화창을 항상 위에 표시",
-
-    ["Enable/Disable addon messages."] = "애드온 메시지를 활성화하거나 비활성화합니다",
 
     -- Class Names --
     ["Druid"] = LOCALIZED_CLASS_NAMES_MALE.DRUID,
@@ -152,7 +85,6 @@ WIM.AddLocale("koKR", {
     -- WIM.lua --
     ["Toggle WIM 'On' and 'Off'."] = "WIM을 켜고 끕니다",
     ["Toggle Debugging Mode 'On' and 'Off'."] = "WIM 디버그모드를 켜고 끕니다",
-    ["WIM is currently running. To access WIM's wide array of options type:"] = "현재 WIM이 사용중입니다. 사용할 수 있는 WIM의 옵션 :",
 
     -- Filters.lua --
     ["Whispers Sent by Addons"] = "애드온을 통해 귓속말",
@@ -173,6 +105,8 @@ WIM.AddLocale("koKR", {
     ["User must be at least level:"] = "유저의 최소 레벨",
     ["Apply to messages received."] = "메세지 받기 허용",
     ["Apply to messages sent."] = "메세지 보내기 허용",
+    ["Apply to:"] = "적용 대상:",
+    ["All Classes"] = "전체 클래스",
     ["Action to Perform:"] = "실행할 동작:",
     ["Allow"] = "허용",
     ["Ignore"] = "무시",
@@ -184,7 +118,6 @@ WIM.AddLocale("koKR", {
 
     -- History.lua --
     ["WIM History Button"] = "WIM 대화기록 버튼",
-    ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "메시지 창에서 %s 버튼을 클릭하면 해당 사용자의 대화 기록이 WIM 기록 보기 창에 표시됩니다.",
     ["Click to view message history."] = "클릭하면 대화기록을 볼 수 있습니다.",
     ["WIM pruned %d |4message:messages; from your history."] = "WIM이 대화 기록에서 메시지 %d개를 정리했습니다.",
     ["History Viewer"] = "기록 보기",
@@ -197,6 +130,7 @@ WIM.AddLocale("koKR", {
     ["Loading History"] = "기록 불러오는 중",
     ["Chat View"] = "대화 보기",
     ["Text View"] = "텍스트 보기",
+    ["BBCode"] = "BBCode",
     ["WIM History Viewer can be accessed any time by typing:"] = "다음 명령어를 입력하면 언제든지 WIM 기록 보기를 열 수 있습니다:",
     ["WIM History Viewer"] = "WIM 기록 보기",
     ["Display history viewer."] = "기록 보기를 표시합니다",
@@ -210,13 +144,11 @@ WIM.AddLocale("koKR", {
 
     -- Negotiate.lua --
     ["WIM Update Available!"] = "WIM 업데이트가 있습니다",
-    ["There is a newer version of WIM available for download. You can download it at %s."] = "새로운 버전의 WIM이 다운로드 가능합니다. %s에서 다운로드할 수 있습니다.",
 
     -- ShortcutBar.lua --
     ["Player Location"] = "현재 위치",
     ["Unknown"] = "알 수 없음",
     ["Click to update..."] = "클릭 - 위치 정보 갱신",
-    ["Coordinates"] = "좌표",
     ["Invite to Party"] = "파티 초대",
     ["Add Friend"] = "친구 추가",
     ["Ignore User"] = "차단 설정",
@@ -230,17 +162,12 @@ WIM.AddLocale("koKR", {
 	["Copy Name"] = "이름 복사",
 
     -- Tutorials.lua --
-    ["Display WIM tips"] = "WIM 팁 보여주기",
-
-    -- W2W.lua --
-    ["%s is typing..."] = "%s님이 타이핑 중...",
-    ["W2W Profile"] = "W2W(WIM to WIM) 프로필",
-    ["Talent Spec"] = "특성 스팩",
+    ["View Updates"] = "업데이트 보기",
 
     -- WhisperEngine.lua --
     ["Whisper Received!"] = "귓속말 받기",
-    ["You received a whisper which was hidden due to your current activity. You can change how whispers behave in WIM's options by typing"] = "현재 활동 상태로 인해 숨겨진 귓속말을 받았습니다. 귓속말 처리 방식은 WIM 옵션에서 다음 명령어를 입력해 변경할 수 있습니다:",
     ["Recently Sent Messages"] = "최근 보낸 메시지",
+    ["Users in %s"] = "%s 내 사용자",
 
     -- Clear.lua --
     ["You are about to clear all of WIM's history!"] = "WIM의 모든 대화 기록을 삭제합니다!",
@@ -252,17 +179,16 @@ WIM.AddLocale("koKR", {
 
     -- SlashHandler.lua --
     ["WIM Slash Commands"] = "WIM /명령어",
+    ["Hide or show {all, whisper, chat} windows."] = "{전체, 귓속말, 채팅} 창 숨기기 또는 보이기.",
     ["To see a list of available WIM slash commands type:"] = "사용 가능한 WIM 슬래시 명령어 목록을 보려면 다음을 입력하세요:",
     ["Display available slash commands."] = "사용 가능한 명령어를 표시합니다",
     ["Reload User Interface."] = "유저 인터페이스 재시작",
 
     -- TabHandler.lua --
     ["Manipulating Tabs"] = "탭 조작",
-    ["You can <Shift-Click> a tab and drag it out into it's own window."] = "<Shift-클릭>으로 탭을 선택한 뒤 끌어내면 별도의 창으로 분리할 수 있습니다.",
 
     -- WindowHandler.lua --
     ["Window Resized!"] = "창 크기가 변경되었습니다!",
-    ["If you want all windows to be this size, you can set the default window size within WIM's options."] = "모든 창을 이 크기로 사용하려면 WIM 옵션에서 기본 창 크기를 설정할 수 있습니다.",
     ["Creating Tab Groups"] = "탭 그룹 만들기",
     ["You can group two or many windows together by <Shift-Clicking> a window and dragging it on top of another."] = "Shift 클릭으로 창을 선택한 뒤 다른 창 위로 끌어다 놓으면 여러 창을 하나의 탭 그룹으로 묶을 수 있습니다.",
     ["Resizing Windows"] = "창 크기 조절",
@@ -270,17 +196,16 @@ WIM.AddLocale("koKR", {
     ["Demo Window"] = "데모 창",
 	["<Shift-Click> to close window."] = "Shift 클릭으로 창 닫기",
     ["Message Window Hidden"] = "메시지 창 숨김",
-    ["WIM's message window has been hidden to WIM's Minimap Icon. If you want to end a conversation, you may do so by <Shift-Clicking> the close button."] = "WIM 메시지 창이 미니맵 아이콘으로 숨겨졌습니다. 대화를 종료하려면 Shift 클릭으로 닫기 버튼을 누르세요.",
     ["Default"] = "기본값",
     ["%s is Away From Keyboard: %s"] = "%s님이 자리 비움 상태입니다: %s",
     ["%s does not wish to be disturbed: %s"] = "%s님은 현재 방해받고 싶지 않습니다: %s",
     ["Right-Mouse Click!"] = "오른쪽 버튼 클릭!",
     ["There might be useful tools hidden under the message box. Right-Click to see them!"] = "메시지 창 아래에 유용한 도구가 숨겨져 있을 수 있습니다. 오른쪽 클릭으로 확인하세요!",
 
-
     -- Options.lua --
     ["Display WIM's options."] = "WIM 옵션을 표시합니다.",
     ["Resetting WIM will clear all of your settings!"] = "WIM을 초기화하면 모든 설정이 삭제됩니다!",
+    ["A reset will reload your user interface."] = "초기화하면 사용자 인터페이스가 다시 로드됩니다.",
     ["Reset all options to default."] = "모든 옵션을 기본값으로 초기화합니다.",
 
     -- CoreOptions --
@@ -371,7 +296,6 @@ WIM.AddLocale("koKR", {
     ["Enable History"] = "대화 기록 사용",
     ["Messages"] = "메시지",
     ["Preview history inside message windows."] = "메시지 창에서 대화 기록을 미리 봅니다.",
-    ["Record Whispers"] = "귓속말 기록",
     ["Record Friends"] = "친구 대화 기록",
     ["Record Guild"] = "길드 대화 기록",
     ["Record Everyone"] = "모든 대화 기록",
@@ -425,44 +349,7 @@ WIM.AddLocale("koKR", {
     ["Does not apply to windows already opened."] = "이미 열린 창에는 적용되지 않습니다",
 
 	-- Talent Specs --
-    ["Affliction"] = "고통",
-    ["Arcane"] = "비전",
-    ["Arms"] = "무기",
-    ["Assassination"] = "암살",
-    ["Balance"] = "조화",
-    ["Beast Mastery"] = "야수",
-    ["Blood"] = "혈기",
-    ["Brewmaster"] = "양조",
-    ["Combat"] = "무법",
-    ["Demonology"] = "악마학",
-    ["Destruction"] = "파괴",
-    ["Discipline"] = "수양",
-    ["Elemental"] = "정기",
-    ["Enhancement"] = "고양",
-    ["Feral Combat"] = "야성",
-    ["Fire"] = "화염",
-    ["Frost"] = "냉기",
-    ["Fury"] = "분노",
-    ["Guardian"] = "수호",
-    ["Holy"] = "신성",
     ["Hybrid"] = "하이브리드",
-    ["Marksmanship"] = "사격",
-    ["Mistweaver"] = "운무",
-    ["Protection"] = "방어",
-    ["Restoration"] = "회복",
-    ["Retribution"] = "징벌",
-    ["Shadow"] = "암흑",
-    ["Subtlety"] = "잠행",
-    ["Survival"] = "생존",
-    ["Unholy"] = "부정",
-    ["Windwalker"] = "풍운",
-    ["Havok"] = "파멸",
-    ["Vengeance"] = "복수",
-
-    -- ChangeLog.lua --
-    ["Change Log"] = "바뀐 부분",
-    ["View WIM's change log."] = "WIM 바뀐 부분 보기",
-    ["Available For Download!"] = "다운로드 가능합니다!",
 
     -- Filters.lua --
     ["Show Alert"] = "알림 표시",
@@ -507,6 +394,7 @@ WIM.AddLocale("koKR", {
     ["Do not record history for this channel."] = "이 채널의 기록을 저장하지 않기",
     ["World Chat"] = "월드 채팅",
     ["Custom Chat"] = "사용자 채팅",
+    ["Community Chat"] = "커뮤니티 채팅",
     ["Chat"] = "채팅",
     ["Play special sound for %s."] = "%s에 대해 소리 재생",
     ["Play sound when a message is received."] = "메시지 수신 시 효과음 재생",
@@ -515,18 +403,20 @@ WIM.AddLocale("koKR", {
     ["No Sound"] = "소리 없음",
     ["Sensitivity"] = "민감도",
     ["Enable WorldFrame Click Detection."] = "WorldFrame 클릭 감지 사용",
-    ["The UI must be reloaded in order to disable this module fully. Reload UI now?"] = "이 모듈을 완전히 비활성화하려면 UI를 재시작해야 합니다. 지금 재시작하시겠습니까?",
 
     --OffScreenTracker.lua
     ["WIM Window Off Screen"] = "WIM 창이 화면 밖에 있습니다",
     ["Click to reposition."] = "클릭하여 위치 재조정",
-
-    --Misc
-    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = "WIM이 현재 프라이빗 서버에서 플레이 중임을 감지했습니다. 일부 서버는 ChatAddonMessages를 처리하지 못할 수 있습니다. 그래도 활성화하시겠습니까?",
 
     -- Whisper Mode Warnings
     ["Whisper Mode: In-line"] = "귓속말 모드: 인라인",
     ["Set whispers to In-line"] = "귓속말을 인라인으로 설정",
     ["Message suppression requires whispers to be set to 'In-line'."] = "메시지 숨김 기능을 사용하려면 귓속말이 '인라인'으로 설정되어 있어야 합니다.",
     ["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "귓속말의 동작을 올바르게 처리하려면 인라인 설정을 권장합니다.",
+
+    -- Skins --
+    ["Blue"] = "파란색",
+    ["Green"] = "초록색",
+    ["Red"] = "빨간색",
+    ["Yellow"] = "노란색",
 });

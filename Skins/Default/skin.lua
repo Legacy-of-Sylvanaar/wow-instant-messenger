@@ -432,7 +432,7 @@ local WIM_ClassicSkin = {
 };
 
 local WIM_ClassicSkin_Blue = {
-    title = "WIM Classic - Blue",
+    title = "WIM Classic - " .. WIM.L["Blue"],
     author = WIM_ClassicSkin.author,
     version = WIM_ClassicSkin.version,
     message_window = {
@@ -441,7 +441,7 @@ local WIM_ClassicSkin_Blue = {
 };
 
 local WIM_ClassicSkin_Green = {
-    title = "WIM Classic - Green",
+    title = "WIM Classic - " .. WIM.L["Green"],
     author = WIM_ClassicSkin.author,
     version = WIM_ClassicSkin.version,
     message_window = {
@@ -450,7 +450,7 @@ local WIM_ClassicSkin_Green = {
 };
 
 local WIM_ClassicSkin_Red = {
-    title = "WIM Classic - Red",
+    title = "WIM Classic - " .. WIM.L["Red"],
     author = WIM_ClassicSkin.author,
     version = WIM_ClassicSkin.version,
     message_window = {
@@ -459,7 +459,7 @@ local WIM_ClassicSkin_Red = {
 };
 
 local WIM_ClassicSkin_Yellow = {
-    title = "WIM Classic - Yellow",
+    title = "WIM Classic - " .. WIM.L["Yellow"],
     author = WIM_ClassicSkin.author,
     version = WIM_ClassicSkin.version,
     message_window = {

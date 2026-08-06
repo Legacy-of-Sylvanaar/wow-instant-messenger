@@ -14,9 +14,6 @@ WIM.AddLocale("enUS", {
     ["Yes"] = true,
     ["No"] = true,
     ["None"] = true,
-    ["<Right-Click>"] = true,
-    ["<Left-Click>"] = true,
-    ["OK"] = true,
     ["Cancel"] = true,
     ["Unknown"] = true,
     ["Click to update..."] = true,
@@ -30,28 +27,8 @@ WIM.AddLocale("enUS", {
     ["state_raid"] = "Raid Instance",
     ["state_other"] = "Normal (Other)",
 
-    ["A new version of WIM is available!\nYou can download the latest version from curse"] = true,
-
     ["Options"] = true,
 
-    ["Icon Position"] = true,
-    ["Font Size"] = true,
-    ["Window Scale (Percent)"] = true,
-    ["Transparency (Percent)"] = true,
-    ["Window Width"] = true,
-    ["Window Height"] = true,
-    ["(Limited by shortcut bar)"] = true,
-    ["ERROR"] = true,
-    ["Invalid Name!"] = true,
-    ["Name is already used!"] = true,
-    ["Invalid Alias!"] = true,
-    ["Invalid Keyword/Phrase!"] = true,
-    ["Keyword/Phrase is already used!"] = true,
-
-    ["Day"] = true,
-    ["Week"] = true,
-    ["Month"] = true,
-    ["Drag to set default spawn/position for message windows."] = true,
     ["Up"] = true,
     ["Down"] = true,
     ["Left"] = true,
@@ -60,63 +37,20 @@ WIM.AddLocale("enUS", {
     ["Block"] = true,
     ["Enable WIM"] = true,
 
-    ["Auto Close Friends after:"] = true,
-    ["Auto Close Non-Friends after:"] = true,
-
-    ["Display"] = true,
-    ["Incoming Messages"] = true,
-    ["Outgoing Messages"] = true,
-    ["System Messages"] = true,
-    ["Error Messages"] = true,
-    ["Web URLs"] = true,
     ["Enable"] = true,
     ["Disable"] = true,
-    ["Enabled"] = true,
-    ["Disabled"] = true,
-    ["Display character information."] = true,
-    ["Display time stamps"] = true,
-    ["This setting limits the\nwindow's minimum height."] = true,
-    ["Requires /who querying."] = true,
     ["Enable window fading effects."] = true,
-    ["Enable window animations."] = true,
-
-    ["Display minimap icon."] = true,
 
     ["General"] = true,
     ["History"] = true,
     ["Filters"] = true,
-    ["Plugins"] = true,
 
-    ["Auto focus when window is shown."] = true,
-    ["Preserve focus after sending messages."] = true,
-    ["Display tooltips."] = true,
-    ["Show window when sending a message."] = true,
-    ["Show window when message has been received."] = true,
-    ["Suppress messages from default chat frame."] = true,
-    ["Play sound when message is received."] = true,
-    ["Play sound when message is sent."] = true,
-    ["Sort alphabetically."] = true,
-    ["Use <Escape> to close windows."] = true,
-    ["Windows will close when opening the world map."] = true,
-    ["Intercept slash commands."] = true,
 	["Include sent messages in /REPLY."] = true,
-    ["Ignore arrow keys while typing."] = true,
-    ["Requires using <Alt> to navigate text."] = true,
-    ["Display emoticons."] = true,
-    ["Display URLs as item links."] = true,
-    ["Display floating item links."] = true,
 
-    ["Cascade windows."] = true,
-    ["Direction:"] = true,
-    ["Tabs"] = true,
     ["Sort tabs by:"] = true,
 	["Window Created"] = true,
 	["Last Activity"] = true,
     ["Alphabetical"] = true,
-    ["Recent Activity"] = true,
-    ["Keep windows on top of your UI."] = true,
-
-    ["Enable/Disable addon messages."] = true,
 
     -- Class Names --
     ["Druid"] = LOCALIZED_CLASS_NAMES_MALE.DRUID,
@@ -153,7 +87,6 @@ WIM.AddLocale("enUS", {
     -- WIM.lua --
     ["Toggle WIM 'On' and 'Off'."] = true,
     ["Toggle Debugging Mode 'On' and 'Off'."] = true,
-    ["WIM is currently running. To access WIM's wide array of options type:"] = true,
 
     -- Filters.lua --
     ["Whispers Sent by Addons"] = true,
@@ -174,6 +107,8 @@ WIM.AddLocale("enUS", {
     ["User must be at least level:"] = true,
     ["Apply to messages received."] = true,
     ["Apply to messages sent."] = true,
+    ["Apply to:"] = true,
+    ["All Classes"] = true,
     ["Action to Perform:"] = true,
     ["Allow"] = true,
     ["Ignore"] = true,
@@ -185,7 +120,6 @@ WIM.AddLocale("enUS", {
 
     -- History.lua --
     ["WIM History Button"] = true,
-    ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = true,
     ["Click to view message history."] = true,
     ["WIM pruned %d |4message:messages; from your history."] = true,
     ["History Viewer"] = true,
@@ -198,6 +132,7 @@ WIM.AddLocale("enUS", {
     ["Loading History"] = true,
     ["Chat View"] = true,
     ["Text View"] = true,
+    ["BBCode"] = true,
     ["WIM History Viewer can be accessed any time by typing:"] = true,
     ["WIM History Viewer"] = true,
     ["Display history viewer."] = true,
@@ -211,13 +146,11 @@ WIM.AddLocale("enUS", {
 
     -- Negotiate.lua --
     ["WIM Update Available!"] = true,
-    ["There is a newer version of WIM available for download. You can download it at %s."] = true,
 
     -- ShortcutBar.lua --
     ["Player Location"] = true,
     ["Unknown"] = true,
     ["Click to update..."] = true,
-    ["Coordinates"] = true,
     ["Invite to Party"] = true,
     ["Add Friend"] = true,
     ["Ignore User"] = true,
@@ -231,17 +164,12 @@ WIM.AddLocale("enUS", {
 	["Copy Name"] = true,
 
     -- Tutorials.lua --
-    ["Display WIM tips"] = true,
-
-    -- W2W.lua --
-    ["%s is typing..."] = true,
-    ["W2W Profile"] = true,
-    ["Talent Spec"] = true,
+    ["View Updates"] = true,
 
     -- WhisperEngine.lua --
     ["Whisper Received!"] = true,
-    ["You received a whisper which was hidden due to your current activity. You can change how whispers behave in WIM's options by typing"] = true,
     ["Recently Sent Messages"] = true,
+    ["Users in %s"] = true,
 
     -- Clear.lua --
     ["You are about to clear all of WIM's history!"] = true,
@@ -253,17 +181,16 @@ WIM.AddLocale("enUS", {
 
     -- SlashHandler.lua --
     ["WIM Slash Commands"] = true,
+    ["Hide or show {all, whisper, chat} windows."] = true,
     ["To see a list of available WIM slash commands type:"] = true,
     ["Display available slash commands."] = true,
     ["Reload User Interface."] = true,
 
     -- TabHandler.lua --
     ["Manipulating Tabs"] = true,
-    ["You can <Shift-Click> a tab and drag it out into it's own window."] = true,
 
     -- WindowHandler.lua --
     ["Window Resized!"] = true,
-    ["If you want all windows to be this size, you can set the default window size within WIM's options."] = true,
     ["Creating Tab Groups"] = true,
     ["You can group two or many windows together by <Shift-Clicking> a window and dragging it on top of another."] = true,
     ["Resizing Windows"] = true,
@@ -271,7 +198,6 @@ WIM.AddLocale("enUS", {
     ["Demo Window"] = true,
     ["<Shift-Click> to close window."] = true,
     ["Message Window Hidden"] = true,
-    ["WIM's message window has been hidden to WIM's Minimap Icon. If you want to end a conversation, you may do so by <Shift-Clicking> the close button."] = true,
     ["Default"] = true,
     ["%s is Away From Keyboard: %s"] = true,
     ["%s does not wish to be disturbed: %s"] = true,
@@ -281,6 +207,7 @@ WIM.AddLocale("enUS", {
     -- Options.lua --
     ["Display WIM's options."] = true,
     ["Resetting WIM will clear all of your settings!"] = true,
+    ["A reset will reload your user interface."] = true,
     ["Reset all options to default."] = true,
 
     -- CoreOptions --
@@ -370,7 +297,6 @@ WIM.AddLocale("enUS", {
     ["Enable History"] = true,
     ["Messages"] = true,
     ["Preview history inside message windows."] = true,
-    ["Record Whispers"] = true,
     ["Record Friends"] = true,
     ["Record Guild"] = true,
     ["Record Everyone"] = true,
@@ -424,44 +350,7 @@ WIM.AddLocale("enUS", {
 	["Does not apply to windows already opened."] = true,
 
 	-- Talent Specs --
-	["Affliction"] = true,
-	["Arcane"] = true,
-	["Arms"] = true,
-    ["Assassination"] = true,
-    ["Balance"] = true,
-    ["Beast Mastery"] = true,
-    ["Blood"] = true,
-    ["Brewmaster"] = true,
-    ["Combat"] = true,
-    ["Demonology"] = true,
-    ["Destruction"] = true,
-    ["Discipline"] = true,
-    ["Elemental"] = true,
-    ["Enhancement"] = true,
-    ["Feral Combat"] = true,
-    ["Fire"] = true,
-    ["Frost"] = true,
-    ["Fury"] = true,
-    ["Guardian"] = true,
-    ["Holy"] = true,
     ["Hybrid"] = true,
-    ["Marksmanship"] = true,
-    ["Mistweaver"] = true,
-    ["Protection"] = true,
-    ["Restoration"] = true,
-    ["Retribution"] = true,
-    ["Shadow"] = true,
-    ["Subtlety"] = true,
-    ["Survival"] = true,
-    ["Unholy"] = true,
-    ["Windwalker"] = true,
-    ["Havok"] = true,
-    ["Vengeance"] = true,
-
-    -- ChangeLog.lua --
-    ["Change Log"] = true,
-    ["View WIM's change log."] = true,
-    ["Available For Download!"] = true,
 
     -- Filters.lua --
     ["Show Alert"] = true,
@@ -515,18 +404,20 @@ WIM.AddLocale("enUS", {
     ["No Sound"] = true,
     ["Sensitivity"] = true,
     ["Enable WorldFrame Click Detection."] = true,
-    ["The UI must be reloaded in order to disable this module fully. Reload UI now?"] = true,
 
     --OffScreenTracker.lua
     ["WIM Window Off Screen"] = true,
     ["Click to reposition."] = true,
-
-    --Misc
-    ["WIM has detected that you are playing on a private server. Some servers can not process ChatAddonMessages. Would you like to enable them anyway?"] = true,
 
 	-- Whisper Mode Warnings
 	["Whisper Mode: In-line"] = true,
 	["Set whispers to In-line"] = true,
 	["Message suppression requires whispers to be set to 'In-line'."] = true,
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = true,
+
+	-- Skins --
+	["Blue"] = true,
+	["Green"] = true,
+	["Red"] = true,
+	["Yellow"] = true,
 });
