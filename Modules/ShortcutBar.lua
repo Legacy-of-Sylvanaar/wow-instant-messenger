@@ -162,6 +162,7 @@ local function createShortCutBar(win)
 			end
 			for i=1,#buttons do
 				self.buttons[i].index = i;
+				self.buttons[i].parentWindow = self.parentWindow;
 				self.buttons[i]:SetNormalTexture(skin.buttons.NormalTexture);
 				self.buttons[i]:SetPushedTexture(skin.buttons.PushedTexture);
 				self.buttons[i]:SetHighlightTexture(skin.buttons.HighlightTexture, skin.buttons.HighlightAlphaMode);
@@ -303,14 +304,17 @@ function ShortcutBar:FRIENDLIST_UPDATE()
 			friend = i;
 		end
 	end
+	if(not friend) then
+		return;
+	end
 	for widget in Widgets("shortcuts") do
-		if(lists.friends[widget.parentWindow.theUser] or _G.UnitName("player") == widget.parentWindow.theUser) then
-			if(friend) then
-				widget.buttons[friend]:Disable();
-			end
-		else
-			if(friend) then
-				widget.buttons[friend]:Enable();
+		-- friend index is from the whisper button table; other window types (chat) have their own button sets.
+		local button = widget.type == "whisper" and widget.buttons[friend];
+		if(button and widget.parentWindow) then
+			if(lists.friends[widget.parentWindow.theUser] or _G.UnitName("player") == widget.parentWindow.theUser) then
+				button:Disable();
+			else
+				button:Enable();
 			end
 		end
 	end
