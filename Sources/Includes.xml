@@ -18,4 +18,6 @@
     <Script file="Options\Options.lua" />
     <Script file="Options\OptionsTookKit.lua" />
     <Script file="Options\CoreOptions.lua" />
+
+	<script file="Options\AddonOptions.lua" />
 </Ui>
