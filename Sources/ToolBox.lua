@@ -331,6 +331,7 @@ function WIM.dPrint(t)
     end
 end
 
+WIM.dump = _G.DevTools_Dump
 
 function dumpGlobals()
     local tmp = {};
