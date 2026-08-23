@@ -423,6 +423,11 @@ local function buildFontBrowser()
     if (not ok or not scroll) then
         scroll = CreateFrame("ScrollFrame", "WIM3_ModernFontScrollFrame", border, "UIPanelScrollFrameTemplate");
     end
+    -- Classic-flavor clients ship both templates with the old wide
+    -- scrollbar; swap it for the slim one either way.
+    if (not HasPortraitPanelArt()) then
+        AttachMinimalScrollBar(scroll, border);
+    end
     scroll:SetPoint("TOPLEFT", 4, -4);
     scroll:SetPoint("BOTTOMRIGHT", -24, 4);
     local content = CreateFrame("Frame", nil, scroll);
@@ -586,6 +591,9 @@ local function makeFilterHolder(isChat)
     if (not ok or not scroll) then
         scroll = CreateFrame("ScrollFrame", "WIM3_ModernFilterScroll"..(isChat and "Chat" or "Whisper"),
             border, "UIPanelScrollFrameTemplate");
+    end
+    if (not HasPortraitPanelArt()) then
+        AttachMinimalScrollBar(scroll, border);
     end
     scroll:SetPoint("TOPLEFT", 4, -4);
     scroll:SetPoint("BOTTOMRIGHT", -24, 4);
@@ -788,6 +796,9 @@ local function makeChannelHolder(channelType, listFun)
     if (not ok or not scroll) then
         scroll = CreateFrame("ScrollFrame", "WIM3_ModernChannelScroll"..channelType,
             border, "UIPanelScrollFrameTemplate");
+    end
+    if (not HasPortraitPanelArt()) then
+        AttachMinimalScrollBar(scroll, border);
     end
     scroll:SetPoint("TOPLEFT", 4, -4);
     scroll:SetPoint("BOTTOMRIGHT", -24, 4);

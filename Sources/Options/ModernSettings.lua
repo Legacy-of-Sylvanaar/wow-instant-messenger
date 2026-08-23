@@ -648,6 +648,17 @@ local function registerCategory()
                 return not SkinLocksOptionsStyle();
             end);
         end
+        -- Some clients' settings code ignores modify predicates on
+        -- button rows; enforcing the state as the row initializes
+        -- covers them all.
+        local origInitFrame = classicButton.InitFrame;
+        classicButton.InitFrame = function(self, frame)
+            origInitFrame(self, frame);
+            local button = frame and frame.Button;
+            if (button and button.SetEnabled) then
+                button:SetEnabled(not SkinLocksOptionsStyle());
+            end
+        end;
         layout:AddInitializer(classicButton);
     end
 

@@ -214,7 +214,7 @@ function ApplyChromeBackgroundChoice(texture, key)
     if(entry.color) then
         texture:SetColorTexture(entry.color[1], entry.color[2],
             entry.color[3], entry.color[4]);
-        return;
+        return entry;
     end
     local tile = entry.tile and true or false;
     texture:SetTexture(entry.file, tile, tile);
@@ -223,6 +223,38 @@ function ApplyChromeBackgroundChoice(texture, key)
     texture:SetTexCoord(0, 1, 0, 1);
     local tint = entry.tint or 1;
     texture:SetVertexColor(tint, tint, tint, 1);
+    return entry;
+end
+
+-- Paints a catalog choice across cut-out strips. Tiling materials keep
+-- their own repeat, but a picture (a stretch entry) must read as ONE
+-- image with the well cut out of it, so each strip is windowed to the
+-- part of the picture that falls under it. The area texture's
+-- rectangle defines the full picture; rects unresolved on the first
+-- pass are picked up by the callers' size hooks.
+function ApplyChromeBackgroundToStrips(strips, area, key)
+    local entry;
+    for i=1, #strips do
+        entry = ApplyChromeBackgroundChoice(strips[i], key);
+    end
+    if(not entry or entry.color or entry.tile) then
+        return;
+    end
+    local areaLeft, areaBottom, areaWidth, areaHeight = area:GetRect();
+    if(not areaLeft or not areaWidth
+            or areaWidth <= 0 or areaHeight <= 0) then
+        return;
+    end
+    for i=1, #strips do
+        local left, bottom, width, height = strips[i]:GetRect();
+        if(left and width and width > 0 and height > 0) then
+            strips[i]:SetTexCoord(
+                (left - areaLeft) / areaWidth,
+                (left + width - areaLeft) / areaWidth,
+                1 - ((bottom + height - areaBottom) / areaHeight),
+                1 - ((bottom - areaBottom) / areaHeight));
+        end
+    end
 end
 
 local SelectedSkin;
@@ -795,6 +827,16 @@ local function buildWindowChrome(obj)
     if(chrome.input) then chrome.input.parentWindow = obj; end
     if(chrome.scrollBar) then chrome.scrollBar.parentWindow = obj; end
 
+    -- Resizing moves the strips; picture backgrounds re-window so the
+    -- image stays continuous (see ApplyChromeBackgroundToStrips).
+    obj:HookScript("OnSizeChanged", function()
+        local liveTheme = db and db.modernTheme;
+        if(liveTheme and liveTheme.chatCutout and chrome:IsShown()) then
+            ApplyChromeBackgroundToStrips(chrome.strips, chrome.bg,
+                liveTheme.chatFrame);
+        end
+    end);
+
     obj.wimChrome = chrome;
     return true;
 end
@@ -822,41 +864,100 @@ local function styleWindowStepper(button, up)
     button:SetSize(16, 11);
 end
 
--- Restyles a classic UIPanelScrollBar with the minimal scrollbar art.
--- The modern options panels prefer the generic ScrollFrameTemplate,
--- which carries this look natively; clients whose template predates it
--- (classic era) fall back to the classic scroll frame and route its
--- scrollbar through here. No-op without the atlases.
-function StyleMinimalScrollBar(bar)
-    if(not bar or not getAtlasInfo("minimal-scrollbar-small-thumb-middle")
-            or not getAtlasInfo("minimal-scrollbar-arrow-top")
+-- A minimal-art scrollbar for a plain ScrollFrame, for clients whose
+-- generic scroll template still carries the old wide scrollbar
+-- (classic era; probed via HasPortraitPanelArt at the call sites).
+-- Whatever scrollbar the template attached is hidden and a slim
+-- slider takes its place, built from the same pieces as the themed
+-- chat-window scrollbar. No-op without the atlases.
+function AttachMinimalScrollBar(scroll, host)
+    if(not getAtlasInfo("minimal-scrollbar-small-thumb-middle")
             or not getAtlasInfo("minimal-scrollbar-track-top")) then
         return false;
     end
-    local name = bar.GetName and bar:GetName();
-    local up = bar.ScrollUpButton or (name and _G[name.."ScrollUpButton"]);
-    local down = bar.ScrollDownButton or (name and _G[name.."ScrollDownButton"]);
-    if(up) then styleWindowStepper(up, true); end
-    if(down) then styleWindowStepper(down, false); end
-    local thumb = bar.GetThumbTexture and bar:GetThumbTexture();
-    if(thumb) then
-        thumb:SetAtlas("minimal-scrollbar-small-thumb-middle");
-        thumb:SetTexCoord(0, 1, 0, 1);
-        thumb:SetSize(8, 40);
+    local name = scroll.GetName and scroll:GetName();
+    local old = scroll.ScrollBar or (name and _G[name.."ScrollBar"]);
+    if(old and old.Hide) then
+        old:Hide();
+        if(old.HookScript) then
+            pcall(old.HookScript, old, "OnShow", function(self) self:Hide(); end);
+        end
     end
-    if(not bar.wimMinimalTrack) then
-        local trackTop = bar:CreateTexture(nil, "BACKGROUND");
-        trackTop:SetAtlas("minimal-scrollbar-track-top", true);
-        trackTop:SetPoint("TOP");
-        local trackBottom = bar:CreateTexture(nil, "BACKGROUND");
-        trackBottom:SetAtlas("minimal-scrollbar-track-bottom", true);
-        trackBottom:SetPoint("BOTTOM");
-        local trackMiddle = bar:CreateTexture(nil, "BACKGROUND");
-        trackMiddle:SetAtlas("!minimal-scrollbar-track-middle");
-        trackMiddle:SetPoint("TOPLEFT", trackTop, "BOTTOMLEFT");
-        trackMiddle:SetPoint("BOTTOMRIGHT", trackBottom, "TOPRIGHT");
-        bar.wimMinimalTrack = true;
+
+    local bar = CreateFrame("Slider", nil, host);
+    bar:SetOrientation("VERTICAL");
+    bar:SetWidth(16);
+    bar:SetFrameLevel(scroll:GetFrameLevel() + 2);
+    bar:SetPoint("TOPRIGHT", host, "TOPRIGHT", -6, -12);
+    bar:SetPoint("BOTTOMRIGHT", host, "BOTTOMRIGHT", -6, 12);
+    bar:SetMinMaxValues(0, 0);
+    bar:SetValueStep(1);
+    bar:SetValue(0);
+    local thumb = bar:CreateTexture(nil, "OVERLAY");
+    bar:SetThumbTexture(thumb);
+    thumb:SetAlpha(0);
+    local capTop = bar:CreateTexture(nil, "ARTWORK");
+    capTop:SetAtlas("minimal-scrollbar-small-thumb-top", true);
+    capTop:SetPoint("TOP", thumb, "TOP");
+    local capBottom = bar:CreateTexture(nil, "ARTWORK");
+    capBottom:SetAtlas("minimal-scrollbar-small-thumb-bottom", true);
+    capBottom:SetPoint("BOTTOM", thumb, "BOTTOM");
+    local body = bar:CreateTexture(nil, "ARTWORK");
+    body:SetAtlas("minimal-scrollbar-small-thumb-middle");
+    body:SetPoint("TOPLEFT", capTop, "BOTTOMLEFT");
+    body:SetPoint("BOTTOMRIGHT", capBottom, "TOPRIGHT");
+    local trackTop = bar:CreateTexture(nil, "BACKGROUND");
+    trackTop:SetAtlas("minimal-scrollbar-track-top", true);
+    trackTop:SetPoint("TOP");
+    local trackBottom = bar:CreateTexture(nil, "BACKGROUND");
+    trackBottom:SetAtlas("minimal-scrollbar-track-bottom", true);
+    trackBottom:SetPoint("BOTTOM");
+    local trackMiddle = bar:CreateTexture(nil, "BACKGROUND");
+    trackMiddle:SetAtlas("!minimal-scrollbar-track-middle");
+    trackMiddle:SetPoint("TOPLEFT", trackTop, "BOTTOMLEFT");
+    trackMiddle:SetPoint("BOTTOMRIGHT", trackBottom, "TOPRIGHT");
+
+    local function sizeThumb()
+        local trackHeight = bar:GetHeight() or 0;
+        local thumbHeight = 40;
+        if(trackHeight > 0) then
+            local cap = _G.math.floor(trackHeight * 0.6);
+            if(cap < 20) then cap = 20; end
+            if(thumbHeight > cap) then thumbHeight = cap; end
+        end
+        thumb:SetSize(8, thumbHeight);
+        local info = getAtlasInfo("minimal-scrollbar-small-thumb-middle");
+        if(info and info.height and info.height > 0) then
+            local extent = (thumbHeight - 16) / info.height;
+            if(extent > 1) then extent = 1; end
+            body:SetTexCoord(0, 1, 0, extent);
+        end
     end
+    bar:HookScript("OnSizeChanged", sizeThumb);
+    sizeThumb();
+
+    bar:SetScript("OnValueChanged", function(self, value)
+        if(not self.wimSyncing) then
+            scroll:SetVerticalScroll(value);
+        end
+    end);
+    scroll:HookScript("OnScrollRangeChanged", function(_, _, yrange)
+        yrange = yrange or 0;
+        if(yrange < 0) then yrange = 0; end
+        bar.wimSyncing = true;
+        bar:SetMinMaxValues(0, yrange);
+        local offset = scroll:GetVerticalScroll() or 0;
+        bar:SetValue(offset < yrange and offset or yrange);
+        bar.wimSyncing = false;
+        bar:SetShown(yrange > 1);
+        sizeThumb();
+    end);
+    scroll:HookScript("OnVerticalScroll", function(_, offset)
+        bar.wimSyncing = true;
+        bar:SetValue(offset or 0);
+        bar.wimSyncing = false;
+    end);
+    bar:Hide();
     return true;
 end
 
@@ -1904,14 +2005,16 @@ function ApplyModernThemeToWindow(obj)
     end
     for i=1, #chrome.strips do
         chrome.strips[i]:SetShown(cutout);
-        if(cutout) then
-            ApplyChromeBackgroundChoice(chrome.strips[i], theme.chatFrame);
-        end
     end
     ApplyChromeBackgroundChoice(chrome.well.bg, theme.chatPanel);
 
     LayoutThemedInput(obj);
     LayoutThemedHeader(obj);
+
+    -- Strips paint after the layout passes above settle their rects.
+    if(cutout) then
+        ApplyChromeBackgroundToStrips(chrome.strips, chrome.bg, theme.chatFrame);
+    end
 
     -- The corner button: minimize glyph at rest, the X while SHIFT
     -- is held (see UpdateThemedCloseArt).
