@@ -429,6 +429,17 @@ function ApplySkinToWindow(obj)
         close:SetPushedTexture(SelectedSkin.message_window.widgets.close.state_close.PushedTexture);
         close:SetHighlightTexture(SelectedSkin.message_window.widgets.close.state_close.HighlightTexture, SelectedSkin.message_window.widgets.close.state_close.HighlightAlphaMode);
     end
+    -- Setting a state texture file does not reset texture coordinates,
+    -- and the themed corner button windows its states into padded art
+    -- (ApplyRedButtonArt); without the reset the classic art draws
+    -- cropped and off-center after a switch back.
+    local closeStates = { close:GetNormalTexture(), close:GetPushedTexture(),
+        close:GetHighlightTexture() };
+    for i = 1, #closeStates do
+        if(closeStates[i]) then
+            closeStates[i]:SetTexCoord(0, 1, 0, 1);
+        end
+    end
 
     --scroll_up button
     local scroll_up = obj.widgets.scroll_up;
@@ -1631,6 +1642,35 @@ end
 -- hides the window) and swaps to the X while SHIFT is held, because
 -- SHIFT-click closes the conversation. The art always shows what the
 -- click will do. curTextureIndex 2 is the always-close state.
+-- The corner-button art. Retail resolves these atlas names to 2x art,
+-- but classic flavors ship only the 1x sheet, which upscales blurry at
+-- the 24px button size; clients without the portrait panel art paint
+-- the addon's shipped copies of the retail 2x pieces instead. The art
+-- occupies 36x38 of each padded 64x64 file. Returns true when the name
+-- is one of the corner-button pieces.
+local SHIPPED_RED_BUTTONS = {
+    ["RedButton-Exit"] = "redbutton_exit",
+    ["RedButton-exit-pressed"] = "redbutton_exit_pressed",
+    ["redbutton-condense"] = "redbutton_condense",
+    ["redbutton-condense-pressed"] = "redbutton_condense_pressed",
+    ["RedButton-Highlight"] = "redbutton_highlight",
+};
+function ApplyRedButtonArt(texture, atlasName)
+    local shipped = texture and SHIPPED_RED_BUTTONS[atlasName];
+    if(not shipped) then
+        return false;
+    end
+    if(HasPortraitPanelArt()) then
+        texture:SetAtlas(atlasName);
+        texture:SetTexCoord(0, 1, 0, 1);
+    else
+        texture:SetTexture("Interface\\AddOns\\"..addonTocName
+            .."\\Skins\\Modern\\"..shipped..".png");
+        texture:SetTexCoord(0, 36 / 64, 0, 38 / 64);
+    end
+    return true;
+end
+
 function UpdateThemedCloseArt(obj)
     local close = obj.widgets and obj.widgets.close;
     if(not (close and close.GetNormalTexture)) then return; end
@@ -1638,43 +1678,15 @@ function UpdateThemedCloseArt(obj)
     local normal = close:GetNormalTexture();
     local pushed = close:GetPushedTexture();
     local highlight = close:GetHighlightTexture();
-    if(getAtlasInfo("RedButton-Exit")) then
-        local normalAtlas = closes and "RedButton-Exit" or "redbutton-condense";
-        local pushedAtlas = closes and "RedButton-exit-pressed" or "redbutton-condense-pressed";
-        if(normal) then
-            normal:SetAtlas(normalAtlas);
-            normal:SetTexCoord(0, 1, 0, 1);
-        end
-        if(pushed) then
-            pushed:SetAtlas(pushedAtlas);
-            pushed:SetTexCoord(0, 1, 0, 1);
-        end
-        if(highlight) then
-            highlight:SetAtlas("RedButton-Highlight");
-            highlight:SetTexCoord(0, 1, 0, 1);
-            highlight:SetBlendMode("ADD");
-        end
-    else
-        -- Clients without the RedButton art use the panel button files
-        -- every client ships: the corner X for close, the square minus
-        -- for the condense state.
-        local normalFile = closes and "Interface\\Buttons\\UI-Panel-MinimizeButton-Up"
-            or "Interface\\Buttons\\UI-MinusButton-Up";
-        local pushedFile = closes and "Interface\\Buttons\\UI-Panel-MinimizeButton-Down"
-            or "Interface\\Buttons\\UI-MinusButton-Down";
-        if(normal) then
-            normal:SetTexture(normalFile);
-            normal:SetTexCoord(0, 1, 0, 1);
-        end
-        if(pushed) then
-            pushed:SetTexture(pushedFile);
-            pushed:SetTexCoord(0, 1, 0, 1);
-        end
-        if(highlight) then
-            highlight:SetTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Highlight");
-            highlight:SetTexCoord(0, 1, 0, 1);
-            highlight:SetBlendMode("ADD");
-        end
+    if(normal) then
+        ApplyRedButtonArt(normal, closes and "RedButton-Exit" or "redbutton-condense");
+    end
+    if(pushed) then
+        ApplyRedButtonArt(pushed, closes and "RedButton-exit-pressed" or "redbutton-condense-pressed");
+    end
+    if(highlight) then
+        ApplyRedButtonArt(highlight, "RedButton-Highlight");
+        highlight:SetBlendMode("ADD");
     end
     close:SetSize(24, 24);
     close:ClearAllPoints();

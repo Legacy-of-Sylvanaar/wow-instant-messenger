@@ -1000,6 +1000,13 @@ local function createHistoryViewer()
     -- original art would crop the new glyph.
     local function applyCloseArt(texture, art, blend)
         if(not texture or not art) then return; end
+        -- Corner-button pieces route through the shipped copies on
+        -- clients whose own sheet is low resolution; the helper sets
+        -- its own texcoord window.
+        if(ApplyRedButtonArt(texture, art)) then
+            if(blend) then texture:SetBlendMode(blend); end
+            return;
+        end
         if(string.find(art, "\\", 1, true)) then
             texture:SetTexture(art);
         elseif(getAtlasInfo(art)) then
@@ -3820,6 +3827,13 @@ local function createHistoryViewer()
             pb.delete:SetNormalAtlas("RedButton-Exit");
             pb.delete:SetPushedAtlas("RedButton-exit-pressed");
             pb.delete:SetHighlightAtlas("RedButton-Highlight", "ADD");
+            -- Repaint the states through the shared corner-button
+            -- helper, so clients with the low-resolution sheet get the
+            -- shipped 2x pieces here too.
+            ApplyRedButtonArt(pb.delete:GetNormalTexture(), "RedButton-Exit");
+            ApplyRedButtonArt(pb.delete:GetPushedTexture(), "RedButton-exit-pressed");
+            ApplyRedButtonArt(pb.delete:GetHighlightTexture(), "RedButton-Highlight");
+            pb.delete:GetHighlightTexture():SetBlendMode("ADD");
             pb.delete:GetHighlightTexture():SetAlpha(1);
         else
             if(pb.bar.wimTrack) then
@@ -3833,6 +3847,15 @@ local function createHistoryViewer()
             pb.text:SetPoint("BOTTOMLEFT", pb.bar, "TOPLEFT", 0, 5);
             pb.delete:SetNormalTexture("Interface\\AddOns\\"..addonTocName.."\\Modules\\Textures\\xNormal");
             pb.delete:SetPushedTexture("Interface\\AddOns\\"..addonTocName.."\\Modules\\Textures\\xPressed");
+            -- Setting a file does not reset texture coordinates; the
+            -- modern branch windows these states into padded art.
+            local deleteStates = { pb.delete:GetNormalTexture(),
+                pb.delete:GetPushedTexture() };
+            for i = 1, #deleteStates do
+                if(deleteStates[i]) then
+                    deleteStates[i]:SetTexCoord(0, 1, 0, 1);
+                end
+            end
             local highlight = pb.delete:GetHighlightTexture();
             if(highlight) then
                 highlight:SetAlpha(0);
