@@ -490,6 +490,13 @@ local function ensureBugReportHolder()
                     local name = self:GetName();
                     local editBox = self.editBox or (name and _G[name.."EditBox"]);
                     if (editBox) then
+                        -- Classic dialogs are narrower than the
+                        -- requested width; keep the box inside the
+                        -- frame.
+                        local maxWidth = (self:GetWidth() or 0) - 40;
+                        if (maxWidth > 100 and editBox:GetWidth() > maxWidth) then
+                            editBox:SetWidth(maxWidth);
+                        end
                         editBox:SetText(BUG_REPORT_URL);
                         editBox:HighlightText();
                         editBox:SetFocus();
