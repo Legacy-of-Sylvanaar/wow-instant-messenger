@@ -1478,12 +1478,20 @@ local function createHistoryViewer()
         end
         if(clear.wimNativeMode) then
             if(not clear.wimSavedArt) then
+                -- The font restores from its file properties, never
+                -- from GetFontObject: a box whose font came in by path
+                -- reports its own anonymous font object there, and
+                -- handing a widget its own font object back creates an
+                -- inheritance cycle the client resolves by infinite
+                -- recursion (a hard STACK_OVERFLOW crash on era).
+                local fontPath, fontSize, fontFlags = box:GetFont();
                 clear.wimSavedArt = {
                     normal = saveTextureState(clear:GetNormalTexture()),
                     pushed = saveTextureState(clear:GetPushedTexture()),
                     width = clear:GetWidth(), height = clear:GetHeight(),
                     points = savePoints(clear), boxPoints = savePoints(box),
-                    fontObject = box:GetFontObject(),
+                    fontPath = fontPath, fontSize = fontSize,
+                    fontFlags = fontFlags,
                     boxHeight = box:GetHeight(),
                 };
             end
@@ -1533,7 +1541,9 @@ local function createHistoryViewer()
             end
             clear:SetSize(saved.width, saved.height);
             clear:SetAlpha(1);
-            box:SetFontObject(saved.fontObject);
+            if(saved.fontPath) then
+                box:SetFont(saved.fontPath, saved.fontSize, saved.fontFlags);
+            end
             box:SetHeight(saved.boxHeight);
             box:SetTextInsets(0, 0, 0, 0);
             win.search.label:Show();
