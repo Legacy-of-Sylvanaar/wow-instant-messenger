@@ -1547,8 +1547,12 @@ local function createHistoryViewer()
             box:SetHeight(saved.boxHeight);
             box:SetTextInsets(0, 0, 0, 0);
             win.search.label:Show();
-            restorePoints(box, saved.boxPoints);
+            -- The clear button restores first: in the native style it
+            -- anchors to the box, while the box's saved anchor targets
+            -- the clear button, so restoring the box first creates an
+            -- anchor cycle.
             restorePoints(clear, saved.points);
+            restorePoints(box, saved.boxPoints);
             clear:Show();
         end
     end
