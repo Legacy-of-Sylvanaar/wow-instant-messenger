@@ -1647,6 +1647,14 @@ local function createHistoryViewer()
             chrome.metal = BuildLiteMetalFrame(chrome, false);
         end
 
+        -- Resizing moves the strips; picture backgrounds re-window so
+        -- the image stays continuous.
+        win:HookScript("OnSizeChanged", function()
+            if(chrome:IsShown()) then
+                win.ApplyChromeBackgrounds();
+            end
+        end);
+
         win.wimChrome = chrome;
         win.nav.wimInset = insetNav;
         win.content.wimInset = insetContent;
@@ -1663,9 +1671,12 @@ local function createHistoryViewer()
         if(win.wimChromeStrips) then
             for i=1, #win.wimChromeStrips do
                 win.wimChromeStrips[i]:SetShown(cutout);
-                if(cutout) then
-                    ApplyChromeBackgroundChoice(win.wimChromeStrips[i], theme.frame);
-                end
+            end
+            if(cutout) then
+                -- Picture backgrounds window each strip to its part of
+                -- one continuous image (see ApplyChromeBackgroundToStrips).
+                ApplyChromeBackgroundToStrips(win.wimChromeStrips,
+                    win.wimChromeBg, theme.frame);
             end
         end
         if(not cutout) then
