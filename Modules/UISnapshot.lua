@@ -29,6 +29,18 @@ local type, tostring = type, tostring;
 local pcall = pcall;
 local table, string, math = table, string, math;
 
+-- Defined before the setfenv: C_Texture.GetAtlasInfo resolves helper
+-- mixins (Vector2DMixin) through the caller's environment, so calling
+-- it from inside the WIM environment throws. Same pattern as
+-- Modules/History.lua.
+local C_Texture = C_Texture;
+local function getAtlasInfoRaw(name)
+    if (C_Texture and C_Texture.GetAtlasInfo) then
+        return C_Texture.GetAtlasInfo(name);
+    end
+    return nil;
+end
+
 setfenv(1, WIM);
 
 -- The fixed targets of /wim snap all: the styled panels, plus the
@@ -258,6 +270,155 @@ local function snapRegion(obj, parent, depth, budget)
     return node;
 end
 
+-- ---------------------------------------------------------------------------
+-- Client capability probes. Classic-flavored clients (era, TBC, wrath,
+-- MoP and their successors) share atlas and layout NAMES with retail
+-- while the art, geometry, and API behavior differ, so every dump
+-- records what this client actually has. Diffing the client block of
+-- two dumps isolates flavor problems without guesswork.
+-- ---------------------------------------------------------------------------
+local PROBE_ATLASES = {
+    "RedButton-Exit", "redbutton-condense", "RedButton-Highlight",
+    "minimal-scrollbar-small-thumb-middle", "minimal-scrollbar-arrow-top",
+    "minimal-scrollbar-track-top", "common-search-border-left",
+    "common-search-border-middle", "options_frame_child",
+    "CircleMaskScalable", "common-dropdown-bg", "Options_List_Active",
+    "Options_CategoryHeader_1", "UI-Frame-TopLeftCornerNoPortrait",
+    "_UI-Frame-TitleTile", "UI-Frame-InnerTopLeft",
+};
+local PROBE_FILES = {
+    "Interface\\Icons\\ClassIcon_WARRIOR",
+    "Interface\\FrameGeneral\\UI-Background-Rock",
+    "Interface\\FrameGeneral\\UI-Background-Marble",
+    "Interface\\DialogFrame\\UI-Dialog-Icon-AlertNew",
+    "Interface\\Tooltips\\UI-Tooltip-Border",
+};
+local PROBE_LAYOUTS = {
+    "PortraitFrameTemplate", "ButtonFrameTemplate",
+    "ButtonFrameTemplateNoPortrait", "InsetFrameTemplate",
+};
+
+local layoutProbeFrame;
+local function collectClientInfo()
+    -- Every probe is isolated: one API behaving differently on some
+    -- flavor must not cost the whole block, and a failed section
+    -- records its error instead of disappearing.
+    local info = { atlases = {}, files = {}, layouts = {}, api = {},
+        errors = {} };
+    local function try(section, fun)
+        local ok, err = pcall(fun);
+        if (not ok) then
+            info.errors[section] = tostring(err);
+        end
+    end
+    try("build", function()
+        local version, build, _, interface = _G.GetBuildInfo();
+        info.version = version;
+        info.buildNumber = build;
+        info.interface = interface;
+    end);
+    info.project = _G.WOW_PROJECT_ID;
+    info.isModernApi = isModernApi and true or false;
+    try("atlases", function()
+        info.api.GetAtlasInfo = (_G.C_Texture and _G.C_Texture.GetAtlasInfo)
+            and true or false;
+        for _, name in ipairs(PROBE_ATLASES) do
+            local ok, result = pcall(getAtlasInfoRaw, name);
+            info.atlases[name] = (ok and result ~= nil) and true or false;
+        end
+    end);
+    try("files", function()
+        info.api.GetFileIDFromPath = _G.GetFileIDFromPath and true or false;
+        for _, file in ipairs(PROBE_FILES) do
+            local ok, id = pcall(_G.GetFileIDFromPath, file);
+            info.files[file] = (ok and id ~= nil) and true or false;
+        end
+    end);
+    try("layouts", function()
+        local apply = _G.NineSliceUtil and _G.NineSliceUtil.ApplyLayoutByName;
+        info.api.NineSliceUtil = apply and true or false;
+        for _, layout in ipairs(PROBE_LAYOUTS) do
+            if (apply) then
+                layoutProbeFrame = layoutProbeFrame or _G.CreateFrame("Frame");
+                layoutProbeFrame:Hide();
+                info.layouts[layout] = pcall(apply, layoutProbeFrame, layout)
+                    and true or false;
+            else
+                info.layouts[layout] = false;
+            end
+        end
+    end);
+    try("api", function()
+        info.api.SettingsVertical = (_G.Settings
+            and _G.Settings.RegisterVerticalLayoutCategory) and true or false;
+        info.api.SettingsElementInit = (_G.Settings
+            and _G.Settings.CreateElementInitializer) and true or false;
+        info.api.SettingsPanelInit = (_G.Settings
+            and _G.Settings.CreatePanelInitializer) and true or false;
+        info.api.SettingsButtonInit = _G.CreateSettingsButtonInitializer
+            and true or false;
+        info.api.ScrollFrameTemplate = pcall(_G.CreateFrame, "ScrollFrame",
+            nil, nil, "ScrollFrameTemplate") and true or false;
+    end);
+    return info;
+end
+
+-- The skin and theme state the paint paths key off.
+local function collectWimInfo()
+    local info = {};
+    info.skinSelected = db and db.skin and db.skin.selected;
+    pcall(function()
+        local skin = GetSelectedSkin();
+        info.skinLoaded = skin and skin.title;
+        info.modernOnly = (skin and skin.modernOnly) and true or false;
+    end);
+    info.modernOptions = (db and db.modernOptions) and true or false;
+    if(db and db.modernTheme) then
+        local theme = {};
+        for k, v in pairs(db.modernTheme) do
+            if(type(v) ~= "table") then
+                theme[k] = v;
+            end
+        end
+        info.theme = theme;
+    end
+    return info;
+end
+
+-- WIM-side bookkeeping for a captured window: the flags that decide
+-- which paint path runs. Widget trees alone cannot show these.
+local function collectWindowState(obj)
+    local state = {};
+    state.class = obj.class;
+    state.type = obj.type;
+    state.chromeFailed = obj.wimChromeFailed and true or nil;
+    local chrome = obj.wimChrome;
+    if(chrome) then
+        state.chrome = chrome.lite and "lite" or "layout";
+        state.chromeShown = chrome:IsShown() and true or false;
+        state.hasPortrait = chrome.hasPortrait and true or false;
+    end
+    state.litePainted = obj.wimLitePainted and true or nil;
+    state.portraitMasked = obj.wimPortraitMasked and true or nil;
+    state.boxThemed = obj.wimBoxThemed and true or nil;
+    state.rpIcon = obj.wimRPIcon and true or nil;
+    state.themeWasActive = obj.wimThemeWasActive;
+    if(obj.wimIconBaseSize) then
+        state.iconBaseSize = tostring(obj.wimIconBaseSize[1])..","
+            ..tostring(obj.wimIconBaseSize[2]);
+    end
+    if(obj.wimIconBaseLayer) then
+        state.iconBaseLayer = tostring(obj.wimIconBaseLayer[1]).."/"
+            ..tostring(obj.wimIconBaseLayer[2]);
+    end
+    local icon = obj.widgets and obj.widgets.class_icon;
+    if(icon) then
+        local w, h = icon:GetSize();
+        state.iconSize = string.format("%.0fx%.0f", w or 0, h or 0);
+    end
+    return state;
+end
+
 local function takeSnapshot(args)
     local targets;
     args = args and string.trim(args) or "";
@@ -270,10 +431,28 @@ local function takeSnapshot(args)
             .." minimap button and the native reference widgets.");
         msg:AddMessage("  |cffffffff<Frame.Dot.Path>|r - capture one frame"
             .." by global path, e.g. /wim snap WIM3_msgFrame1");
+        msg:AddMessage("  |cffffffffdelay <seconds>|r - capture everything"
+            .." after a delay, to dump a transient state while your hands"
+            .." are busy reproducing it.");
         msg:AddMessage("  Also: |cffffffff/wim snapmenu|r - capture the"
             .." next modern context menu while it is open.");
         return;
-    elseif (string.lower(args) == "all") then
+    end
+    -- Delayed capture: arm now, reproduce the transient, the snapshot
+    -- fires by itself.
+    local delay = string.match(string.lower(args), "^delay%s+(%d+)$");
+    if (delay) then
+        delay = tonumber(delay);
+        if (delay < 1) then delay = 1; end
+        if (delay > 60) then delay = 60; end
+        _G.DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0WIM:|r snapshot armed:"
+            .." capturing everything in "..delay.."s.");
+        _G.C_Timer.After(delay, function()
+            takeSnapshot("all");
+        end);
+        return;
+    end
+    if (string.lower(args) == "all") then
         targets = collectAllTargets();
     else
         targets = { args };
@@ -293,6 +472,8 @@ local function takeSnapshot(args)
         snap.screen = { w = w, h = h };
     end);
     pcall(function() snap.uiScale = rnd(_G.UIParent:GetEffectiveScale()); end);
+    pcall(function() snap.client = collectClientInfo(); end);
+    pcall(function() snap.wim = collectWimInfo(); end);
 
     local found = 0;
     for _, path in ipairs(targets) do
@@ -301,6 +482,10 @@ local function takeSnapshot(args)
             local budget = { nodes = MAX_NODES };
             local tree = snapRegion(obj, nil, 1, budget);
             if (budget.truncated) then tree.truncated = true; end
+            if (obj.wimChrome ~= nil or obj.wimChromeFailed ~= nil
+                    or obj.widgets) then
+                pcall(function() tree.wimState = collectWindowState(obj); end);
+            end
             snap.targets[path] = tree;
             found = found + 1;
         else

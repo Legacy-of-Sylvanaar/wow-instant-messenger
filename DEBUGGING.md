@@ -92,6 +92,26 @@ the packaging script; `dev` when running from the source tree), and the
 confirmation line in chat prints it. When testing a fix, check that value
 against the build you meant to install before drawing any conclusions.
 
+Snapshots also record what the client itself provides and what WIM decided,
+which is what isolates flavor problems (era, TBC, wrath, MoP and their
+successors share atlas and layout names with retail while the art and
+behavior differ):
+
+- `client` -- the flavor (version, build number, interface, project id) and
+  probe results: whether each critical atlas, texture file, nine-slice
+  layout, and API surface exists on this client. Diff this block between a
+  retail dump and a classic dump to see exactly which capability differs.
+- `wim` -- the selected and loaded skin, whether it is modern-only, the
+  options style, and the modern theme's scalar settings.
+- `wimState` on each captured window -- the bookkeeping that picks the paint
+  path: chrome kind (layout or lite) and visibility, portrait flags, themed
+  input state, the recorded base icon size and layer, and the icon's current
+  size.
+
+The debug log gains one line per window whenever the modern theme applies or
+tears down (`ModernTheme <frame>: apply/teardown, chrome=...`), so a skin
+switch leaves a visible trail between two snapshots.
+
 ## Which tool for which problem
 
 - **Behavioral** (messages not routed, history missing, events mishandled,
