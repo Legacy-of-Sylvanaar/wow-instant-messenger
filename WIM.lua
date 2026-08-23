@@ -52,6 +52,19 @@ lists = {};
 -- list of all the events registered from attached modules.
 local Events = {};
 
+-- import libraries. Checked before any event registration: the Libs
+-- folder is not in the repository (the packager pulls it in through
+-- .pkgmeta), so a plain source checkout used to die here with nothing
+-- but "attempt to call a nil value" errors to explain it.
+local SML = _G.LibStub and _G.LibStub:GetLibrary("LibSharedMedia-3.0", true);
+local DropDownMenu = _G.LibStub and _G.LibStub:GetLibrary("LibDropDownMenu", true);
+if(not SML or not DropDownMenu) then
+    _G.DEFAULT_CHAT_FRAME:AddMessage("|cffff2020WIM could not load:|r the packaged libraries are missing. Install a packaged release; a plain source checkout does not include the Libs folder.");
+    do return end;
+end
+libs.SML = SML;
+libs.DropDownMenu = DropDownMenu;
+
 -- create a frame to moderate events and frame updates.
     local workerFrame = CreateFrame("Frame", "WIM_workerFrame");
     workerFrame:SetScript("OnEvent", function(self, event, ...) WIM:CoreEventHandler(event, ...); end);
@@ -59,10 +72,6 @@ local Events = {};
     -- some events we always want to listen to so data is ready upon WIM being enabled.
     workerFrame:RegisterEvent("VARIABLES_LOADED");
     workerFrame:RegisterEvent("ADDON_LOADED");
-
--- import libraries.
-libs.SML = _G.LibStub:GetLibrary("LibSharedMedia-3.0");
-libs.DropDownMenu = _G.LibStub:GetLibrary("LibDropDownMenu");
 
 -- called when WIM is first loaded into memory but after variables are loaded.
 local function initialize()
