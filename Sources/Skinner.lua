@@ -1012,6 +1012,7 @@ function LiteRepaintPortrait(obj)
     if(obj.wimRPIcon) then
         icon:SetTexCoord(0, 1, 0, 1);
         icon:SetSize(56, 56);
+        dPrint("LitePortrait "..(obj:GetName() or "?")..": rp, 56");
         return;
     end
     local entry = obj.class and constants.classes[obj.class];
@@ -1021,9 +1022,13 @@ function LiteRepaintPortrait(obj)
         icon:SetTexture(file);
         icon:SetTexCoord(0, 1, 0, 1);
         icon:SetSize(56, 56);
+        dPrint("LitePortrait "..(obj:GetName() or "?")..": file "
+            ..tostring(tag)..", 56");
     else
         ZoomPortraitIcon(obj);
         icon:SetSize(36, 36);
+        dPrint("LitePortrait "..(obj:GetName() or "?")..": fallback, 36"
+            ..", class="..tostring(obj.class));
     end
 end
 
@@ -1855,9 +1860,31 @@ local function padMenuBottom(frame)
     end
 end
 
-function DarkenModernMenus(frame, depth)
-    if(HasPortraitPanelArt() or not frame) then return; end
-    depth = depth or 1;
+-- Submenus spawn as sibling frames when a row is hovered, after the
+-- open-time walk has run, so every row gets a hook that re-walks the
+-- menus' shared parent once the submenu exists. The hook keeps the
+-- original container: deriving a fresh parent from it would escalate
+-- the walk toward UIParent.
+local walkMenus;
+local function hookSubmenuSpawner(button, container)
+    if(button.wimSubHook or not container) then return; end
+    button.wimSubHook = true;
+    button:HookScript("OnEnter", function()
+        -- The submenu opens after the hover-intent delay, so a single
+        -- immediate walk runs too early; the staggered walks catch it
+        -- whenever it appears. The walk is idempotent, so repeats are
+        -- cheap.
+        for _, delay in ipairs({ 0.1, 0.4, 0.9 }) do
+            _G.C_Timer.After(delay, function()
+                if(not HasPortraitPanelArt()) then
+                    walkMenus(container, 1, container);
+                end
+            end);
+        end
+    end);
+end
+
+function walkMenus(frame, depth, container)
     if(depth > 8) then return; end
     if(frame.GetRegions) then
         local regions = { frame:GetRegions() };
@@ -1893,9 +1920,19 @@ function DarkenModernMenus(frame, depth)
     if(frame.GetChildren) then
         local children = { frame:GetChildren() };
         for i = 1, #children do
-            DarkenModernMenus(children[i], depth + 1);
+            local child = children[i];
+            if(child.GetObjectType and child:GetObjectType() == "Button") then
+                hookSubmenuSpawner(child, container);
+            end
+            walkMenus(child, depth + 1, container);
         end
     end
+end
+
+function DarkenModernMenus(frame, depth)
+    if(HasPortraitPanelArt() or not frame) then return; end
+    walkMenus(frame, depth or 1,
+        frame.GetParent and frame:GetParent() or nil);
 end
 
 -- Dropdown buttons repaint their art per state, and their menus build
@@ -2218,6 +2255,8 @@ function ApplyModernThemeToWindow(obj)
         -- LiteRepaintPortrait); this is the retail size and the lite
         -- starting point.
         icon:SetSize(56, 56);
+        dPrint("ThemedPortrait "..(obj:GetName() or "?")
+            ..": block sized 56, lite="..tostring(chrome.lite and true or false));
         if(not obj.wimPortraitMask) then
             local mask = icon:GetParent():CreateMaskTexture();
             -- CircleMaskScalable's circle reaches the mask's edges,
