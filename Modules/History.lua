@@ -1571,6 +1571,11 @@ local function createHistoryViewer()
         -- right differs from the native -3: this art's right rail core
         -- runs past the window edge (-3.5..+1), and stopping short of
         -- the edge leaves the rail's half-opaque band see-through.
+        -- Clients whose layouts lack this art (classic era) get the
+        -- same frame from the addon's shipped copies of the pieces at
+        -- the same geometry (BuildLiteMetalFrame), so one set of fill
+        -- measurements serves every client.
+        local hasPanelArt = HasPortraitPanelArt();
         chrome.bg:SetPoint("TOPLEFT", 7, -18);
         chrome.bg:SetPoint("BOTTOMRIGHT", 0, 3);
         win.wimChromeBg = chrome.bg;
@@ -1620,8 +1625,7 @@ local function createHistoryViewer()
         stripBottom:SetPoint("BOTTOM", chrome, "BOTTOM", 0, 3);
         win.wimChromeStrips = { stripTop, stripLeft, stripRight, stripBottom };
 
-        if(not (pcall(apply, chrome, "ButtonFrameTemplateNoPortrait")
-                and pcall(apply, insetNav, "InsetFrameTemplate")
+        if(not (pcall(apply, insetNav, "InsetFrameTemplate")
                 and pcall(apply, insetContent, "InsetFrameTemplate"))) then
             chrome:Hide();
             insetNav:Hide();
@@ -1629,7 +1633,19 @@ local function createHistoryViewer()
             dPrint("History Viewer: nine-slice layouts unavailable; keeping the backdrop style.");
             return false;
         end
-
+        if(hasPanelArt) then
+            if(not pcall(apply, chrome, "ButtonFrameTemplateNoPortrait")) then
+                chrome:Hide();
+                insetNav:Hide();
+                insetContent:Hide();
+                dPrint("History Viewer: nine-slice layouts unavailable; keeping the backdrop style.");
+                return false;
+            end
+        else
+            -- The same frame from the addon's shipped copies of the
+            -- retail pieces, plain top-left corner variant.
+            chrome.metal = BuildLiteMetalFrame(chrome, false);
+        end
 
         win.wimChrome = chrome;
         win.nav.wimInset = insetNav;

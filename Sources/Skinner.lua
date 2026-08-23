@@ -433,6 +433,77 @@ function ApplySkinToWindow(obj)
     ApplyModernThemeToWindow(obj);
 end
 
+-- Whether this client has the portrait-capable panel layouts (the
+-- modern metal frame with its opaque title band). Era clients answer
+-- no: they ship only the older thin frame art, whose band region is
+-- transparent. Probed once on a throwaway frame; both the message
+-- windows and the History Viewer key their fallbacks off this.
+local portraitPanelArt;
+function HasPortraitPanelArt()
+    if(portraitPanelArt == nil) then
+        local apply = _G.NineSliceUtil and _G.NineSliceUtil.ApplyLayoutByName;
+        if(not apply) then
+            portraitPanelArt = false;
+        else
+            local probe = CreateFrame("Frame");
+            probe:Hide();
+            portraitPanelArt = pcall(apply, probe, "PortraitFrameTemplate")
+                and true or false;
+        end
+    end
+    return portraitPanelArt;
+end
+
+-- The Modern frame from the addon's own copies of the retail pieces,
+-- for clients whose nine-slice layouts lack the art (see
+-- HasPortraitPanelArt). Geometry comes from a retail widget dump and
+-- the pieces anchor corner to corner, so the frame follows any window
+-- size, exactly like the layout it stands in for. The edge files are
+-- pre-tiled power-of-two sheets; the texcoord windows trim their
+-- padding. Pieces draw at OVERLAY like the retail layout's, above the
+-- fills and below the portrait's frame.
+function BuildLiteMetalFrame(frame, portraitCorner)
+    local path = "Interface\\AddOns\\"..addonTocName.."\\Skins\\Modern\\";
+    local ART = 150 / 256;   -- art region inside the padded canvases
+    local function piece(file, l, r, t, b)
+        local tex = frame:CreateTexture(nil, "OVERLAY");
+        tex:SetTexture(path..file..".png");
+        tex:SetTexCoord(l, r, t, b);
+        return tex;
+    end
+    -- The portrait corner's left pieces sit 5px further out than the
+    -- plain corner's (-13 against -8), same as the retail layouts.
+    local leftInset = portraitCorner and -13 or -8;
+    local tl = piece(portraitCorner and "metal_corner_topleft_portrait"
+        or "metal_corner_topleft", 0, ART, 0, ART);
+    tl:SetSize(75, 75);
+    tl:SetPoint("TOPLEFT", leftInset, 16);
+    local tr = piece("metal_corner_topright", 0, ART, 0, ART);
+    tr:SetSize(75, 75);
+    tr:SetPoint("TOPRIGHT", 4, 16);
+    local bl = piece("metal_corner_bottomleft", 0, 1, 0, 1);
+    bl:SetSize(32, 32);
+    bl:SetPoint("BOTTOMLEFT", leftInset, -3);
+    local br = piece("metal_corner_bottomright", 0, 1, 0, 1);
+    br:SetSize(32, 32);
+    br:SetPoint("BOTTOMRIGHT", 4, -3);
+    local top = piece("metal_edge_top", 0, 1, 0, ART);
+    top:SetPoint("TOPLEFT", tl, "TOPRIGHT");
+    top:SetPoint("BOTTOMRIGHT", tr, "BOTTOMLEFT");
+    local bottom = piece("metal_edge_bottom", 0, 1, 0, 1);
+    bottom:SetPoint("TOPLEFT", bl, "TOPRIGHT");
+    bottom:SetPoint("BOTTOMRIGHT", br, "BOTTOMLEFT");
+    local left = piece("metal_edge_left", 0, ART, 0, 1);
+    left:SetPoint("TOPLEFT", tl, "BOTTOMLEFT");
+    left:SetPoint("TOPRIGHT", tl, "BOTTOMRIGHT");
+    left:SetPoint("BOTTOM", bl, "TOP");
+    local right = piece("metal_edge_right", 0, ART, 0, 1);
+    right:SetPoint("TOPLEFT", tr, "BOTTOMLEFT");
+    right:SetPoint("TOPRIGHT", tr, "BOTTOMRIGHT");
+    right:SetPoint("BOTTOM", br, "TOP");
+    return { tl, tr, bl, br, top, bottom, left, right };
+end
+
 -- Modern skin styling for the message windows. While such a skin is
 -- selected, each window uses the History Viewer's construction at a
 -- smaller size: the standard metal nine-slice frame, a title band with
@@ -443,7 +514,6 @@ end
 -- message well, so a clear well shows the game world through it.
 local function buildWindowChrome(obj)
     local apply = _G.NineSliceUtil and _G.NineSliceUtil.ApplyLayoutByName;
-    if(not apply) then return false; end
     local display = obj.widgets.chat_display;
     local msg_box = obj.widgets.msg_box;
 
@@ -455,22 +525,27 @@ local function buildWindowChrome(obj)
     -- 13px outside the frame, 5px further than the plain layout's, which
     -- puts the left rail at about -1..+4. The fill's left inset must
     -- follow the applied layout or a gap opens against the rail.
-    chrome.hasPortrait = pcall(apply, chrome, "PortraitFrameTemplate")
-        or pcall(apply, chrome, "ButtonFrameTemplate");
+    chrome.hasPortrait = (apply and (pcall(apply, chrome, "PortraitFrameTemplate")
+        or pcall(apply, chrome, "ButtonFrameTemplate"))) and true or false;
     if(not chrome.hasPortrait) then
-        if(not pcall(apply, chrome, "ButtonFrameTemplateNoPortrait")) then
-            chrome:Hide();
-            return false;
-        end
+        -- Lite chrome, for clients whose nine-slice layouts lack this
+        -- art (classic era): the same frame, built from the shipped
+        -- copies of the retail pieces at the retail geometry. Only the
+        -- portrait paint path stays era-specific (LiteRepaintPortrait).
+        chrome.lite = true;
+        chrome.hasPortrait = true;
+        chrome.metal = BuildLiteMetalFrame(chrome, true);
     end
     local bgLeft = chrome.hasPortrait and 2 or 7;
+    local bgRight = 0;
+    local bgBottom = 3;
 
     -- Otherwise the fill matches the History Viewer: native panel
     -- insets at top and bottom, and it runs under the asymmetric right
     -- rail to the frame edge.
     chrome.bg = chrome:CreateTexture(nil, "BACKGROUND", nil, -8);
     chrome.bg:SetPoint("TOPLEFT", bgLeft, -18);
-    chrome.bg:SetPoint("BOTTOMRIGHT", 0, 3);
+    chrome.bg:SetPoint("BOTTOMRIGHT", bgRight, bgBottom);
 
     -- Cut-out strips: the fill drawn only around the message well.
     local function strip()
@@ -480,11 +555,11 @@ local function buildWindowChrome(obj)
     end
     local stripTop = strip();
     stripTop:SetPoint("TOPLEFT", chrome, "TOPLEFT", bgLeft, -18);
-    stripTop:SetPoint("RIGHT", chrome, "RIGHT", 0, 0);
+    stripTop:SetPoint("RIGHT", chrome, "RIGHT", bgRight, 0);
     stripTop:SetPoint("BOTTOM", display, "TOP", 0, 6);
     local stripBottom = strip();
-    stripBottom:SetPoint("BOTTOMLEFT", chrome, "BOTTOMLEFT", bgLeft, 3);
-    stripBottom:SetPoint("RIGHT", chrome, "RIGHT", 0, 0);
+    stripBottom:SetPoint("BOTTOMLEFT", chrome, "BOTTOMLEFT", bgLeft, bgBottom);
+    stripBottom:SetPoint("RIGHT", chrome, "RIGHT", bgRight, 0);
     stripBottom:SetPoint("TOP", display, "BOTTOM", 0, -6);
     local stripLeft = strip();
     stripLeft:SetPoint("LEFT", chrome, "LEFT", bgLeft, 0);
@@ -492,7 +567,7 @@ local function buildWindowChrome(obj)
     stripLeft:SetPoint("TOP", display, "TOP", 0, 6);
     stripLeft:SetPoint("BOTTOM", display, "BOTTOM", 0, -6);
     local stripRight = strip();
-    stripRight:SetPoint("RIGHT", chrome, "RIGHT", 0, 0);
+    stripRight:SetPoint("RIGHT", chrome, "RIGHT", bgRight, 0);
     stripRight:SetPoint("LEFT", display, "RIGHT", 24, 0);
     stripRight:SetPoint("TOP", display, "TOP", 0, 6);
     stripRight:SetPoint("BOTTOM", display, "BOTTOM", 0, -6);
@@ -537,64 +612,73 @@ local function buildWindowChrome(obj)
         input:SetPoint("TOPLEFT", msg_box, "TOPLEFT", 0, 0);
         input:SetPoint("BOTTOMRIGHT", msg_box, "BOTTOMRIGHT", 0, 0);
         input:SetFrameLevel(obj:GetFrameLevel());
-        input.capLeft = input:CreateTexture(nil, "BACKGROUND");
-        input.capLeft:SetAtlas("common-search-border-left");
-        input.capLeft:SetSize(8, 20);
-        input.capLeft:SetPoint("LEFT", -5, 0);
-        input.capRight = input:CreateTexture(nil, "BACKGROUND");
-        input.capRight:SetAtlas("common-search-border-right");
-        input.capRight:SetSize(8, 20);
-        input.capRight:SetPoint("RIGHT", 5, 0);
-        input.capMiddle = input:CreateTexture(nil, "BACKGROUND");
-        input.capMiddle:SetAtlas("common-search-border-middle");
-        input.capMiddle:SetPoint("TOPLEFT", input.capLeft, "TOPRIGHT");
-        input.capMiddle:SetPoint("BOTTOMRIGHT", input.capRight, "BOTTOMLEFT");
-        -- Wrap-mode border: the same search-border art, cut into a
-        -- nine-piece grid so it also stretches vertically. Texture
-        -- coordinates apply within an atlas member, so the pieces can
-        -- be sampled directly: the caps' top and bottom 40% become the
-        -- corners, their middle band becomes the side edges, and the
-        -- tube's bands become the top edge, bottom edge, and fill.
-        local grid = {};
-        local function slice(atlas, top, bottom)
-            local tex = input:CreateTexture(nil, "BACKGROUND");
-            tex:SetAtlas(atlas);
-            tex:SetTexCoord(0, 1, top, bottom);
-            table.insert(grid, tex);
-            return tex;
+        -- The search-border art is applied only where the atlases
+        -- exist; without them the row keeps the counter and the wrap
+        -- machinery but no border decor.
+        local hasSearchArt = getAtlasInfo("common-search-border-left")
+            and getAtlasInfo("common-search-border-middle")
+            and getAtlasInfo("common-search-border-right") and true or false;
+        if(hasSearchArt) then
+            input.capLeft = input:CreateTexture(nil, "BACKGROUND");
+            input.capLeft:SetAtlas("common-search-border-left");
+            input.capLeft:SetSize(8, 20);
+            input.capLeft:SetPoint("LEFT", -5, 0);
+            input.capRight = input:CreateTexture(nil, "BACKGROUND");
+            input.capRight:SetAtlas("common-search-border-right");
+            input.capRight:SetSize(8, 20);
+            input.capRight:SetPoint("RIGHT", 5, 0);
+            input.capMiddle = input:CreateTexture(nil, "BACKGROUND");
+            input.capMiddle:SetAtlas("common-search-border-middle");
+            input.capMiddle:SetPoint("TOPLEFT", input.capLeft, "TOPRIGHT");
+            input.capMiddle:SetPoint("BOTTOMRIGHT", input.capRight, "BOTTOMLEFT");
+            -- Wrap-mode border: the same search-border art, cut into a
+            -- nine-piece grid so it also stretches vertically. Texture
+            -- coordinates apply within an atlas member, so the pieces can
+            -- be sampled directly: the caps' top and bottom 40% become the
+            -- corners, their middle band becomes the side edges, and the
+            -- tube's bands become the top edge, bottom edge, and fill.
+            local grid = {};
+            local function slice(atlas, top, bottom)
+                local tex = input:CreateTexture(nil, "BACKGROUND");
+                tex:SetAtlas(atlas);
+                tex:SetTexCoord(0, 1, top, bottom);
+                table.insert(grid, tex);
+                return tex;
+            end
+            -- On the single-line border the caps sit 3px inside the row's
+            -- vertical extent. The grid keeps the same inset so the art
+            -- does not move when the mode changes.
+            local tl = slice("common-search-border-left", 0, 0.4);
+            tl:SetSize(8, 8);
+            tl:SetPoint("TOPLEFT", -5, -3);
+            local bl = slice("common-search-border-left", 0.6, 1);
+            bl:SetSize(8, 8);
+            bl:SetPoint("BOTTOMLEFT", -5, 3);
+            local edgeL = slice("common-search-border-left", 0.45, 0.55);
+            edgeL:SetPoint("TOPLEFT", tl, "BOTTOMLEFT");
+            edgeL:SetPoint("BOTTOMRIGHT", bl, "TOPRIGHT");
+            local tr = slice("common-search-border-right", 0, 0.4);
+            tr:SetSize(8, 8);
+            tr:SetPoint("TOPRIGHT", 5, -3);
+            local br = slice("common-search-border-right", 0.6, 1);
+            br:SetSize(8, 8);
+            br:SetPoint("BOTTOMRIGHT", 5, 3);
+            local edgeR = slice("common-search-border-right", 0.45, 0.55);
+            edgeR:SetPoint("TOPLEFT", tr, "BOTTOMLEFT");
+            edgeR:SetPoint("BOTTOMRIGHT", br, "TOPRIGHT");
+            local edgeT = slice("common-search-border-middle", 0, 0.4);
+            edgeT:SetPoint("TOPLEFT", tl, "TOPRIGHT");
+            edgeT:SetPoint("BOTTOMRIGHT", tr, "BOTTOMLEFT");
+            local edgeB = slice("common-search-border-middle", 0.6, 1);
+            edgeB:SetPoint("TOPLEFT", bl, "TOPRIGHT");
+            edgeB:SetPoint("BOTTOMRIGHT", br, "BOTTOMLEFT");
+            local center = slice("common-search-border-middle", 0.45, 0.55);
+            center:SetPoint("TOPLEFT", edgeT, "BOTTOMLEFT");
+            center:SetPoint("BOTTOMRIGHT", edgeB, "TOPRIGHT");
+            for i=1, #grid do grid[i]:Hide(); end
+            input.multi = grid;
         end
-        -- On the single-line border the caps sit 3px inside the row's
-        -- vertical extent. The grid keeps the same inset so the art
-        -- does not move when the mode changes.
-        local tl = slice("common-search-border-left", 0, 0.4);
-        tl:SetSize(8, 8);
-        tl:SetPoint("TOPLEFT", -5, -3);
-        local bl = slice("common-search-border-left", 0.6, 1);
-        bl:SetSize(8, 8);
-        bl:SetPoint("BOTTOMLEFT", -5, 3);
-        local edgeL = slice("common-search-border-left", 0.45, 0.55);
-        edgeL:SetPoint("TOPLEFT", tl, "BOTTOMLEFT");
-        edgeL:SetPoint("BOTTOMRIGHT", bl, "TOPRIGHT");
-        local tr = slice("common-search-border-right", 0, 0.4);
-        tr:SetSize(8, 8);
-        tr:SetPoint("TOPRIGHT", 5, -3);
-        local br = slice("common-search-border-right", 0.6, 1);
-        br:SetSize(8, 8);
-        br:SetPoint("BOTTOMRIGHT", 5, 3);
-        local edgeR = slice("common-search-border-right", 0.45, 0.55);
-        edgeR:SetPoint("TOPLEFT", tr, "BOTTOMLEFT");
-        edgeR:SetPoint("BOTTOMRIGHT", br, "TOPRIGHT");
-        local edgeT = slice("common-search-border-middle", 0, 0.4);
-        edgeT:SetPoint("TOPLEFT", tl, "TOPRIGHT");
-        edgeT:SetPoint("BOTTOMRIGHT", tr, "BOTTOMLEFT");
-        local edgeB = slice("common-search-border-middle", 0.6, 1);
-        edgeB:SetPoint("TOPLEFT", bl, "TOPRIGHT");
-        edgeB:SetPoint("BOTTOMRIGHT", br, "BOTTOMLEFT");
-        local center = slice("common-search-border-middle", 0.45, 0.55);
-        center:SetPoint("TOPLEFT", edgeT, "BOTTOMLEFT");
-        center:SetPoint("BOTTOMRIGHT", edgeB, "TOPRIGHT");
-        for i=1, #grid do grid[i]:Hide(); end
-        input.multi = grid;
+        input.multi = input.multi or {};
         -- Character counter, on its own strip above the row. The game
         -- limits chat messages to 255 characters.
         input.counter = input:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall");
@@ -604,17 +688,30 @@ local function buildWindowChrome(obj)
         chrome.input = input;
     end
 
-    if(not pcall(apply, well, "InsetFrameTemplate")) then
-        chrome:Hide();
-        well:Hide();
-        if(chrome.input) then chrome.input:Hide(); end
-        return false;
+    -- The well's recessed inset art, where the layout exists; a plain
+    -- dark outline stands in on clients without it. Probed on its own:
+    -- classic era lacks the frame layouts above but has this one.
+    local inset = apply and pcall(apply, well, "InsetFrameTemplate");
+    if(not inset) then
+        local function edge()
+            local tex = well:CreateTexture(nil, "BORDER");
+            tex:SetColorTexture(0, 0, 0, 0.9);
+            return tex;
+        end
+        local top, bottom, left, right = edge(), edge(), edge(), edge();
+        top:SetPoint("TOPLEFT"); top:SetPoint("TOPRIGHT"); top:SetHeight(1);
+        bottom:SetPoint("BOTTOMLEFT"); bottom:SetPoint("BOTTOMRIGHT"); bottom:SetHeight(1);
+        left:SetPoint("TOPLEFT", 0, -1); left:SetPoint("BOTTOMLEFT", 0, 1); left:SetWidth(1);
+        right:SetPoint("TOPRIGHT", 0, -1); right:SetPoint("BOTTOMRIGHT", 0, 1); right:SetWidth(1);
     end
 
     -- Minimal scrollbar inside the message well, in the gutter that the
     -- display's pulled-in right edge leaves free. This matches the
     -- History Viewer. The window's scroll buttons act as its steppers.
-    if(display.GetMaxScrollRange and display.GetScrollOffset) then
+    -- Skipped without the minimal-scrollbar art; the default scroll
+    -- controls stay.
+    if(display.GetMaxScrollRange and display.GetScrollOffset
+            and getAtlasInfo("minimal-scrollbar-small-thumb-middle")) then
         local bar = CreateFrame("Slider", nil, obj);
         bar:SetOrientation("VERTICAL");
         bar:SetWidth(16);
@@ -708,6 +805,7 @@ end
 local function styleWindowStepper(button, up)
     local prefix = up and "minimal-scrollbar-arrow-top"
                    or "minimal-scrollbar-arrow-bottom";
+    if(not getAtlasInfo(prefix)) then return; end
     local states = {
         button:GetNormalTexture(), button:GetPushedTexture(),
         button:GetDisabledTexture(), button:GetHighlightTexture(),
@@ -722,6 +820,44 @@ local function styleWindowStepper(button, up)
     local highlight = button:GetHighlightTexture();
     if(highlight) then highlight:SetBlendMode("BLEND"); end
     button:SetSize(16, 11);
+end
+
+-- Restyles a classic UIPanelScrollBar with the minimal scrollbar art.
+-- The modern options panels prefer the generic ScrollFrameTemplate,
+-- which carries this look natively; clients whose template predates it
+-- (classic era) fall back to the classic scroll frame and route its
+-- scrollbar through here. No-op without the atlases.
+function StyleMinimalScrollBar(bar)
+    if(not bar or not getAtlasInfo("minimal-scrollbar-small-thumb-middle")
+            or not getAtlasInfo("minimal-scrollbar-arrow-top")
+            or not getAtlasInfo("minimal-scrollbar-track-top")) then
+        return false;
+    end
+    local name = bar.GetName and bar:GetName();
+    local up = bar.ScrollUpButton or (name and _G[name.."ScrollUpButton"]);
+    local down = bar.ScrollDownButton or (name and _G[name.."ScrollDownButton"]);
+    if(up) then styleWindowStepper(up, true); end
+    if(down) then styleWindowStepper(down, false); end
+    local thumb = bar.GetThumbTexture and bar:GetThumbTexture();
+    if(thumb) then
+        thumb:SetAtlas("minimal-scrollbar-small-thumb-middle");
+        thumb:SetTexCoord(0, 1, 0, 1);
+        thumb:SetSize(8, 40);
+    end
+    if(not bar.wimMinimalTrack) then
+        local trackTop = bar:CreateTexture(nil, "BACKGROUND");
+        trackTop:SetAtlas("minimal-scrollbar-track-top", true);
+        trackTop:SetPoint("TOP");
+        local trackBottom = bar:CreateTexture(nil, "BACKGROUND");
+        trackBottom:SetAtlas("minimal-scrollbar-track-bottom", true);
+        trackBottom:SetPoint("BOTTOM");
+        local trackMiddle = bar:CreateTexture(nil, "BACKGROUND");
+        trackMiddle:SetAtlas("!minimal-scrollbar-track-middle");
+        trackMiddle:SetPoint("TOPLEFT", trackTop, "BOTTOMLEFT");
+        trackMiddle:SetPoint("BOTTOMRIGHT", trackBottom, "TOPRIGHT");
+        bar.wimMinimalTrack = true;
+    end
+    return true;
 end
 
 -- The class-icon cells contain transparent padding, which makes the
@@ -746,6 +882,37 @@ function ZoomPortraitIcon(obj)
     -- circular mask hides the small overshoot at the edges.
     local ix, iy = w * 0.22, h * 0.22;
     icon:SetTexCoord(left + ix, right - ix, top + iy, bottom - iy);
+end
+
+-- The lite portrait's paint pass. Era clients sample a mask texture
+-- through the masked texture's own texture coordinates, so a
+-- sprite-sheet cell defeats the circle mask: the sampled patch of the
+-- mask is all white and the square cell renders uncut. Textures at
+-- full coordinates clip fine. So the icon is repainted from the
+-- per-class icon file at full coordinates, filling the circle; the
+-- roleplay icon just drops its baked-border crop. Windows with
+-- neither (Game Master tags) keep the sheet cell, inscribed small
+-- enough to sit inside the circular field.
+function LiteRepaintPortrait(obj)
+    local icon = obj.widgets and obj.widgets.class_icon;
+    if(not icon) then return; end
+    obj.wimLitePainted = true;
+    if(obj.wimRPIcon) then
+        icon:SetTexCoord(0, 1, 0, 1);
+        icon:SetSize(56, 56);
+        return;
+    end
+    local entry = obj.class and constants.classes[obj.class];
+    local tag = entry and entry.tag and string.gsub(entry.tag, "F$", "");
+    local file = tag and tag ~= "GM" and "Interface\\Icons\\ClassIcon_"..tag;
+    if(file and (not _G.GetFileIDFromPath or _G.GetFileIDFromPath(file))) then
+        icon:SetTexture(file);
+        icon:SetTexCoord(0, 1, 0, 1);
+        icon:SetSize(56, 56);
+    else
+        ZoomPortraitIcon(obj);
+        icon:SetSize(36, 36);
+    end
 end
 
 -- Themed header layout. The title text runs between the circled
@@ -1161,9 +1328,12 @@ function LayoutThemedInput(obj)
     local wraps = theme.inputWrap and true or false;
 
     obj.wimBoxThemed = true;
-    input.capLeft:SetShown(not wraps);
-    input.capRight:SetShown(not wraps);
-    input.capMiddle:SetShown(not wraps);
+    -- No border decor on clients without the search-border art.
+    if(input.capLeft) then
+        input.capLeft:SetShown(not wraps);
+        input.capRight:SetShown(not wraps);
+        input.capMiddle:SetShown(not wraps);
+    end
     for i=1, #input.multi do
         input.multi[i]:SetShown(wraps);
     end
@@ -1364,23 +1534,46 @@ function UpdateThemedCloseArt(obj)
     local close = obj.widgets and obj.widgets.close;
     if(not (close and close.GetNormalTexture)) then return; end
     local closes = _G.IsShiftKeyDown() or close.curTextureIndex == 2;
-    local normalAtlas = closes and "RedButton-Exit" or "redbutton-condense";
-    local pushedAtlas = closes and "RedButton-exit-pressed" or "redbutton-condense-pressed";
     local normal = close:GetNormalTexture();
-    if(normal) then
-        normal:SetAtlas(normalAtlas);
-        normal:SetTexCoord(0, 1, 0, 1);
-    end
     local pushed = close:GetPushedTexture();
-    if(pushed) then
-        pushed:SetAtlas(pushedAtlas);
-        pushed:SetTexCoord(0, 1, 0, 1);
-    end
     local highlight = close:GetHighlightTexture();
-    if(highlight) then
-        highlight:SetAtlas("RedButton-Highlight");
-        highlight:SetTexCoord(0, 1, 0, 1);
-        highlight:SetBlendMode("ADD");
+    if(getAtlasInfo("RedButton-Exit")) then
+        local normalAtlas = closes and "RedButton-Exit" or "redbutton-condense";
+        local pushedAtlas = closes and "RedButton-exit-pressed" or "redbutton-condense-pressed";
+        if(normal) then
+            normal:SetAtlas(normalAtlas);
+            normal:SetTexCoord(0, 1, 0, 1);
+        end
+        if(pushed) then
+            pushed:SetAtlas(pushedAtlas);
+            pushed:SetTexCoord(0, 1, 0, 1);
+        end
+        if(highlight) then
+            highlight:SetAtlas("RedButton-Highlight");
+            highlight:SetTexCoord(0, 1, 0, 1);
+            highlight:SetBlendMode("ADD");
+        end
+    else
+        -- Clients without the RedButton art use the panel button files
+        -- every client ships: the corner X for close, the square minus
+        -- for the condense state.
+        local normalFile = closes and "Interface\\Buttons\\UI-Panel-MinimizeButton-Up"
+            or "Interface\\Buttons\\UI-MinusButton-Up";
+        local pushedFile = closes and "Interface\\Buttons\\UI-Panel-MinimizeButton-Down"
+            or "Interface\\Buttons\\UI-MinusButton-Down";
+        if(normal) then
+            normal:SetTexture(normalFile);
+            normal:SetTexCoord(0, 1, 0, 1);
+        end
+        if(pushed) then
+            pushed:SetTexture(pushedFile);
+            pushed:SetTexCoord(0, 1, 0, 1);
+        end
+        if(highlight) then
+            highlight:SetTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Highlight");
+            highlight:SetTexCoord(0, 1, 0, 1);
+            highlight:SetBlendMode("ADD");
+        end
     end
     close:SetSize(24, 24);
     close:ClearAllPoints();
@@ -1414,9 +1607,22 @@ function ApplyModernThemeToWindow(obj)
     end
     local chrome = active and obj.wimChrome or nil;
 
+    -- One debug-log line per apply/teardown transition; steady-state
+    -- passes stay quiet.
+    if(obj.wimThemeWasActive ~= active) then
+        obj.wimThemeWasActive = active;
+        dPrint("ModernTheme "..(obj:GetName() or "?")..": "
+            ..(active and "apply" or "teardown")..", chrome="
+            ..(obj.wimChrome and (obj.wimChrome.lite and "lite" or "layout")
+               or (obj.wimChromeFailed and "failed" or "none")));
+    end
+
     -- The skin's own backdrop pieces hide while the chrome is shown.
     -- They return when the chrome goes: ApplySkinToWindow reapplies
-    -- their art on each pass before this code runs.
+    -- their art on each pass before this code runs. This includes the
+    -- lite chrome, which draws its own hairline edge: the skin's
+    -- border pieces carry the panel fill baked in and would read as a
+    -- fat black ring around the lite fills.
     local skinShown = (chrome == nil);
     bd.tl:SetShown(skinShown); bd.tr:SetShown(skinShown);
     bd.bl:SetShown(skinShown); bd.br:SetShown(skinShown);
@@ -1426,15 +1632,12 @@ function ApplyModernThemeToWindow(obj)
     -- Themed windows show the class icon only as the circled portrait
     -- (below). Without the portrait layout the icon would extend past
     -- the window's top-left corner, over the chrome.
-    if(widgets.class_icon) then
-        local hasPortrait = obj.wimChrome and obj.wimChrome.hasPortrait;
-        widgets.class_icon:SetShown(skinShown or (chrome ~= nil and hasPortrait and true or false));
-        if(skinShown and obj.wimPortraitMasked) then
-            widgets.class_icon:RemoveMaskTexture(obj.wimPortraitMask);
-            obj.wimPortraitMasked = nil;
-        end
-    end
-
+    --
+    -- The chrome's visibility flips BEFORE the class-icon teardown on
+    -- purpose: the UpdateIcon wrapper routes through the themed paint
+    -- pass whenever the chrome is still shown, so a teardown repaint
+    -- issued while the chrome was up re-applied the themed size and
+    -- art it was trying to remove.
     if(obj.wimChrome) then
         obj.wimChrome:SetShown(chrome ~= nil);
         obj.wimChrome.well:SetShown(chrome ~= nil);
@@ -1443,6 +1646,38 @@ function ApplyModernThemeToWindow(obj)
         end
         if(obj.wimChrome.scrollBar) then
             obj.wimChrome.scrollBar:SetShown(chrome ~= nil);
+        end
+    end
+    if(widgets.class_icon) then
+        local hasPortrait = obj.wimChrome and obj.wimChrome.hasPortrait;
+        widgets.class_icon:SetShown(skinShown or (chrome ~= nil and hasPortrait and true or false));
+        if(skinShown and obj.wimPortraitMasked) then
+            widgets.class_icon:RemoveMaskTexture(obj.wimPortraitMask);
+            obj.wimPortraitMasked = nil;
+        end
+        -- Restore the construction-time size unless the classic skin
+        -- sizes the widget itself; the skin pass reapplies points but
+        -- SetWidgetRect only sizes widgets the skin table sizes, so
+        -- the themed 56px would survive the switch back.
+        if(skinShown and obj.wimIconBaseSize) then
+            local widgetSkin = skin and skin.message_window
+                and skin.message_window.widgets
+                and skin.message_window.widgets.class_icon;
+            if(not (widgetSkin and type(widgetSkin.width) == "number")) then
+                widgets.class_icon:SetWidth(obj.wimIconBaseSize[1]);
+            end
+            if(not (widgetSkin and type(widgetSkin.height) == "number")) then
+                widgets.class_icon:SetHeight(obj.wimIconBaseSize[2]);
+            end
+        end
+        -- The lite paint pass leaves a per-class icon file at full
+        -- texture coordinates on the widget. The classic skin pass
+        -- restores the sheet texture but not the cell coordinates, so
+        -- without a repaint the icon shows the whole sheet. The chrome
+        -- is hidden above, so this repaint stays on the classic path.
+        if(skinShown and obj.wimLitePainted) then
+            obj.wimLitePainted = nil;
+            obj:UpdateIcon();
         end
     end
     if(not chrome) then
@@ -1601,6 +1836,16 @@ function ApplyModernThemeToWindow(obj)
         -- the opaque runs along the corner piece's center row and
         -- column). The icon slightly overlaps the lip's anti-aliasing.
         icon:SetPoint("CENTER", obj, "TOPLEFT", 25.5, -22);
+        -- The construction-time size comes from the window template,
+        -- not the skin table, so the teardown must put it back itself
+        -- (SetWidgetRect only sizes widgets the skin table sizes).
+        if(not obj.wimIconBaseSize) then
+            local baseWidth, baseHeight = icon:GetSize();
+            obj.wimIconBaseSize = { baseWidth or 64, baseHeight or 64 };
+        end
+        -- The lite portrait may re-size the icon per paint (see
+        -- LiteRepaintPortrait); this is the retail size and the lite
+        -- starting point.
         icon:SetSize(56, 56);
         if(not obj.wimPortraitMask) then
             local mask = icon:GetParent():CreateMaskTexture();
@@ -1629,9 +1874,17 @@ function ApplyModernThemeToWindow(obj)
             local origUpdateIcon = obj.UpdateIcon;
             obj.UpdateIcon = function(self, ...)
                 origUpdateIcon(self, ...);
+                -- The selected-skin check keeps this off the themed
+                -- path during a skin switch regardless of teardown
+                -- ordering; the chrome's visibility alone lags it.
                 if(self.wimChrome and self.wimChrome:IsShown()
-                        and self.wimChrome.hasPortrait) then
-                    ZoomPortraitIcon(self);
+                        and self.wimChrome.hasPortrait
+                        and GetSelectedSkin().modernOnly) then
+                    if(self.wimChrome.lite) then
+                        LiteRepaintPortrait(self);
+                    else
+                        ZoomPortraitIcon(self);
+                    end
                 end
             end;
         end
