@@ -2373,6 +2373,7 @@ local function createHistoryViewer()
             "WowStyle1DropdownTemplate");
         if(ok and dropdown) then
             win.nav.userModern = dropdown;
+            DarkenModernDropdown(dropdown);
             -- Seated over the navigation well's top corners, 2px past
             -- its edges, so the control's chamfered corners become the
             -- visual corners and only the dark panel fill sits behind
@@ -2641,7 +2642,8 @@ local function createHistoryViewer()
     win.nav.filters.header:SetScript("OnClick", function(self)
             local hv = GetSelectedSkin().history_viewer;
             if(canModernMenus and hv and hv.dropdown_style == "modern") then
-                _G.MenuUtil.CreateContextMenu(self, win.BuildModernFilterMenu);
+                local menu = _G.MenuUtil.CreateContextMenu(self, win.BuildModernFilterMenu);
+                DarkenModernMenus(menu);
             else
                 DDM.ToggleDropDownMenu(1, nil, win.nav.filters.menu, self, 0, 0);
             end
@@ -2665,6 +2667,7 @@ local function createHistoryViewer()
             win.nav.filters, "WowStyle1DropdownTemplate");
         if(ok and dropdown) then
             win.nav.filtersModern = dropdown;
+            DarkenModernDropdown(dropdown);
             dropdown:SetPoint("TOPLEFT", -2, 0);
             dropdown:SetPoint("TOPRIGHT", 4, 0);
             dropdown:SetHeight(26);

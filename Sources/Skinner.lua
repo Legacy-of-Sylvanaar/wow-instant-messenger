@@ -1671,6 +1671,264 @@ function ApplyRedButtonArt(texture, atlasName)
     return true;
 end
 
+-- Era's build of the modern menus and dropdowns paints classic-styled
+-- atlas variants whose names differ from the retail ones only by a
+-- "-classic-" infix. Where this client also carries the retail member,
+-- a rename hook keeps every state repaint on it; where it does not,
+-- the art is left alone. Retail names never match the pattern, and the
+-- helpers are inert on clients with the portrait panel art anyway.
+-- The client's own copies of some dark members render with opaque
+-- padding (the era textholder bleeds black past its chamfered
+-- corners), so those paint from the addon's shipped copies of the
+-- retail pixels instead of the client's atlas member. Each entry
+-- names the padded file and the art window inside it.
+local SHIPPED_MENU_ART = {
+    ["common-dropdown-textholder"] = {
+        file = "dropdown_textholder", right = 108 / 128, bottom = 82 / 128 },
+    ["common-dropdown-a-button"] = {
+        file = "dropdown_arrow", right = 54 / 64, bottom = 54 / 64 },
+    ["common-dropdown-a-button-open"] = {
+        file = "dropdown_arrow_open", right = 54 / 64, bottom = 54 / 64 },
+    ["common-dropdown-a-button-hover"] = {
+        file = "dropdown_arrow_hover", right = 54 / 64, bottom = 54 / 64 },
+    ["common-dropdown-a-button-pressed"] = {
+        file = "dropdown_arrow_pressed", right = 54 / 64, bottom = 54 / 64 },
+    ["common-dropdown-a-button-pressedhover"] = {
+        file = "dropdown_arrow_pressedhover", right = 54 / 64, bottom = 54 / 64 },
+    ["common-dropdown-a-button-disabled"] = {
+        file = "dropdown_arrow_disabled", right = 54 / 64, bottom = 54 / 64 },
+};
+
+-- The client camel-cases the arrow states (buttonDown, buttonHover)
+-- where retail dashes them (button, button-hover); the map bridges
+-- the two conventions.
+local ARROW_STATE_MAP = {
+    Down = "", Up = "-open", Open = "-open",
+    Hover = "-hover", DownHover = "-hover", HoverDown = "-hover",
+    UpHover = "-open", HoverUp = "-open",
+    Pressed = "-pressed", PressedHover = "-pressedhover",
+    Disabled = "-disabled",
+};
+
+local function darkenTexture(tex)
+    if(tex.wimDarkHook or not tex.SetAtlas) then return; end
+    tex.wimDarkHook = true;
+    _G.hooksecurefunc(tex, "SetAtlas", function(self, name)
+        if(self.wimDarkGuard or type(name) ~= "string") then return; end
+        local dark = string.gsub(name, "%-classic%-", "-", 1);
+        if(dark ~= name and not SHIPPED_MENU_ART[dark]
+                and not getAtlasInfo(dark)) then
+            -- The client names arrow states in a mix of conventions:
+            -- camel cores (buttonDown, buttonUp), camel tails
+            -- (buttonHover), and dashed suffixes on camel cores
+            -- (buttonDown-hover). Normalize toward the retail dashed
+            -- names, then fall back through progressively plainer
+            -- states.
+            local base = string.gsub(dark, "buttonDown", "button", 1);
+            if(base == dark) then
+                base = string.gsub(dark, "buttonUp", "button-open", 1);
+            end
+            if(base == dark) then
+                local state = string.match(dark, "button(%u%a*)$");
+                local mapped = state and ARROW_STATE_MAP[state];
+                if(mapped) then
+                    base = string.gsub(dark, "button%u%a*$",
+                        "button"..mapped);
+                end
+            end
+            local candidates = {
+                base,
+                string.gsub(base, "%-hover$", ""),
+                string.gsub(base, "(button)[%w%-]*$", "%1"),
+            };
+            for i = 1, #candidates do
+                local candidate = candidates[i];
+                if(candidate ~= dark and (SHIPPED_MENU_ART[candidate]
+                        or getAtlasInfo(candidate))) then
+                    dark = candidate;
+                    break;
+                end
+            end
+        end
+        if(dark == name) then return; end
+        local shipped = SHIPPED_MENU_ART[dark];
+        if(shipped) then
+            self.wimDarkGuard = true;
+            self:SetTexture("Interface\\AddOns\\"..addonTocName
+                .."\\Skins\\Modern\\"..shipped.file..".png");
+            self:SetTexCoord(0, shipped.right, 0, shipped.bottom);
+            -- Arrows draw at the retail size and seat: the client
+            -- rests them smaller and anchored differently (RIGHT -1,0
+            -- against retail's RIGHT +1,-3), which reads misaligned
+            -- with the retail art.
+            if(string.find(shipped.file, "dropdown_arrow", 1, true)) then
+                self:SetSize(27, 27);
+                local parent = self:GetParent();
+                if(parent) then
+                    self:ClearAllPoints();
+                    self:SetPoint("RIGHT", parent, "RIGHT", 1, -3);
+                end
+            end
+            self.wimDarkGuard = nil;
+        elseif(getAtlasInfo(dark)) then
+            self.wimDarkGuard = true;
+            self:SetAtlas(dark);
+            self.wimDarkGuard = nil;
+        end
+    end);
+    local current = tex.GetAtlas and tex:GetAtlas();
+    if(current and string.find(current, "-classic-", 1, true)) then
+        tex:SetAtlas(current);
+    end
+end
+
+-- The menu plate itself: the client's pixels for common-dropdown-bg
+-- are the square-cornered panel, so the plate is rebuilt from the
+-- shipped retail pixels as a nine-slice (the art is a fixed-size
+-- octagon; sliced corners keep the chamfer and shadow unscaled at any
+-- menu size) and the client's own plate textures hide. The 136px art
+-- sits in a 256px canvas; the 44px margin covers shadow and chamfer.
+local function replaceMenuPlate(frame, plateBg, plateFill)
+    plateBg:Hide();
+    if(plateFill) then plateFill:Hide(); end
+    if(frame.wimMenuPlate) then return; end
+    local plate = CreateFrame("Frame", nil, frame);
+    plate:SetPoint("TOPLEFT", -3, 3);
+    plate:SetPoint("BOTTOMRIGHT", 3, -3);
+    plate:SetFrameLevel(frame:GetFrameLevel());
+    local path = "Interface\\AddOns\\"..addonTocName
+        .."\\Skins\\Modern\\dropdown_menu_bg.png";
+    local ART = 136 / 256;
+    local MARGIN = 44 / 256;
+    local drawn = 22;
+    local function piece(l, r, t, b)
+        local tex = plate:CreateTexture(nil, "BACKGROUND");
+        tex:SetTexture(path);
+        tex:SetTexCoord(l, r, t, b);
+        return tex;
+    end
+    local tl = piece(0, MARGIN, 0, MARGIN);
+    tl:SetSize(drawn, drawn); tl:SetPoint("TOPLEFT");
+    local tr = piece(ART - MARGIN, ART, 0, MARGIN);
+    tr:SetSize(drawn, drawn); tr:SetPoint("TOPRIGHT");
+    local bl = piece(0, MARGIN, ART - MARGIN, ART);
+    bl:SetSize(drawn, drawn); bl:SetPoint("BOTTOMLEFT");
+    local br = piece(ART - MARGIN, ART, ART - MARGIN, ART);
+    br:SetSize(drawn, drawn); br:SetPoint("BOTTOMRIGHT");
+    local top = piece(MARGIN, ART - MARGIN, 0, MARGIN);
+    top:SetPoint("TOPLEFT", tl, "TOPRIGHT");
+    top:SetPoint("BOTTOMRIGHT", tr, "BOTTOMLEFT");
+    local bottom = piece(MARGIN, ART - MARGIN, ART - MARGIN, ART);
+    bottom:SetPoint("TOPLEFT", bl, "TOPRIGHT");
+    bottom:SetPoint("BOTTOMRIGHT", br, "BOTTOMLEFT");
+    local left = piece(0, MARGIN, MARGIN, ART - MARGIN);
+    left:SetPoint("TOPLEFT", tl, "BOTTOMLEFT");
+    left:SetPoint("BOTTOMRIGHT", bl, "TOPRIGHT");
+    local right = piece(ART - MARGIN, ART, MARGIN, ART - MARGIN);
+    right:SetPoint("TOPLEFT", tr, "BOTTOMLEFT");
+    right:SetPoint("BOTTOMRIGHT", br, "TOPRIGHT");
+    local center = piece(MARGIN, ART - MARGIN, MARGIN, ART - MARGIN);
+    center:SetPoint("TOPLEFT", tl, "BOTTOMRIGHT");
+    center:SetPoint("BOTTOMRIGHT", br, "TOPLEFT");
+    frame.wimMenuPlate = plate;
+end
+
+-- The client's menu layout seats the last row on the plate's bottom
+-- edge; retail keeps a small margin. Measured (not fixed) so the pass
+-- is self-limiting: once the gap exists, nothing more is added.
+local function padMenuBottom(frame)
+    if(not frame:IsShown()) then return; end
+    local frameBottom = frame:GetBottom();
+    if(not frameBottom) then return; end
+    local lowest;
+    local children = { frame:GetChildren() };
+    for i = 1, #children do
+        if(children[i]:IsShown()) then
+            local bottom = children[i]:GetBottom();
+            if(bottom and (not lowest or bottom < lowest)) then
+                lowest = bottom;
+            end
+        end
+    end
+    if(lowest and (lowest - frameBottom) < 5) then
+        frame:SetHeight(frame:GetHeight() + (6 - (lowest - frameBottom)));
+    end
+end
+
+function DarkenModernMenus(frame, depth)
+    if(HasPortraitPanelArt() or not frame) then return; end
+    depth = depth or 1;
+    if(depth > 8) then return; end
+    if(frame.GetRegions) then
+        local regions = { frame:GetRegions() };
+        local plateBg;
+        for i = 1, #regions do
+            darkenTexture(regions[i]);
+            local r = regions[i];
+            if(r.GetAtlas and r:GetAtlas() == "common-dropdown-bg") then
+                plateBg = r;
+            end
+        end
+        if(plateBg) then
+            -- The color-fill sibling has neither atlas nor file.
+            local plateFill;
+            for i = 1, #regions do
+                local r = regions[i];
+                if(r ~= plateBg and r.GetObjectType
+                        and r:GetObjectType() == "Texture"
+                        and r.GetAtlas and not r:GetAtlas()
+                        and r.GetTexture and not r:GetTexture()) then
+                    plateFill = r;
+                    break;
+                end
+            end
+            replaceMenuPlate(frame, plateBg, plateFill);
+            -- Deferred: the menu's rects resolve on the next layout
+            -- pass.
+            _G.C_Timer.After(0, function()
+                padMenuBottom(frame);
+            end);
+        end
+    end
+    if(frame.GetChildren) then
+        local children = { frame:GetChildren() };
+        for i = 1, #children do
+            DarkenModernMenus(children[i], depth + 1);
+        end
+    end
+end
+
+-- Dropdown buttons repaint their art per state, and their menus build
+-- fresh rows on every open; both route through the rename hook. The
+-- open-menu lookup is best effort: without it the menu keeps the
+-- client's own style but works the same.
+function DarkenModernDropdown(dropdown)
+    if(HasPortraitPanelArt() or not dropdown) then return; end
+    DarkenModernMenus(dropdown);
+    dropdown:HookScript("OnMouseDown", function()
+        _G.C_Timer.After(0, function()
+            local manager = _G.Menu and _G.Menu.GetManager
+                and _G.Menu.GetManager();
+            local open = manager and manager.GetOpenMenu
+                and manager:GetOpenMenu();
+            if(open) then
+                DarkenModernMenus(open);
+                -- Keep the frame reachable for /wim snap, and honor a
+                -- pending /wim snapmenu arm for dropdown menus too.
+                _G.WIM_LastModernMenu = open;
+                if(snapNextMenu) then
+                    snapNextMenu = nil;
+                    if(SnapshotTarget) then
+                        _G.C_Timer.After(0.2, function()
+                            SnapshotTarget("WIM_LastModernMenu");
+                        end);
+                    end
+                end
+            end
+        end);
+    end);
+end
+
 function UpdateThemedCloseArt(obj)
     local close = obj.widgets and obj.widgets.close;
     if(not (close and close.GetNormalTexture)) then return; end

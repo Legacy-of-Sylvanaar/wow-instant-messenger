@@ -240,6 +240,11 @@ function PopContextMenu(tag, parent)
                     menu:SetPoint(point, owner, relPoint);
                 end);
             end
+            -- Clients that paint the classic-styled menu variants
+            -- remap to the retail art where they have it.
+            if(DarkenModernMenus) then
+                DarkenModernMenus(menu);
+            end
             _G.PlaySound(1115);
             return;
         end
