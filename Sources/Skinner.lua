@@ -165,12 +165,34 @@ local CHROME_BACKGROUNDS = {
       file = "Interface\\Credits\\CreditsScreenBackground7BfA", tile = true },
 };
 
-function GetChromeBackgrounds()
-    return CHROME_BACKGROUNDS;
+-- A choice is offered only when its texture exists on this client.
+-- Classic flavors lack much of the retail panel art, and a picker
+-- entry whose file is missing draws nothing. Flat fills always exist.
+-- Checked once per entry; without GetFileIDFromPath everything is
+-- offered, which is the old behavior.
+local function chromeBackgroundAvailable(entry)
+    if(entry.color) then
+        return true;
+    end
+    if(entry.wimAvailable == nil) then
+        entry.wimAvailable = (not _G.GetFileIDFromPath)
+            or (_G.GetFileIDFromPath(entry.file) ~= nil);
+    end
+    return entry.wimAvailable;
 end
 
--- Paints one catalog choice onto a texture. Unknown keys fall back
--- to Rock, never to the flat fills.
+function GetChromeBackgrounds()
+    local list = {};
+    for i=1, #CHROME_BACKGROUNDS do
+        if(chromeBackgroundAvailable(CHROME_BACKGROUNDS[i])) then
+            table.insert(list, CHROME_BACKGROUNDS[i]);
+        end
+    end
+    return list;
+end
+
+-- Paints one catalog choice onto a texture. Unknown keys and keys whose
+-- art this client lacks fall back to Rock, then to the clear fill.
 function ApplyChromeBackgroundChoice(texture, key)
     local entry, fallback;
     for i=1, #CHROME_BACKGROUNDS do
@@ -181,6 +203,12 @@ function ApplyChromeBackgroundChoice(texture, key)
         if(CHROME_BACKGROUNDS[i].key == "rock") then
             fallback = CHROME_BACKGROUNDS[i];
         end
+    end
+    if(entry and not chromeBackgroundAvailable(entry)) then
+        entry = nil;
+    end
+    if(fallback and not chromeBackgroundAvailable(fallback)) then
+        fallback = nil;
     end
     entry = entry or fallback or CHROME_BACKGROUNDS[1];
     if(entry.color) then
