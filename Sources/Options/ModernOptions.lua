@@ -114,8 +114,16 @@ local function addPopRulesSection(cat, layout, ui, winType)
         ui.Button(layout,
             L["Message suppression requires whispers to be set to 'In-line'."],
             L["Set whispers to In-line"],
-            function() _G.SetCVar("whisperMode", "inline"); end,
-            L["Sets the game's Social > Whisper Mode setting to In-line. Without it, suppressed whispers would vanish into a popout chat tab."]);
+            function(self)
+                _G.SetCVar("whisperMode", "inline");
+                -- The row only re-initializes on redisplay; grey the
+                -- clicked button right away.
+                if (self and self.SetEnabled) then
+                    self:SetEnabled(false);
+                end
+            end,
+            L["Sets the game's Social > Whisper Mode setting to In-line. Without it, suppressed whispers would vanish into a popout chat tab."],
+            function() return _G.GetCVar("whisperMode") ~= "inline"; end);
     end
 end
 
@@ -1420,6 +1428,51 @@ RegisterModernPage(function(category, ui)
         reapply);
     table.insert(backgroundControls, wrapLines);
     ui.DependsOn(wrapLines, wrapLimit);
+
+    ui.Header(layout, L["Filter Editor"]);
+    local reapplyFilter = function()
+        if (RestyleFilterFrame) then RestyleFilterFrame(); end
+    end;
+    table.insert(backgroundControls,
+        ui.Dropdown(cat, L["Frame background"], db.modernTheme.filterFrame,
+            backgroundItems, db.modernTheme, "filterFrame", nil, reapplyFilter));
+    table.insert(backgroundControls,
+        ui.Dropdown(cat, L["Filter area background"], db.modernTheme.filterPanel,
+            backgroundItems, db.modernTheme, "filterPanel", nil, reapplyFilter));
+    table.insert(backgroundControls,
+        ui.Checkbox(cat, L["Filter area sees through to the game world"],
+            db.modernTheme.filterCutout, db.modernTheme, "filterCutout",
+            L["Draws the frame background only around the filter area, so a clear filter area background (None or Transparent) shows the game world behind the editor."],
+            reapplyFilter));
+
+    ui.Header(layout, L["Chat Colors"]);
+    local nativeColors = db.displayColors.useNative;
+    local refreshInput = function()
+        if (UpdateAllInputColors) then UpdateAllInputColors(); end
+    end;
+    local nativeMaster = ui.Checkbox(cat, L["Match the game's chat colors."],
+        nativeColors.enabled, nativeColors, "enabled",
+        L["The message being typed takes the color of the chat type it will send as, like the game's own chat box."],
+        refreshInput);
+    table.insert(backgroundControls, nativeMaster);
+    local nativeRows = {
+        { label = L["Whispers"], key = "whisper" },
+        { label = L["Battle.net Whispers"], key = "bnet" },
+        { label = _G.SAY, key = "say" },
+        { label = _G.GUILD, key = "guild" },
+        { label = _G.GUILD_RANK1_DESC, key = "officer" },
+        { label = _G.PARTY, key = "party" },
+        { label = _G.RAID, key = "raid" },
+        { label = _G.INSTANCE_CHAT, key = "instance" },
+        { label = _G.CHANNELS, key = "channel" },
+    };
+    for i = 1, #nativeRows do
+        local row = ui.Checkbox(cat, nativeRows[i].label,
+            nativeColors[nativeRows[i].key], nativeColors, nativeRows[i].key,
+            nil, refreshInput);
+        table.insert(backgroundControls, row);
+        ui.DependsOn(row, nativeMaster);
+    end
 
     ui.Header(layout, L["Roleplay Profiles"]);
     local rpEnable = ui.Checkbox(cat, L["Enable roleplay profile integration"],

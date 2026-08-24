@@ -212,10 +212,27 @@ function ui.Header(layout, name, tooltip)
     layout:AddInitializer(_G.CreateSettingsListSectionHeaderInitializer(name, tooltip));
 end
 
-function ui.Button(layout, name, buttonText, onClick, tooltip)
+function ui.Button(layout, name, buttonText, onClick, tooltip, enabledPredicate)
     if (_G.CreateSettingsButtonInitializer) then
-        layout:AddInitializer(_G.CreateSettingsButtonInitializer(
-            name, buttonText, onClick, tooltip, true));
+        local init = _G.CreateSettingsButtonInitializer(
+            name, buttonText, onClick, tooltip, true);
+        if (enabledPredicate) then
+            if (init.AddModifyPredicate) then
+                init:AddModifyPredicate(enabledPredicate);
+            end
+            -- Some clients' settings code ignores modify predicates on
+            -- button rows; enforcing the state as the row initializes
+            -- covers them all.
+            local origInitFrame = init.InitFrame;
+            init.InitFrame = function(self, frame)
+                origInitFrame(self, frame);
+                local button = frame and frame.Button;
+                if (button and button.SetEnabled) then
+                    button:SetEnabled(enabledPredicate() and true or false);
+                end
+            end;
+        end
+        layout:AddInitializer(init);
     end
 end
 
@@ -485,18 +502,15 @@ local function ensureBugReportHolder()
                 text = L["Press Ctrl+C to copy the link, then open it in your browser."],
                 button1 = _G.CLOSE,
                 hasEditBox = 1,
-                editBoxWidth = 330,
+                -- 260 is the classic GameDialog's edit box cap; a wider
+                -- request makes that client widen the dialog from its
+                -- stale pooled width and the box overflows the frame.
+                editBoxWidth = 260,
                 OnShow = function(self)
                     local name = self:GetName();
-                    local editBox = self.editBox or (name and _G[name.."EditBox"]);
+                    local editBox = self.EditBox or self.editBox
+                        or (name and _G[name.."EditBox"]);
                     if (editBox) then
-                        -- Classic dialogs are narrower than the
-                        -- requested width; keep the box inside the
-                        -- frame.
-                        local maxWidth = (self:GetWidth() or 0) - 40;
-                        if (maxWidth > 100 and editBox:GetWidth() > maxWidth) then
-                            editBox:SetWidth(maxWidth);
-                        end
                         editBox:SetText(BUG_REPORT_URL);
                         editBox:HighlightText();
                         editBox:SetFocus();
