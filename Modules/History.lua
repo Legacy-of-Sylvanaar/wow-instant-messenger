@@ -2378,16 +2378,19 @@ local function createHistoryViewer()
         if(ok and dropdown) then
             win.nav.userModern = dropdown;
             DarkenModernDropdown(dropdown);
-            -- Seated over the navigation well's top corners, 2px past
-            -- its edges, so the control's chamfered corners become the
+            PadModernMenus(dropdown);
+            -- Seated on the navigation well's top edge, 2px past its
+            -- sides, so the control's chamfered corners become the
             -- visual corners and only the dark panel fill sits behind
-            -- the cut. Placed flush against the well, the well's square
-            -- bevel corner shows past the chamfer as a bright notch.
-            dropdown:SetPoint("TOPLEFT", -2, 2);
-            dropdown:SetPoint("TOPRIGHT", 2, 2);
+            -- the cut. Placed flush against the well's sides, the
+            -- well's square bevel corner shows past the chamfer as a
+            -- bright notch.
+            dropdown:SetPoint("TOPLEFT", -2, 0);
+            dropdown:SetPoint("TOPRIGHT", 2, 0);
             dropdown:SetHeight(26);
             dropdown:Hide();
             dropdown:SetupMenu(function(_, rootDescription)
+                DarkenModernMenusOnAcquire(rootDescription);
                 local model = win.nav.user.getMenuModel(true);
                 local function isSelected(value)
                     return win.USER == value and not win.USERSUBSET;
@@ -2454,6 +2457,7 @@ local function createHistoryViewer()
     -- The filter-mode menu in the same modern form, opened from the
     -- filters header as a context menu.
     local function buildModernFilterMenu(_, rootDescription)
+        DarkenModernMenusOnAcquire(rootDescription);
         local mode = win.FILTERMODE or { kind = "days" };
         rootDescription:CreateRadio(L["No Filter"],
             function() return mode.kind ~= "relative" and mode.kind ~= "metric"; end,
@@ -2646,6 +2650,7 @@ local function createHistoryViewer()
     win.nav.filters.header:SetScript("OnClick", function(self)
             local hv = GetSelectedSkin().history_viewer;
             if(canModernMenus and hv and hv.dropdown_style == "modern") then
+                PadModernMenus(self);
                 local menu = _G.MenuUtil.CreateContextMenu(self, win.BuildModernFilterMenu);
                 DarkenModernMenus(menu);
             else
@@ -2672,6 +2677,7 @@ local function createHistoryViewer()
         if(ok and dropdown) then
             win.nav.filtersModern = dropdown;
             DarkenModernDropdown(dropdown);
+            PadModernMenus(dropdown);
             dropdown:SetPoint("TOPLEFT", -2, 0);
             dropdown:SetPoint("TOPRIGHT", 4, 0);
             dropdown:SetHeight(26);

@@ -47,6 +47,9 @@ db_defaults.modernTheme = {
     chatFrame = "rock",
     chatPanel = "darkmarble",
     chatCutout = false,
+    filterFrame = "rock",
+    filterPanel = "darkmarble",
+    filterCutout = false,
     -- The typed message can wrap onto multiple lines. The row grows
     -- with the message. A line limit is optional.
     inputWrap = false,
@@ -839,13 +842,20 @@ local function buildWindowChrome(obj)
     if(chrome.scrollBar) then chrome.scrollBar.parentWindow = obj; end
 
     -- Resizing moves the strips; picture backgrounds re-window so the
-    -- image stays continuous (see ApplyChromeBackgroundToStrips).
-    obj:HookScript("OnSizeChanged", function()
+    -- image stays continuous (see ApplyChromeBackgroundToStrips). The
+    -- show hook covers windows whose theme applied while they were
+    -- hidden with no rect yet (chat windows build at login, hidden),
+    -- one frame later so the rects have settled.
+    local function rewindowStrips()
         local liveTheme = db and db.modernTheme;
         if(liveTheme and liveTheme.chatCutout and chrome:IsShown()) then
             ApplyChromeBackgroundToStrips(chrome.strips, chrome.bg,
                 liveTheme.chatFrame);
         end
+    end
+    obj:HookScript("OnSizeChanged", rewindowStrips);
+    obj:HookScript("OnShow", function()
+        _G.C_Timer.After(0, rewindowStrips);
     end);
 
     obj.wimChrome = chrome;
@@ -891,7 +901,12 @@ function AttachMinimalScrollBar(scroll, host)
     if(old and old.Hide) then
         old:Hide();
         if(old.HookScript) then
-            pcall(old.HookScript, old, "OnShow", function(self) self:Hide(); end);
+            -- wimClassicBar hands the template's own bar back (the
+            -- filter editor's classic dress); without it the old bar
+            -- stays retired.
+            pcall(old.HookScript, old, "OnShow", function(self)
+                if(not scroll.wimClassicBar) then self:Hide(); end
+            end);
         end
     end
 
@@ -960,7 +975,8 @@ function AttachMinimalScrollBar(scroll, host)
         local offset = scroll:GetVerticalScroll() or 0;
         bar:SetValue(offset < yrange and offset or yrange);
         bar.wimSyncing = false;
-        bar:SetShown(yrange > 1);
+        bar:SetShown(yrange > 1 and not scroll.wimClassicBar
+            and scroll:IsShown());
         sizeThumb();
     end);
     scroll:HookScript("OnVerticalScroll", function(_, offset)
@@ -969,7 +985,26 @@ function AttachMinimalScrollBar(scroll, host)
         bar.wimSyncing = false;
     end);
     bar:Hide();
-    return true;
+    return bar;
+end
+
+-- Swaps a scroll frame between its template scrollbar and the slim
+-- one AttachMinimalScrollBar built for it.
+function SetMinimalScrollBarShown(scroll, bar, useSlim)
+    scroll.wimClassicBar = (not useSlim) or nil;
+    local name = scroll.GetName and scroll:GetName();
+    local old = scroll.ScrollBar or (name and _G[name.."ScrollBar"]);
+    if(old and old.SetShown) then
+        old:SetShown(not useSlim);
+    end
+    if(bar and bar.SetShown) then
+        if(useSlim) then
+            local _, maxValue = bar:GetMinMaxValues();
+            bar:SetShown((maxValue or 0) > 1);
+        else
+            bar:Hide();
+        end
+    end
 end
 
 -- The class-icon cells contain transparent padding, which makes the
@@ -1015,6 +1050,15 @@ function LiteRepaintPortrait(obj)
         dPrint("LitePortrait "..(obj:GetName() or "?")..": rp, 56");
         return;
     end
+    if(obj.type == "chat") then
+        -- The chat-type icon is a soft alpha blob with wide transparent
+        -- margins; it shapes itself, so it takes retail's zoom crop at
+        -- the full portrait size and the blob spans the circle.
+        ZoomPortraitIcon(obj);
+        icon:SetSize(56, 56);
+        dPrint("LitePortrait "..(obj:GetName() or "?")..": chat, 56 zoomed");
+        return;
+    end
     local entry = obj.class and constants.classes[obj.class];
     local tag = entry and entry.tag and string.gsub(entry.tag, "F$", "");
     local file = tag and tag ~= "GM" and "Interface\\Icons\\ClassIcon_"..tag;
@@ -1025,6 +1069,24 @@ function LiteRepaintPortrait(obj)
         dPrint("LitePortrait "..(obj:GetName() or "?")..": file "
             ..tostring(tag)..", 56");
     else
+        -- Unknown class so far (a window opened before any class data,
+        -- like an intercepted /w): the sheet's blank emblem is circular
+        -- with a ~20% transparent inset, so cropping exactly to the
+        -- inset inscribes it in the field at full size with nothing
+        -- left for the missing mask to clip. Square cells (Battle.net
+        -- client logos, GM tags) keep the small inscribed cell.
+        if(not tag and not obj.isBN) then
+            local ulx, uly, _, lly, urx = icon:GetTexCoord();
+            local left, right, top, bottom = ulx, urx, uly, lly;
+            local w, h = right - left, bottom - top;
+            if(w > 0 and h > 0) then
+                local ix, iy = w * 0.19, h * 0.19;
+                icon:SetTexCoord(left + ix, right - ix, top + iy, bottom - iy);
+                icon:SetSize(56, 56);
+                dPrint("LitePortrait "..(obj:GetName() or "?")..": blank, 56");
+                return;
+            end
+        end
         ZoomPortraitIcon(obj);
         icon:SetSize(36, 36);
         dPrint("LitePortrait "..(obj:GetName() or "?")..": fallback, 36"
@@ -1266,16 +1328,18 @@ local function estimateMessageCount(text, limit)
     local count, current = 0, 0;
     for word in string.gmatch(text, "%S+") do
         local length = #word;
-        while(length >= limit) do
+        while(length > limit) do
             if(current > 0) then
                 count = count + 1;
                 current = 0;
             end
             count = count + 1;
-            length = length - (limit - 1);
+            length = length - limit;
         end
         if(length > 0) then
-            if(current == 0 or current + length < limit) then
+            -- current carries a trailing space per word, mirroring the
+            -- splitter's chunk, so equality still fits after the trim.
+            if(current + length <= limit) then
                 current = current + length + 1;
             else
                 count = count + 1;
@@ -1287,6 +1351,23 @@ local function estimateMessageCount(text, limit)
     return count;
 end
 
+-- What the send path will really do with this text: a chat-type slash
+-- command's body goes through the splitter without its prefix, other
+-- slash commands go to the default edit box whole and never split.
+local function counterSendPlan(text)
+    if(string.sub(text, 1, 1) ~= "/") then
+        return text, true;
+    end
+    local command, body = string.match(text, "^(/%S+)%s+(.-)%s*$");
+    local chatType = command and body and _G.hash_ChatTypeInfoList
+        and _G.hash_ChatTypeInfoList[string.upper(command)];
+    if(chatType and chatType ~= "WHISPER" and chatType ~= "BN_WHISPER"
+            and chatType ~= "REPLY" and chatType ~= "CHANNEL") then
+        return body, true;
+    end
+    return text, false;
+end
+
 function UpdateThemedInputDecor(obj)
     local chrome = obj.wimChrome;
     local widgets = obj.widgets;
@@ -1295,22 +1376,33 @@ function UpdateThemedInputDecor(obj)
     local box = widgets.msg_box;
     if(not (box and input.counter)) then return; end
 
-    local text = box:GetText() or "";
+    local raw = box:GetText() or "";
+    local text, splits = counterSendPlan(raw);
     local count = #text;
     -- OnCursorChanged can fire every frame while the box has focus;
     -- skip the repaint when nothing it depends on has changed.
-    local stamp = count.."|"..tostring(obj.wimInputScrollOfs).."|"
+    local stamp = count.."|"..tostring(splits).."|"
+        ..tostring(obj.wimInputScrollOfs).."|"
         ..tostring(box.IsMultiLine and box:IsMultiLine());
     if(obj.wimDecorStamp == stamp) then
         return;
     end
     obj.wimDecorStamp = stamp;
     -- The limits the whisper engine splits against: 255 characters
-    -- for regular whispers, 800 for Battle.net.
-    local limit = obj.isBN and 800 or 255;
+    -- for regular whispers, 800 for Battle.net. A slash command's body
+    -- always goes out as a plain chat type at the 255 cap.
+    local limit = (obj.isBN and text == raw) and 800 or 255;
     if(count == 0) then
         input.counter:SetText("-/"..limit);
         input.counter:SetTextColor(0.6, 0.6, 0.6);
+    elseif(not splits) then
+        -- The default edit box sends this whole; past the cap it cuts.
+        input.counter:SetText(count.."/"..limit);
+        if(count > limit) then
+            input.counter:SetTextColor(1, 0.35, 0.25);
+        else
+            input.counter:SetTextColor(0.6, 0.6, 0.6);
+        end
     else
         local messages = estimateMessageCount(text, limit);
         input.counter:SetText(count.."/"..limit.." ("..messages..")");
@@ -1793,10 +1885,12 @@ end
 -- octagon; sliced corners keep the chamfer and shadow unscaled at any
 -- menu size) and the client's own plate textures hide. The 136px art
 -- sits in a 256px canvas; the 44px margin covers shadow and chamfer.
+local menuPlates = setmetatable({}, { __mode = "k" });
 local function replaceMenuPlate(frame, plateBg, plateFill)
     plateBg:Hide();
     if(plateFill) then plateFill:Hide(); end
-    if(frame.wimMenuPlate) then return; end
+    local existing = menuPlates[frame];
+    if(existing) then existing:Show(); return; end
     local plate = CreateFrame("Frame", nil, frame);
     plate:SetPoint("TOPLEFT", -3, 3);
     plate:SetPoint("BOTTOMRIGHT", 3, -3);
@@ -1835,56 +1929,112 @@ local function replaceMenuPlate(frame, plateBg, plateFill)
     local center = piece(MARGIN, ART - MARGIN, MARGIN, ART - MARGIN);
     center:SetPoint("TOPLEFT", tl, "BOTTOMRIGHT");
     center:SetPoint("BOTTOMRIGHT", br, "TOPLEFT");
-    frame.wimMenuPlate = plate;
+    menuPlates[frame] = plate;
 end
 
--- The client's menu layout seats the last row on the plate's bottom
--- edge; retail keeps a small margin. Measured (not fixed) so the pass
--- is self-limiting: once the gap exists, nothing more is added.
-local function padMenuBottom(frame)
-    if(not frame:IsShown()) then return; end
-    local frameBottom = frame:GetBottom();
-    if(not frameBottom) then return; end
-    local lowest;
+-- The retail art's bottom chamfer and shadow eat into the interior,
+-- so retail lays this menu out with 7px more inset at the bottom than
+-- the top (8/15); the classic clients use symmetric insets, which
+-- reads bottom-tight under the same art. The pass grows the menu
+-- until the bottom gap is topGap+7, measured around the rows only
+-- (the plate hangs past the frame rect), so it is a no-op once the
+-- gaps match and survives the client re-laying the menu out.
+local MENU_BOTTOM_EXTRA = 7;
+local paddedMenus = setmetatable({}, { __mode = "k" });
+local function equalizeMenuPadding(frame)
+    local plate = menuPlates[frame];
+    if(not plate or not plate:IsShown() or not frame:IsShown()) then
+        return;
+    end
+    local frameTop, frameBottom = frame:GetTop(), frame:GetBottom();
+    if(not frameTop or not frameBottom) then return; end
+    local highest, lowest;
     local children = { frame:GetChildren() };
     for i = 1, #children do
-        if(children[i]:IsShown()) then
-            local bottom = children[i]:GetBottom();
+        local child = children[i];
+        if(child ~= plate and child:IsShown()) then
+            local top, bottom = child:GetTop(), child:GetBottom();
+            if(top and (not highest or top > highest)) then
+                highest = top;
+            end
             if(bottom and (not lowest or bottom < lowest)) then
                 lowest = bottom;
             end
         end
     end
-    if(lowest and (lowest - frameBottom) < 5) then
-        frame:SetHeight(frame:GetHeight() + (6 - (lowest - frameBottom)));
+    if(not highest or not lowest) then return; end
+    local delta = (frameTop - highest) + MENU_BOTTOM_EXTRA
+        - (lowest - frameBottom);
+    if(delta > 0.5) then
+        local target = frame:GetHeight() + delta;
+        local state = paddedMenus[frame];
+        if(state) then state.applied = target; end
+        frame:SetHeight(target);
+        dPrint(string.format("MenuPad: %+.1f (top %.1f, bottom %.1f)",
+            delta, frameTop - highest, lowest - frameBottom));
     end
 end
 
--- Submenus spawn as sibling frames when a row is hovered, after the
--- open-time walk has run, so every row gets a hook that re-walks the
--- menus' shared parent once the submenu exists. The hook keeps the
--- original container: deriving a fresh parent from it would escalate
--- the walk toward UIParent.
-local walkMenus;
-local function hookSubmenuSpawner(button, container)
-    if(button.wimSubHook or not container) then return; end
-    button.wimSubHook = true;
-    button:HookScript("OnEnter", function()
-        -- The submenu opens after the hover-intent delay, so a single
-        -- immediate walk runs too early; the staggered walks catch it
-        -- whenever it appears. The walk is idempotent, so repeats are
-        -- cheap.
-        for _, delay in ipairs({ 0.1, 0.4, 0.9 }) do
-            _G.C_Timer.After(delay, function()
-                if(not HasPortraitPanelArt()) then
-                    walkMenus(container, 1, container);
-                end
-            end);
+-- The flicker-free path: menus lay themselves out from their style
+-- mixin's insets, and both dropdown buttons (self.menuMixin) and
+-- context menu owners (ownerRegion.menuMixin) accept an override.
+-- A padded copy of the client's default style bakes the extra bottom
+-- inset into every layout pass, first paint and refreshes alike, so
+-- the equalizer below is only a backstop.
+-- Keyed by the base mixin: templates preset owner.menuMixin (era's
+-- WowStyle1DropdownTemplate carries MenuStyle1Mixin), so the base is
+-- whatever the owner already uses, wrapped rather than replaced.
+local paddedMenuMixins = setmetatable({}, { __mode = "k" });
+local function paddedMenuMixin(base)
+    if(not base or base.wimPadded) then return base; end
+    local cached = paddedMenuMixins[base];
+    if(cached) then return cached; end
+    local baseInset = base.GetInset and base:GetInset();
+    if(not baseInset) then return nil; end
+    local mixin = _G.CreateFromMixins(base);
+    local inset = {
+        left = baseInset.left, top = baseInset.top,
+        right = baseInset.right,
+        bottom = baseInset.bottom + MENU_BOTTOM_EXTRA,
+    };
+    mixin.GetInset = function() return inset; end;
+    mixin.wimPadded = true;
+    paddedMenuMixins[base] = mixin;
+    return mixin;
+end
+
+function PadModernMenus(owner)
+    if(HasPortraitPanelArt() or not owner) then return; end
+    local variants = _G.MenuVariants;
+    local base = owner.menuMixin;
+    if(not base and variants) then
+        if(owner.SetupMenu and variants.GetDefaultMenuMixin) then
+            base = variants.GetDefaultMenuMixin();
+        elseif(variants.GetDefaultContextMenuMixin) then
+            base = variants.GetDefaultContextMenuMixin();
         end
+    end
+    owner.menuMixin = paddedMenuMixin(base) or owner.menuMixin;
+end
+
+local function hookMenuPadding(menu)
+    if(paddedMenus[menu]) then return; end
+    paddedMenus[menu] = {};
+    menu:HookScript("OnSizeChanged", function(self)
+        -- Only a resize from the client's own layout re-runs the
+        -- pass; the pass's resize firing this hook must not loop.
+        local state = paddedMenus[self];
+        if(state and state.applied
+                and math.abs(self:GetHeight() - state.applied) < 0.5) then
+            return;
+        end
+        _G.C_Timer.After(0, function()
+            equalizeMenuPadding(self);
+        end);
     end);
 end
 
-function walkMenus(frame, depth, container)
+local function walkMenus(frame, depth)
     if(depth > 8) then return; end
     if(frame.GetRegions) then
         local regions = { frame:GetRegions() };
@@ -1910,29 +2060,51 @@ function walkMenus(frame, depth, container)
                 end
             end
             replaceMenuPlate(frame, plateBg, plateFill);
-            -- Deferred: the menu's rects resolve on the next layout
-            -- pass.
-            _G.C_Timer.After(0, function()
-                padMenuBottom(frame);
-            end);
         end
     end
     if(frame.GetChildren) then
         local children = { frame:GetChildren() };
         for i = 1, #children do
-            local child = children[i];
-            if(child.GetObjectType and child:GetObjectType() == "Button") then
-                hookSubmenuSpawner(child, container);
-            end
-            walkMenus(child, depth + 1, container);
+            walkMenus(children[i], depth + 1);
         end
     end
 end
 
 function DarkenModernMenus(frame, depth)
     if(HasPortraitPanelArt() or not frame) then return; end
-    walkMenus(frame, depth or 1,
-        frame.GetParent and frame:GetParent() or nil);
+    walkMenus(frame, depth or 1);
+end
+
+function DarkenModernMenusOnAcquire(rootDescription)
+    if(HasPortraitPanelArt() or not rootDescription
+            or not rootDescription.AddMenuAcquiredCallback) then return; end
+    rootDescription:AddMenuAcquiredCallback(function(menu)
+        walkMenus(menu, 1);
+        hookMenuPadding(menu);
+        _G.C_Timer.After(0, function()
+            if(menu:IsShown()) then
+                walkMenus(menu, 1);
+                equalizeMenuPadding(menu);
+            end
+        end);
+    end);
+    if(rootDescription.AddMenuReleasedCallback) then
+        rootDescription:AddMenuReleasedCallback(function(menu)
+            local plate = menuPlates[menu];
+            if(plate) then plate:Hide(); end
+        end);
+    end
+    -- A refresh response re-lays the menu out at its natural height;
+    -- the callbacks fire after that, so the padding re-applies here.
+    if(rootDescription.AddMenuResponseCallback) then
+        rootDescription:AddMenuResponseCallback(function()
+            _G.C_Timer.After(0, function()
+                for frame in pairs(paddedMenus) do
+                    equalizeMenuPadding(frame);
+                end
+            end);
+        end);
+    end
 end
 
 -- Dropdown buttons repaint their art per state, and their menus build
@@ -1942,6 +2114,12 @@ end
 function DarkenModernDropdown(dropdown)
     if(HasPortraitPanelArt() or not dropdown) then return; end
     DarkenModernMenus(dropdown);
+    -- The classic template right-aligns the control's text; retail's
+    -- aligns left.
+    local text = dropdown.Text;
+    if(text and text.GetJustifyH and text:GetJustifyH() == "RIGHT") then
+        text:SetJustifyH("LEFT");
+    end
     dropdown:HookScript("OnMouseDown", function()
         _G.C_Timer.After(0, function()
             local manager = _G.Menu and _G.Menu.GetManager
@@ -2411,6 +2589,13 @@ function LoadSkin(skinName, immutableDB)
     ApplySkinToTabs();
 
 	CallModuleFunction("OnSkinLoaded", SelectedSkin);
+
+    -- The filter editor re-dresses with the skin regardless of whether
+    -- the filtering modules are enabled (module dispatch above only
+    -- reaches enabled modules).
+    if(RestyleFilterFrame) then
+        RestyleFilterFrame();
+    end
 
     -- A modern-only skin requires the modern options UI (see
     -- SkinLocksOptionsStyle). Selecting one turns that UI on.

@@ -271,19 +271,15 @@ local function createGroup(title, list, maxButtons, showNone)
 		-- scales with the menu -- extended 10px past the frame
 		-- horizontally and 3px vertically (the baked shadow pad),
 		-- at 0.93 alpha.
+		-- The plate itself is drawn ONCE, on the parent menu frame
+		-- spanning every visible group (the groups overlap where they
+		-- meet, so per-group plates doubled the border there); each
+		-- group only retires its own backdrop and styles its header.
 		local atlas = skin.menu.background_atlas;
-		if(atlas and getAtlasInfo(atlas) and not self.wimAtlasBg) then
-			local bg = self:CreateTexture(nil, "BACKGROUND");
-			bg:SetPoint("TOPLEFT", -10, 3);
-			bg:SetPoint("BOTTOMRIGHT", 10, -3);
-			bg:Hide();
-			self.wimAtlasBg = bg;
-		end
-		if(atlas and self.wimAtlasBg) then
-			self.wimAtlasBg:SetAtlas(atlas);
-			self.wimAtlasBg:SetTexCoord(0, 1, 0, 1);
-			self.wimAtlasBg:SetAlpha(0.93);
-			self.wimAtlasBg:Show();
+		if(atlas and getAtlasInfo(atlas)) then
+			if(self.wimAtlasBg) then
+				self.wimAtlasBg:Hide();
+			end
 			-- Retire the template backdrop. ClearBackdrop runs first,
 			-- while backdropInfo is still set (it is a no-op once the
 			-- field is nil) -- but the mixin can leave the pieces
@@ -453,13 +449,47 @@ local function createMenu()
             end
             self:SetHeight(groupHeight);
             self:SetWidth(groupWidth);
+            -- The single plate spans from the first group to the
+            -- lowest visible one; the menu frame's own rect overstates
+            -- the content (group anchors overlap), so the plate
+            -- anchors to the groups.
+            if(self.wimAtlasBg) then
+                local lowest = self.groups[1];
+                for i=1, #self.groups do
+                    if(self.groups[i]:IsShown()) then
+                        lowest = self.groups[i];
+                    end
+                end
+                self.wimAtlasBg:ClearAllPoints();
+                self.wimAtlasBg:SetPoint("TOPLEFT", self.groups[1],
+                    "TOPLEFT", -10, 3);
+                self.wimAtlasBg:SetPoint("BOTTOMRIGHT", lowest,
+                    "BOTTOMRIGHT", 10, -3);
+            end
         end
 
 	menu.ApplySkin = function(self, skin)
+		skin = skin or GetSelectedSkin();
+
+		local atlas = skin.menu.background_atlas;
+		local useAtlas = atlas and getAtlasInfo(atlas);
+		if(useAtlas and not self.wimAtlasBg) then
+			self.wimAtlasBg = self:CreateTexture(nil, "BACKGROUND");
+		end
+		if(self.wimAtlasBg) then
+			if(useAtlas) then
+				self.wimAtlasBg:SetAtlas(atlas);
+				self.wimAtlasBg:SetTexCoord(0, 1, 0, 1);
+				self.wimAtlasBg:SetAlpha(0.93);
+				self.wimAtlasBg:Show();
+			else
+				self.wimAtlasBg:Hide();
+			end
+		end
 
 		for i=1, #self.groups do
 			local group = self.groups[i];
-			group:ApplySkin(skin or GetSelectedSkin());
+			group:ApplySkin(skin);
 		end
 
 		self:Refresh();

@@ -211,12 +211,18 @@ function PopContextMenu(tag, parent)
             DDM.CloseDropDownMenus();
             local owner = parent;
             if(type(owner) == "string") then owner = _G[owner]; end
+            if(PadModernMenus and owner) then
+                PadModernMenus(owner);
+            end
             -- The returned frame is kept reachable for /wim snap, as
             -- the styling reference for WIM's own menus (the pooled
             -- frame persists, configured, after the menu closes).
             _G.WIM_LastModernMenu = _G.MenuUtil.CreateContextMenu(
                 owner or _G.UIParent,
                 function(_, rootDescription)
+                    if(DarkenModernMenusOnAcquire) then
+                        DarkenModernMenusOnAcquire(rootDescription);
+                    end
                     describeItems(id, rootDescription);
                 end);
             -- The menu compositor strips its visual art when a menu is
