@@ -347,12 +347,12 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 	-- sent as its own message. Links are already reduced to short
 	-- placeholders above and stay whole.
 	theMsg = string.gsub(theMsg, "%S+", function(word)
-		if(string.len(word) < messageLimit) then
+		if(string.len(word) <= messageLimit) then
 			return nil;
 		end
 		local parts = {};
-		for s=1, string.len(word), messageLimit - 1 do
-			table.insert(parts, string.sub(word, s, s + messageLimit - 2));
+		for s=1, string.len(word), messageLimit do
+			table.insert(parts, string.sub(word, s, s + messageLimit - 1));
 		end
 		return table.concat(parts, " ");
 	end);
@@ -361,23 +361,58 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 	SplitToTable(theMsg, "%s", splitMessage);
 
 	--reconstruct message into chunks of no more than 255 characters.
+	local chunks = {};
 	local chunk = "";
 	for i=1, #splitMessage + 1 do
-		if(splitMessage[i] and string.len(chunk) + string.len(splitMessage[i]) < messageLimit) then
+		-- The chunk carries a trailing space per word, so equality means
+		-- the content fits the limit exactly once that space is trimmed.
+		if(splitMessage[i] and string.len(chunk) + string.len(splitMessage[i]) <= messageLimit) then
 			chunk = chunk..splitMessage[i].." ";
 		else
+			chunk = string.gsub(chunk, "%s+$", "");
 			-- reinsert links of necessary
 			chunk = string.gsub(chunk, "\001\002%d+\003\004", function(link)
 				local index = _G.tonumber(string.match(link, "(%d+)"));
 				return splitMessageLinks[index] or link;
 			end);
-
-			if(isBN) then
-				(_G.C_BattleNet and _G.C_BattleNet.SendWhisper or _G.BNSendWhisper)(Windows[safeName(to)].bn.id, chunk);
-			else
-                (_G.C_ChatInfo and _G.C_ChatInfo.SendChatMessage or _G.SendChatMessage)(chunk, CHANNEL, EXTRA, to)
+			if(chunk ~= "") then
+				table.insert(chunks, chunk);
 			end
 			chunk = (splitMessage[i] or "").." ";
+		end
+	end
+
+	local function send(text)
+		if(isBN) then
+			(_G.C_BattleNet and _G.C_BattleNet.SendWhisper or _G.BNSendWhisper)(Windows[safeName(to)].bn.id, text);
+		else
+			(_G.C_ChatInfo and _G.C_ChatInfo.SendChatMessage or _G.SendChatMessage)(text, CHANNEL, EXTRA, to);
+		end
+	end
+
+	-- A long burst can trip the server's chat throttle, so messages
+	-- past the second go out paced. Two kinds of send must stay
+	-- synchronous: with Gopher (Emote Splitter) loaded its own queue
+	-- paces and confirms everything, and the protected types (say and
+	-- yell in the open world, channels) are only accepted inside the
+	-- keypress that sent them -- a deferred send would be dropped, a
+	-- synchronous burst goes through.
+	local protected = (((CHANNEL == "SAY" or CHANNEL == "YELL")
+		and not _G.IsInInstance()) or CHANNEL == "CHANNEL");
+	if(_G.LibGopher or protected) then
+		for i=1, #chunks do
+			send(chunks[i]);
+		end
+	else
+		for i=1, #chunks do
+			if(i <= 2) then
+				send(chunks[i]);
+			else
+				local text = chunks[i];
+				_G.C_Timer.After(0.25 * (i - 2), function()
+					send(text);
+				end);
+			end
 		end
 	end
 

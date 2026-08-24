@@ -121,7 +121,7 @@ db_defaults.chat = {
 
     },
     say = {
-
+        outputType = "SAY",
     },
     bn = {
         showAlerts = true,
@@ -136,6 +136,28 @@ local function getRuleSet()
     return db.pop_rules.chat[curState];
 end
 
+
+-- The say window's outgoing chat type. The toggle button itself lives
+-- on the shortcut bar (ShortcutBar module).
+local SAY_OUTPUT_ORDER = { SAY = "YELL", YELL = "EMOTE", EMOTE = "SAY" };
+
+function GetSayOutputType()
+    local mode = db and db.chat and db.chat.say and db.chat.say.outputType;
+    return SAY_OUTPUT_ORDER[mode] and mode or "SAY";
+end
+
+function CycleSayOutputType()
+    db.chat.say.outputType = SAY_OUTPUT_ORDER[GetSayOutputType()];
+    if(UpdateAllInputColors) then UpdateAllInputColors(); end
+    return GetSayOutputType();
+end
+
+function SetSayOutputType(mode)
+    if(SAY_OUTPUT_ORDER[mode]) then
+        db.chat.say.outputType = mode;
+        if(UpdateAllInputColors) then UpdateAllInputColors(); end
+    end
+end
 
 local function createWidget_Chat()
     local button = _G.CreateFrame("Button");
@@ -238,7 +260,7 @@ RegisterWidgetTrigger("msg_box", "chat", "OnEnterPressed", function(self)
 	elseif(obj.chatType == "battleground") then
 		TARGET = "INSTANCE_CHAT";
 	elseif(obj.chatType == "say") then
-		TARGET = "SAY";
+		TARGET = GetSayOutputType();
 	elseif(obj.chatType == "channel") then
 		TARGET = "CHANNEL";
 		NUMBER = obj.channelNumber;
@@ -255,6 +277,27 @@ RegisterWidgetTrigger("msg_box", "chat", "OnEnterPressed", function(self)
 	end
 
 	self:SetText("");
+end);
+
+-- Typing a /s, /y, or /e prefix (or any of the client's variants,
+-- /say, /yell, /em, /me ...) in the say window is consumed on the
+-- space: the prefix leaves the box and the output toggle flips to
+-- that chat type. Whisper and other commands stay in the box and
+-- keep their normal slash handling.
+RegisterWidgetTrigger("msg_box", "chat", "OnTextChanged", function(self, isUser)
+	if(not isUser) then return; end
+	local obj = self:GetParent();
+	if(obj.chatType ~= "say") then return; end
+	local command, rest = string.match(self:GetText() or "", "^(/%S+)%s(.*)$");
+	local chatType = command and _G.hash_ChatTypeInfoList
+		and _G.hash_ChatTypeInfoList[string.upper(command)];
+	if(chatType == "SAY" or chatType == "YELL" or chatType == "EMOTE") then
+		SetSayOutputType(chatType);
+		if(UpdateSayOutputShortcut) then
+			UpdateSayOutputShortcut(obj);
+		end
+		self:SetText(rest);
+	end
 end);
 
 

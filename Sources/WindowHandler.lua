@@ -52,7 +52,89 @@ db_defaults.displayColors = {
 				b=0
 			},
                 useSkin = true,
+                useNative = {
+                        enabled = false,
+                        whisper = true,
+                        bnet = true,
+                        say = true,
+                        guild = true,
+                        officer = true,
+                        party = true,
+                        raid = true,
+                        instance = true,
+                        channel = true,
+                },
 	};
+
+-- The input field takes the color of the chat type it sends as, like
+-- the game's own chat box. A Modern skin option, inert under other
+-- skins like the rest of the theme settings.
+local function nativeColorsActive()
+	local native = db and db.displayColors and db.displayColors.useNative;
+	if(not (native and native.enabled)) then return nil; end
+	local skin = GetSelectedSkin and GetSelectedSkin();
+	return (skin and skin.modernOnly) and native or nil;
+end
+
+local function inputColorTarget(obj)
+	if(obj.type == "whisper" or obj.type == "w2w") then
+		if(obj.isBN) then
+			return "bnet", "BN_WHISPER";
+		end
+		return "whisper", "WHISPER";
+	elseif(obj.type == "chat") then
+		local chatType = obj.chatType;
+		if(chatType == "say") then
+			-- Follows the say window's output toggle.
+			return "say", GetSayOutputType and GetSayOutputType() or "SAY";
+		elseif(chatType == "guild") then
+			return "guild", "GUILD";
+		elseif(chatType == "officer") then
+			return "officer", "OFFICER";
+		elseif(chatType == "party") then
+			return "party", "PARTY";
+		elseif(chatType == "raid") then
+			return "raid", "RAID";
+		elseif(chatType == "battleground") then
+			return "instance", "INSTANCE_CHAT";
+		elseif(chatType == "channel") then
+			return "channel", "CHANNEL"..(obj.channelNumber or "");
+		elseif(chatType == "community") then
+			return "channel", "COMMUNITIES_CHANNEL";
+		end
+	end
+end
+
+function UpdateInputColor(obj)
+	local box = obj and obj.widgets and obj.widgets.msg_box;
+	if(not box) then return; end
+	local native = nativeColorsActive();
+	local key, token = inputColorTarget(obj);
+	local info = native and key and native[key]
+		and (_G.ChatTypeInfo[token or ""] or _G.ChatTypeInfo["CHANNEL"]);
+	if(info) then
+		box:SetTextColor(info.r, info.g, info.b);
+		obj.wimInputColored = true;
+	elseif(obj.wimInputColored) then
+		obj.wimInputColored = nil;
+		local widgetSkin = GetSelectedSkin().message_window.widgets.msg_box;
+		local color = widgetSkin and widgetSkin.font_color;
+		if(type(color) == "table") then
+			box:SetTextColor(_G.unpack(color));
+		elseif(color) then
+			box:SetTextColor(RGBHexToPercent(color));
+		else
+			box:SetTextColor(1, 1, 1);
+		end
+	end
+end
+
+function UpdateAllInputColors()
+	for box in Widgets("msg_box") do
+		UpdateInputColor(box.parentWindow);
+	end
+end
+
 db_defaults.fontSize = 12;
 db_defaults.windowAlpha = 80;
 db_defaults.windowOnTop = true;
@@ -2239,15 +2321,32 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkLeave", fu
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", function(self)
 		if(strsub(self:GetText(), 1, 1) == "/") then
-			EditBoxInFocus = nil;
-			_G.ChatFrame1EditBox:SetText(self:GetText());
-			if (_G.ChatFrameEditBoxBaseMixin and _G.ChatFrameEditBoxBaseMixin.SendText) then
-				_G.ChatFrameEditBoxBaseMixin.SendText(_G.ChatFrame1EditBox, 1);
+			-- Chat-type commands (/s, /e, /y ...) route through the
+			-- splitter: the default edit box sends one message and the
+			-- client drops everything past the length cap. Commands
+			-- that need a target or channel number keep the edit box.
+			local command, body = string.match(self:GetText(), "^(/%S+)%s+(.-)%s*$");
+			local chatType = command and body and body ~= ""
+				and _G.hash_ChatTypeInfoList
+				and _G.hash_ChatTypeInfoList[string.upper(command)];
+			if(chatType and chatType ~= "WHISPER" and chatType ~= "BN_WHISPER"
+					and chatType ~= "REPLY" and chatType ~= "CHANNEL"
+					and SendSplitMessage) then
+				if(not InChatMessagingLockdown()) then
+					SendSplitMessage("ALERT", "WIM", PreSendFilterText(body), chatType);
+				end
+				self:SetText("");
 			else
-				_G.ChatEdit_SendText(_G.ChatFrame1EditBox, 1);
+				EditBoxInFocus = nil;
+				_G.ChatFrame1EditBox:SetText(self:GetText());
+				if (_G.ChatFrameEditBoxBaseMixin and _G.ChatFrameEditBoxBaseMixin.SendText) then
+					_G.ChatFrameEditBoxBaseMixin.SendText(_G.ChatFrame1EditBox, 1);
+				else
+					_G.ChatEdit_SendText(_G.ChatFrame1EditBox, 1);
+				end
+				self:SetText("");
+				EditBoxInFocus = self;
 			end
-			self:SetText("");
-			EditBoxInFocus = self;
 		else
                         if(self:GetText() == "") then
 				self:Hide();
@@ -2263,6 +2362,10 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", func
 			self:Show();
                 end
 
+	end);
+
+RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnShow", function(self)
+		UpdateInputColor(self:GetParent());
 	end);
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEscapePressed", function(self)

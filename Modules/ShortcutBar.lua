@@ -502,3 +502,98 @@ RegisterShortcut("ignore", L["Ignore Player"], {
 		_G.StaticPopup_Show("WIM_IGNORE");
 	end
 });
+
+-- Say output toggle: a letter in the outgoing chat type's color,
+-- shown on the say window while the Modern skin is active.
+local SAY_LABELS = { SAY = "S", YELL = "Y", EMOTE = "E" };
+local SAY_NAMES = { SAY = _G.SAY, YELL = _G.YELL, EMOTE = _G.EMOTE };
+
+local function sayOutputAllowed(obj)
+	local skin = GetSelectedSkin();
+	return (obj and obj.chatType == "say" and skin and skin.modernOnly)
+		and true or false;
+end
+
+local function paintSayOutput(button)
+	if(not button.wimText) then
+		button.icon:Hide();
+		button.wimText = button:CreateFontString(nil, "OVERLAY",
+			"GameFontNormalLarge");
+		button.wimText:SetPoint("CENTER");
+	end
+	local mode = GetSayOutputType();
+	button.wimText:SetText(SAY_LABELS[mode]);
+	local info = _G.ChatTypeInfo[mode];
+	if(info) then
+		button.wimText:SetTextColor(info.r, info.g, info.b);
+	end
+end
+
+local function sayOutputTooltip(self)
+	local mode = GetSayOutputType();
+	_G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+	_G.GameTooltip:SetText(SAY_NAMES[mode] or mode);
+	_G.GameTooltip:AddLine(L["Click to switch between Say, Yell, and Emote."],
+		1, 1, 1, true);
+	_G.GameTooltip:Show();
+end
+
+RegisterShortcut("sayOutput", L["Say, Yell, or Emote"], {
+	type = "chat",
+	OnClick = function(self)
+		CycleSayOutputType();
+		paintSayOutput(self);
+		if(_G.GameTooltip:IsOwned(self)) then
+			sayOutputTooltip(self);
+		end
+	end,
+	OnEnter = function(self)
+		sayOutputTooltip(self);
+	end,
+	SetDefaults = function(self)
+		if(sayOutputAllowed(self.parentWindow)) then
+			paintSayOutput(self);
+			self:Enable();
+		else
+			self:Disable();
+		end
+	end
+});
+
+local function updateSayOutputButton(obj)
+	local bar = obj and obj.widgets and obj.widgets.shortcuts;
+	if(not bar) then return; end
+	local buttons = getButtonTable(bar.type);
+	for i=1, #buttons do
+		if(buttons[i].id == "sayOutput" and bar.buttons[i]) then
+			if(sayOutputAllowed(obj)) then
+				paintSayOutput(bar.buttons[i]);
+				bar.buttons[i]:Enable();
+			else
+				bar.buttons[i]:Disable();
+			end
+			return;
+		end
+	end
+end
+
+function UpdateSayOutputShortcut(obj)
+	updateSayOutputButton(obj);
+end
+
+local ShortcutBar_OnWindowShow = ShortcutBar.OnWindowShow;
+function ShortcutBar:OnWindowShow(obj)
+	ShortcutBar_OnWindowShow(self, obj);
+	if(obj.type == "chat") then
+		updateSayOutputButton(obj);
+	end
+end
+
+function ShortcutBar:OnSkinLoaded()
+	for widget in Widgets("shortcuts") do
+		local obj = widget.parentWindow;
+		if(obj and obj.type == "chat") then
+			updateSayOutputButton(obj);
+		end
+	end
+end
