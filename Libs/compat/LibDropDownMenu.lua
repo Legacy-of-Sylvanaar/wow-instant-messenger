@@ -5,7 +5,14 @@ local buildNumber = select(4, _G.GetBuildInfo())
 local isModernApi = buildNumber >= 30401--This needs review
 
 if (not isModernApi) then
-	local DDM = LibStub:GetLibrary("LibDropDownMenu");
+	local DDM = _G.LibStub and _G.LibStub:GetLibrary("LibDropDownMenu", true);
+
+	if (not DDM) then
+		-- Packaged external is unavailable (dev checkout or no other addon embedding it);
+		-- register a stub whose unresolved lookups fall back to the WoW global api.
+		DDM = _G.LibStub and _G.LibStub:NewLibrary("LibDropDownMenu", 1) or {};
+		setmetatable(DDM, { __index = function(_, key) return _G[key]; end });
+	end
 
 	local k, v
 	for k,v in pairs (DDM) do
