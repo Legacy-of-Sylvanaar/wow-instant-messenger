@@ -621,4 +621,16 @@ WIM.AddLocale("koKR", {
     ["Usage: /wim style [classic|modern]"] = "사용법: /wim style [classic|modern]",
     ["WIM: the modern options UI is not available on this client."] = "WIM: 이 클라이언트에서는 현대식 옵션 UI를 사용할 수 없습니다.",
     ["WIM: queued options open canceled."] = "WIM: 대기 중인 옵션 열기가 취소되었습니다.",
+
+    -- Placeholder: Translated with Google Translate, pending a natural language speaker to verify the translation.
+    ["Click to switch between Say, Yell, and Emote."] = "클릭하면 일반 대화, 외치기, 감정표현을 전환합니다.",
+    ["Say, Yell, or Emote"] = "일반 대화, 외치기 또는 감정표현",
+    ["Chat Colors"] = "대화 색상",
+    ["Match the game's chat colors."] = "게임의 대화 색상과 일치시킵니다.",
+    ["The message being typed takes the color of the chat type it will send as, like the game's own chat box."] = "입력 중인 메시지가 전송될 대화 유형의 색상으로 표시됩니다. 게임의 대화 입력창과 같습니다.",
+    ["Battle.net Whispers"] = "Battle.net 귓속말",
+    ["Filter Editor"] = "필터 편집기",
+    ["Filter area background"] = "필터 영역 배경",
+    ["Filter area sees through to the game world"] = "필터 영역 너머로 게임 세계 표시",
+    ["Draws the frame background only around the filter area, so a clear filter area background (None or Transparent) shows the game world behind the editor."] = "창 배경을 필터 영역 주위에만 그립니다. 필터 영역 배경이 없음 또는 투명이면 편집기 뒤로 게임 세계가 보입니다.",
 });

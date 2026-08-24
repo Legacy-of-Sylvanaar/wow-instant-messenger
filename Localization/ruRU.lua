@@ -623,4 +623,16 @@ WIM.AddLocale("ruRU", {
     ["Usage: /wim style [classic|modern]"] = "Использование: /wim style [classic|modern]",
     ["WIM: the modern options UI is not available on this client."] = "WIM: современный интерфейс настроек недоступен на этом клиенте.",
     ["WIM: queued options open canceled."] = "WIM: отложенное открытие настроек отменено.",
+
+    -- Placeholder: Translated with Google Translate, pending a natural language speaker to verify the translation.
+    ["Click to switch between Say, Yell, and Emote."] = "Нажмите, чтобы переключаться между командами Сказать, Крикнуть и Эмоция.",
+    ["Say, Yell, or Emote"] = "Сказать, Крикнуть или Эмоция",
+    ["Chat Colors"] = "Цвета чата",
+    ["Match the game's chat colors."] = "Использовать цвета чата из игры.",
+    ["The message being typed takes the color of the chat type it will send as, like the game's own chat box."] = "Набираемое сообщение окрашивается в цвет того типа чата, в который оно будет отправлено, как в игровом окне чата.",
+    ["Battle.net Whispers"] = "Шепот Battle.net",
+    ["Filter Editor"] = "Редактор фильтров",
+    ["Filter area background"] = "Фон области фильтра",
+    ["Filter area sees through to the game world"] = "Область фильтра просвечивает на игровой мир",
+    ["Draws the frame background only around the filter area, so a clear filter area background (None or Transparent) shows the game world behind the editor."] = "Рисует фон окна только вокруг области фильтра, поэтому пустой фон области (Нет или Прозрачный) показывает игровой мир позади редактора.",
 });

@@ -623,4 +623,16 @@ WIM.AddLocale("zhTW", {
     ["Usage: /wim style [classic|modern]"] = "用法：/wim style [classic|modern]",
     ["WIM: the modern options UI is not available on this client."] = "WIM：此用戶端不支援現代選項介面。",
     ["WIM: queued options open canceled."] = "WIM：已取消排入佇列的選項開啟。",
+
+    -- Placeholder: Translated with Google Translate, pending a natural language speaker to verify the translation.
+    ["Click to switch between Say, Yell, and Emote."] = "點擊在說話、大喊和表情之間切換。",
+    ["Say, Yell, or Emote"] = "說話、大喊或表情",
+    ["Chat Colors"] = "聊天顏色",
+    ["Match the game's chat colors."] = "使用遊戲的聊天顏色。",
+    ["The message being typed takes the color of the chat type it will send as, like the game's own chat box."] = "正在輸入的訊息會顯示為其傳送頻道的顏色，與遊戲內建聊天框一致。",
+    ["Battle.net Whispers"] = "戰網密語",
+    ["Filter Editor"] = "過濾器編輯器",
+    ["Filter area background"] = "過濾區域背景",
+    ["Filter area sees through to the game world"] = "過濾區域透視遊戲世界",
+    ["Draws the frame background only around the filter area, so a clear filter area background (None or Transparent) shows the game world behind the editor."] = "僅在過濾區域周圍繪製視窗背景，因此當過濾區域背景為無或透明時，可以看到編輯器後面的遊戲世界。",
 });

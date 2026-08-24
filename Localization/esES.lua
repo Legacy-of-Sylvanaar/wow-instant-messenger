@@ -621,6 +621,18 @@ local translations = {
     ["Usage: /wim style [classic|modern]"] = "Uso: /wim style [classic|modern]",
     ["WIM: the modern options UI is not available on this client."] = "WIM: la interfaz moderna de opciones no está disponible en este cliente.",
     ["WIM: queued options open canceled."] = "WIM: apertura de opciones en cola cancelada.",
+
+    -- Placeholder: Translated with Google Translate, pending a natural language speaker to verify the translation.
+    ["Click to switch between Say, Yell, and Emote."] = "Haz clic para alternar entre Decir, Gritar y Emoción.",
+    ["Say, Yell, or Emote"] = "Decir, Gritar o Emoción",
+    ["Chat Colors"] = "Colores del chat",
+    ["Match the game's chat colors."] = "Usar los colores de chat del juego.",
+    ["The message being typed takes the color of the chat type it will send as, like the game's own chat box."] = "El mensaje que escribes toma el color del tipo de chat con el que se enviará, como en la ventana de chat del juego.",
+    ["Battle.net Whispers"] = "Susurros de Battle.net",
+    ["Filter Editor"] = "Editor de filtros",
+    ["Filter area background"] = "Fondo del área del filtro",
+    ["Filter area sees through to the game world"] = "El área del filtro deja ver el mundo del juego",
+    ["Draws the frame background only around the filter area, so a clear filter area background (None or Transparent) shows the game world behind the editor."] = "Dibuja el fondo de la ventana solo alrededor del área del filtro, de modo que un fondo despejado (Ninguno o Transparente) muestre el mundo del juego detrás del editor.",
 };
 
 if WIM.getLocale() == "esES" then
