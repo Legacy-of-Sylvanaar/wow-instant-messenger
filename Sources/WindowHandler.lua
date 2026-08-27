@@ -2334,9 +2334,15 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", func
 					and SendSplitMessage) then
 				if(not InChatMessagingLockdown()) then
 					SendSplitMessage("ALERT", "WIM", PreSendFilterText(body), chatType);
+					self:SetText("");
+				else
+					LockdownNotice();
 				end
-				self:SetText("");
 			else
+				if(InChatMessagingLockdown()) then
+					LockdownNotice();
+					return;
+				end
 				EditBoxInFocus = nil;
 				_G.ChatFrame1EditBox:SetText(self:GetText());
 				if (_G.ChatFrameEditBoxBaseMixin and _G.ChatFrameEditBoxBaseMixin.SendText) then

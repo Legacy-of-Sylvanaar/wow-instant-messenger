@@ -246,6 +246,7 @@ RegisterWidgetTrigger("msg_box", "chat", "OnEnterPressed", function(self)
 
 	-- do not send if in chat messaging lockdown (12.0.0+)
 	if InChatMessagingLockdown() then
+		LockdownNotice();
 		return;
 	end
 

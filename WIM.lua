@@ -1482,6 +1482,16 @@ function InChatMessagingLockdown()
 	end
 end
 
+local lastLockdownNotice = 0;
+function LockdownNotice()
+	local now = _G.GetTime();
+	if now - lastLockdownNotice < 10 then
+		return;
+	end
+	lastLockdownNotice = now;
+	_G.DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0WIM|r: "..L["Blizzard is restricting chat right now. Your message was not sent."]);
+end
+
 
 
 -- list of PreSendFilterText(text)

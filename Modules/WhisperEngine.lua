@@ -383,6 +383,11 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 	end
 
 	local function send(text)
+		if InChatMessagingLockdown() then
+			LockdownNotice();
+			return;
+		end
+
 		if(isBN) then
 			(_G.C_BattleNet and _G.C_BattleNet.SendWhisper or _G.BNSendWhisper)(Windows[safeName(to)].bn.id, text);
 		else
@@ -432,6 +437,7 @@ RegisterWidgetTrigger("msg_box", "whisper", "OnEnterPressed", function(self)
 
 		-- do not send if in chat messaging lockdown (12.0.0+)
 		if InChatMessagingLockdown() then
+			LockdownNotice();
 			return;
 		end
 
