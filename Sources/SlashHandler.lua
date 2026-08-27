@@ -108,3 +108,20 @@ end
 RegisterSlashCommand("help", showCommands, L["Display available slash commands."])
 -- register some tools for WIM;
 RegisterSlashCommand("rl", _G.ReloadUI, L["Reload User Interface."]); -- ReloadUI()
+
+if (_G.C_ChatInfo and _G.C_ChatInfo.InChatMessagingLockdown and _G.C_CVar and _G.C_CVar.SetCVar) then
+	RegisterSlashCommand("forcelockdown", function(args)
+		local mode = string.lower(args or "");
+		local enable;
+		if (mode == "on") then
+			enable = true;
+		elseif (mode == "off") then
+			enable = false;
+		else
+			enable = _G.C_CVar.GetCVar("addonChatRestrictionsForced") ~= "1";
+		end
+		_G.pcall(_G.C_CVar.SetCVar, "addonChatRestrictionsForced", enable and "1" or "0");
+		_G.DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0WIM|r: addonChatRestrictionsForced = "
+			..(enable and "1" or "0")..", InChatMessagingLockdown() = ".._G.tostring(InChatMessagingLockdown()));
+	end, L["Force Blizzard's chat messaging lockdown for testing (on|off, does not persist)."]);
+end
