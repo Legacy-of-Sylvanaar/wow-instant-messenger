@@ -435,6 +435,10 @@ local function cacheIfCensored (record, ...)
 	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = ...;
 	local lineID = arg11;
 
+	if (record.msg and record.msg:find("|K", 1, true)) then
+		record.msg = record.msg:gsub("|K.-|k", "(protected)");
+	end
+
 	-- lineID must be checked before the call, not just the API's existence:
 	-- C_ChatInfo.IsChatLineCensored errors on a nil argument, and not every
 	-- event that reaches here carries a chat line ID. CLUB_MESSAGE_ADDED
