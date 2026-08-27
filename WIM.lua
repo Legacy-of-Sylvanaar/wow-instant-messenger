@@ -486,11 +486,26 @@ deferredEventQueueProcessor:SetScript("OnUpdate", function(self)
 	self:Hide();
 end);
 
-local deferredEventTime = _G.C_Timer.NewTicker(1, function ()
+local deferredEventTime = _G.hasanysecretvalues and _G.C_Timer.NewTicker(1, function ()
 	if #deferredEvents > 0 then
 		deferredEventQueueProcessor:Show();
 	end
-end);
+end) or nil;
+
+local chatRestrictionType = _G.Enum and _G.Enum.AddOnRestrictionType and _G.Enum.AddOnRestrictionType.Chat;
+if chatRestrictionType then
+	local restrictionWatcher = CreateFrame("Frame");
+	restrictionWatcher:RegisterEvent("ADDON_RESTRICTION_STATE_CHANGED");
+	restrictionWatcher:SetScript("OnEvent", function(self, event, restrictionType, state)
+		if HasAnySecretValues(restrictionType, state) then
+			return;
+		end
+		local inactive = (_G.Enum.AddOnRestrictionState and _G.Enum.AddOnRestrictionState.Inactive) or 0;
+		if restrictionType == chatRestrictionType and state == inactive and #deferredEvents > 0 then
+			deferredEventQueueProcessor:Show();
+		end
+	end);
+end
 
 
 
