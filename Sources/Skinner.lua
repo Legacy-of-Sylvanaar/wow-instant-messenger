@@ -2629,7 +2629,8 @@ function RegisterSkin(skinTable)
     local error_list = "";
     local addonName;
 
-    local stack = {string.split("\n", debugstack())};
+    local trace = debugstack();
+    local stack = (not IsSecretValue(trace)) and {string.split("\n", trace)} or {};
     if(table.getn(stack) >= 2) then
         local paths = {string.split("\\", stack[2])};
         addonName = paths[3];

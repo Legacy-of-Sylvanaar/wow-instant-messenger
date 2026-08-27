@@ -2503,6 +2503,9 @@ escapeFrame.Hide = function(self)
                 end
                 -- lets do some checks first shall we?
                 local stack = _G.debugstack(1);
+                if(IsSecretValue(stack)) then
+                                return;
+                end
 		if(stack:match("TOGGLEWORLDMAP")) then
 				-- we do not want to close the windows.
                                 return;

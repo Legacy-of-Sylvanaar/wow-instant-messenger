@@ -119,6 +119,9 @@ function classes.GetMyColoredName()
 end
 
 function classes.GetColoredNameByChatEvent(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
+     if HasAnySecretValues(arg2, arg12) then
+          return arg2;
+     end
      if(arg12 and arg12 ~= "") then
 	    	 local type = _G.strsplit("-", arg12 or "")
 	    	 if type ~= "Player" then return arg2 end--Blizzard didn't return a valid guid, so abort class colors

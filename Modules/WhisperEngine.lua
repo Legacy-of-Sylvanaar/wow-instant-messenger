@@ -877,7 +877,7 @@ end
 --------------------------------------
 
 -- hook SendChatMessage to track sent messages
-hooksecurefunc(_G.C_ChatInfo or _G, "SendChatMessage", function(...)
+hooksecurefunc((_G.C_ChatInfo and _G.C_ChatInfo.SendChatMessage) and _G.C_ChatInfo or _G, "SendChatMessage", function(...)
 	if HasAnySecretValues(...) then
 		return;
 	end

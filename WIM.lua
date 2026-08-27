@@ -1473,6 +1473,24 @@ function HasAnySecretValues(...)
 	end
 end
 
+local _canaccessvalue = _G.canaccessvalue;
+function CanAccessValue(value)
+	if _canaccessvalue then
+		return _canaccessvalue(value);
+	else
+		return true;
+	end
+end
+
+local _scrubsecretvalues = _G.scrubsecretvalues;
+function ScrubSecretValues(...)
+	if _scrubsecretvalues then
+		return _scrubsecretvalues(...);
+	else
+		return ...;
+	end
+end
+
 local _inchatmessaginglockdown = _G.C_ChatInfo and _G.C_ChatInfo.InChatMessagingLockdown;
 function InChatMessagingLockdown()
 	if _inchatmessaginglockdown then
