@@ -1024,9 +1024,6 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 	end);
 
 	hooksecurefunc(_G.ChatFrameUtil, "SendBNetTell", sendBNetTell);
-
-	-- by not allowing Blizzard to keep its own log of lastTellTargets, it prevents secret issues.
-	_G.ChatFrameUtil.SetLastTellTarget = function (target, chatType) end
 else
 	-- build list of reply commands
 	local replyCommands = {};
@@ -1057,7 +1054,6 @@ else
 	)
 
 	hooksecurefunc(_G, "ChatFrame_SendBNetTell", sendBNetTell);
-	_G.ChatEdit_SetLastTellTarget = function (target, chatType) end
 end
 
 

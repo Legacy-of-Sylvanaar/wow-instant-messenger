@@ -2384,14 +2384,10 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnUpdate", function(s
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusGained", function(self)
                                 EditBoxInFocus = self;
-                                -- _G.ACTIVE_CHAT_EDIT_BOX = self; -- preserve linking abilities.
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusLost", function(self)
 								_EditBoxInFocus = EditBoxInFocus -- temporary reference
                                 EditBoxInFocus = nil;
-								-- if _G.ACTIVE_CHAT_EDIT_BOX == self then
-	                            --     _G.ACTIVE_CHAT_EDIT_BOX = nil;
-								-- end
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnMouseUp", function(self, button)
                                 libs.DropDownMenu.CloseDropDownMenus();
@@ -2412,15 +2408,14 @@ RegisterWidgetTrigger("msg_box", "whisper,w2w", "OnTabPressed", function(self)
                 		local whisperTarget = win.isBN and win.toonName or win.theUser
                 		local chatType = win.isBN and "BN_WHISPER" or "WHISPER"
                 		-- Lookup the next whisper target
-                		local nextWhisperTarget = (_G.ChatFrameUtil and _G.ChatFrameUtil.GetNextTellTarget or _G.ChatEdit_GetNextTellTarget)(whisperTarget,chatType)
+                		local ok, nextWhisperTarget = _G.pcall(_G.ChatFrameUtil and _G.ChatFrameUtil.GetNextTellTarget or _G.ChatEdit_GetNextTellTarget, whisperTarget, chatType)
 
-                		if nextWhisperTarget ~= "" then
+                		if ok and nextWhisperTarget and nextWhisperTarget ~= "" and not HasAnySecretValues(nextWhisperTarget) then
                 			win = GetWhisperWindowByUser(nextWhisperTarget);
                 			chatType = win.isBN and "BN_WHISPER" or "WHISPER"
                 			win:Hide();
                 			win:Pop(true); -- force popup
                 			win.widgets.msg_box:SetFocus();
-                			(_G.ChatFrameUtil and _G.ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(nextWhisperTarget,chatType);
                 		end
                 end
 	end);
