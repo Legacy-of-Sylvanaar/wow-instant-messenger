@@ -168,6 +168,22 @@ function WhisperEngine:OnEnableWIM()
 	for i = 1, #CHAT_EVENTS do
 		WhisperEngine:RegisterEvent(CHAT_EVENTS[i]);
 	end
+	_G.pcall(WhisperEngine.RegisterEvent, WhisperEngine, "PLAYER_REPORT_SUBMITTED");
+end
+
+function WhisperEngine:PLAYER_REPORT_SUBMITTED(guid)
+	if HasAnySecretValues(guid) or _G.type(guid) ~= "string" then
+		return;
+	end
+	local ok, _, _, _, _, _, name, realm = _G.pcall(_G.GetPlayerInfoByGUID, guid);
+	if not ok or _G.type(name) ~= "string" or name == "" then
+		return;
+	end
+	local fullName = (_G.type(realm) == "string" and realm ~= "") and (name.."-"..realm) or name;
+	local win = Windows[safeName(fullName)] or Windows[safeName(name)];
+	if win and win.widgets and win.widgets.chat_display and win.widgets.chat_display.Clear then
+		win.widgets.chat_display:Clear();
+	end
 end
 
 function WhisperEngine:OnEnable ()
