@@ -354,21 +354,16 @@ end
 
 -- defer an event to be called on a next cycle. This is used to defer events that may cause taint if called during combat or during certain protected function calls.
 local deferredEvents = {};
-ChatLineHasSecrets = {};
+local MAX_DEFERRED_EVENTS = 500;
+local droppedDeferredEvents = 0;
 
 local function sanitizeDeferredEventArgs (...)
-	local args = {...};
-	for i = 1, 29 do
+	local args = {n = select("#", ...), ...};
+	for i = 1, args.n do
 		if IsSecretValue(args[i]) then
 			args[i] = "";
-
-			if args[11] then
-				ChatLineHasSecrets[args[11]] = true; -- mark which chatLines have secrets.
-			end
-		else
-			if type(args[i]) == "nil" then
-				args[i] = "";
-			end
+			args.secret = args.secret or {};
+			args.secret[i] = true;
 		end
 	end
 
@@ -376,6 +371,21 @@ local function sanitizeDeferredEventArgs (...)
 end
 
 local function enqueueDeferredEvent(module, event, ...)
+	local lineID = select(11, ...);
+	if not IsSecretValue(lineID) and type(lineID) == "number" and lineID > 0 then
+		for i = 1, #deferredEvents do
+			local pending = deferredEvents[i];
+			if pending.module == module and pending.event == event and pending.args[11] == lineID then
+				return;
+			end
+		end
+	end
+
+	if #deferredEvents >= MAX_DEFERRED_EVENTS then
+		table.remove(deferredEvents, 1);
+		droppedDeferredEvents = droppedDeferredEvents + 1;
+	end
+
 	-- queue the event
 	dPrint("  +-- Deferring Event: "..event);
 	table.insert(deferredEvents, {module = module, event = event, args = sanitizeDeferredEventArgs(...), time = _G.time()});
@@ -388,21 +398,58 @@ local function dequeueDeferredEvent ()
 
 	local event = table.remove(deferredEvents, 1);
 	if event then
+		local args = event.args;
+		local secret = args.secret;
 		if string.match(event.event, "^CHAT_MSG") then
-			local lineID = event.args[11];
-			event.args[1] = _G.C_ChatInfo.GetChatLineText(lineID) or "";
-			event.args[2] = _G.C_ChatInfo.GetChatLineSenderName(lineID) or "";
-			event.args[12] = _G.C_ChatInfo.GetChatLineSenderGUID(lineID) or "";
+			if secret then
+				if secret[9] and string.match(event.event, "^CHAT_MSG_CHANNEL") then
+					dPrint("  +-- Dropping deferred "..event.event..": channel name not recoverable.");
+					droppedDeferredEvents = droppedDeferredEvents + 1;
+					return true;
+				end
 
-			-- if Bnet, add BnetAccountId
-			if event.event == "CHAT_MSG_BN_WHISPER_INFORM" then
-				event.args[13] = GetBNGetFriendInfo(0) or 0;
-			elseif event.event == "CHAT_MSG_BN_WHISPER" or event.event == "CHAT_MSG_BN_INLINE_TOAST_ALERT" then
-				local bnInfo = GetBNGetGameAccountInfoByKName(event.args[2]);
-				event.args[13] = (bnInfo and bnInfo[1]) or 0;
+				if not (_G.C_ChatInfo and _G.C_ChatInfo.GetChatLineText) then
+					droppedDeferredEvents = droppedDeferredEvents + 1;
+					return true;
+				end
+
+				local lineID = args[11];
+				if secret[1] then
+					local ok, text = _G.pcall(_G.C_ChatInfo.GetChatLineText, lineID);
+					if not ok or type(text) ~= "string" or text == "" or IsSecretValue(text) then
+						dPrint("  +-- Dropping deferred "..event.event..": line "..tostring(lineID).." not recoverable.");
+						droppedDeferredEvents = droppedDeferredEvents + 1;
+						return true;
+					end
+					args[1] = text;
+				end
+				if secret[2] then
+					local ok, sender = _G.pcall(_G.C_ChatInfo.GetChatLineSenderName, lineID);
+					if not ok or type(sender) ~= "string" or sender == "" or IsSecretValue(sender) then
+						dPrint("  +-- Dropping deferred "..event.event..": sender of line "..tostring(lineID).." not recoverable.");
+						droppedDeferredEvents = droppedDeferredEvents + 1;
+						return true;
+					end
+					args[2] = sender;
+				end
+				if secret[12] then
+					local ok, guid = _G.pcall(_G.C_ChatInfo.GetChatLineSenderGUID, lineID);
+					args[12] = (ok and type(guid) == "string" and not IsSecretValue(guid)) and guid or "";
+				end
 			end
 
-			event.args[29] = event.time; -- add original event time as arg29 for modules to use if they want.
+			-- if Bnet, add BnetAccountId
+			if event.event == "CHAT_MSG_BN_WHISPER" or event.event == "CHAT_MSG_BN_WHISPER_INFORM" or event.event == "CHAT_MSG_BN_INLINE_TOAST_ALERT" then
+				if type(args[13]) ~= "number" or args[13] <= 0 then
+					local bnInfo = GetBNGetGameAccountInfoByKName(args[2]);
+					args[13] = (bnInfo and bnInfo[1]) or 0;
+				end
+			end
+
+			args[29] = event.time; -- add original event time as arg29 for modules to use if they want.
+			if (args.n or 0) < 29 then
+				args.n = 29;
+			end
 		end
 
 		if event.module.enabled then
@@ -410,7 +457,7 @@ local function dequeueDeferredEvent ()
 			local handler = event.module[event.event];
 			if type(handler) == "function" then
 				dPrint("  +-- "..event.module.title..":"..event.event);
-				handler(event.module, unpack(event.args));
+				handler(event.module, unpack(args, 1, args.n or 29));
 			end
 		end
 
@@ -429,6 +476,11 @@ deferredEventQueueProcessor:SetScript("OnUpdate", function(self)
 		end
 
 		return;
+	end
+
+	if droppedDeferredEvents > 0 then
+		_G.DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0WIM|r: "..string.format(L["%d chat message(s) could not be recovered after the chat lockdown."], droppedDeferredEvents));
+		droppedDeferredEvents = 0;
 	end
 
 	self:Hide();
