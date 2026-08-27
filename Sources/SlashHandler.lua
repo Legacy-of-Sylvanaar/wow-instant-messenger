@@ -64,13 +64,15 @@ end
 
 
 --  Legacy slash command handler
-if (_G.ChatEdit_ParseText or _G.ChatFrame_DisplayHelpTextSimple) then
+if (_G.ChatEdit_ParseText) then
 	_G.hooksecurefunc("ChatEdit_ParseText", function(editBox, send, parseIfNoSpaces)
 		if (send == 0) then
 			lastMessage = editBox:GetText()
 		end
 	end)
+end
 
+if (_G.ChatFrame_DisplayHelpTextSimple) then
 	_G.hooksecurefunc("ChatFrame_DisplayHelpTextSimple", function(frame)
 		if (lastMessage and lastMessage ~= "") then
 			local cmd = string.upper(lastMessage)

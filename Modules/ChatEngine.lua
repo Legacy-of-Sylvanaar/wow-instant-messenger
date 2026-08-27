@@ -13,6 +13,8 @@ local math = math;
 local tonumber = tonumber;
 local playerRealm = GetRealmName()
 local ChatFrameUtil = ChatFrameUtil;
+local GetCommunitiesChannelColor = (ChatFrameUtil and ChatFrameUtil.GetCommunitiesChannelColor) or ChatFrame_GetCommunitiesChannelColor or function() return 1, 0.82, 0 end;
+local GetCommunityAndStreamFromChannel = (ChatFrameUtil and ChatFrameUtil.GetCommunityAndStreamFromChannel) or ChatFrame_GetCommunityAndStreamFromChannel;
 
 -- set name space
 setfenv(1, WIM);
@@ -1382,7 +1384,7 @@ function Channel:OnEnable()
     self:RegisterEvent("CHAT_MSG_CHANNEL_LEAVE");
     self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE");
     self:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE_USER");
-	self:RegisterEvent("CLUB_MESSAGE_ADDED");
+	pcall(self.RegisterEvent, self, "CLUB_MESSAGE_ADDED");
 
 	if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
 		ChatFrameUtil.AddMessageEventFilter('CHAT_MSG_CHANNEL', Channel.ChatMessageEventFilter);
@@ -2147,7 +2149,7 @@ function Channel:CLUB_MESSAGE_ADDED(clubId, streamId, messageId)
 		end
 	end
 
-	local r, g, b = ChatFrameUtil.GetCommunitiesChannelColor(clubId, streamId)
+	local r, g, b = GetCommunitiesChannelColor(clubId, streamId)
 	local color = { r = r, g = g, b = b };
 
 	local neverPop = db.chat.community.channelSettings[name] and db.chat.community.channelSettings[name].neverPop;
@@ -2290,7 +2292,7 @@ function ChatAlerts:PostEvent_ChatMessage(event, ...)
 			return;
 		end
 
-		local r, g, b = _G.ChatFrameUtil.GetCommunitiesChannelColor(win.clubId, win.streamId)
+		local r, g, b = GetCommunitiesChannelColor(win.clubId, win.streamId)
 		local color = { r = r, g = g, b = b };
 
 		if(showAlert and not win:IsVisible() and win.unreadCount) then
@@ -2475,10 +2477,12 @@ local function loadChatOptions()
                     f.sub.list.buttons[i].noSound:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].noSound);
                     local color = _G.ChatTypeInfo["CHANNEL"..channelNumber] or _G.NORMAL_FONT_COLOR;
 
-					if (isCommunityChannel) then
-						local clubId, streamId = ChatFrameUtil.GetCommunityAndStreamFromChannel(name);
-						local r, g, b = ChatFrameUtil.GetCommunitiesChannelColor(clubId, streamId)
-						color = { r = r, g = g, b = b };
+					if (isCommunityChannel and GetCommunityAndStreamFromChannel) then
+						local clubId, streamId = GetCommunityAndStreamFromChannel(name);
+						if (clubId and streamId) then
+							local r, g, b = GetCommunitiesChannelColor(clubId, streamId)
+							color = { r = r, g = g, b = b };
+						end
 					end
 					-- "No History" is force-ticked and greyed out for community
 					-- channels: Community chat cannot be recorded (the client

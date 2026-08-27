@@ -34,6 +34,8 @@ local UnitClass = UnitClass;
 local UnitLevel = UnitLevel;
 local UnitRace = UnitRace;
 local InCombatLockdown = InCombatLockdown;
+local GetCommunitiesChannelColor = (ChatFrameUtil and ChatFrameUtil.GetCommunitiesChannelColor) or ChatFrame_GetCommunitiesChannelColor or function() return 1, 0.82, 0 end;
+local GetCommunityAndStreamName = (ChatFrameUtil and ChatFrameUtil.GetCommunityAndStreamName) or ChatFrame_GetCommunityAndStreamName;
 
 -- set namespace
 setfenv(1, WIM);
@@ -1093,7 +1095,7 @@ local function instantiateWindow(obj)
         if(self.type == "chat" and self.chatType) then
 				if (self.chatType == "community") then
 					if (self.clubId and self.streamId) then
-						local r, g, b = _G.ChatFrameUtil.GetCommunitiesChannelColor(self.clubId, self.streamId)
+						local r, g, b = GetCommunitiesChannelColor(self.clubId, self.streamId)
 						local color = { r = r, g = g, b = b };
 
 						icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
@@ -1108,7 +1110,7 @@ local function instantiateWindow(obj)
 						-- session GetCommunityAndStreamName can return empty, and
 						-- theUser must never become nil: it is the identity every
 						-- list and lookup displays.
-						local resolved = _G.ChatFrameUtil.GetCommunityAndStreamName(self.clubId, self.streamId);
+						local resolved = GetCommunityAndStreamName and GetCommunityAndStreamName(self.clubId, self.streamId);
 						dPrint("Community name resolve ["..tostring(self.clubId)..":"..tostring(self.streamId).."]: '"..tostring(resolved).."'");
 						if (type(resolved) == "string" and string.gsub(resolved, "[%s%-]", "") ~= "") then
 							self.theUser = resolved;
