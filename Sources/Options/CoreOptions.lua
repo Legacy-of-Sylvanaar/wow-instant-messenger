@@ -38,8 +38,8 @@ local function General_Main()
     frame.welcome.cb2:CreateCheckButton(L["<Right-Click> to show unread messages."], db.minimap, "rightClickNew");
     -- Persistent History: list recent conversations from saved history in the Whispers menu.
     local function refreshMenu() if(WIM.Menu) then WIM.Menu:Refresh(); end end
-    frame.welcome.cb2.recent = frame.welcome.cb2:CreateCheckButton(L["Enable Persistent History"], db.minimap.recent, "enabled", nil, refreshMenu);
-    frame.welcome.cb2.recent:CreateCheckButton(L["Include all characters on this account."], db.minimap.recent, "accountWide", nil, refreshMenu);
+    frame.welcome.cb2.recent = frame.welcome.cb2:CreateCheckButton(L["Show recent whispers from history."], db.minimap.recent, "enabled", nil, refreshMenu);
+    frame.welcome.cb2.recent:CreateCheckButton(L["Include whispers from all my characters."], db.minimap.recent, "accountWide", nil, refreshMenu);
 
 	frame.welcome.nextOffSetY = -130;
 
