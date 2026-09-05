@@ -333,6 +333,8 @@ WIM.AddLocale("enUS", {
 	["Dialog"] = ENABLE_DIALOG,
 	["Tooltip"] = true,
     ["Unlock from Minimap"] = true,
+    ["Enable Persistent History"] = true,
+    ["Include all characters on this account."] = true,
 	["Press <Tab> to advance to next tell target."] = true,
 	["Force sounds when game sound is disabled."] = true,
     ["Colorize names."] = true,
