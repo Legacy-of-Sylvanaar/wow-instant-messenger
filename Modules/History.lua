@@ -178,6 +178,7 @@ local function recordWhisper(inbound, ...)
 		end
         local history = getPlayerHistoryTable(from);
         history.info.gm = lists.gm[from];
+        history.info.menuHidden = nil; -- new activity puts this conversation back in the minimap menu.
         table.insert(history, cacheIfCensored({
             convo = from,
             type = 1, -- whisper

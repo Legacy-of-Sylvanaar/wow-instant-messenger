@@ -71,34 +71,110 @@ local function resolveBNetID(name)
     return nil;
 end
 
--- scan one character's history table and collect whisper conversations.
--- open: set of names that already have a window; seen: name -> entry for de-duplication.
-local function collectRecent(realm, convos, open, seen)
+-- call fn(convoTable, target) for every whisper conversation saved for one character.
+-- target is the name to whisper: history from another realm is qualified as Name-Realm so the
+-- whisper reaches the right person; BattleTags (Name#1234) are realm independent and left alone.
+local function forEachWhisperConvo(realm, convos, fn)
     local sameRealm = (realm == env.realm);
     local realmSuffix = "-"..string.gsub(realm, "%s", "");
     for convo, tbl in pairs(convos) do
         local last = type(tbl) == "table" and tbl[#tbl];
         if(last and last.type == 1 and not (tbl.info and tbl.info.chat) and type(convo) == "string" and convo ~= "") then
             local target = convo;
-            -- history from another realm: qualify the name so the whisper reaches the right person.
-            -- BattleTags (Name#1234) are realm independent and are left alone.
             if(not sameRealm and not string.find(convo, "#", 1, true) and not string.find(convo, "-", 1, true)) then
                 target = convo..realmSuffix;
             end
-            local key = safeName(target);
-            if(not open[key]) then
-                local entry = seen[key];
-                if(entry) then
-                    if(last.time and last.time > entry.time) then
-                        entry.time = last.time;
+            fn(tbl, target, last);
+        end
+    end
+end
+
+-- call fn(convoTable, target, lastMessage) for every saved whisper conversation in the
+-- configured scope: this character only, or every character on the account.
+local function forEachScopedConvo(settings, fn)
+    if(settings.accountWide) then
+        for realm, characters in pairs(history) do
+            if(type(characters) == "table") then
+                for _, convos in pairs(characters) do
+                    if(type(convos) == "table") then
+                        forEachWhisperConvo(realm, convos, fn);
                     end
-                else
-                    entry = {theUser = target, target = target, time = last.time or 0};
-                    seen[key] = entry;
-                    table.insert(recentWhispers, entry);
                 end
             end
         end
+    else
+        local convos = history[env.realm] and history[env.realm][env.character];
+        if(convos) then
+            forEachWhisperConvo(env.realm, convos, fn);
+        end
+    end
+end
+
+-- collect one conversation into recentWhispers.
+-- open: set of names that already have a window; seen: name -> entry for de-duplication.
+-- Conversations closed from the menu carry info.menuHidden and are skipped; History clears
+-- that flag the next time a whisper is exchanged with that person.
+local function collectRecent(tbl, target, last, open, seen)
+    if(tbl.info and tbl.info.menuHidden) then
+        return;
+    end
+    local key = safeName(target);
+    if(open[key]) then
+        return;
+    end
+    local entry = seen[key];
+    if(entry) then
+        if(last.time and last.time > entry.time) then
+            entry.time = last.time;
+        end
+    else
+        entry = {theUser = target, target = target, time = last.time or 0, sources = {}};
+        seen[key] = entry;
+        table.insert(recentWhispers, entry);
+    end
+    -- remember every history table behind this entry so closing it hides all of them.
+    table.insert(entry.sources, tbl);
+end
+
+-- mark every saved conversation with this person as closed from the menu.
+local function hideConvosFor(target)
+    local settings = db and db.minimap and db.minimap.recent;
+    if(not settings or not settings.enabled or not history or not env or not env.realm) then
+        return;
+    end
+    local key = safeName(target);
+    forEachScopedConvo(settings, function(tbl, convoTarget)
+        if(safeName(convoTarget) == key) then
+            tbl.info = tbl.info or {};
+            tbl.info.menuHidden = true;
+        end
+    end);
+end
+
+-- closing a persistent-history entry: flag its history tables, nothing is deleted.
+local function hideRecentEntry(entry)
+    if(not entry or not entry.sources) then
+        return;
+    end
+    for i=1, #entry.sources do
+        local tbl = entry.sources[i];
+        tbl.info = tbl.info or {};
+        tbl.info.menuHidden = true;
+    end
+end
+
+-- closing a live window from the menu: also keep it out of the persistent-history list so it
+-- does not pop straight back in as a history entry. Battle.net history is saved under the
+-- BattleTag (or toon name) rather than the account name shown on the window.
+local function hideRecentForWindow(win)
+    if(not win or win.type ~= "whisper") then
+        return;
+    end
+    hideConvosFor(win.theUser);
+    if(win.isBN and win.bn and win.bn.id) then
+        local _, _, btag, _, toonName = GetBNGetFriendInfoByID(win.bn.id);
+        if(btag) then hideConvosFor(btag); end
+        if(toonName and toonName ~= "") then hideConvosFor(toonName); end
     end
 end
 
@@ -125,22 +201,9 @@ local function buildRecentWhispers()
             end
         end
     end
-    if(settings.accountWide) then
-        for realm, characters in pairs(history) do
-            if(type(characters) == "table") then
-                for _, convos in pairs(characters) do
-                    if(type(convos) == "table") then
-                        collectRecent(realm, convos, open, seen);
-                    end
-                end
-            end
-        end
-    else
-        local convos = history[env.realm] and history[env.realm][env.character];
-        if(convos) then
-            collectRecent(env.realm, convos, open, seen);
-        end
-    end
+    forEachScopedConvo(settings, function(tbl, target, last)
+        collectRecent(tbl, target, last, open, seen);
+    end);
     table.sort(recentWhispers, sortRecent);
     local count = _G.tonumber(settings.count) or 10;
     count = _G.math.max(0, _G.math.min(count, maxButtons.whisper - #lists.whisper));
@@ -207,8 +270,16 @@ local function createCloseButton(parent)
     button:SetWidth(16);
     button:SetHeight(16);
     button:SetScript("OnClick", function(self)
-            self:GetParent().win.widgets.close.forceShift = true;
-            self:GetParent().win.widgets.close:Click();
+            local row = self:GetParent();
+            if(row.win) then
+                hideRecentForWindow(row.win);
+                row.win.widgets.close.forceShift = true;
+                row.win.widgets.close:Click();
+            elseif(row.recent) then
+                -- persistent-history entry: hide it from the menu, the conversation itself is kept.
+                hideRecentEntry(row.recent);
+                WIM.Menu:Refresh();
+            end
         end);
 
     return button;
@@ -267,7 +338,9 @@ local function createButton(parent)
             if(self.recent) then
                 -- no window open for this person yet; draw it dimmed like a hidden window.
                 self.text:SetTextColor(1, 1, 1);
+                self.status:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipClear");
                 self.text:SetAlpha(.65);
+                self.status:SetAlpha(.65);
             elseif(self.win) then
                 if(self.win.online ~= nil and not self.win.online and self.win.type == "whisper") then
                     self.text:SetTextColor(.5, .5, .5);
@@ -407,11 +480,11 @@ local function createGroup(title, list, maxButtons, showNone)
                     button.status:Show();
                     button.text:SetText(button.win.theUser);
                 else
-                    -- persistent-history entry: nothing to close and no online state to show.
+                    -- persistent-history entry: same dot and close button as a live row.
                     button.win = nil;
                     button.recent = extra[i - #self.list];
-                    button.close:Hide();
-                    button.status:Hide();
+                    button.close:Show();
+                    button.status:Show();
                     button.text:SetText(button.recent.theUser);
                 end
                 button:Show();
