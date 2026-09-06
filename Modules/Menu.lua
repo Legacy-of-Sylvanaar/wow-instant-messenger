@@ -74,17 +74,21 @@ end
 ----------------------------------------------
 --            Name colouring                --
 ----------------------------------------------
--- Rows follow the "Colorize names." option: Battle.net friends in the Battle.net blue the
--- default chat uses for them, characters in their class colour when the class is known.
+-- Rows follow the "Colorize names." option: characters in their class colour when the class is
+-- known. Battle.net friends are marked with the Battle.net icon the friends list uses instead of
+-- a colour, since Battle.net blue is easily mistaken for a mage.
 local WHITE = {r = 1, g = 1, b = 1};
-local BN_NAME_COLOR = {r = 0.51, g = 0.77, b = 1};
 
-local function bnNameColor()
-    local c = _G.FRIENDS_BN_NAME_COLOR;
-    if(type(c) == "table" and c.r and c.g and c.b) then
-        return c;
+-- inline markup for the Battle.net app icon; the game resolves the path for the client version.
+local function bnIconMarkup()
+    local path;
+    if(_G.BNet_GetClientTexture and _G.BNET_CLIENT_APP) then
+        path = _G.BNet_GetClientTexture(_G.BNET_CLIENT_APP);
     end
-    return BN_NAME_COLOR;
+    if(type(path) ~= "string" or path == "") then
+        path = "Interface\\FriendsFrame\\Battlenet-Battleneticon";
+    end
+    return "|T"..path..":0|t ";
 end
 
 -- english class token (WARRIOR, MAGE, ...) from a localized class name, using WIM's own table.
@@ -122,9 +126,6 @@ local function windowNameColor(win)
     if(not db or not db.coloredNames) then
         return WHITE;
     end
-    if(win.isBN) then
-        return bnNameColor();
-    end
     return classColorByToken(classTokenByLocalized(win.class)) or WHITE;
 end
 
@@ -161,9 +162,6 @@ end
 local function recentNameColor(entry)
     if(not db or not db.coloredNames) then
         return nil;
-    end
-    if(string.find(entry.target, "#", 1, true)) then
-        return bnNameColor();
     end
     return classColorByToken(recentClassToken(entry));
 end
@@ -225,7 +223,8 @@ local function collectRecent(tbl, target, last, open, seen)
             entry.time = last.time;
         end
     else
-        entry = {theUser = target, target = target, time = last.time or 0, sources = {}};
+        entry = {theUser = target, target = target, time = last.time or 0, sources = {},
+                 isBN = string.find(target, "#", 1, true) and true or false};
         seen[key] = entry;
         table.insert(recentWhispers, entry);
     end
@@ -566,6 +565,7 @@ local function createGroup(title, list, maxButtons, showNone)
         local extra = self.extra;
         local extraCount = extra and #extra or 0;
         local total = #self.list + extraCount;
+        local bnIcon = bnIconMarkup();
         for i=1, #self.buttons do
             local button = self.buttons[i];
             if(i > total) then
@@ -579,14 +579,14 @@ local function createGroup(title, list, maxButtons, showNone)
                     button.recent = nil;
                     button.close:Show();
                     button.status:Show();
-                    button.text:SetText(button.win.theUser);
+                    button.text:SetText((button.win.isBN and bnIcon or "")..button.win.theUser);
                 else
                     -- persistent-history entry: same dot and close button as a live row.
                     button.win = nil;
                     button.recent = extra[i - #self.list];
                     button.close:Show();
                     button.status:Show();
-                    button.text:SetText(button.recent.theUser);
+                    button.text:SetText((button.recent.isBN and bnIcon or "")..button.recent.theUser);
                 end
                 button:Show();
                 button:Enable();
