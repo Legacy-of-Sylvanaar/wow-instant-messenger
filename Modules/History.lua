@@ -179,6 +179,22 @@ local function recordWhisper(inbound, ...)
         local history = getPlayerHistoryTable(from);
         history.info.gm = lists.gm[from];
         history.info.menuHidden = nil; -- new activity puts this conversation back in the minimap menu.
+        -- remember the other player's class so the minimap menu can colour this conversation.
+        -- inbound: the sender's GUID travels with the event; outbound: use whatever the window learnt.
+        local classToken;
+        if(inbound) then
+            local guid = select(12, ...);
+            if(_G.type(guid) == "string" and guid ~= "" and _G.GetPlayerInfoByGUID) then
+                local _, englishClass = _G.GetPlayerInfoByGUID(guid);
+                classToken = englishClass;
+            end
+        end
+        if((not classToken or classToken == "") and win.class and win.class ~= "" and constants.classes[win.class]) then
+            classToken = string.gsub(constants.classes[win.class].tag, "F$", "");
+        end
+        if(classToken and classToken ~= "") then
+            history.info.class = classToken;
+        end
         table.insert(history, cacheIfCensored({
             convo = from,
             type = 1, -- whisper

@@ -71,6 +71,103 @@ local function resolveBNetID(name)
     return nil;
 end
 
+----------------------------------------------
+--            Name colouring                --
+----------------------------------------------
+-- Rows follow the "Colorize names." option: Battle.net friends in the Battle.net blue the
+-- default chat uses for them, characters in their class colour when the class is known.
+local WHITE = {r = 1, g = 1, b = 1};
+local BN_NAME_COLOR = {r = 0.51, g = 0.77, b = 1};
+
+local function bnNameColor()
+    local c = _G.FRIENDS_BN_NAME_COLOR;
+    if(type(c) == "table" and c.r and c.g and c.b) then
+        return c;
+    end
+    return BN_NAME_COLOR;
+end
+
+-- english class token (WARRIOR, MAGE, ...) from a localized class name, using WIM's own table.
+local function classTokenByLocalized(localizedClass)
+    local info = type(localizedClass) == "string" and localizedClass ~= "" and constants.classes[localizedClass];
+    if(type(info) == "table" and info.tag) then
+        return (string.gsub(info.tag, "F$", ""));
+    end
+    return nil;
+end
+
+-- {r,g,b} for an english class token; honours class colour addons, falls back to WIM's table
+-- which also covers Game Masters.
+local function classColorByToken(token)
+    if(type(token) ~= "string" or token == "") then
+        return nil;
+    end
+    local colors = _G.CUSTOM_CLASS_COLORS or _G.RAID_CLASS_COLORS;
+    local c = colors and colors[token];
+    if(type(c) == "table" and c.r) then
+        return c;
+    end
+    local localized = constants.classes.GetClassByTag(token);
+    local info = localized and localized ~= "" and constants.classes[localized];
+    if(type(info) == "table" and info.color) then
+        local r, g, b = RGBHexToPercent(info.color);
+        return {r = r, g = g, b = b};
+    end
+    return nil;
+end
+
+-- colour for a live window row; cheap enough to call from OnUpdate as the class can arrive
+-- later from the /who lookup.
+local function windowNameColor(win)
+    if(not db or not db.coloredNames) then
+        return WHITE;
+    end
+    if(win.isBN) then
+        return bnNameColor();
+    end
+    return classColorByToken(classTokenByLocalized(win.class)) or WHITE;
+end
+
+-- class token for a persistent-history entry: saved with the conversation by History, or for
+-- older history, looked up live from the guild roster and the friends list.
+local function recentClassToken(entry)
+    for i=1, #entry.sources do
+        local info = entry.sources[i].info;
+        if(type(info) == "table" and type(info.class) == "string" and info.class ~= "") then
+            return info.class;
+        end
+    end
+    local name = entry.target;
+    local guild = WIM.lists and WIM.lists.guild;
+    local index = guild and guild[name];
+    if(index and _G.GetGuildRosterInfo) then
+        local rosterName, _, _, _, localizedClass, _, _, _, _, _, token = _G.GetGuildRosterInfo(index);
+        if(type(rosterName) == "string") then
+            rosterName = _G.Ambiguate and _G.Ambiguate(rosterName, "none") or rosterName;
+            if(safeName(rosterName) == safeName(name)) then
+                return (type(token) == "string" and token ~= "" and token) or classTokenByLocalized(localizedClass);
+            end
+        end
+    end
+    if(_G.C_FriendList and _G.C_FriendList.GetFriendInfo) then
+        local friend = _G.C_FriendList.GetFriendInfo(name);
+        if(type(friend) == "table" and friend.className) then
+            return classTokenByLocalized(friend.className);
+        end
+    end
+    return nil;
+end
+
+local function recentNameColor(entry)
+    if(not db or not db.coloredNames) then
+        return nil;
+    end
+    if(string.find(entry.target, "#", 1, true)) then
+        return bnNameColor();
+    end
+    return classColorByToken(recentClassToken(entry));
+end
+
 -- call fn(convoTable, target) for every whisper conversation saved for one character.
 -- target is the name to whisper: history from another realm is qualified as Name-Realm so the
 -- whisper reaches the right person; BattleTags (Name#1234) are realm independent and left alone.
@@ -210,9 +307,10 @@ local function buildRecentWhispers()
     for i=#recentWhispers, count+1, -1 do
         recentWhispers[i] = nil;
     end
-    -- show the friend's account name for BattleTag entries when the friend is known.
+    -- colour the rows, and show the friend's account name for BattleTag entries when the friend is known.
     for i=1, #recentWhispers do
         local entry = recentWhispers[i];
+        entry.color = recentNameColor(entry);
         if(string.find(entry.target, "#", 1, true)) then
             local bnID = resolveBNetID(entry.target);
             local accountName;
@@ -337,7 +435,8 @@ local function createButton(parent)
     button:SetScript("OnUpdate", function(self, elapsed)
             if(self.recent) then
                 -- no window open for this person yet; draw it dimmed like a hidden window.
-                self.text:SetTextColor(1, 1, 1);
+                local color = self.recent.color or WHITE;
+                self.text:SetTextColor(color.r, color.g, color.b);
                 self.status:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipClear");
                 self.text:SetAlpha(.65);
                 self.status:SetAlpha(.65);
@@ -347,11 +446,13 @@ local function createButton(parent)
                     self.status:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipRed");
                     self.canFade = true;
                 elseif(self.win.unreadCount and self.win.unreadCount > 0) then
-                    self.text:SetTextColor(1, 1, 1);
+                    local color = windowNameColor(self.win);
+                    self.text:SetTextColor(color.r, color.g, color.b);
                     self.status:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipBlue");
                     self.canFade = false;
                 else
-                    self.text:SetTextColor(1, 1, 1);
+                    local color = windowNameColor(self.win);
+                    self.text:SetTextColor(color.r, color.g, color.b);
                     self.status:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipClear");
                     self.canFade = true;
                 end
