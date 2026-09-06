@@ -74,10 +74,21 @@ end
 ----------------------------------------------
 --            Name colouring                --
 ----------------------------------------------
--- Rows follow the "Colorize names." option: characters in their class colour when the class is
--- known. Battle.net friends are marked with the Battle.net icon the friends list uses instead of
--- a colour, since Battle.net blue is easily mistaken for a mage.
+-- Rows follow the "Colorize names." option: Battle.net friends in the Battle.net blue the
+-- default chat uses for them, characters in their class colour when the class is known.
+-- Battle.net rows also carry the Battle.net icon the friends list uses, since the blue on its
+-- own is easily mistaken for a mage.
 local WHITE = {r = 1, g = 1, b = 1};
+local BN_NAME_COLOR = {r = 0.51, g = 0.77, b = 1};
+local BN_ICON_SIZE = 16; -- a little larger than the 12px row font so the logo reads clearly
+
+local function bnNameColor()
+    local c = _G.FRIENDS_BN_NAME_COLOR;
+    if(type(c) == "table" and c.r and c.g and c.b) then
+        return c;
+    end
+    return BN_NAME_COLOR;
+end
 
 -- inline markup for the Battle.net app icon; the game resolves the path for the client version.
 local function bnIconMarkup()
@@ -88,7 +99,7 @@ local function bnIconMarkup()
     if(type(path) ~= "string" or path == "") then
         path = "Interface\\FriendsFrame\\Battlenet-Battleneticon";
     end
-    return "|T"..path..":0|t ";
+    return "|T"..path..":"..BN_ICON_SIZE..":"..BN_ICON_SIZE.."|t ";
 end
 
 -- english class token (WARRIOR, MAGE, ...) from a localized class name, using WIM's own table.
@@ -126,6 +137,9 @@ local function windowNameColor(win)
     if(not db or not db.coloredNames) then
         return WHITE;
     end
+    if(win.isBN) then
+        return bnNameColor();
+    end
     return classColorByToken(classTokenByLocalized(win.class)) or WHITE;
 end
 
@@ -162,6 +176,9 @@ end
 local function recentNameColor(entry)
     if(not db or not db.coloredNames) then
         return nil;
+    end
+    if(entry.isBN) then
+        return bnNameColor();
     end
     return classColorByToken(recentClassToken(entry));
 end
