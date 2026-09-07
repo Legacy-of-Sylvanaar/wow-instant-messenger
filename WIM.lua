@@ -1251,8 +1251,9 @@ function WIM:VARIABLES_LOADED()
     end
 
     -- One-shot informational notice the first time we run after converting
-    -- history to the blob-archive format.
-    if (historySchemaAtLogin < HISTORY_SCHEMA) then
+    -- history to the blob-archive format. A fresh install has nothing to
+    -- convert and gets no notice.
+    if (historySchemaAtLogin < HISTORY_SCHEMA and #historyDrainQueue > 0) then
         _G.DEFAULT_CHAT_FRAME:AddMessage(
             "|cff69ccf0[WIM]|r WIM history is now kept in an "
             .."account-wide archive that stores each conversation as a single "
