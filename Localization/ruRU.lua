@@ -39,16 +39,11 @@ WIM.AddLocale("ruRU", {
 
 	["Enable"] = "Включить",
 	["Disable"] = "Выключить",
-	["Enable window fading effects."] = "Включить затухание.",
 
-	["General"] = "Основное",
 	["History"] = "История",
 	["Filters"] = "Фильтры",
 
-	["Include sent messages in /REPLY."] = "Включать отправленные сообщения в /REPLY.",
-	["Display URLs as Links"] = "Отображать URL-адрес как ссылку.",
 
-	["Sort tabs by:"] = "Сортировка закладок:",
 	["Window Created"] = "По созданию окна",
 	["Last Activity"] = "По последней активности",
 	["Alphabetical"] = "По алфавиту",
@@ -87,7 +82,6 @@ WIM.AddLocale("ruRU", {
 
 	-- WIM.lua --
 	["Toggle WIM 'On' and 'Off'."] = "Вкл/Выкл WIM",
-	["Toggle Debugging Mode 'On' and 'Off'."] = "Вкл/Выкл режим отладки",
 
     -- Filters.lua --
 	["Whispers Sent by Addons"] = "Шопот высылаемый аддонами",
@@ -134,7 +128,6 @@ WIM.AddLocale("ruRU", {
 	["Chat View"] = "Вид чата",
 	["Text View"] = "Вид текста",
 	["BBCode"] = "BBCode",
-	["WIM History Viewer can be accessed any time by typing:"] = "Доступ к просмотру истории можете получить введя команду:",
 	["WIM History Viewer"] = "WIM просмотр истории",
 	["Display history viewer."] = "Показывать просмотр истории",
 
@@ -174,7 +167,6 @@ WIM.AddLocale("ruRU", {
 	["Users in %s"] = "Пользователи в %s",
 
     -- Clear.lua --
-	["You are about to clear all of WIM's history!"] = "Вы собираетесь удалить всю историю WIMа!",
 	["This action will reload your user interface."] = "Данное действие перезагрузит ваш интерфейс.",
 	["Do you want to continue?"] = "Вы хотите продолжить?",
 	["You are about to restore WIM's filters to it's default settings!"] = "Вы собираетесь восстановить настройки фильтров WIMа на настройки по умолчанию!",
@@ -213,143 +205,46 @@ WIM.AddLocale("ruRU", {
 	["Reset all options to default."] = "Сброс всех настроек на стандартные значения.",
 
     -- CoreOptions --
-	["Bracket names."] = "Заключать имена в скобки.",
 	["Created By:"] = "Создатель:",
 	["Special Thanks:"] = "Отдельно спасибо:",
-	["Welcome!"] = "Добро пожаловать!",
 	["Enable WIM"] = "Включить WIM",
-	["Display Minimap Icon"] = "Отображать иконку у мини-карты",
-	["<Right-Click> to show unread messages."] = "<Правый-Клик> открывает непрочитанные сообщения.",
-	["Display Addon Compartment Icon"] = "Показывать значок панели аддонов",
-	["Display Tutorials"] = "Показывать руководство",
-	["Reset Tutorials"] = "Сброс руководства",
 	["Credits"] = "Титры",
 	["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "Это длинное сообщение, которое содержит и смайлики и адреса/ссылки 8). Домашняя страничка WIM'а: www.WIMAddon.com.",
-	["Message Formatting"] = "формат сообщения",
-	["Manipulate how WIM displays messages."] = "Управление отображением сообщений WIMом",
 	["Preview"] = "Пред просмотр",
-	["Display Time Stamps"] = "Отображать время",
-	["Display Emoticons"] = "Отображать эмоции",
-	["Display URLs as Links"] = "Отображать URL-адрес как ссылку",
-	["Indent long messages."] = "Делать отступ в длинных сообщениях",
-	["Window Behavior"] = "Поведение окна",
-	["You can control how windows behave while you are in different situations."] = "Вы можете настроить поведения окна в различных ситуациях.",
-	["Intercept Slash Commands"] = "Перехватывать слеш команды",
-	["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "Соблюдать правила автофокуса при открытии окон через меню. (автофокус, если не отмечено)",
-	["Use the same rules for all states."] = "Использовать одинаковые правила для всех состояний",
-	["Behaviors for state:"] = "Поведение для:",
-	["Pop-Up window when message is sent."] = "Всплывание окна при отсылке сообщения.",
-	["Pop-Up window when message is received."] = "Всплывание окна при получении сообщения.",
-	["Auto focus a window when it is shown."] = "Авто-фокус окна при его появлении.",
-	["Keep focus on window after sending a message."] = "Сохранить фокус на окне после отправки сообщения.",
-	["Suppress messages from the default chat frame."] = "Подавлять сообщения в стандартном окне чата.",
-	["Window Settings"] = "Настройки окна",
-	["Some settings may be limited by certain skins."] = "Некоторые настройку будут ограничены в определённых шкурках.",
 	["Default Width"] = "Стандартная ширина",
 	["Default Height"] = "Стандартная высота",
 	["Window Scale"] = "Масштаб окна",
-	["Window Alpha"] = "Прозрачность окна",
 	["Set Window Spawn Location"] = "Установка места появления окна",
 	["Up"] = "Вверх",
 	["Down"] = "Вниз",
 	["Left"] = "Влево",
 	["Right"] = "Вправо",
-	["Cascade overlapping windows."] = "Каскад окон с наложением.",
-	["Ignore arrow keys in message box."] = "Игнорировать кнопки передвижения в строке ввода.",
-	["Allow <ESC> to hide windows."] = "Позволить скрывать окно клавишей <ESC>.",
-	["Display Settings"] = "Настройки отображения",
-	["Configure general window display settings."] = "Настройки отображения основного окна.",
-	["Window Skin:"] = "Шкурка окна:",
 	["Version"] = "Версия",
-	["Color: System Messages"] = "Цвет: системных сообщений",
-	["Color: Error Messages"] = "Цвет: ошибок",
-	["Color: URL - Web Addresses"] = "Цвет: URL - интернет адресов",
-	["Color: History Messages Sent"] = "Цвет: высылаемых сообщений в истории",
-	["Color: History Messages Received"] = "Цвет: получаемых сообщений в истории",
-	["Use colors suggested by skin."] = "Использовать цвета входящие в шкурку.",
-	["Enable window fading effects."] = "Включить эффекты затухания окна",
-	["Enable window animation effects."] = "Включить эффекты анимации окна",
-	["Display item links when hovering over them."] = "Отображать ссылки предметов при зависании мышью над ними.",
-	["Fonts"] = "Шрифты",
-	["Configure the fonts used in WIM's message windows."] = "Настройка используемых шрифтов в окне сообщений WIMа.",
 	["Font Outline"] = "Контур шрифта",
 	["Thin"] = "Тонкий",
 	["Thick"] = "Толстый",
-	["Use font suggested by skin."] = "Использовать шрифт входящий в шкурку.",
-	["Chat Font Size"] = "Размер шрифта чата",
-	["Configure general display settings when dealing with whispers."] = "Настройка основного отображения когда происходит общение шепотом.",
-	["Color: Messages Sent"] = "Цвет: высылаемых сообщений",
-	["Color: Messages Received"] = "Цвет: получаемых сообщений",
-	["Color: BNet Messages Sent"] = "Цвет: высылаемых BNet сообщений",
-	["Color: BNet Messages Received"] = "Цвет: получаемых BNet сообщений",
-	["Use colors suggested by skin."] = "Исп. встроенные цвета шкурки.",
-	["Display user class icons and details."] = "Отображать иконку класса пользователя и другие детали.",
-	["Requires who lookups."] = "Требует поиск через команду /who",
-	["Display Shortcut Bar"] = "Отображать панель ярлыков",
 	["Allow"] = "Разрешить",
 	["Ignore"] = "Игнорировать",
 	["Block"] = "Блокировать",
-	["Filtering"] = "Фильтрация",
-	["Filtering allows you to control which messages are handled as well as how they are handled by WIM."] = "Фильтрация позволяет вам контролировать, какие сообщения обрабатывать, а также каким образом они будут обрабатываться WIMом.",
-	["Enable Filtering"] = "Включить фильтрацию",
 	["Protected"] = "Под защитой",
 	["Action:"] = "Действие",
 	["Occurrences:"] = "Появление",
 	["Delete Filter"] = "Удалить фильтр",
 	["History"] = "История",
-	["WIM can store conversations to be viewed at a later time."] = "WIM может хранить беседы, которые можно проссматривать в любое время.",
-	["Enable History"] = "Включить историю",
 	["Messages"] = "Сообщений",
-	["Preview history inside message windows."] = "Пред просмотр истории в окне сообщения.",
-	["Record Friends"] = "Записывать друзей",
-	["Record Guild"] = "Записывать гильдию",
-	["Record Everyone"] = "Записывать всех",
 	["Record Chat"] = "Записывать чат",
 	["Maintenance"] = "Поддержка",
-	["Allowing your history logs to grow too large will affect the game's performance, therefore it is reccomended that you use the following options."] = "Позволяя вести журнал вашей истории, что может сильно повлиять на производительность вашей игры, поэтому рекомендуется использовать следующие настройки.",
-	["Save a maximum number of messages per person."] = "Макс. количество сохраняемых сообщений на человека.",
 	["%d |4Week:Weeks;"] = "%d |4ниделя: нидели:нидель;",
-	["Automatically delete old messages."] = "Автоматически удалять старые сообщения.",
-	["WIM-2-WIM is a feature which allows users with WIM to interact in ways that normal whispering can not."] = "WIM-2-WIM даёт возможность пользователям с WIM взаимодействовать таким образом, что нормальное перешептывание не может.",
-	["Enable WIM-2-WIM"] = "Включить WIM-2-WIM",
-	["Privacy"] = "Личное дело",
-	["Restrict the data that is shared."] = "Ограничить разделение/вывод данных.",
-	["Allow others to see me typing."] = "Позволить другим видеть когда вы печатаете.",
-	["Allow others to see my location."] = "Позволить другим видеть ваше местоположение.",
-	["Main"] = "Главное",
-	["General"] = "Основное",
 	["User Level"] = "Уровень игрока",
-	["Windows will also be hidden when frames such as the world map are shown."] = "Окно будет также закрыто при открытии карты.",
 	["Sounds"] = "Звуки",
-	["Configure various sound events and how they are triggered."] = "Настройка звуковых оповещений и когда они будут проигрываться.",
-	["Play sound when a whisper is received."] = "Проиграть звук при получении сообщения.",
-	["Play special sound for battle.net friends."] = "Специальный звук для Battle.Net друзей.",
-	["Play special sound for friends."] = "Специальный звук для друзей.",
-	["Play special sound for guild members."] = "Специальный звук для членов гильдии.",
-	["Play sound when a whisper is sent."] = "Проиграть звук при отправке сообщения.",
-	["Allow others to see my talent spec."] = "Позволить другим видеть мои таланты.",
-	["Window Strata:"] = "Слой окна",
 	["Background"] = BACKGROUND,
 	["Low"] = LOW,
 	["Medium"] = "Средняя",
 	["High"] = "Высокая",
 	["Dialog"] = ENABLE_DIALOG,
 	["Tooltip"] = "Подсказка",
-	["Unlock from Minimap"] = "Открепить от мини-карты",
-    ["Press <Tab> to advance to next tell target."] = "Нажмите <Tab> чтобы перейти к следующему собеседнику.",
-    ["Force sounds when game sound is disabled."] = "Принудительно воспроизводить звук, когда игровой звук отключён.",
-    ["Colorize names."] = "Окраска имён.",
-    ["Clamp window to screen."] = "Фиксировать окно на экране.",
-	["Group with whisper windows."] = "Групировать с окном шопота.", --??
 
     -- TabManagement.lua --
-	["Tab Management"] = "Управление закладками",
-	["Automatically manage your open windows and place them into appropriate tab groups."] = "Автоматическое управление открытыми окнами и помещение их в соответствующие вкладки групп.",
-	["Automatically group whispers."] = "Автоматически группировать",
-	["Place friends in their own group."] = "Помещать друзей в отдельную группу.",
-	["Place guild members in their own group."] = "Помещать членов гильдии в отдельную группу.",
-	["Does not apply to windows already opened."] = "Не применять если окно уже открыто.",
-	["Automatically group chat windows."] = "Автоматически группировать окна чата.",
 
     -- Talent Specs --
 	["Hybrid"] = "Гибрид",
@@ -373,49 +268,23 @@ WIM.AddLocale("ruRU", {
 	--Expose.lua
     ["Your conversations have been hidden in order to clear your screen while in combat. To disable this feature type"] = "Ваши диалоги были скрыты, чтобы очистить экран в то время как в находитесь в бою. Чтобы отключить эту функцию введите",
     ["Expose"] = "Экспонировка",
-    ["Expose is a Mac OS X inspired feature which enables you to quickly clear your screen of windows and then restore them back to their original position."] = "Экспонировка является инспирической особенностью Mac OS X, которая позволяет быстро очистить экран от окон, а затем восстановить их обратно в их первоначальное положение.",
-    ["Auto hide/restore windows during combat."] = "Авто скрывать/открывать окона во время боя.",
-    ["Border Size"] = "Размер рамки",
-    ["Only while in an instance."] = "Только в подземельях.",
-    ["Show Border"] = "Показать рамку",
-    ["Animation Direction:"] = "Направления анимации:",
-    ["Delay if I am typing a message."] = "Откладывать, если я печатаю сообщение.",
 
     --ChatEngine.lua
-    ["WIM will manage this chat type within its own message windows."] = "WIM будет управлять данным типом чата в рамках своего окна сообщений.",
-    ["Include emotes."] = "Включать эмоции.",
-    ["Show Minimap Alerts"] = "Оповещения у мини-карты",
-    ["Never pop-up on my screen."] = "Никогда не всплывать на маём экране.",
-    ["Never suppress messages."] = "Никогда не подавлять сообщения.",
     ["Have WIM monitor this channel."] = "Позволить WIMу следить за данным каналом.",
-    ["Never Pop"] = "Не всплывать",
-    ["Never have this window pop-up on my screen."] = "Никогда не позволять всплывать данному окну на моём экране.",
     ["Never Suppress"] = "Не подавлять",
-    ["Never suppress messages from the default chat frame."] = "Никогда не подавлять сообщения с стандартного окна чата.",
-    ["Show unread message alert on minimap."] = "Показывать у мини-карты оповещение об непрочитанных сообщениях.",
     ["No History"] = "Без истории",
-    ["Do not record history for this channel."] = "Не записывать историю для данного канала.",
     ["World Chat"] = "Мировой чат",
     ["Custom Chat"] = "Свой чат",
     ["Community Chat"] = "Чат сообщества",
-    ["Community Chats"] = "Чаты сообщества",
     ["Chat"] = "Чат",
-    ["Play special sound for %s."] = "Проиграть особый звук для %s.",
-    ["Play sound when a message is received."] = "Проиграть звук при получении сообщения.",
-    ["Play sound when a message is sent."] = "Проиграть звук при отправке сообщения.",
-    ["Do not play sounds for this channel."] = "Не проигрывать звук для данного канала.",
     ["No Sound"] = "Без звука",
-	["Sensitivity"] = "Чувствительность",
-    ["Enable WorldFrame Click Detection."] = "Включить обнаружение клика на мировом фрейме.",
 
     --OffScreenTracker.lua
     ["WIM Window Off Screen"] = "Окно WIM за экраном",
     ["Click to reposition."] = "Кликните для смены расположения.",
 
 	-- Whisper Mode Warnings
-	["Whisper Mode: In-line"] = "Режим шёпота: встроенный",
 	["Set whispers to In-line"] = "Установить шёпот во встроенный режим",
-	["Message suppression requires whispers to be set to 'In-line'."] = "Для подавления сообщений шёпот должен быть установлен в режим «встроенный».",
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "Рекомендуется установить шёпот во встроенный режим для корректной обработки.",
 
 	-- Skins --
@@ -435,35 +304,14 @@ WIM.AddLocale("ruRU", {
 
 
 	-- Modern options panel --
-	["Use modern options UI"] = "Использовать современный интерфейс настроек",
-	["Classic Options"] = "Классические настройки",
-	["Open"] = "Открыть",
-	["Open the classic WIM options window."] = "Открывает классическое окно настроек WIM.",
-	["Choose the options style: /wim style [classic|modern]."] = "Выберите стиль настроек: /wim style [classic|modern].",
-	["When enabled, WIM's Options entry points (minimap menu, key binding, /wim) open this panel instead of the classic WIM options window."] = "Если включено, точки входа в настройки WIM (меню миникарты, привязка клавиши, /wim) открывают эту панель вместо классического окна настроек WIM.",
-	["While a modern-only skin (such as WIM Modern) is selected, this option is enforced: those skins are configured through this panel only."] = "Пока выбран исключительно современный облик (например, WIM Modern), этот параметр принудительно включён: такие облики настраиваются только через эту панель.",
 
 	-- Modern skin styling --
-	["Modern Skin"] = "Современный облик",
-	["These settings style WIM's modern-only skins (such as WIM Modern), which are built from the game's own interface art. They shape the History Viewer and the chat windows, and are available only while a modern-only skin is selected under General > Display Settings; with a classic skin active they are greyed out."] = "Эти параметры задают оформление исключительно современных обликов WIM (например, WIM Modern), построенных на элементах интерфейса самой игры. Они определяют вид окна просмотра истории и окон чата и доступны только пока выбран исключительно современный облик в разделе «Общие > Настройки отображения»; при активном классическом облике они неактивны.",
-	["Disabled while a modern-only skin (such as WIM Modern) is selected: those skins carry settings the classic window has no controls for."] = "Недоступно, пока выбран исключительно современный облик (например, WIM Modern): такие облики содержат параметры, для которых у классического окна нет элементов управления.",
-	["Frame background"] = "Фон рамки",
-	["Message area background"] = "Фон области сообщений",
-	["Chat history background"] = "Фон истории чата",
-	["Selection panels background"] = "Фон панелей выбора",
-	["Window frame background"] = "Фон рамки окна",
 	["None (game default)"] = "Нет (как в игре)",
-	["Panels see through to the game world"] = "Панели прозрачны для игрового мира",
-	["Window sees through to the game world"] = "Окно прозрачно для игрового мира",
-	["Draws the frame background only around the panels, so a clear panel background (None or Transparent) shows the game world behind the viewer instead of the frame fill."] = "Рисует фон рамки только вокруг панелей, поэтому при прозрачном фоне панелей («Нет» или «Прозрачный») за окном просмотра виден игровой мир вместо заливки рамки.",
 	["Draws the window frame background only around the message area, so a clear message area background (None or Transparent) shows the game world behind the window."] = "Рисует фон рамки окна только вокруг области сообщений, поэтому при прозрачном фоне области сообщений («Нет» или «Прозрачный») за окном виден игровой мир.",
 
 	-- Roleplay profiles (Total RP 3 / Mary Sue Protocol) --
 	["Roleplay Profiles"] = "Ролевые профили",
-	["Enable roleplay profile integration"] = "Включить интеграцию ролевых профилей",
-	["Whisper windows show roleplay profile fields from Total RP 3 or any Mary Sue Protocol addon, and gain an Open RP Profile button on their shortcut bar that opens the partner's profile in the installed viewer."] = "Окна шёпота показывают поля ролевого профиля из Total RP 3 или любого аддона с протоколом Mary Sue, а также получают кнопку «Открыть RP-профиль» на панели ярлыков, которая открывает профиль собеседника в установленном просмотрщике.",
 	["Open RP Profile"] = "Открыть RP-профиль",
-	["Displayed profile fields"] = "Отображаемые поля профиля",
 	["Whisper windows show the selected fields from the partner's Total RP 3 or Mary Sue Protocol profile. Fields left unselected -- or without profile data -- keep the standard display."] = "Окна шёпота показывают выбранные поля из профиля Total RP 3 или Mary Sue собеседника. Невыбранные поля — или поля без данных профиля — сохраняют обычный вид.",
 	["First Name"] = "Имя",
 	["Last Name"] = "Фамилия",
@@ -496,9 +344,6 @@ WIM.AddLocale("ruRU", {
 	["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Нажатие кнопки %s в окне сообщения покажет историю этого игрока в окне просмотра истории WIM.",
 
 	-- Message input & formatting --
-	["Wrap the message being typed"] = "Переносить набираемое сообщение",
-	["Limit wrapped lines"] = "Ограничить число строк переноса",
-	["Visible input lines"] = "Видимые строки ввода",
 	["Caps how far the input field grows; past the limit the message scrolls inside it."] = "Ограничивает рост поля ввода; сверх лимита сообщение прокручивается внутри него.",
 	["The most lines the input field grows to before the message scrolls inside it."] = "Максимальное число строк, до которых растёт поле ввода, прежде чем сообщение начнёт прокручиваться внутри.",
 	["The input field wraps long messages onto multiple lines, growing downward with the message instead of scrolling it on one line."] = "Поле ввода переносит длинные сообщения на несколько строк, увеличиваясь вниз вместе с сообщением, вместо прокрутки в одной строке.",
@@ -508,17 +353,14 @@ WIM.AddLocale("ruRU", {
 	["Sound"] = "Звук",
 
 	-- Chat type options --
-	["Chat Windows"] = "Окна чата",
-	["Monitor"] = "Отслеживать",
 	["Record"] = "Записывать",
-	["Minimap Alerts"] = "Оповещения на миникарте",
 
 	-- Help, bug reports & links --
 	["Found a bug?"] = "Нашли ошибку?",
 	["Report a Bug"] = "Сообщить об ошибке",
 	["Reports are welcome! Click below and follow the instructions in the bug report template."] = "Сообщения об ошибках приветствуются! Нажмите ниже и следуйте инструкциям в шаблоне отчёта.",
-	["Visit us on GitHub"] = "Заходите к нам на GitHub",
-	["Click to copy the link."] = "Нажмите, чтобы скопировать ссылку.",
+	["Show GitHub Link"] = "Показать ссылку на GitHub", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+	["Click to show the link for copying."] = "Нажмите, чтобы показать ссылку для копирования.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
 	["Press Ctrl+C to copy the link, then open it in your browser."] = "Нажмите Ctrl+C, чтобы скопировать ссылку, и откройте её в браузере.",
 
 	-- Debugging & development slash commands --
@@ -533,14 +375,13 @@ WIM.AddLocale("ruRU", {
 	["If you want all windows to be this size, you can set the default window size within WIM's options."] = "Если хотите, чтобы все окна были такого размера, задайте размер окна по умолчанию в настройках WIM.",
 	["You can <Shift-Click> a tab and drag it out into it's own window."] = "<Shift-щелчок> по вкладке позволяет перетащить её в отдельное окно.",
 	["You received a whisper which was hidden due to your current activity. You can change how whispers behave in WIM's options by typing"] = "Вы получили шёпот, скрытый из-за вашей текущей активности. Изменить поведение шёпота можно в настройках WIM, введя",
-	["Sets the game's Social > Whisper Mode setting to In-line. Without it, suppressed whispers would vanish into a popout chat tab."] = "Устанавливает игровой параметр «Социальное > Режим шёпота» в значение «Встроенный». Иначе подавленные шёпоты исчезнут в отдельной вкладке чата.",
 
 	-- Community channel maintenance --
 	["Toggle the experimental community channel re-add repair (mutates chat window channels)."] = "Включает экспериментальное исправление повторного присоединения каналов сообщества (изменяет каналы окон чата).",
 	["Toggle whether WIM focuses community streams at login."] = "Определяет, фокусирует ли WIM потоки сообщества при входе.",
 
 	-- Misc --
-	["Age"] = "Возраст",
+	["Older Than"] = "Старше чем", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
 	["Users in %s"] = "Игроки в %s",
 
 	-- History Viewer filter modes --
@@ -607,10 +448,6 @@ WIM.AddLocale("ruRU", {
 
 
 	-- Skin & options style notices --
-	["WIM: the selected skin (%s) is configured through the modern options UI; the classic window is unavailable while it is active."] = "WIM: выбранный облик (%s) настраивается через современный интерфейс настроек; классическое окно недоступно, пока он активен.",
-	["WIM: the selected skin (%s) requires the modern options UI; switch to another skin first."] = "WIM: выбранный облик (%s) требует современный интерфейс настроек; сначала переключитесь на другой облик.",
-	["WIM options style: Modern (native Options > AddOns)."] = "Стиль настроек WIM: современный (в настройках игры, раздел «Аддоны»).",
-	["WIM options style: Classic (WIM window)."] = "Стиль настроек WIM: классический (окно WIM).",
 
 
     -- Slash command feedback --
@@ -620,19 +457,318 @@ WIM.AddLocale("ruRU", {
     ["WIM channel re-add repair ON (experimental). On logins where the community stream is focused late, WIM removes and re-adds community channels to ChatFrame1 about 8s after login. If a re-add fails the channel must be restored from the chat settings UI."] = "Восстановление каналов WIM ВКЛЮЧЕНО (экспериментально). При входах, когда канал сообщества получает фокус с опозданием, WIM удаляет и заново добавляет каналы сообщества в ChatFrame1 примерно через 8 секунд после входа. Если повторное добавление не удалось, канал нужно восстановить в настройках чата.",
     ["WIM: attempting a repair now (see /wim debug output)."] = "WIM: попытка восстановления (см. вывод /wim debug).",
     ["WIM channel re-add repair OFF. No further attempts this session."] = "Восстановление каналов WIM ВЫКЛЮЧЕНО. Больше попыток в этой сессии не будет.",
-    ["Usage: /wim style [classic|modern]"] = "Использование: /wim style [classic|modern]",
-    ["WIM: the modern options UI is not available on this client."] = "WIM: современный интерфейс настроек недоступен на этом клиенте.",
     ["WIM: queued options open canceled."] = "WIM: отложенное открытие настроек отменено.",
 
     -- Placeholder: Translated with Google Translate, pending a natural language speaker to verify the translation.
     ["Click to switch between Say, Yell, and Emote."] = "Нажмите, чтобы переключаться между командами Сказать, Крикнуть и Эмоция.",
     ["Say, Yell, or Emote"] = "Сказать, Крикнуть или Эмоция",
-    ["Chat Colors"] = "Цвета чата",
-    ["Match the game's chat colors."] = "Использовать цвета чата из игры.",
     ["The message being typed takes the color of the chat type it will send as, like the game's own chat box."] = "Набираемое сообщение окрашивается в цвет того типа чата, в который оно будет отправлено, как в игровом окне чата.",
     ["Battle.net Whispers"] = "Шепот Battle.net",
     ["Filter Editor"] = "Редактор фильтров",
-    ["Filter area background"] = "Фон области фильтра",
-    ["Filter area sees through to the game world"] = "Область фильтра просвечивает на игровой мир",
     ["Draws the frame background only around the filter area, so a clear filter area background (None or Transparent) shows the game world behind the editor."] = "Рисует фон окна только вокруг области фильтра, поэтому пустой фон области (Нет или Прозрачный) показывает игровой мир позади редактора.",
+
+    -- Modern options, Edit Mode, and dialogs --
+    ["%d chat message(s) could not be recovered after the chat lockdown."] = "Не удалось восстановить %d сообщение(й) чата после блокировки чата.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["%d unsupported User Level filter(s) were removed."] = "Удалено неподдерживаемых фильтров по уровню игрока: %d.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["/reply Counts Sent Whispers"] = "/reply учитывает отправленные шёпоты", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["A thin border along the screen edge signals that windows are hidden."] = "Тонкая рамка вдоль края экрана показывает, что окна скрыты.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Above everything, at tooltip level."] = "Поверх всего, на уровне подсказок.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Above most interface frames."] = "Поверх большинства окон интерфейса.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Above the background layer."] = "Над фоновым слоем.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Actions"] = "Действия", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Addon Compartment Entry"] = "Пункт в панели модификаций", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["All windows hide when combat starts and are restored when it ends."] = "Все окна скрываются при начале боя и восстанавливаются после его окончания.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Also captures emotes."] = "Также перехватывает эмоции.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Animates closing windows toward the minimap, and the slide used by combat auto-hide and the show/hide key binding."] = "Анимирует закрытие окон в сторону миникарты, а также сдвиг при автоскрытии в бою и по клавише показать/скрыть.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Animation"] = "Анимация", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Animation Direction"] = "Направление анимации", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Appearance"] = "Внешний вид", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Applies the filter list below to captured chat messages. Community chat is not filtered."] = "Применяет список фильтров ниже к перехваченным сообщениям чата. Чат сообществ не фильтруется.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Applies to the minimap button, the addon compartment entry, and data broker launchers."] = "Относится к кнопке у миникарты, пункту в панели модификаций и кнопкам Data Broker.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Applies to whisper and chat history alike. Pruning runs at login."] = "Относится и к истории шёпотов, и к истории чата. Очистка выполняется при входе в игру.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Apply To"] = "Применять к", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Arrow keys keep controlling the game while the input box has focus; hold Alt to move the text cursor instead."] = "Клавиши со стрелками продолжают управлять игрой, пока поле ввода в фокусе; удерживайте Alt, чтобы вместо этого перемещать текстовый курсор.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["At login WIM focuses your community chat streams so the client accepts sends to their channel numbers. Takes effect at the next login and needs at least one channel type captured."] = "При входе WIM фокусирует потоки чата ваших сообществ, чтобы клиент принимал отправку по их номерам каналов. Вступает в силу при следующем входе и требует хотя бы одного перехватываемого типа каналов.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Auto Focus"] = "Автофокус", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Backgrounds, input field, and roleplay profile options for the WIM Modern skin."] = "Фоны, поле ввода и параметры ролевых профилей для оформления WIM Modern.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Base"] = "Базовые", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Battle.net Received"] = "Battle.net входящие", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Battle.net Sent"] = "Battle.net исходящие", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Behind the standard interface."] = "Позади стандартного интерфейса.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Blizzard is restricting chat right now. Your message was not sent."] = "Blizzard сейчас ограничивает чат. Ваше сообщение не отправлено.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Bracket Names"] = "Имена в скобках", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Briefly turns game audio back on so a notification can be heard while all sound is disabled. The Master channel alone cannot get past that setting."] = "Ненадолго включает звук игры, чтобы уведомление было слышно при полностью отключённом звуке. Один лишь главный канал эту настройку обойти не может.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["By conversation name."] = "По имени собеседника.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Calculate Minimum Size"] = "Вычислить минимальный размер", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Cap Stored Messages"] = "Ограничить хранимые сообщения", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture"] = "Перехватывать", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture Community Channels"] = "Перехватывать каналы сообществ", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture Custom Channels"] = "Перехватывать пользовательские каналы", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture World Channels"] = "Перехватывать мировые каналы", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture community channels, set per-channel exceptions, and keep their chat channels working."] = "Перехват каналов сообществ, исключения для отдельных каналов и поддержание их чат-каналов в рабочем состоянии.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture world and custom channels and set per-channel exceptions."] = "Перехват мировых и пользовательских каналов и исключения для отдельных каналов.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Cascade Direction"] = "Направление каскада", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Cascade Windows"] = "Окна каскадом", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Channels"] = "Каналы", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat Follows Focus Rules"] = "Чат следует правилам фокуса", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat Sounds"] = "Звуки чата", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat Types"] = "Типы чата", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat windows join the whisper tab group instead of their own, even while Group Whispers is off."] = "Окна чата присоединяются к группе вкладок шёпотов вместо собственной, даже если «Группировать шёпоты» выключено.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat windows opened from WIM's menus normally take focus immediately; with this on they follow the pop-up focus rules instead."] = "Окна чата, открытые из меню WIM, обычно сразу получают фокус; с этой настройкой они вместо этого следуют правилам фокуса всплывающих окон.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat windows share one tabbed window. Does not apply to windows already opened."] = "Окна чата делят одно окно с вкладками. Не относится к уже открытым окнам.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Check to use alternate pop-up rules for this situation. Unchecked, the Base rules apply."] = "Отметьте, чтобы использовать отдельные правила появления для этой ситуации. Без отметки действуют базовые правила.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Choose what WIM captures: whispers, chat types, and channels."] = "Выберите, что перехватывает WIM: шёпоты, типы чата и каналы.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Clamp to Screen"] = "Удерживать в пределах экрана", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Class-Colored Names"] = "Имена цветом класса", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Click Hold Limit"] = "Предел удержания клика", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Click to Release Focus"] = "Клик снимает фокус", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Clickable Links"] = "Кликабельные ссылки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Clicking the game world releases WIM's keyboard focus so movement keys control your character again. Not while in combat."] = "Клик по игровому миру снимает фокус клавиатуры с WIM, и клавиши движения снова управляют персонажем. Не в бою.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Clicks held longer than this are treated as camera turns and keep WIM's focus."] = "Клики, удерживаемые дольше этого времени, считаются поворотом камеры и сохраняют фокус WIM.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Combat Auto-Hide"] = "Автоскрытие в бою", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Combat hiding only happens inside dungeons, raids, battlegrounds, and arenas."] = "Скрытие в бою происходит только в подземельях, рейдах, на полях боя и аренах.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Communities"] = "Сообщества", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Content Background"] = "Фон содержимого", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Continuation lines of wrapped messages are indented."] = "Строки продолжения перенесённых сообщений выводятся с отступом.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Conversations"] = "Беседы", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Custom %s Rules"] = "Особые правила: %s", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Custom Channels"] = "Пользовательские каналы", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Custom Rules"] = "Особые правила", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Defaults"] = "По умолчанию", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Delete"] = "Удалить", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Delete All History"] = "Удалить всю историю", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Delete Old Messages"] = "Удалять старые сообщения", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Distinct Chat Sounds"] = "Отдельные звуки чата", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Distinct Whisper Sounds"] = "Отдельные звуки шёпота", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Do not play sounds for this channel, whatever the Notifications page plays."] = "Не воспроизводить звуки для этого канала, что бы ни было задано на странице «Уведомления».", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Do not record history for this channel, whatever History > Recording records."] = "Не записывать историю этого канала, что бы ни было задано в История > Запись.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Draws the frame background only around the panels, so a clear panel background (None or Transparent) shows the game world behind the viewer."] = "Рисует фон рамки только вокруг панелей, так что прозрачный фон панелей (Нет или Прозрачный) показывает игровой мир позади окна.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Each message is prefixed with the time it arrived."] = "Перед каждым сообщением выводится время его получения.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Edit Mode"] = "Режим редактирования", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Erases every recorded conversation and the archive for every character on this account, then reloads the interface."] = "Стирает все записанные беседы и архив для всех персонажей этой учётной записи, затем перезагружает интерфейс.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Error Messages"] = "Сообщения об ошибках", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Escape Hides Windows"] = "Escape скрывает окна", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Every whisper is recorded."] = "Записывается каждый шёпот.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Fade When Inactive"] = "Затемнять при бездействии", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Fades the window frame, header, and buttons; message and input text stay opaque. Modern skins keep their frame art opaque."] = "Затемняет рамку, заголовок и кнопки окна; текст сообщений и ввода остаётся непрозрачным. Современные оформления сохраняют рамку непрозрачной.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Filter Chat"] = "Фильтровать чат", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Filter Panel Background"] = "Фон панели фильтров", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Filter Whispers"] = "Фильтровать шёпоты", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Filters run top to bottom; the first match wins. Allow lets a message through, Ignore hides it silently, Block hides it and, with Show Alert, tells you in the chat frame with a link to view it."] = "Фильтры применяются сверху вниз; побеждает первое совпадение. «Разрешить» пропускает сообщение, «Игнорировать» скрывает его молча, «Блокировать» скрывает его и, при включённом «Показывать оповещение», сообщает вам в окне чата со ссылкой для просмотра.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Focus & Input"] = "Фокус и ввод", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Focus Streams at Login"] = "Фокусировать потоки при входе", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Font"] = "Шрифт", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Font Size"] = "Размер шрифта", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Force Blizzard's chat messaging lockdown for testing (on|off, does not persist)."] = "Принудительно включить блокировку сообщений чата Blizzard для тестирования (on|off, не сохраняется).", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Formatting"] = "Форматирование", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Frame Background"] = "Фон рамки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends & guild"] = "Друзья и гильдия", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends and Battle.net friends."] = "Друзья и друзья Battle.net.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends only"] = "Только друзья", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends, Battle.net friends, and guild members."] = "Друзья, друзья Battle.net и соратники по гильдии.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends, Battle.net friends, guild members, and your current party and raid get through; whispers from anyone else are ignored. This drives the two WhisperSelect entries in the filter list below."] = "Друзья, друзья Battle.net, соратники по гильдии и ваша текущая группа и рейд проходят; шёпоты от всех остальных игнорируются. Это управляет двумя записями WhisperSelect в списке фильтров ниже.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Group Chat Windows"] = "Группировать окна чата", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Group Whispers"] = "Группировать шёпоты", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Group windows into shared tab strips."] = "Группировать окна в общие полосы вкладок.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Guild members."] = "Соратники по гильдии.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Guild only"] = "Только гильдия", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hidden-Windows Indicator"] = "Индикатор скрытых окон", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hide During Combat"] = "Скрывать в бою", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hide windows during combat and restore them after."] = "Скрывать окна во время боя и восстанавливать после.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hides these messages from the game's chat frame so they appear only in WIM. Per-type and per-channel 'Never Suppress' exceptions on the Conversations pages win. A message is never hidden while its WIM window has not yet been shown."] = "Скрывает эти сообщения из окна чата игры, чтобы они появлялись только в WIM. Исключения «Никогда не скрывать» по типам и каналам на страницах «Беседы» имеют приоритет. Сообщение никогда не скрывается, пока его окно WIM ещё не было показано.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hiding"] = "Скрытие", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hiding waits until you finish typing your message."] = "Скрытие ждёт, пока вы допечатаете сообщение.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["History Preview Received"] = "Предпросмотр истории входящие", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["History Preview Sent"] = "Предпросмотр истории исходящие", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hover Item Tooltips"] = "Подсказки предметов при наведении", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hovering an item link in a message shows its tooltip without clicking."] = "Наведение на ссылку предмета в сообщении показывает его подсказку без клика.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["How messages are formatted and displayed."] = "Как форматируются и отображаются сообщения.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Ignore Arrow Keys"] = "Игнорировать стрелки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["In-Line Whisper Mode"] = "Встроенный режим шёпота", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Includes emotes."] = "Включая эмоции.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Includes raid warnings."] = "Включая рейдовые предупреждения.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Incoming Chat"] = "Входящий чат", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Incoming Whispers"] = "Входящие шёпоты", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Incoming whispers always open in WIM while it is enabled; this additionally redirects typing /w and /r in the game's chat box into a WIM window. Not while in combat."] = "Входящие шёпоты всегда открываются в WIM, пока он включён; эта настройка дополнительно перенаправляет ввод /w и /r в окне чата игры в окно WIM. Не в бою.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Indent Wrapped Lines"] = "Отступ у перенесённых строк", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Indicator"] = "Индикатор", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Indicator Thickness"] = "Толщина индикатора", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Input Field"] = "Поле ввода", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Keep Focus"] = "Сохранять фокус", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Keeps at most this many messages per conversation. Applies to whisper and chat history alike."] = "Хранит не более этого числа сообщений на беседу. Относится и к истории шёпотов, и к истории чата.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Keeps the keyboard focus in the input box after sending a message."] = "Сохраняет фокус клавиатуры в поле ввода после отправки сообщения.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Keyboard focus and input behavior."] = "Фокус клавиатуры и поведение ввода.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Known Senders Only"] = "Только известные отправители", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Launcher"] = "Кнопка запуска", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Launcher Alerts"] = "Оповещения на кнопке", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Level with dialog windows."] = "На уровне диалоговых окон.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Level with most interface frames."] = "На уровне большинства окон интерфейса.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Limit Height"] = "Ограничить высоту", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Links & Emoticons"] = "Ссылки и смайлики", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Главный переключатель для этого типа каналов; отдельные каналы перехватываются флажком «Перехватывать» ниже.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Maximum Lines"] = "Максимум строк", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Menus & Tooltips"] = "Меню и подсказки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message Area Background"] = "Фон области сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message Format"] = "Формат сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message Windows"] = "Окна сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message colors."] = "Цвета сообщений.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message font, outline, and size."] = "Шрифт, обводка и размер сообщений.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message suppression requires the game's Social > Whisper Mode setting to be In-line; without it, suppressed whispers would vanish into a popout chat tab."] = "Скрытие сообщений требует, чтобы настройка игры Общение > Режим шёпота была «Встроенный»; иначе скрытые шёпоты пропадут в отдельной вкладке чата.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Messages Received"] = "Входящие сообщения", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Messages Sent"] = "Исходящие сообщения", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Messages per Conversation"] = "Сообщений на беседу", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Minimap Button"] = "Кнопка у миникарты", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Most recently active conversation first."] = "Сначала недавно активная беседа.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Multi-Line Input"] = "Многострочный ввод", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Native Input Colors"] = "Родные цвета ввода", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Navigation List Background"] = "Фон списка навигации", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Never Pop Up"] = "Никогда не показывать", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Never have this window pop-up on my screen. Overrides Windows > Pop-up Rules."] = "Никогда не показывать это окно на экране. Имеет приоритет над Окна > Правила появления.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Never suppress messages from the default chat frame. Overrides 'Show Only in WIM' under Windows > Pop-up Rules."] = "Никогда не скрывать сообщения из стандартного окна чата. Имеет приоритет над «Показывать только в WIM» в Окна > Правила появления.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["New windows that would overlap are offset in the chosen direction. Whisper windows do not cascade while Group Whispers is on, nor chat windows while Group Chat Windows is on. Applies to windows opened after the change."] = "Новые окна, которые перекрывались бы, смещаются в выбранном направлении. Окна шёпотов не идут каскадом при включённом «Группировать шёпоты», окна чата — при включённом «Группировать окна чата». Относится к окнам, открытым после изменения.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["No one (GM whispers only)"] = "Никто (только шёпоты ГМ)", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Nothing is recorded except game master whispers."] = "Не записывается ничего, кроме шёпотов гейм-мастеров.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Notifications"] = "Уведомления", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Oldest conversation first."] = "Сначала самая старая беседа.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Only While in an Instance"] = "Только в подземелье", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Open History Viewer"] = "Открыть просмотр истории", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Opens a placement window; drag it to where new windows should appear, then close it to save the spot."] = "Открывает окно размещения; перетащите его туда, где должны появляться новые окна, затем закройте, чтобы сохранить место.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Opens the window when a message arrives in this situation."] = "Открывает окно при получении сообщения в этой ситуации.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Opens the window when you send a message in this situation."] = "Открывает окно при отправке сообщения в этой ситуации.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Optional different sounds for whispers from particular senders."] = "Необязательные отдельные звуки для шёпотов от определённых отправителей.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Optional different sounds per chat type."] = "Необязательные отдельные звуки для каждого типа чата.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Outline for the message area and input box text."] = "Обводка текста области сообщений и поля ввода.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Override Muted Audio"] = "Обходить отключённый звук", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Placement & Size"] = "Размещение и размер", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Playback"] = "Воспроизведение", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Player names take their class color. Applies to new messages."] = "Имена игроков окрашиваются в цвет класса. Относится к новым сообщениям.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a distinct sound for raid chat instead of the standard incoming sound; raid warnings keep the standard sound. It never mutes."] = "Воспроизводит отдельный звук для рейдового чата вместо стандартного входящего; рейдовые предупреждения сохраняют стандартный звук. Никогда не отключает звук.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a distinct sound for this chat type instead of the standard incoming sound; it never mutes. Use a channel's No Sound flag or turn off incoming chat sounds to silence."] = "Воспроизводит отдельный звук для этого типа чата вместо стандартного входящего; никогда не отключает звук. Чтобы отключить, используйте флажок «Без звука» у канала или выключите звуки входящего чата.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a sound when a captured chat message arrives. Per-channel No Sound flags on the channel lists mute individual channels."] = "Воспроизводит звук при получении перехваченного сообщения чата. Флажки «Без звука» в списках каналов отключают звук отдельных каналов.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a sound when a whisper arrives."] = "Воспроизводит звук при получении шёпота.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a sound when you send a message in a captured chat type, from WIM or the game's chat box."] = "Воспроизводит звук при отправке сообщения в перехватываемом типе чата, из WIM или из окна чата игры.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a sound when you send a whisper."] = "Воспроизводит звук при отправке шёпота.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays notification sounds on the Master channel so they are heard even when sound effects are turned off."] = "Воспроизводит звуки уведомлений на главном канале, чтобы они были слышны даже при отключённых звуковых эффектах.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays this sound instead of the standard incoming whisper sound."] = "Воспроизводит этот звук вместо стандартного звука входящего шёпота.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pop Up on Receive"] = "Показывать при получении", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pop Up on Send"] = "Показывать при отправке", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pop-up Rules"] = "Правила появления", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pressing Escape hides all open WIM windows."] = "Нажатие Escape скрывает все открытые окна WIM.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pressing Tab in a whisper window jumps to the next person you whispered. While enabled, forward Tab no longer cycles through window tabs."] = "Нажатие Tab в окне шёпота переходит к следующему собеседнику. Пока включено, Tab больше не переключает вкладки окон.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Preview Count"] = "Число в предпросмотре", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Preview Recent Messages"] = "Предпросмотр недавних сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays this sound instead of the standard incoming whisper sound when a Battle.net friend whispers. When several match, Battle.net friend wins over friend and guild member."] = "Воспроизводит этот звук вместо стандартного звука входящего шёпота, когда шепчет друг Battle.net. При нескольких совпадениях друг Battle.net имеет приоритет над другом и соратником по гильдии.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Privacy & Filtering"] = "Приватность и фильтры", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Profile Fields"] = "Поля профиля", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Puts the keyboard focus in the input box when a window pops up."] = "Ставит фокус клавиатуры в поле ввода при появлении окна.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Re-adds community channels to your chat frames when the client drops them, once per login after a late stream focus; /wim channelrepair runs it now. Opt-in: this mutates saved chat window configuration."] = "Заново добавляет каналы сообществ в ваши окна чата, когда клиент их теряет, один раз за вход после запоздалой фокусировки потока; /wim channelrepair запускает это сейчас. По желанию: изменяет сохранённую конфигурацию окон чата.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Record From"] = "Записывать от", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Record Whispers"] = "Записывать шёпоты", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Recording"] = "Запись", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Recording stops as soon as this is off; the history button stays on open windows until the next reload."] = "Запись прекращается сразу после выключения; кнопка истории остаётся на открытых окнах до следующей перезагрузки.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Redirect /w and /r to WIM"] = "Перенаправлять /w и /r в WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Repair Dropped Channels"] = "Восстанавливать потерянные каналы", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Reset Position"] = "Сбросить положение", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Retention"] = "Хранение", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Retention caps, preview, and deletion."] = "Пределы хранения, предпросмотр и удаление.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Right-Click Opens Unread"] = "Правый клик открывает непрочитанные", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Runs the whisper filter list below. While off, addon-spam whispers open windows like any other whisper."] = "Применяет список фильтров шёпотов ниже. Пока выключено, спам-шёпоты от модификаций открывают окна, как любой другой шёпот.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["See-Through Frame"] = "Прозрачная рамка", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sender Details"] = "Сведения об отправителе", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sent Chat"] = "Исходящий чат", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sent Whispers"] = "Исходящие шёпоты", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Separate Friends Group"] = "Отдельная группа для друзей", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Separate Guild Group"] = "Отдельная группа для гильдии", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Set to In-line"] = "Переключить на встроенный", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Share Tab Group with Whispers"] = "Общая группа вкладок с шёпотами", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shortcut Bar"] = "Панель быстрого доступа", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show Only in WIM"] = "Показывать только в WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show Roleplay Profiles"] = "Показывать ролевые профили", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show Timestamps"] = "Показывать время", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show WIM Tooltips"] = "Показывать подсказки WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show an unread message badge on the WIM launcher icons."] = "Показывать значок непрочитанного сообщения на кнопках запуска WIM.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show an unread message badge on the WIM launcher icons. Off by default for channels."] = "Показывать значок непрочитанного сообщения на кнопках запуска WIM. Для каналов по умолчанию выключено.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shows help tooltips on WIM's windows, lists, and the custom rows of these options."] = "Показывает подсказки в окнах и списках WIM и в особых строках этих настроек.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shows the most recent messages when a window opens. Applies to whisper and chat history alike, and requires Record Whispers."] = "Показывает последние сообщения при открытии окна. Относится и к истории шёпотов, и к истории чата и требует «Записывать шёпоты».", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shows the row of shortcut buttons on message windows. Turning this off takes effect after the next interface reload."] = "Показывает ряд кнопок быстрого доступа в окнах сообщений. Выключение вступает в силу после следующей перезагрузки интерфейса.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shows the sender's class, level, and guild on their window. Sends one /who lookup when the window opens. Applies to windows opened after the change."] = "Показывает класс, уровень и гильдию отправителя в его окне. Отправляет один запрос /who при открытии окна. Относится к окнам, открытым после изменения.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Situations without custom rules follow these base rules."] = "Ситуации без особых правил следуют этим базовым правилам.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Skin"] = "Оформление", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Skin default"] = "По умолчанию оформления", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Skin, fonts, message look, and colors."] = "Оформление, шрифты, вид сообщений и цвета.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sort Menu by Activity"] = "Сортировать меню по активности", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sort Tabs By"] = "Сортировать вкладки по", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sounds for whispers and chat, and how they are played."] = "Звуки для шёпотов и чата и способ их воспроизведения.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sources"] = "Источники", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Storage"] = "Хранилище", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["System Messages & Timestamps"] = "Системные сообщения и время", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Tab Groups"] = "Группы вкладок", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Tab to Next Whisper"] = "Tab к следующему шёпоту", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Text smileys render as icons."] = "Текстовые смайлики отображаются значками.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The base rules. Situations without custom rules follow these."] = "Базовые правила. Ситуации без особых правил следуют им.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The button can then be dragged anywhere on the screen."] = "После этого кнопку можно перетащить в любое место экрана.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The direction windows slide out when they hide. Also used by the show/hide key binding. Only applies while Window Animations is on under Appearance > Skin."] = "Направление, в котором окна уезжают при скрытии. Также используется клавишей показать/скрыть. Действует только при включённой «Анимации окон» в Внешний вид > Оформление.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The interface layer WIM windows draw on; higher layers cover lower ones."] = "Слой интерфейса, на котором рисуются окна WIM; верхние слои перекрывают нижние.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The message area renders two points larger than the chosen size; the input box and header follow the skin."] = "Область сообщений отображается на два пункта крупнее выбранного размера; поле ввода и заголовок следуют оформлению.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The message box at the bottom of each window."] = "Поле сообщения внизу каждого окна.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The message history window."] = "Окно истории сообщений.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The skin and window chrome."] = "Оформление и рамка окон.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The skin picks the font."] = "Шрифт выбирает оформление.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The sound to play. The speaker button plays a preview."] = "Воспроизводимый звук. Кнопка с динамиком проигрывает образец.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The whisper and chat windows."] = "Окна шёпотов и чата.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The window for adding and editing whisper and chat filters."] = "Окно добавления и редактирования фильтров шёпотов и чата.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["These settings style WIM's modern-only skins (such as WIM Modern), which are built from the game's own interface art. They are available while a modern-only skin is selected on the Skin page; with a classic skin active they are greyed out."] = "Эти настройки оформляют исключительно современные оформления WIM (например, WIM Modern), собранные из графики интерфейса самой игры. Они доступны, пока на странице «Оформление» выбрано исключительно современное оформление; при классическом оформлении они затемнены.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Timestamps"] = "Время", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Total RP 3 and Mary Sue Protocol profile display on whisper windows."] = "Отображение профилей Total RP 3 и Mary Sue Protocol в окнах шёпота.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Type %s to confirm."] = "Введите %s для подтверждения.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Unlock Minimap Button"] = "Открепить кнопку у миникарты", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Use Master Sound Channel"] = "Использовать главный звуковой канал", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Message Window"] = "Окно сообщений WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Modern Skin"] = "Оформление WIM Modern", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM manages this chat type in its own message windows. Turning a type off stops capture now; its window button stays until the next reload."] = "WIM ведёт этот тип чата в собственных окнах сообщений. Выключение типа сразу останавливает перехват; его кнопка окна остаётся до следующей перезагрузки.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM's launcher menus list the most recently active conversations first."] = "Меню кнопок запуска WIM показывают сначала недавно активные беседы.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM: the options UI is not available on this client."] = "WIM: интерфейс настроек недоступен в этом клиенте.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Wait While Typing"] = "Ждать, пока печатаю", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Web Addresses"] = "Веб-адреса", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Web addresses in messages become clickable links."] = "Веб-адреса в сообщениях становятся кликабельными ссылками.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["What WIM takes over: whispers, and the chat types that get their own windows."] = "Что берёт на себя WIM: шёпоты и типы чата, получающие собственные окна.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["What is kept, and for how long."] = "Что хранится и как долго.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["When choosing the /reply target, your most recent sent whisper counts as well as the last one received."] = "При выборе адресата /reply учитывается ваш последний отправленный шёпот наравне с последним полученным.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["When windows appear, where they sit, and what has keyboard focus."] = "Когда появляются окна, где они располагаются и что получает фокус клавиатуры.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["When windows pop up and when messages leave the chat frame, per situation."] = "Когда появляются окна и когда сообщения покидают окно чата, по ситуациям.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Where new windows appear, their default size and scale, and the placement of the History Viewer and filter editor are set in the game's Edit Mode."] = "Где появляются новые окна, их размер и масштаб по умолчанию, а также расположение просмотра истории и редактора фильтров задаются в режиме редактирования игры.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Which whispers and chat types are recorded."] = "Какие шёпоты и типы чата записываются.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in a battleground."] = "На поле боя.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in a dungeon."] = "В подземелье.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in a raid instance."] = "В рейдовом подземелье.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in an arena match."] = "В матче на арене.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in combat."] = "В бою.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While resting in an inn or city."] = "На отдыхе в таверне или городе.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whisper Sounds"] = "Звуки шёпота", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whisper windows opened from WIM's menus normally take focus immediately; with this on they follow the pop-up focus rules instead."] = "Окна шёпота, открытые из меню WIM, обычно сразу получают фокус; с этой настройкой они вместо этого следуют правилам фокуса всплывающих окон.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whisper windows share one tabbed window. Does not apply to windows already opened."] = "Окна шёпота делят одно окно с вкладками. Не относится к уже открытым окнам.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whisper windows show roleplay profile fields from Total RP 3 or any Mary Sue Protocol addon, and gain an Open RP Profile button on their shortcut bar that opens the partner's profile in the installed viewer. Requires the WIM Modern skin."] = "Окна шёпота показывают поля ролевого профиля из Total RP 3 или любой модификации Mary Sue Protocol и получают кнопку «Открыть РП-профиль» на панели быстрого доступа, открывающую профиль собеседника в установленном просмотрщике. Требует оформления WIM Modern.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whispers Follow Focus Rules"] = "Шёпоты следуют правилам фокуса", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whispers from friends group into their own tabbed window."] = "Шёпоты от друзей группируются в собственное окно с вкладками.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whispers from game masters are always recorded. Battle.net whispers count as friends."] = "Шёпоты от гейм-мастеров записываются всегда. Шёпоты Battle.net считаются как от друзей.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whispers from guild members group into their own tabbed window. A friend who is also a guild member goes to the friends group."] = "Шёпоты от соратников по гильдии группируются в собственное окно с вкладками. Друг, состоящий и в гильдии, попадает в группу друзей.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Who gets through."] = "Кто проходит.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Window Animations"] = "Анимации окон", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Window Layer"] = "Слой окон", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Window Opacity"] = "Непрозрачность окон", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Window Skin"] = "Оформление окон", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Where new windows spawn and how big they are, their layer, cascading, and screen clamping."] = "Где появляются новые окна и их размер, их слой, каскад и удержание в пределах экрана.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Windows"] = "Окна", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Windows Opened from Menus"] = "Окна, открытые из меню", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Windows cannot be dragged past the screen edges."] = "Окна нельзя вытащить за края экрана.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Windows fade to half opacity after two seconds without the mouse over them."] = "Окна затемняются до половины непрозрачности через две секунды без курсора над ними.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["World Channels"] = "Мировые каналы", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Wraps player names in brackets."] = "Заключает имена игроков в скобки.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["You are about to permanently delete WIM's message history for every character on this account."] = "Вы собираетесь безвозвратно удалить историю сообщений WIM для всех персонажей этой учётной записи.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["instant"] = "мгновенно", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["slow"] = "медленно", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Community chat cannot be recorded, so this is always on for community channels."] = "Чат сообществ записать нельзя, поэтому для каналов сообществ это всегда включено.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Width"] = "Ширина", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Height"] = "Высота", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Filter Editor"] = "Редактор фильтров WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
 });

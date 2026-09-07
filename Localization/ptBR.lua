@@ -38,13 +38,10 @@ WIM.AddLocale("ptBR", {
 
     ["Enable"] = "Ativar",
     ["Disable"] = "Desativar",
-    ["Enable window fading effects."] = "Ativar efeitos de desbotamento na janela",
 
-    ["General"] = "Geral",
     ["History"] = "Histórico",
     ["Filters"] = "Filtros",
 
-    ["Sort tabs by:"] = "Classificar guias por:",
 	["Window Created"] = "Janela criada",
 	["Last Activity"] = "Última atividade",
     ["Alphabetical"] = "Alfabético",
@@ -83,7 +80,6 @@ WIM.AddLocale("ptBR", {
 
     -- WIM.lua --
     ["Toggle WIM 'On' and 'Off'."] = "Alternar WIM 'Ativado' e 'Desativado'",
-    ["Toggle Debugging Mode 'On' and 'Off'."] = "Alternar modo de depuração 'Ativado' e 'Desativado'",
 
     -- Filters.lua --
     ["Whispers Sent by Addons"] = "Sussuros enviados pelos addons",
@@ -130,7 +126,6 @@ WIM.AddLocale("ptBR", {
     ["Chat View"] = "Visualização de bate-papo",
     ["Text View"] = "Visualização de texto",
     ["BBCode"] = "BBCode",
-    ["WIM History Viewer can be accessed any time by typing:"] = "O visualizador de histórico pode ser acessado todo o tempo escrevendo:",
     ["WIM History Viewer"] = "Visualizador de histórico",
     ["Display history viewer."] = "Exibir visualizador de histórico.",
 
@@ -170,7 +165,6 @@ WIM.AddLocale("ptBR", {
     ["Users in %s"] = "Usuários em %s",
 
     -- Clear.lua --
-    ["You are about to clear all of WIM's history!"] = "Você está prestes a limpar todo o histórico do WIM!",
     ["This action will reload your user interface."] = "Esta ação irá recarregar a interface do usuário.",
     ["Do you want to continue?"] = "Você quer continuar?",
     ["You are about to restore WIM's filters to it's default settings!"] = "Você está prestes a restaurar as configurações padrões do WIM!",
@@ -211,141 +205,44 @@ WIM.AddLocale("ptBR", {
     -- CoreOptions --
     ["Created By:"] = "Criado por:",
     ["Special Thanks:"] = "Agradecimentos especiais:",
-    ["Welcome!"] = "Bem-Vindo!",
     ["Enable WIM"] = "Ativar WIM",
-    ["Display Minimap Icon"] = "Exibir ícone no minimapa",
-    ["<Right-Click> to show unread messages."] = "<Clique-Direita> para exibir mensagens não lidas",
-	["Display Addon Compartment Icon"] = "Exibir ícone do compartimento de addons",
-    ["Display Tutorials"] = "Exibir tutoriais",
-    ["Reset Tutorials"] = "Resetar tutoriais",
     ["Credits"] = "Créditos",
     ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "Esta é uma mensagem longa que contém emoticons e URLs 8). A página do WIM é www.WIMAddon.com.",
-    ["Message Formatting"] = "Formatação",
-    ["Manipulate how WIM displays messages."] = "Manipule como WIM exibi mensagens.",
     ["Preview"] = "Previsualização",
-    ["Display Time Stamps"] = "Exibir carimbos de tempo",
-    ["Display Emoticons"] = "Exibir emoticons",
-    ["Display URLs as Links"] = "Exibir URLs como links",
-    ["Indent long messages."] = "Encomendar mensagens longas",
-	["Bracket names."] = "Nomes de colchetes",
-    ["Window Behavior"] = "Comportamento",
-    ["You can control how windows behave while you are in different situations."] = "Você pode controlar como as jenelas se comportam enquanto você está em diferentes situações.",
-    ["Intercept Slash Commands"] = "Interceptar comandos de barra",
-    ["Include sent messages in /REPLY."] = "Incluir mensagens enviadas em /r",
-	["Obey autofocus rules when opening frames via the menu. (autofocus if unchecked)"] = "Obedecer as regras de foco automático ao abrir janelas",
-    ["Use the same rules for all states."] = "Usar as mesmas regras para todos os estados",
-    ["Behaviors for state:"] = "Comportamentos de estado:",
-    ["Pop-Up window when message is sent."] = "Brotar janela quando a mensagem é enviada",
-    ["Pop-Up window when message is received."] = "Brotar janela quando a mensagem é recebida",
-    ["Auto focus a window when it is shown."] = "Focar na janela automaticamente quando ela aparecer",
-    ["Keep focus on window after sending a message."] = "Manter o foco na janela depis de enviar mensagem",
-    ["Suppress messages from the default chat frame."] = "Suprimir mensagens da janela de bate-papo padrão",
-    ["Window Settings"] = "Definições da janela",
-    ["Some settings may be limited by certain skins."] = "Algumas configurações podem ser limitadas por certos temas.",
     ["Default Width"] = "Largura padrão",
     ["Default Height"] = "Altura padrão",
     ["Window Scale"] = "Escala da janela",
-    ["Window Alpha"] = "Alfa da janela",
     ["Set Window Spawn Location"] = "Definir o local do surgimento da janela",
     ["Up"] = "Cima",
     ["Down"] = "Baixo",
     ["Left"] = "Esquerda",
     ["Right"] = "Direita",
-    ["Cascade overlapping windows."] = "Janelas em cascata sobrepostas",
-    ["Ignore arrow keys in message box."] = "Ignorar teclas de seta na caixa de mensagem",
-    ["Allow <ESC> to hide windows."] = "Permitir que <ESC> oculte as janelas",
-    ["Display Settings"] = "Visualização",
-    ["Configure general window display settings."] = "Configure a exibição geral da janela.",
-    ["Window Skin:"] = "Tema da janela:",
     ["Version"] = "Versão",
-    ["Color: System Messages"] = "Cor: mensagens do sistema",
-    ["Color: Error Messages"] = "Cor: mensagens de erro",
-    ["Color: URL - Web Addresses"] = "Cor: URL - endereços de sites",
-    ["Color: History Messages Sent"] = "Cor: mensagens do histórico enviadas",
-    ["Color: History Messages Received"] = "Cor: mensagens do histórico recebidas",
-    ["Use colors suggested by skin."] = "Usar cores sugerido pelo tema",
-    ["Enable window fading effects."] = "Ativar efeitos de desbotamento na janela",
-    ["Enable window animation effects."] = "Ativar efeitos de animação na janela",
-    ["Display item links when hovering over them."] = "Exibir links de item quando pairar o ponteiro sobre",
-    ["Fonts"] = "Fontes",
-    ["Configure the fonts used in WIM's message windows."] = "Configure a fonte usada na janela de mensagens do WIM.",
     ["Font Outline"] = "Contorno da fonte",
     ["Thin"] = "Fino",
     ["Thick"] = "Grosso",
-    ["Use font suggested by skin."] = "Usar fonte sugerido pelo tema",
-    ["Chat Font Size"] = "Tamanho da fonte do bate-papo",
-    ["Configure general display settings when dealing with whispers."] = "Configure as exibições gerais quando se lida com sussurros.",
-    ["Color: Messages Sent"] = "Cor: mensagens enviadas",
-    ["Color: Messages Received"] = "Cor: mensagens recebidas",
-	["Color: BNet Messages Sent"] = "Color: mensagens de BNet enviadas",
-    ["Color: BNet Messages Received"] = "Color: mensagens de BNet recibidas",
-    ["Display user class icons and details."] = "Exibir ícones e detalhes sobre a classe do usuário",
-    ["Requires who lookups."] = "Exige quem procura.",
-    ["Display Shortcut Bar"] = "Exibir barra de atalhos",
     ["Allow"] = "Permitir",
     ["Ignore"] = "Ignorar",
     ["Block"] = "Bloqueio",
-    ["Filtering"] = "Filtragem",
-    ["Filtering allows you to control which messages are handled as well as how they are handled by WIM."] = "Filtragem permite que você controle quais mensagens são tratadas também como elas são manipuladas pelo WIM.",
-    ["Enable Filtering"] = "Ativar filtragem",
     ["Protected"] = "Protegido",
     ["Action:"] = "Ação:",
     ["Occurrences:"] = "Ocorrências:",
     ["Delete Filter"] = "Deletar filtro",
     ["History"] = "Histórico",
-    ["WIM can store conversations to be viewed at a later time."] = "WIM pode armanezar conversações para ser visto mais tarde.",
-    ["Enable History"] = "Ativar histórico",
     ["Messages"] = "Mensagens",
-    ["Preview history inside message windows."] = "Previsualizar histórico dentro das janelas de mensagem",
-    ["Record Friends"] = "Gravar amigos",
-    ["Record Guild"] = "Gravar guilda",
-    ["Record Everyone"] = "Gravar todos",
     ["Record Chat"] = "Gravar bate-papo",
     ["Maintenance"] = "Manutenção",
-    ["Allowing your history logs to grow too large will affect the game's performance, therefore it is reccomended that you use the following options."] = "Permita que o registro da histórico ao crescer e fiquei muito grande afetará o desempenho do jogo, portanto o recomendável que você use as seguintes opções.",
-    ["Save a maximum number of messages per person."] = "Salvar o máximo de números de mensagens por pessoa",
     ["%d |4Week:Weeks;"] = "%d |4Semana:Semanas;",
-    ["Automatically delete old messages."] = "Deletar automaticamente mensagens antigas",
-    ["WIM-2-WIM is a feature which allows users with WIM to interact in ways that normal whispering can not."] = "WIM-2-WIM é um recurso que permite que o usuário com WIM possa interagir de forma que o modo padrão de sussuro não consegue.",
-    ["Enable WIM-2-WIM"] = "Ativar WIM-2-WIM",
-    ["Privacy"] = "Privacidade",
-    ["Restrict the data that is shared."] = "Restringir os dados que são compartilhados.",
-    ["Allow others to see me typing."] = "Permitir que outros me vejam digitando.",
-    ["Allow others to see my location."] = "Permitir que outros vejam minha localização.",
-    ["Main"] = "Principal",
-    ["General"] = "Geral",
     ["User Level"] = "Nível do usuário",
-    ["Windows will also be hidden when frames such as the world map are shown."] = "Janelas também serão ocultadas quando os quadros, como o mapa-múndi são exibidos.",
     ["Sounds"] = "Sons",
-    ["Configure various sound events and how they are triggered."] = "Configure eventos sonoros diversos, e como eles são acionados.",
-    ["Play sound when a whisper is received."] = "Reproduzir som quando um sussurro é recebido",
-    ["Play special sound for friends."] = "Reproduzir som especial para amigos",
-	["Play special sound for battle.net friends."] = "Reproduzir som especial para amigos de battle.net",
-    ["Play special sound for guild members."] = "Reproduzir som especial para membros da guilda",
-    ["Play sound when a whisper is sent."] = "Reproduzir som quando um sussurro é enviado",
-    ["Allow others to see my talent spec."] = "Permitir que outros vejam o meu talento especifico",
-    ["Window Strata:"] = "Strata da janela:",
 	["Background"] = BACKGROUND,
 	["Low"] = LOW,
 	["Medium"] = "Médio",
 	["High"] = "Alto",
 	["Dialog"] = ENABLE_DIALOG,
 	["Tooltip"] = "Dica",
-    ["Unlock from Minimap"] = "Desbloquear do minimapa",
-    ["Press <Tab> to advance to next tell target."] = "Pressionar <Tab> para avançar para o próximo alvo",
-	["Force sounds when game sound is disabled."] = "Forçar sons quando o som do jogo estiver desativado",
-    ["Colorize names."] = "Colorir nomes",
-    ["Clamp window to screen."] = "Fixar a janela na tela",
-    ["Group with whisper windows."] = "Agrupar com janelas sussurradas",
 
     -- TabManagement.lua --
-    ["Tab Management"] = "Gerenciador de guia",
-    ["Automatically manage your open windows and place them into appropriate tab groups."] = "Gerencie automaticamente suas janelas abertas e coloque-as em grupos de abas apropriados.",
-    ["Automatically group whispers."] = "Formar automaticamente um grupo de sussurros",
-	["Automatically group chat windows."] = "Formar automaticamente um grupo de janelas de bate-papo",
-    ["Place friends in their own group."] = "Colocar amigos no seu próprio grupo",
-    ["Place guild members in their own group."] = "Colocar membros da guilda no seu próprio grupo",
-    ["Does not apply to windows already opened."] = "Isso não se aplica à janelas já abertas.",
 
     -- Talent Specs --
     ["Hybrid"] = "Híbrido",
@@ -369,49 +266,23 @@ WIM.AddLocale("ptBR", {
     --Expose.lua
     ["Your conversations have been hidden in order to clear your screen while in combat. To disable this feature type"] = "Suas conversas foram ocultas para limpar sua tela durante o combate. Para desativar esse recurso, digite",
     ["Expose"] = "Expose",
-    ["Expose is a Mac OS X inspired feature which enables you to quickly clear your screen of windows and then restore them back to their original position."] = "Expose é um recurso inspirado no Mac OS X que permite limpar rapidamente a tela da janelas e depois restaurá-la à sua posição original.",
-    ["Auto hide/restore windows during combat."] = "Ocultar/restaurar automaticamente janelas durante o combate",
-	["Delay if I am typing a message."] = "Atraso se estou escrevendo uma mensagem",
-    ["Border Size"] = "Tamanho da borda",
-    ["Only while in an instance."] = "Somente enquanto estiver em uma instância",
-    ["Show Border"] = "Exibir borda",
-    ["Animation Direction:"] = "Direção da animação:",
 
     --ChatEngine.lua
-    ["WIM will manage this chat type within its own message windows."] = "O WIM gerenciará esse tipo de bate-papo dentro de suas próprias janelas de mensagens.",
-    ["Show Minimap Alerts"] = "Exibir alertas do minimapa",
-    ["Never pop-up on my screen."] = "Nunca aparecer na minha tela",
-    ["Never suppress messages."] = "Nunca suprimir mensagens",
-	["Include emotes."] = "Incluir expressões",
     ["Have WIM monitor this channel."] = "Faça com que o WIM monitore este canal.",
-    ["Never Pop"] = "Nunca aparecer",
-    ["Never have this window pop-up on my screen."] = "Nunca essa janela apareceu na minha tela.",
     ["Never Suppress"] = "Nunca suprimir",
-    ["Never suppress messages from the default chat frame."] = "Nunca suprima mensagens do quadro de bate-papo padrão.",
-    ["Show unread message alert on minimap."] = "Exibir alerta de mensagem não lida no minimapa.",
     ["No History"] = "Sem histórico",
-    ["Do not record history for this channel."] = "Não grave histórico para este canal.",
     ["World Chat"] = "Bate-papo mundial",
     ["Custom Chat"] = "Bate-papo personalizado",
     ["Community Chat"] = "Bate-papo da comunidade",
-    ["Community Chats"] = "Bate-papos da comunidade",
     ["Chat"] = "Bate-papo",
-    ["Play special sound for %s."] = "Reproduzir som especial para %s",
-    ["Play sound when a message is received."] = "Reproduzir som quando uma mensagem é recebida.",
-    ["Play sound when a message is sent."] = "Reproduzir som quando uma mensagem é enviada.",
-    ["Do not play sounds for this channel."] = "Não reproduz sons para este canal.",
     ["No Sound"] = "Sem som",
-    ["Sensitivity"] = "Sensibilidade",
-    ["Enable WorldFrame Click Detection."] = "Ativar detecção de clique no WorldFrame",
 
     --OffScreenTracker.lua
     ["WIM Window Off Screen"] = "Janela WIM fora da tela",
     ["Click to reposition."] = "Clique para reposicionar.",
 
 	-- Whisper Mode Warnings
-    ["Whisper Mode: In-line"] = "Modo de susurro: em linha",
 	["Set whispers to In-line"] = "Definir sussurros como Em linha",
-	["Message suppression requires whispers to be set to 'In-line'."] = "A supressão de mensagens requer que os sussurros estejam configurados como 'Em linha'.",
 	["It is recommended for whispers to be set to in-line in order to handle their behavior properly."] = "Recomenda-se configurar os sussurros como Em linha para lidar corretamente com seu comportamento.",
 
 	-- Skins --
@@ -431,35 +302,14 @@ WIM.AddLocale("ptBR", {
 
 
 	-- Modern options panel --
-	["Use modern options UI"] = "Usar a interface de opções moderna",
-	["Classic Options"] = "Opções clássicas",
-	["Open"] = "Abrir",
-	["Open the classic WIM options window."] = "Abre a janela de opções clássicas do WIM.",
-	["Choose the options style: /wim style [classic|modern]."] = "Escolha o estilo das opções: /wim style [classic|modern].",
-	["When enabled, WIM's Options entry points (minimap menu, key binding, /wim) open this panel instead of the classic WIM options window."] = "Quando ativada, os pontos de acesso às opções do WIM (menu do minimapa, atalho de teclado, /wim) abrem este painel em vez da janela de opções clássicas do WIM.",
-	["While a modern-only skin (such as WIM Modern) is selected, this option is enforced: those skins are configured through this panel only."] = "Com um skin exclusivamente moderno selecionado (como o WIM Modern), esta opção é imposta: esses skins são configurados apenas por este painel.",
 
 	-- Modern skin styling --
-	["Modern Skin"] = "Skin moderno",
-	["These settings style WIM's modern-only skins (such as WIM Modern), which are built from the game's own interface art. They shape the History Viewer and the chat windows, and are available only while a modern-only skin is selected under General > Display Settings; with a classic skin active they are greyed out."] = "Essas configurações definem o estilo dos skins exclusivamente modernos do WIM (como o WIM Modern), construídos com a arte de interface do próprio jogo. Elas moldam o visualizador de histórico e as janelas de bate-papo, e estão disponíveis apenas enquanto um skin exclusivamente moderno estiver selecionado em Geral > Configurações de exibição; com um skin clássico ativo, ficam esmaecidas.",
-	["Disabled while a modern-only skin (such as WIM Modern) is selected: those skins carry settings the classic window has no controls for."] = "Desativado enquanto um skin exclusivamente moderno (como o WIM Modern) estiver selecionado: esses skins trazem configurações para as quais a janela clássica não tem controles.",
-	["Frame background"] = "Fundo da moldura",
-	["Message area background"] = "Fundo da área de mensagens",
-	["Chat history background"] = "Fundo do histórico de bate-papo",
-	["Selection panels background"] = "Fundo dos painéis de seleção",
-	["Window frame background"] = "Fundo da moldura da janela",
 	["None (game default)"] = "Nenhum (padrão do jogo)",
-	["Panels see through to the game world"] = "Os painéis deixam ver o mundo do jogo",
-	["Window sees through to the game world"] = "A janela deixa ver o mundo do jogo",
-	["Draws the frame background only around the panels, so a clear panel background (None or Transparent) shows the game world behind the viewer instead of the frame fill."] = "Desenha o fundo da moldura apenas ao redor dos painéis, de modo que um fundo de painel limpo (Nenhum ou Transparente) mostra o mundo do jogo atrás do visualizador em vez do preenchimento da moldura.",
 	["Draws the window frame background only around the message area, so a clear message area background (None or Transparent) shows the game world behind the window."] = "Desenha o fundo da moldura da janela apenas ao redor da área de mensagens, de modo que um fundo de área de mensagens limpo (Nenhum ou Transparente) mostra o mundo do jogo atrás da janela.",
 
 	-- Roleplay profiles (Total RP 3 / Mary Sue Protocol) --
 	["Roleplay Profiles"] = "Perfis de roleplay",
-	["Enable roleplay profile integration"] = "Ativar a integração de perfis de roleplay",
-	["Whisper windows show roleplay profile fields from Total RP 3 or any Mary Sue Protocol addon, and gain an Open RP Profile button on their shortcut bar that opens the partner's profile in the installed viewer."] = "As janelas de sussurro mostram os campos de perfil de roleplay do Total RP 3 ou de qualquer addon Mary Sue Protocol, e ganham um botão 'Abrir perfil de roleplay' na sua barra de atalhos que abre o perfil do outro jogador no visualizador instalado.",
 	["Open RP Profile"] = "Abrir perfil de roleplay",
-	["Displayed profile fields"] = "Campos de perfil exibidos",
 	["Whisper windows show the selected fields from the partner's Total RP 3 or Mary Sue Protocol profile. Fields left unselected -- or without profile data -- keep the standard display."] = "As janelas de sussurro mostram os campos selecionados do perfil de Total RP 3 ou Mary Sue Protocol do outro jogador. Os campos não selecionados -- ou sem dados de perfil -- mantêm a exibição padrão.",
 	["First Name"] = "Nome",
 	["Last Name"] = "Sobrenome",
@@ -492,9 +342,6 @@ WIM.AddLocale("ptBR", {
 	["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Clicar no botão %s da janela de mensagens mostrará o histórico desse usuário no Visualizador de histórico do WIM.",
 
 	-- Message input & formatting --
-	["Wrap the message being typed"] = "Quebrar a mensagem sendo digitada",
-	["Limit wrapped lines"] = "Limitar as linhas quebradas",
-	["Visible input lines"] = "Linhas de entrada visíveis",
 	["Caps how far the input field grows; past the limit the message scrolls inside it."] = "Limita até onde o campo de entrada cresce; além do limite, a mensagem rola dentro dele.",
 	["The most lines the input field grows to before the message scrolls inside it."] = "O número máximo de linhas que o campo de entrada cresce antes de a mensagem rolar dentro dele.",
 	["The input field wraps long messages onto multiple lines, growing downward with the message instead of scrolling it on one line."] = "O campo de entrada quebra mensagens longas em várias linhas, crescendo para baixo com a mensagem em vez de rolá-la em uma única linha.",
@@ -504,17 +351,14 @@ WIM.AddLocale("ptBR", {
 	["Sound"] = "Som",
 
 	-- Chat type options --
-	["Chat Windows"] = "Janelas de bate-papo",
-	["Monitor"] = "Monitorar",
 	["Record"] = "Gravar",
-	["Minimap Alerts"] = "Alertas do minimapa",
 
 	-- Help, bug reports & links --
 	["Found a bug?"] = "Encontrou um erro?",
 	["Report a Bug"] = "Relatar um erro",
 	["Reports are welcome! Click below and follow the instructions in the bug report template."] = "Relatórios são bem-vindos! Clique abaixo e siga as instruções do modelo de relatório de erros.",
-	["Visit us on GitHub"] = "Visite-nos no GitHub",
-	["Click to copy the link."] = "Clique para copiar o link.",
+	["Show GitHub Link"] = "Mostrar link do GitHub", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+	["Click to show the link for copying."] = "Clique para mostrar o link para copiar.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
 	["Press Ctrl+C to copy the link, then open it in your browser."] = "Pressione Ctrl+C para copiar o link e abra-o no seu navegador.",
 
 	-- Debugging & development slash commands --
@@ -529,14 +373,13 @@ WIM.AddLocale("ptBR", {
 	["If you want all windows to be this size, you can set the default window size within WIM's options."] = "Se quiser que todas as janelas tenham esse tamanho, você pode definir o tamanho padrão das janelas nas opções do WIM.",
 	["You can <Shift-Click> a tab and drag it out into it's own window."] = "Você pode <Shift-clicar> em uma aba e arrastá-la para fora para torná-la uma janela própria.",
 	["You received a whisper which was hidden due to your current activity. You can change how whispers behave in WIM's options by typing"] = "Você recebeu um sussurro que foi ocultado devido à sua atividade atual. Você pode alterar como os sussurros se comportam nas opções do WIM digitando",
-	["Sets the game's Social > Whisper Mode setting to In-line. Without it, suppressed whispers would vanish into a popout chat tab."] = "Define a configuração 'Social > Modo de sussurro' do jogo como 'Em linha'. Sem ela, os sussurros suprimidos desapareceriam em uma aba popout do chat.",
 
 	-- Community channel maintenance --
 	["Toggle the experimental community channel re-add repair (mutates chat window channels)."] = "Ativa o reparo experimental de readição de canais de comunidade (altera os canais das janelas de bate-papo).",
 	["Toggle whether WIM focuses community streams at login."] = "Define se o WIM foca os fluxos de comunidade ao fazer login.",
 
 	-- Misc --
-	["Age"] = "Idade",
+	["Older Than"] = "Mais antigos que", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
 	["Users in %s"] = "Usuários em %s",
 
 	-- History Viewer filter modes --
@@ -603,10 +446,6 @@ WIM.AddLocale("ptBR", {
 
 
 	-- Skin & options style notices --
-	["WIM: the selected skin (%s) is configured through the modern options UI; the classic window is unavailable while it is active."] = "WIM: a skin selecionada (%s) é configurada pela interface de opções moderna; a janela clássica não está disponível enquanto ela estiver ativa.",
-	["WIM: the selected skin (%s) requires the modern options UI; switch to another skin first."] = "WIM: a skin selecionada (%s) requer a interface de opções moderna; mude primeiro para outra skin.",
-	["WIM options style: Modern (native Options > AddOns)."] = "Estilo de opções do WIM: moderno (nativo, em Opções > AddOns).",
-	["WIM options style: Classic (WIM window)."] = "Estilo de opções do WIM: clássico (janela do WIM).",
 
 
     -- Slash command feedback --
@@ -616,19 +455,318 @@ WIM.AddLocale("ptBR", {
     ["WIM channel re-add repair ON (experimental). On logins where the community stream is focused late, WIM removes and re-adds community channels to ChatFrame1 about 8s after login. If a re-add fails the channel must be restored from the chat settings UI."] = "Reparo de canais do WIM LIGADO (experimental). Em logins em que o canal de comunidade recebe foco tarde, o WIM remove e readiciona os canais de comunidade ao ChatFrame1 cerca de 8 segundos após o login. Se uma readição falhar, o canal deve ser restaurado nas configurações do bate-papo.",
     ["WIM: attempting a repair now (see /wim debug output)."] = "WIM: tentando um reparo agora (veja a saída de /wim debug).",
     ["WIM channel re-add repair OFF. No further attempts this session."] = "Reparo de canais do WIM DESLIGADO. Sem novas tentativas nesta sessão.",
-    ["Usage: /wim style [classic|modern]"] = "Uso: /wim style [classic|modern]",
-    ["WIM: the modern options UI is not available on this client."] = "WIM: a interface moderna de opções não está disponível neste cliente.",
     ["WIM: queued options open canceled."] = "WIM: abertura de opções na fila cancelada.",
 
     -- Placeholder: Translated with Google Translate, pending a natural language speaker to verify the translation.
     ["Click to switch between Say, Yell, and Emote."] = "Clique para alternar entre Dizer, Gritar e Emote.",
     ["Say, Yell, or Emote"] = "Dizer, Gritar ou Emote",
-    ["Chat Colors"] = "Cores do bate-papo",
-    ["Match the game's chat colors."] = "Usar as cores de bate-papo do jogo.",
     ["The message being typed takes the color of the chat type it will send as, like the game's own chat box."] = "A mensagem digitada recebe a cor do tipo de bate-papo em que será enviada, como na janela de bate-papo do jogo.",
     ["Battle.net Whispers"] = "Sussurros do Battle.net",
     ["Filter Editor"] = "Editor de filtros",
-    ["Filter area background"] = "Fundo da área do filtro",
-    ["Filter area sees through to the game world"] = "A área do filtro deixa ver o mundo do jogo",
     ["Draws the frame background only around the filter area, so a clear filter area background (None or Transparent) shows the game world behind the editor."] = "Desenha o fundo da janela apenas ao redor da área do filtro, de modo que um fundo limpo (Nenhum ou Transparente) mostre o mundo do jogo atrás do editor.",
+
+    -- Modern options, Edit Mode, and dialogs --
+    ["%d chat message(s) could not be recovered after the chat lockdown."] = "%d mensagem(ns) de bate-papo não puderam ser recuperadas após o bloqueio do bate-papo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["%d unsupported User Level filter(s) were removed."] = "%d filtro(s) de nível de usuário não compatível(is) foram removidos.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["/reply Counts Sent Whispers"] = "/reply conta os sussurros enviados", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["A thin border along the screen edge signals that windows are hidden."] = "Uma borda fina na beira da tela indica que há janelas ocultas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Above everything, at tooltip level."] = "Acima de tudo, no nível das dicas de tela.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Above most interface frames."] = "Acima da maioria dos quadros da interface.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Above the background layer."] = "Acima da camada de fundo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Actions"] = "Ações", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Addon Compartment Entry"] = "Entrada no compartimento de addons", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["All windows hide when combat starts and are restored when it ends."] = "Todas as janelas se ocultam quando o combate começa e são restauradas quando termina.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Also captures emotes."] = "Também captura emotes.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Animates closing windows toward the minimap, and the slide used by combat auto-hide and the show/hide key binding."] = "Anima o fechamento das janelas em direção ao minimapa, além do deslizamento usado pela ocultação automática em combate e pelo atalho de mostrar/ocultar.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Animation"] = "Animação", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Animation Direction"] = "Direção da animação", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Appearance"] = "Aparência", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Applies the filter list below to captured chat messages. Community chat is not filtered."] = "Aplica a lista de filtros abaixo às mensagens de bate-papo capturadas. O bate-papo de comunidade não é filtrado.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Applies to the minimap button, the addon compartment entry, and data broker launchers."] = "Vale para o botão do minimapa, a entrada no compartimento de addons e os iniciadores Data Broker.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Applies to whisper and chat history alike. Pruning runs at login."] = "Vale tanto para o histórico de sussurros quanto para o de bate-papo. A limpeza é executada ao entrar no jogo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Apply To"] = "Aplicar a", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Arrow keys keep controlling the game while the input box has focus; hold Alt to move the text cursor instead."] = "As setas continuam controlando o jogo enquanto a caixa de entrada tem o foco; segure Alt para mover o cursor do texto.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["At login WIM focuses your community chat streams so the client accepts sends to their channel numbers. Takes effect at the next login and needs at least one channel type captured."] = "Ao entrar no jogo, o WIM foca os fluxos de bate-papo das suas comunidades para que o cliente aceite envios aos seus números de canal. Entra em vigor no próximo login e exige pelo menos um tipo de canal capturado.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Auto Focus"] = "Foco automático", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Backgrounds, input field, and roleplay profile options for the WIM Modern skin."] = "Fundos, campo de entrada e opções de perfil de interpretação para o tema WIM Modern.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Base"] = "Base", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Battle.net Received"] = "Battle.net recebidas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Battle.net Sent"] = "Battle.net enviadas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Behind the standard interface."] = "Atrás da interface padrão.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Blizzard is restricting chat right now. Your message was not sent."] = "A Blizzard está restringindo o bate-papo neste momento. Sua mensagem não foi enviada.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Bracket Names"] = "Nomes entre colchetes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Briefly turns game audio back on so a notification can be heard while all sound is disabled. The Master channel alone cannot get past that setting."] = "Reativa brevemente o áudio do jogo para que uma notificação seja ouvida enquanto todo o som está desativado. O canal Principal sozinho não consegue contornar essa configuração.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["By conversation name."] = "Por nome da conversa.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Calculate Minimum Size"] = "Calcular tamanho mínimo", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Cap Stored Messages"] = "Limitar mensagens armazenadas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture"] = "Capturar", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture Community Channels"] = "Capturar canais de comunidade", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture Custom Channels"] = "Capturar canais personalizados", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture World Channels"] = "Capturar canais de mundo", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture community channels, set per-channel exceptions, and keep their chat channels working."] = "Capturar canais de comunidade, definir exceções por canal e manter seus canais de bate-papo funcionando.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Capture world and custom channels and set per-channel exceptions."] = "Capturar canais de mundo e personalizados e definir exceções por canal.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Cascade Direction"] = "Direção da cascata", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Cascade Windows"] = "Janelas em cascata", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Channels"] = "Canais", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat Follows Focus Rules"] = "Bate-papo segue as regras de foco", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat Sounds"] = "Sons do bate-papo", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat Types"] = "Tipos de bate-papo", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat windows join the whisper tab group instead of their own, even while Group Whispers is off."] = "As janelas de bate-papo entram no grupo de abas dos sussurros em vez do próprio, mesmo com \"Agrupar sussurros\" desativado.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat windows opened from WIM's menus normally take focus immediately; with this on they follow the pop-up focus rules instead."] = "Janelas de bate-papo abertas pelos menus do WIM normalmente recebem o foco na hora; com isto ativado, elas seguem as regras de foco das janelas pop-up.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Chat windows share one tabbed window. Does not apply to windows already opened."] = "As janelas de bate-papo compartilham uma única janela com abas. Não vale para janelas já abertas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Check to use alternate pop-up rules for this situation. Unchecked, the Base rules apply."] = "Marque para usar regras de pop-up alternativas nesta situação. Desmarcado, valem as regras base.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Choose what WIM captures: whispers, chat types, and channels."] = "Escolha o que o WIM captura: sussurros, tipos de bate-papo e canais.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Clamp to Screen"] = "Prender à tela", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Class-Colored Names"] = "Nomes na cor da classe", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Click Hold Limit"] = "Limite de clique pressionado", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Click to Release Focus"] = "Clique para liberar o foco", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Clickable Links"] = "Links clicáveis", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Clicking the game world releases WIM's keyboard focus so movement keys control your character again. Not while in combat."] = "Clicar no mundo do jogo libera o foco do teclado do WIM para que as teclas de movimento voltem a controlar seu personagem. Não em combate.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Clicks held longer than this are treated as camera turns and keep WIM's focus."] = "Cliques mantidos por mais tempo são tratados como giros de câmera e mantêm o foco do WIM.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Combat Auto-Hide"] = "Ocultar automaticamente em combate", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Combat hiding only happens inside dungeons, raids, battlegrounds, and arenas."] = "A ocultação em combate só acontece em masmorras, raides, campos de batalha e arenas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Communities"] = "Comunidades", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Content Background"] = "Fundo do conteúdo", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Continuation lines of wrapped messages are indented."] = "As linhas de continuação de mensagens quebradas recebem recuo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Conversations"] = "Conversas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Custom %s Rules"] = "Regras personalizadas: %s", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Custom Channels"] = "Canais personalizados", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Custom Rules"] = "Regras personalizadas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Defaults"] = "Padrões", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Delete"] = "Excluir", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Delete All History"] = "Excluir todo o histórico", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Delete Old Messages"] = "Excluir mensagens antigas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Distinct Chat Sounds"] = "Sons de bate-papo distintos", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Distinct Whisper Sounds"] = "Sons de sussurro distintos", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Do not play sounds for this channel, whatever the Notifications page plays."] = "Não tocar sons para este canal, independentemente da página Notificações.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Do not record history for this channel, whatever History > Recording records."] = "Não gravar histórico deste canal, independentemente de Histórico > Gravação.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Draws the frame background only around the panels, so a clear panel background (None or Transparent) shows the game world behind the viewer."] = "Desenha o fundo do quadro apenas ao redor dos painéis, de modo que um fundo de painel limpo (Nenhum ou Transparente) mostre o mundo do jogo atrás do visualizador.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Each message is prefixed with the time it arrived."] = "Cada mensagem é precedida pela hora em que chegou.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Edit Mode"] = "Modo de edição", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Erases every recorded conversation and the archive for every character on this account, then reloads the interface."] = "Apaga todas as conversas gravadas e o arquivo de todos os personagens desta conta e, em seguida, recarrega a interface.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Error Messages"] = "Mensagens de erro", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Escape Hides Windows"] = "Esc oculta as janelas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Every whisper is recorded."] = "Todo sussurro é gravado.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Fade When Inactive"] = "Esmaecer quando inativa", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Fades the window frame, header, and buttons; message and input text stay opaque. Modern skins keep their frame art opaque."] = "Esmaece o quadro, o cabeçalho e os botões da janela; o texto das mensagens e da entrada permanece opaco. Temas modernos mantêm a arte do quadro opaca.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Filter Chat"] = "Filtrar bate-papo", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Filter Panel Background"] = "Fundo do painel de filtros", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Filter Whispers"] = "Filtrar sussurros", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Filters run top to bottom; the first match wins. Allow lets a message through, Ignore hides it silently, Block hides it and, with Show Alert, tells you in the chat frame with a link to view it."] = "Os filtros são executados de cima para baixo; a primeira correspondência vence. Permitir deixa a mensagem passar, Ignorar a oculta em silêncio, Bloquear a oculta e, com Mostrar alerta, avisa você no quadro de bate-papo com um link para vê-la.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Focus & Input"] = "Foco e entrada", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Focus Streams at Login"] = "Focar fluxos ao entrar", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Font"] = "Fonte", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Font Size"] = "Tamanho da fonte", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Force Blizzard's chat messaging lockdown for testing (on|off, does not persist)."] = "Força o bloqueio de mensagens de bate-papo da Blizzard para testes (on|off, não persiste).", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Formatting"] = "Formatação", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Frame Background"] = "Fundo do quadro", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends & guild"] = "Amigos e guilda", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends and Battle.net friends."] = "Amigos e amigos do Battle.net.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends only"] = "Somente amigos", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends, Battle.net friends, and guild members."] = "Amigos, amigos do Battle.net e membros da guilda.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Friends, Battle.net friends, guild members, and your current party and raid get through; whispers from anyone else are ignored. This drives the two WhisperSelect entries in the filter list below."] = "Amigos, amigos do Battle.net, membros da guilda e seu grupo e raide atuais passam; sussurros de qualquer outra pessoa são ignorados. Isto controla as duas entradas WhisperSelect na lista de filtros abaixo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Group Chat Windows"] = "Agrupar janelas de bate-papo", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Group Whispers"] = "Agrupar sussurros", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Group windows into shared tab strips."] = "Agrupar janelas em barras de abas compartilhadas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Guild members."] = "Membros da guilda.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Guild only"] = "Somente guilda", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hidden-Windows Indicator"] = "Indicador de janelas ocultas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hide During Combat"] = "Ocultar em combate", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hide windows during combat and restore them after."] = "Ocultar as janelas durante o combate e restaurá-las depois.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hides these messages from the game's chat frame so they appear only in WIM. Per-type and per-channel 'Never Suppress' exceptions on the Conversations pages win. A message is never hidden while its WIM window has not yet been shown."] = "Oculta estas mensagens do quadro de bate-papo do jogo para que apareçam apenas no WIM. As exceções \"Nunca suprimir\" por tipo e por canal nas páginas de Conversas prevalecem. Uma mensagem nunca é ocultada enquanto sua janela do WIM ainda não tiver sido exibida.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hiding"] = "Ocultação", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hiding waits until you finish typing your message."] = "A ocultação espera você terminar de digitar a mensagem.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["History Preview Received"] = "Prévia do histórico recebidas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["History Preview Sent"] = "Prévia do histórico enviadas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hover Item Tooltips"] = "Dicas de item ao passar o mouse", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Hovering an item link in a message shows its tooltip without clicking."] = "Passar o mouse sobre um link de item em uma mensagem mostra sua dica sem clicar.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["How messages are formatted and displayed."] = "Como as mensagens são formatadas e exibidas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Ignore Arrow Keys"] = "Ignorar as setas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["In-Line Whisper Mode"] = "Modo de sussurro em linha", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Includes emotes."] = "Inclui emotes.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Includes raid warnings."] = "Inclui avisos de raide.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Incoming Chat"] = "Bate-papo recebido", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Incoming Whispers"] = "Sussurros recebidos", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Incoming whispers always open in WIM while it is enabled; this additionally redirects typing /w and /r in the game's chat box into a WIM window. Not while in combat."] = "Sussurros recebidos sempre abrem no WIM enquanto ele está ativado; isto também redireciona a digitação de /w e /r na caixa de bate-papo do jogo para uma janela do WIM. Não em combate.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Indent Wrapped Lines"] = "Recuar linhas quebradas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Indicator"] = "Indicador", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Indicator Thickness"] = "Espessura do indicador", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Input Field"] = "Campo de entrada", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Keep Focus"] = "Manter o foco", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Keeps at most this many messages per conversation. Applies to whisper and chat history alike."] = "Mantém no máximo esta quantidade de mensagens por conversa. Vale tanto para o histórico de sussurros quanto para o de bate-papo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Keeps the keyboard focus in the input box after sending a message."] = "Mantém o foco do teclado na caixa de entrada após enviar uma mensagem.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Keyboard focus and input behavior."] = "Foco do teclado e comportamento da entrada.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Known Senders Only"] = "Somente remetentes conhecidos", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Launcher"] = "Iniciador", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Launcher Alerts"] = "Alertas do iniciador", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Level with dialog windows."] = "No nível das janelas de diálogo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Level with most interface frames."] = "No nível da maioria dos quadros da interface.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Limit Height"] = "Limitar altura", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Links & Emoticons"] = "Links e emoticons", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Chave geral deste tipo de canal; os canais individuais são capturados com a opção Capturar abaixo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Maximum Lines"] = "Máximo de linhas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Menus & Tooltips"] = "Menus e dicas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message Area Background"] = "Fundo da área de mensagens", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message Format"] = "Formato das mensagens", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message Windows"] = "Janelas de mensagens", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message colors."] = "Cores das mensagens.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message font, outline, and size."] = "Fonte, contorno e tamanho das mensagens.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Message suppression requires the game's Social > Whisper Mode setting to be In-line; without it, suppressed whispers would vanish into a popout chat tab."] = "A supressão de mensagens exige que a configuração Social > Modo de sussurro do jogo esteja em Em linha; sem isso, sussurros suprimidos sumiriam em uma aba de bate-papo destacada.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Messages Received"] = "Mensagens recebidas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Messages Sent"] = "Mensagens enviadas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Messages per Conversation"] = "Mensagens por conversa", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Minimap Button"] = "Botão do minimapa", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Most recently active conversation first."] = "Conversa ativa mais recente primeiro.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Multi-Line Input"] = "Entrada em várias linhas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Native Input Colors"] = "Cores nativas da entrada", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Navigation List Background"] = "Fundo da lista de navegação", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Never Pop Up"] = "Nunca abrir", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Never have this window pop-up on my screen. Overrides Windows > Pop-up Rules."] = "Nunca abrir esta janela na minha tela. Sobrepõe Janelas > Regras de pop-up.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Never suppress messages from the default chat frame. Overrides 'Show Only in WIM' under Windows > Pop-up Rules."] = "Nunca suprimir mensagens do quadro de bate-papo padrão. Sobrepõe \"Mostrar somente no WIM\" em Janelas > Regras de pop-up.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["New windows that would overlap are offset in the chosen direction. Whisper windows do not cascade while Group Whispers is on, nor chat windows while Group Chat Windows is on. Applies to windows opened after the change."] = "Novas janelas que se sobreporiam são deslocadas na direção escolhida. Janelas de sussurro não entram em cascata enquanto \"Agrupar sussurros\" está ativado, nem janelas de bate-papo enquanto \"Agrupar janelas de bate-papo\" está. Vale para janelas abertas após a mudança.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["No one (GM whispers only)"] = "Ninguém (somente sussurros de MJ)", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Nothing is recorded except game master whispers."] = "Nada é gravado, exceto sussurros de mestres do jogo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Notifications"] = "Notificações", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Oldest conversation first."] = "Conversa mais antiga primeiro.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Only While in an Instance"] = "Somente dentro de uma instância", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Open History Viewer"] = "Abrir visualizador de histórico", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Opens a placement window; drag it to where new windows should appear, then close it to save the spot."] = "Abre uma janela de posicionamento; arraste-a para onde as novas janelas devem aparecer e feche-a para salvar o local.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Opens the window when a message arrives in this situation."] = "Abre a janela quando uma mensagem chega nesta situação.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Opens the window when you send a message in this situation."] = "Abre a janela quando você envia uma mensagem nesta situação.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Optional different sounds for whispers from particular senders."] = "Sons diferentes opcionais para sussurros de remetentes específicos.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Optional different sounds per chat type."] = "Sons diferentes opcionais por tipo de bate-papo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Outline for the message area and input box text."] = "Contorno do texto da área de mensagens e da caixa de entrada.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Override Muted Audio"] = "Ignorar áudio silenciado", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Placement & Size"] = "Posição e tamanho", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Playback"] = "Reprodução", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Player names take their class color. Applies to new messages."] = "Os nomes dos jogadores recebem a cor da sua classe. Vale para novas mensagens.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a distinct sound for raid chat instead of the standard incoming sound; raid warnings keep the standard sound. It never mutes."] = "Toca um som distinto para o bate-papo de raide em vez do som padrão de recebimento; avisos de raide mantêm o som padrão. Nunca silencia.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a distinct sound for this chat type instead of the standard incoming sound; it never mutes. Use a channel's No Sound flag or turn off incoming chat sounds to silence."] = "Toca um som distinto para este tipo de bate-papo em vez do som padrão de recebimento; nunca silencia. Use a opção Sem som de um canal ou desative os sons de bate-papo recebido para silenciar.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a sound when a captured chat message arrives. Per-channel No Sound flags on the channel lists mute individual channels."] = "Toca um som quando uma mensagem de bate-papo capturada chega. As opções Sem som por canal nas listas de canais silenciam canais individuais.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a sound when a whisper arrives."] = "Toca um som quando um sussurro chega.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a sound when you send a message in a captured chat type, from WIM or the game's chat box."] = "Toca um som quando você envia uma mensagem em um tipo de bate-papo capturado, pelo WIM ou pela caixa de bate-papo do jogo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays a sound when you send a whisper."] = "Toca um som quando você envia um sussurro.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays notification sounds on the Master channel so they are heard even when sound effects are turned off."] = "Toca os sons de notificação no canal Principal para que sejam ouvidos mesmo com os efeitos sonoros desativados.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays this sound instead of the standard incoming whisper sound."] = "Toca este som em vez do som padrão de sussurro recebido.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pop Up on Receive"] = "Abrir ao receber", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pop Up on Send"] = "Abrir ao enviar", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pop-up Rules"] = "Regras de pop-up", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pressing Escape hides all open WIM windows."] = "Pressionar Esc oculta todas as janelas abertas do WIM.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Pressing Tab in a whisper window jumps to the next person you whispered. While enabled, forward Tab no longer cycles through window tabs."] = "Pressionar Tab em uma janela de sussurro pula para a próxima pessoa para quem você sussurrou. Enquanto ativado, Tab deixa de alternar entre as abas das janelas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Preview Count"] = "Quantidade na prévia", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Preview Recent Messages"] = "Prévia das mensagens recentes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Plays this sound instead of the standard incoming whisper sound when a Battle.net friend whispers. When several match, Battle.net friend wins over friend and guild member."] = "Toca este som em vez do som padrão de sussurro recebido quando um amigo do Battle.net sussurra. Se vários corresponderem, amigo do Battle.net prevalece sobre amigo e membro da guilda.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Privacy & Filtering"] = "Privacidade e filtragem", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Profile Fields"] = "Campos do perfil", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Puts the keyboard focus in the input box when a window pops up."] = "Coloca o foco do teclado na caixa de entrada quando uma janela abre.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Re-adds community channels to your chat frames when the client drops them, once per login after a late stream focus; /wim channelrepair runs it now. Opt-in: this mutates saved chat window configuration."] = "Adiciona novamente os canais de comunidade aos seus quadros de bate-papo quando o cliente os descarta, uma vez por login após um foco tardio do fluxo; /wim channelrepair executa isso agora. Opcional: isto altera a configuração salva das janelas de bate-papo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Record From"] = "Gravar de", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Record Whispers"] = "Gravar sussurros", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Recording"] = "Gravação", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Recording stops as soon as this is off; the history button stays on open windows until the next reload."] = "A gravação para assim que isto é desativado; o botão de histórico permanece nas janelas abertas até o próximo recarregamento.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Redirect /w and /r to WIM"] = "Redirecionar /w e /r para o WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Repair Dropped Channels"] = "Reparar canais descartados", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Reset Position"] = "Redefinir posição", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Retention"] = "Retenção", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Retention caps, preview, and deletion."] = "Limites de retenção, prévia e exclusão.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Right-Click Opens Unread"] = "Clique direito abre não lidas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Runs the whisper filter list below. While off, addon-spam whispers open windows like any other whisper."] = "Executa a lista de filtros de sussurros abaixo. Desativado, sussurros de spam de addons abrem janelas como qualquer outro sussurro.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["See-Through Frame"] = "Quadro transparente", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sender Details"] = "Detalhes do remetente", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sent Chat"] = "Bate-papo enviado", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sent Whispers"] = "Sussurros enviados", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Separate Friends Group"] = "Grupo separado para amigos", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Separate Guild Group"] = "Grupo separado para a guilda", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Set to In-line"] = "Definir como Em linha", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Share Tab Group with Whispers"] = "Compartilhar grupo de abas com os sussurros", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shortcut Bar"] = "Barra de atalhos", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show Only in WIM"] = "Mostrar somente no WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show Roleplay Profiles"] = "Mostrar perfis de interpretação", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show Timestamps"] = "Mostrar horários", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show WIM Tooltips"] = "Mostrar dicas do WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show an unread message badge on the WIM launcher icons."] = "Mostrar um selo de mensagem não lida nos ícones de inicialização do WIM.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Show an unread message badge on the WIM launcher icons. Off by default for channels."] = "Mostrar um selo de mensagem não lida nos ícones de inicialização do WIM. Desativado por padrão para canais.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shows help tooltips on WIM's windows, lists, and the custom rows of these options."] = "Mostra dicas de ajuda nas janelas e listas do WIM e nas linhas personalizadas destas opções.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shows the most recent messages when a window opens. Applies to whisper and chat history alike, and requires Record Whispers."] = "Mostra as mensagens mais recentes quando uma janela abre. Vale tanto para o histórico de sussurros quanto para o de bate-papo, e exige \"Gravar sussurros\".", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shows the row of shortcut buttons on message windows. Turning this off takes effect after the next interface reload."] = "Mostra a fileira de botões de atalho nas janelas de mensagens. Desativar entra em vigor após o próximo recarregamento da interface.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Shows the sender's class, level, and guild on their window. Sends one /who lookup when the window opens. Applies to windows opened after the change."] = "Mostra a classe, o nível e a guilda do remetente na janela dele. Envia uma consulta /who quando a janela abre. Vale para janelas abertas após a mudança.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Situations without custom rules follow these base rules."] = "Situações sem regras personalizadas seguem estas regras base.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Skin"] = "Tema", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Skin default"] = "Padrão do tema", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Skin, fonts, message look, and colors."] = "Tema, fontes, aparência das mensagens e cores.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sort Menu by Activity"] = "Ordenar menu por atividade", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sort Tabs By"] = "Ordenar abas por", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sounds for whispers and chat, and how they are played."] = "Sons para sussurros e bate-papo, e como são tocados.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Sources"] = "Fontes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Storage"] = "Armazenamento", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["System Messages & Timestamps"] = "Mensagens do sistema e horários", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Tab Groups"] = "Grupos de abas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Tab to Next Whisper"] = "Tab para o próximo sussurro", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Text smileys render as icons."] = "Carinhas de texto são exibidas como ícones.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The base rules. Situations without custom rules follow these."] = "As regras base. Situações sem regras personalizadas seguem estas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The button can then be dragged anywhere on the screen."] = "O botão pode então ser arrastado para qualquer lugar da tela.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The direction windows slide out when they hide. Also used by the show/hide key binding. Only applies while Window Animations is on under Appearance > Skin."] = "A direção em que as janelas deslizam ao se ocultar. Também usada pelo atalho de mostrar/ocultar. Só vale enquanto \"Animações das janelas\" estiver ativado em Aparência > Tema.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The interface layer WIM windows draw on; higher layers cover lower ones."] = "A camada da interface em que as janelas do WIM são desenhadas; camadas superiores cobrem as inferiores.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The message area renders two points larger than the chosen size; the input box and header follow the skin."] = "A área de mensagens é exibida dois pontos maior que o tamanho escolhido; a caixa de entrada e o cabeçalho seguem o tema.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The message box at the bottom of each window."] = "A caixa de mensagem na parte inferior de cada janela.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The message history window."] = "A janela do histórico de mensagens.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The skin and window chrome."] = "O tema e a moldura das janelas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The skin picks the font."] = "O tema escolhe a fonte.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The sound to play. The speaker button plays a preview."] = "O som a ser tocado. O botão de alto-falante toca uma prévia.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The whisper and chat windows."] = "As janelas de sussurro e de bate-papo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["The window for adding and editing whisper and chat filters."] = "A janela para adicionar e editar filtros de sussurro e de bate-papo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["These settings style WIM's modern-only skins (such as WIM Modern), which are built from the game's own interface art. They are available while a modern-only skin is selected on the Skin page; with a classic skin active they are greyed out."] = "Estas configurações estilizam os temas exclusivamente modernos do WIM (como o WIM Modern), construídos com a arte da interface do próprio jogo. Ficam disponíveis enquanto um tema exclusivamente moderno estiver selecionado na página Tema; com um tema clássico ativo, aparecem acinzentadas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Timestamps"] = "Horários", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Total RP 3 and Mary Sue Protocol profile display on whisper windows."] = "Exibição de perfis do Total RP 3 e do Mary Sue Protocol nas janelas de sussurro.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Type %s to confirm."] = "Digite %s para confirmar.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Unlock Minimap Button"] = "Destravar botão do minimapa", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Use Master Sound Channel"] = "Usar canal de som Principal", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Message Window"] = "Janela de mensagens do WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Modern Skin"] = "Tema WIM Modern", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM manages this chat type in its own message windows. Turning a type off stops capture now; its window button stays until the next reload."] = "O WIM gerencia este tipo de bate-papo em suas próprias janelas de mensagens. Desativar um tipo interrompe a captura agora; o botão da janela permanece até o próximo recarregamento.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM's launcher menus list the most recently active conversations first."] = "Os menus de inicialização do WIM listam primeiro as conversas ativas mais recentes.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM: the options UI is not available on this client."] = "WIM: a interface de opções não está disponível neste cliente.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Wait While Typing"] = "Aguardar enquanto digita", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Web Addresses"] = "Endereços web", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Web addresses in messages become clickable links."] = "Endereços web nas mensagens viram links clicáveis.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["What WIM takes over: whispers, and the chat types that get their own windows."] = "O que o WIM assume: sussurros e os tipos de bate-papo que ganham janelas próprias.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["What is kept, and for how long."] = "O que é mantido, e por quanto tempo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["When choosing the /reply target, your most recent sent whisper counts as well as the last one received."] = "Ao escolher o alvo do /reply, seu sussurro enviado mais recente conta tanto quanto o último recebido.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["When windows appear, where they sit, and what has keyboard focus."] = "Quando as janelas aparecem, onde ficam e o que tem o foco do teclado.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["When windows pop up and when messages leave the chat frame, per situation."] = "Quando as janelas abrem e quando as mensagens saem do quadro de bate-papo, por situação.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Where new windows appear, their default size and scale, and the placement of the History Viewer and filter editor are set in the game's Edit Mode."] = "Onde as novas janelas aparecem, seu tamanho e escala padrão e a posição do visualizador de histórico e do editor de filtros são definidos no modo de edição do jogo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Which whispers and chat types are recorded."] = "Quais sussurros e tipos de bate-papo são gravados.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in a battleground."] = "Em um campo de batalha.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in a dungeon."] = "Em uma masmorra.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in a raid instance."] = "Em uma instância de raide.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in an arena match."] = "Em uma partida de arena.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While in combat."] = "Em combate.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["While resting in an inn or city."] = "Descansando em uma estalagem ou cidade.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whisper Sounds"] = "Sons de sussurro", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whisper windows opened from WIM's menus normally take focus immediately; with this on they follow the pop-up focus rules instead."] = "Janelas de sussurro abertas pelos menus do WIM normalmente recebem o foco na hora; com isto ativado, elas seguem as regras de foco das janelas pop-up.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whisper windows share one tabbed window. Does not apply to windows already opened."] = "As janelas de sussurro compartilham uma única janela com abas. Não vale para janelas já abertas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whisper windows show roleplay profile fields from Total RP 3 or any Mary Sue Protocol addon, and gain an Open RP Profile button on their shortcut bar that opens the partner's profile in the installed viewer. Requires the WIM Modern skin."] = "As janelas de sussurro mostram campos de perfil de interpretação do Total RP 3 ou de qualquer addon Mary Sue Protocol, e ganham um botão \"Abrir perfil de RP\" na barra de atalhos que abre o perfil do interlocutor no visualizador instalado. Exige o tema WIM Modern.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whispers Follow Focus Rules"] = "Sussurros seguem as regras de foco", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whispers from friends group into their own tabbed window."] = "Sussurros de amigos são agrupados em uma janela com abas própria.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whispers from game masters are always recorded. Battle.net whispers count as friends."] = "Sussurros de mestres do jogo são sempre gravados. Sussurros do Battle.net contam como de amigos.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Whispers from guild members group into their own tabbed window. A friend who is also a guild member goes to the friends group."] = "Sussurros de membros da guilda são agrupados em uma janela com abas própria. Um amigo que também é membro da guilda vai para o grupo de amigos.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Who gets through."] = "Quem passa.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Window Animations"] = "Animações das janelas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Window Layer"] = "Camada das janelas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Window Opacity"] = "Opacidade das janelas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Window Skin"] = "Tema das janelas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Where new windows spawn and how big they are, their layer, cascading, and screen clamping."] = "Onde as novas janelas surgem e seu tamanho, sua camada, a cascata e a fixação à tela.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Windows"] = "Janelas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Windows Opened from Menus"] = "Janelas abertas pelos menus", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Windows cannot be dragged past the screen edges."] = "As janelas não podem ser arrastadas além das bordas da tela.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Windows fade to half opacity after two seconds without the mouse over them."] = "As janelas esmaecem até metade da opacidade após dois segundos sem o mouse sobre elas.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["World Channels"] = "Canais de mundo", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Wraps player names in brackets."] = "Coloca os nomes dos jogadores entre colchetes.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["You are about to permanently delete WIM's message history for every character on this account."] = "Você está prestes a excluir permanentemente o histórico de mensagens do WIM de todos os personagens desta conta.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["instant"] = "instantâneo", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["slow"] = "lento", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Community chat cannot be recorded, so this is always on for community channels."] = "O bate-papo de comunidade não pode ser gravado, então isto fica sempre ativado para canais de comunidade.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Width"] = "Largura", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Height"] = "Altura", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Filter Editor"] = "Editor de filtros do WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
 });
