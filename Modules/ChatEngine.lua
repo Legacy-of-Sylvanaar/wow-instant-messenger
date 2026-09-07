@@ -24,6 +24,7 @@ local Windows = windows.active.chat;
 db_defaults.pop_rules.chat = {
         --pop-up rule sets based off of your location
         resting = {
+            custom = false,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -31,6 +32,7 @@ db_defaults.pop_rules.chat = {
             keepfocus = false,
         },
         combat = {
+            custom = false,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -38,6 +40,7 @@ db_defaults.pop_rules.chat = {
             keepfocus = false,
         },
         pvp = {
+            custom = false,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -45,6 +48,7 @@ db_defaults.pop_rules.chat = {
             keepfocus = false,
         },
         arena = {
+            custom = false,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -52,6 +56,7 @@ db_defaults.pop_rules.chat = {
             keepfocus = false,
         },
         party = {
+            custom = false,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -59,13 +64,7 @@ db_defaults.pop_rules.chat = {
             keepfocus = false,
         },
         raid = {
-            onSend = false,
-            onReceive = false,
-            supress = false,
-            autofocus = false,
-            keepfocus = false,
-        },
-        bn = {
+            custom = false,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -79,8 +78,6 @@ db_defaults.pop_rules.chat = {
             autofocus = false,
             keepfocus = false,
         },
-        alwaysOther = true,
-        intercept = false,
 		obeyAutoFocusRules = false,
 }
 
@@ -109,24 +106,34 @@ db_defaults.chat = {
     },
     guild = {
         showAlerts = true,
+        neverPop = false,
+        neverSuppress = false,
     },
     officer = {
         showAlerts = true,
+        neverPop = false,
+        neverSuppress = false,
     },
     raid = {
         showAlerts = true,
+        neverPop = false,
+        neverSuppress = false,
     },
     party = {
         showAlerts = true,
+        neverPop = false,
+        neverSuppress = false,
     },
     battleground = {
-
+        showAlerts = true,
+        neverPop = false,
+        neverSuppress = false,
     },
     say = {
         outputType = "SAY",
-    },
-    bn = {
         showAlerts = true,
+        neverPop = false,
+        neverSuppress = false,
     },
 };
 
@@ -134,8 +141,7 @@ db_defaults.chat = {
 local USERLIST_BUTTON_COUNT = 5;
 
 local function getRuleSet()
-    local curState = db.pop_rules.chat.alwaysOther and "other" or curState
-    return db.pop_rules.chat[curState];
+    return GetPopRuleSet("chat");
 end
 
 
@@ -198,6 +204,13 @@ local function createWidget_Chat()
         end);
 
     return button;
+end
+
+function GetChannelSettingsKey(name)
+    if (type(name) ~= "string") then
+        return name;
+    end
+    return (string.split(" - ", name));
 end
 
 local function getChatWindow(ChatName, chatType)
@@ -388,7 +401,10 @@ function Guild.ChatMessageEventFilter (frame, event, ...)
 
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.guild.neverSuppress and getRuleSet().supress) then
-			return true
+			local win = Guild.guildWindow;
+			if(win and win.everShown) then
+				return true
+			end
 		end
 	elseif (frame._isWIM and ignore or block) then
 		return true
@@ -528,7 +544,10 @@ function Officer.ChatMessageEventFilter (frame, event, ...)
 
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.officer.neverSuppress and getRuleSet().supress) then
-			return true
+			local win = Officer.officerWindow;
+			if(win and win.everShown) then
+				return true
+			end
 		end
 	elseif (frame._isWIM and ignore or block) then
 		return true
@@ -666,7 +685,10 @@ function Party.ChatMessageEventFilter (frame, event, ...)
 
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.party.neverSuppress and getRuleSet().supress) then
-			return true
+			local win = Party.partyWindow;
+			if(win and win.everShown) then
+				return true
+			end
 		end
 	elseif (frame._isWIM and ignore or block) then
 		return true
@@ -848,7 +870,10 @@ function Raid.ChatMessageEventFilter (frame, event, ...)
 
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.raid.neverSuppress and getRuleSet().supress) then
-			return true
+			local win = Raid.raidWindow;
+			if(win and win.everShown) then
+				return true
+			end
 		end
 	elseif (frame._isWIM and ignore or block) then
 		return true
@@ -1065,7 +1090,10 @@ function Battleground.ChatMessageEventFilter (frame, event, ...)
 
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.battleground.neverSuppress and getRuleSet().supress) then
-			return true
+			local win = Battleground.battlegroundWindow;
+			if(win and win.everShown) then
+				return true
+			end
 		end
 	elseif (frame._isWIM and ignore or block) then
 		return true
@@ -1219,7 +1247,10 @@ function Say.ChatMessageEventFilter (frame, event, ...)
 
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.say.neverSuppress and getRuleSet().supress) then
-			return true
+			local win = Windows[_G.SAY];
+			if(win and win.everShown) then
+				return true
+			end
 		end
 	elseif (frame._isWIM and ignore or block) then
 		return true
@@ -2014,7 +2045,7 @@ function Channel.ChatMessageEventFilter (frame, event, ...)
 
 	if (not frame._isWIM and not ignore and not block) then
 		local isWorld = arg7 and arg7 > 0;
-		local channelName = string.split("-", arg9:gsub(' ', ''));
+		local channelName = GetChannelSettingsKey(arg9);
 		local neverSuppress = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].neverSuppress;
 
 		--check options. do we want the specified channels.
@@ -2023,7 +2054,10 @@ function Channel.ChatMessageEventFilter (frame, event, ...)
 		elseif(not isWorld and not db.chat.custom.enabled) then
 			-- deliver normally
 		elseif(not neverSuppress and getRuleSet().supress and db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].monitor) then
-			return true
+			local win = Windows[channelName];
+			if(win and win.everShown) then
+				return true
+			end
 		end
 	elseif (frame._isWIM and ignore or block) then
 		return true
@@ -2047,8 +2081,10 @@ function Channel.ChatMessageCommunitiesEventFilter (frame, event, ...)
 	local settings = db.chat.community.channelSettings[name];
 	local neverSuppress = settings and settings.neverSuppress;
 
+	local win = Windows[name];
 	local suppress = (not neverSuppress and getRuleSet().supress
-	                  and settings and settings.monitor) and true or false;
+	                  and settings and settings.monitor
+	                  and win and win.everShown) and true or false;
 
 	-- Whether a community message reaches the default chat frame has been
 	-- reported as intermittent across logins. Two inputs can vary and this
@@ -2183,7 +2219,7 @@ function Channel:CHAT_MSG_CHANNEL(...)
     -- arg9 Channel Name
 
     local isWorld = arg7 and arg7 > 0;
-    local channelName = string.split("-", arg9:gsub(' ', ''));
+    local channelName = GetChannelSettingsKey(arg9);
 
     --check options. do we want the specified channels.
     if(isWorld and not db.chat.world.enabled) then
@@ -2272,7 +2308,7 @@ function ChatAlerts:PostEvent_ChatMessage(event, ...)
     event = event:gsub("CHAT_MSG_", "");
     if(event == "CHANNEL") then
         local isWorld = arg7 and arg7 > 0;
-        local channelName = string.split("-", arg9:gsub(' ', ''));
+        local channelName = GetChannelSettingsKey(arg9);
         local win = getChatWindow(channelName, "channel");
         local showAlert = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].showAlerts;
         if(showAlert and win and not win:IsVisible() and win.unreadCount) then
@@ -2310,7 +2346,7 @@ function ChatAlerts:PostEvent_ChatMessage(event, ...)
             win = getChatWindow(_G.RAID, "raid");
         elseif((event == "INSTANCE_CHAT" or event == "INSTANCE_CHAT_LEADER") and db.chat.battleground.showAlerts) then
             win = getChatWindow(_G.INSTANCE_CHAT, "battleground");
-        elseif(event == "SAY" and db.chat.say.showAlerts) then
+        elseif((event == "SAY" or event == "EMOTE" or event == "TEXT_EMOTE") and db.chat.say.showAlerts) then
             win = getChatWindow(_G.SAY, "say");
         end
 
@@ -2332,27 +2368,6 @@ ChatAlerts:Enable();
 -- create ChatOptions Module
 local ChatOptions = CreateModule("ChatOptions");
 local function loadChatOptions()
-
-    local desc = L["WIM will manage this chat type within its own message windows."];
-
-    -- standard chat template
-    local function createChatTemplate(chatName, moduleName, chatType)
-        local chatDB = db.chat[chatType];
-        local f = options.CreateOptionsFrame();
-        f.sub = f:CreateSection(chatName, desc);
-        f.sub.nextOffSetY = -10;
-        f.sub:CreateCheckButton(L["Enable"], WIM.modules[moduleName], "enabled", nil, function(self, button) EnableModule(moduleName, self:GetChecked()); end);
-		f.sub.nextOffSetY = -30;
-        f.sub:CreateCheckButton(L["Show Minimap Alerts"], chatDB, "showAlerts");
-		f.sub.nextOffSetY = -25;
-		if chatType == 'say' then
-			f.sub.nextOffSetY = -25;
-			f.sub:CreateCheckButton(L["Include emotes."], chatDB, "showEmotes");
-		end
-        f.sub:CreateCheckButton(L["Never pop-up on my screen."], chatDB, "neverPop");
-        f.sub:CreateCheckButton(L["Never suppress messages."], chatDB, "neverSuppress");
-        return f;
-    end
 
     local channelList = {};
     local function getChannelList(world)
@@ -2423,340 +2438,10 @@ local function loadChatOptions()
 	end
 
 
-    local channelScrollCount = 1;
-    local function createChannelChatTemplate(chatName, channelType, channelListFun)
-        local f = options.CreateOptionsFrame();
-        f.sub = f:CreateSection(chatName, desc);
-        f.sub.nextOffSetY = -10;
-        f.sub.enabled = f.sub:CreateCheckButton(L["Enable"], db.chat[channelType], "enabled", nil, function(self, button) Channel:SettingsChanged(); end);
-        f.sub.nextOffSetY = -10;
-
-        --list
-        f.sub.list = f.sub:ImportCustomObject(_G.CreateFrame("Frame"));
-        options.AddFramedBackdrop(f.sub.list);
-        f.sub.list:SetFullSize();
-        f.sub.list.buttonHeight = 80;
-        f.sub.list:SetHeight(4 * f.sub.list.buttonHeight);
-        f.sub.list.scroll = _G.CreateFrame("ScrollFrame", f.sub:GetName().."ChannelScroll"..channelScrollCount, f.sub.list, "FauxScrollFrameTemplate");
-        channelScrollCount = channelScrollCount + 1;
-        f.sub.list.scroll:SetPoint("TOPLEFT", 0, -1);
-        f.sub.list.scroll:SetPoint("BOTTOMRIGHT", -23, 0);
-        f.sub.list.scroll.update = function(self)
-            local channelList = channelListFun();
-            local offset = _G.FauxScrollFrame_GetOffset(self);
-            for i=1, #f.sub.list.buttons do
-                local index = i+offset;
-                if(index <= #channelList) then
-                    local name, active, channelNumber = string.split("*", channelList[index]);
-					local nameText = name;
-					local isCommunityChannel = name:find("%d+:%d+");
-
-					-- format if stream or community channel
-					if (isCommunityChannel and _G.ChatFrameUtil and _G.ChatFrameUtil.ResolveChannelName) then
-						nameText = _G.ChatFrameUtil.ResolveChannelName(name);
-					end
-
-                    active = active == "1";
-                    f.sub.list.buttons[i]:Show();
-                    f.sub.list.buttons[i].channelName = name;
-                    if(not db.chat[channelType].channelSettings[name]) then
-                        db.chat[channelType].channelSettings[name] = {};
-                    end
-
-					local channelNumberText = "";
-					if (channelNumber and channelNumber ~= "0") then
-						channelNumberText = "|cffffffff"..channelNumber..". |r"
-					end
-
-                    f.sub.list.buttons[i].title:SetText(channelNumberText..nameText);
-                    f.sub.list.buttons[i].cb1:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].monitor);
-                    f.sub.list.buttons[i].neverPop:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].neverPop);
-                    f.sub.list.buttons[i].neverSuppress:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].neverSuppress);
-                    f.sub.list.buttons[i].showAlerts:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].showAlerts);
-                    f.sub.list.buttons[i].noHistory:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].noHistory);
-                    f.sub.list.buttons[i].noSound:SetChecked(db.chat[channelType].channelSettings[name] and db.chat[channelType].channelSettings[name].noSound);
-                    local color = _G.ChatTypeInfo["CHANNEL"..channelNumber] or _G.NORMAL_FONT_COLOR;
-
-					if (isCommunityChannel and GetCommunityAndStreamFromChannel) then
-						local clubId, streamId = GetCommunityAndStreamFromChannel(name);
-						if (clubId and streamId) then
-							local r, g, b = GetCommunitiesChannelColor(clubId, streamId)
-							color = { r = r, g = g, b = b };
-						end
-					end
-					-- "No History" is force-ticked and greyed out for community
-					-- channels: Community chat cannot be recorded (the client
-					-- only ever hands addons a protected-string token, never the
-					-- text -- see the CLUB_MESSAGE_ADDED branch in
-					-- Modules/History.lua), so a live control would be a lie.
-					if (channelType == "community") then
-						f.sub.list.buttons[i].noHistory:SetChecked(true);
-						f.sub.list.buttons[i].noHistory:Disable();
-						f.sub.list.buttons[i].noHistory:SetAlpha(.5);
-					else
-						f.sub.list.buttons[i].noHistory:Enable();
-						f.sub.list.buttons[i].noHistory:SetAlpha(1);
-					end
-
-                    f.sub.list.buttons[i].title:SetTextColor(color.r, color.g, color.b);
-                    if(active) then
-                        f.sub.list.buttons[i].title:SetAlpha(1);
-                    else
-                        f.sub.list.buttons[i].title:SetAlpha(.4);
-                    end
-                else
-                    f.sub.list.buttons[i]:Hide();
-                end
-            end
-            _G.FauxScrollFrame_Update(self, #channelList, #f.sub.list.buttons, f.sub.list.buttonHeight);
-        end
-        f.sub.list.scroll:SetScript("OnVerticalScroll", function(self, offset)
-            _G.FauxScrollFrame_OnVerticalScroll(self, offset, f.sub.list.buttonHeight, f.sub.list.scroll.update);
-        end);
-        f.sub.list:SetScript("OnShow", function(self)
-            self.scroll:update();
-        end);
-        f.sub.list.createButton = function(self)
-            self.buttons = self.buttons or {};
-            local button = _G.CreateFrame("Button", nil, self);
-            button:SetHeight(self.buttonHeight);
-            --button:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD");
-            button.bg = button:CreateTexture(nil, "BACKGROUND");
-            button.bg:SetAllPoints();
-            button.bg:SetColorTexture(1,1,1, ((#self.buttons+1) % 2)*.1);
-			button.bg:SetGradient("HORIZONTAL",
-				{ r = 1, g = 1, b = 1, a = 1 },
-				{ r = 0, g = 0, b = 0, a = 0 }
-			);
-            button.border = {};
-
-            button.border.left = button:CreateTexture(nil, "OVERLAY");
-            button.border.left:SetPoint("TOPLEFT");
-            button.border.left:SetPoint("BOTTOMLEFT");
-            button.border.left:SetWidth(4);
-            button.border.left:SetColorTexture(1,1,1,.5);
-
-            button.title = button:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-            button.title:SetPoint("TOPLEFT", 35, -8);
-            button.title:SetPoint("TOPRIGHT");
-            button.title:SetJustifyH("LEFT")
-            local font, height, flags = button.title:GetFont();
-            button.title:SetFont(font, 14, flags);
-            button.title:SetTextColor(_G.GameFontNormal:GetTextColor());
-            button.title:SetText("Test");
-            --monitor checkbox
-            button.cb1 = _G.CreateFrame("CheckButton", nil, button, "UICheckButtonTemplate");
-            button.cb1:SetPoint("RIGHT", button.title, "LEFT", -5, 0);
-            button.cb1:SetScale(.75);
-            button.cb1:SetScript("OnEnter", function(self)
-                self:GetParent():GetParent().help:SetJustifyH("LEFT");
-                self:GetParent():GetParent().help:SetText(L["Have WIM monitor this channel."]);
-            end);
-            button.cb1:SetScript("OnLeave", function(self)
-                self:GetParent():GetParent().help:SetText("");
-            end);
-            button.cb1:SetScript("OnClick", function(self)
-                local name = self:GetParent().channelName;
-                db.chat[channelType].channelSettings[name].monitor = self:GetChecked();
-            end);
-
-            -- Never Pop
-            button.neverPop = _G.CreateFrame("CheckButton", nil, button, "UICheckButtonTemplate");
-            button.neverPop:SetPoint("TOPLEFT", button.cb1, "BOTTOMRIGHT", 20, 0);
-            button.neverPop:SetScale(.75);
-            button.neverPop.text = button.neverPop:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-            button.neverPop.text:SetPoint("LEFT", button.neverPop, "RIGHT", 0, 0);
-            button.neverPop.text:SetText(L["Never Pop"]);
-            button.neverPop:SetScript("OnClick", function(self)
-                    local name = self:GetParent().channelName;
-                    db.chat[channelType].channelSettings[name].neverPop = self:GetChecked();
-            end)
-            button.neverPop:SetScript("OnEnter", function(self)
-                self:GetParent():GetParent().help:SetJustifyH("LEFT");
-                self:GetParent():GetParent().help:SetText(L["Never have this window pop-up on my screen."]);
-            end);
-            button.neverPop:SetScript("OnLeave", function(self)
-                self:GetParent():GetParent().help:SetText("");
-            end);
-
-            -- Never Suppress
-            button.neverSuppress = _G.CreateFrame("CheckButton", nil, button, "UICheckButtonTemplate");
-            button.neverSuppress:SetPoint("TOPLEFT", button.neverPop, "BOTTOMLEFT", 0, 0);
-            button.neverSuppress:SetScale(.75);
-            button.neverSuppress.text = button.neverSuppress:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-            button.neverSuppress.text:SetPoint("LEFT", button.neverSuppress, "RIGHT", 0, 0);
-            button.neverSuppress.text:SetText(L["Never Suppress"]);
-            button.neverSuppress:SetScript("OnClick", function(self)
-                    local name = self:GetParent().channelName;
-                    db.chat[channelType].channelSettings[name].neverSuppress = self:GetChecked();
-            end)
-            button.neverSuppress:SetScript("OnEnter", function(self)
-                self:GetParent():GetParent().help:SetJustifyH("LEFT");
-                self:GetParent():GetParent().help:SetText(L["Never suppress messages from the default chat frame."]);
-            end);
-            button.neverSuppress:SetScript("OnLeave", function(self)
-                self:GetParent():GetParent().help:SetText("");
-            end);
-
-
-            -- Show Minimap Alerts
-            button.showAlerts = _G.CreateFrame("CheckButton", nil, button, "UICheckButtonTemplate");
-            button.showAlerts:SetPoint("TOPLEFT", button.neverPop, "TOPRIGHT", 150, 0);
-            button.showAlerts:SetScale(.75);
-            button.showAlerts.text = button.showAlerts:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-            button.showAlerts.text:SetPoint("LEFT", button.showAlerts, "RIGHT", 0, 0);
-            button.showAlerts.text:SetText(L["Show Minimap Alerts"]);
-            button.showAlerts:SetScript("OnClick", function(self)
-                    local name = self:GetParent().channelName;
-                    db.chat[channelType].channelSettings[name].showAlerts = self:GetChecked();
-            end)
-            button.showAlerts:SetScript("OnEnter", function(self)
-                self:GetParent():GetParent().help:SetJustifyH("LEFT");
-                self:GetParent():GetParent().help:SetText(L["Show unread message alert on minimap."]);
-            end);
-            button.showAlerts:SetScript("OnLeave", function(self)
-                self:GetParent():GetParent().help:SetText("");
-            end);
-
-            -- Don't record history
-            button.noHistory = _G.CreateFrame("CheckButton", nil, button, "UICheckButtonTemplate");
-            button.noHistory:SetPoint("TOPLEFT", button.showAlerts, "BOTTOMLEFT", 0, 0);
-            button.noHistory:SetScale(.75);
-            button.noHistory.text = button.noHistory:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-            button.noHistory.text:SetPoint("LEFT", button.noHistory, "RIGHT", 0, 0);
-            button.noHistory.text:SetText(L["No History"]);
-            button.noHistory:SetScript("OnClick", function(self)
-                    local name = self:GetParent().channelName;
-                    db.chat[channelType].channelSettings[name].noHistory = self:GetChecked();
-            end)
-            button.noHistory:SetScript("OnEnter", function(self)
-                self:GetParent():GetParent().help:SetJustifyH("LEFT");
-                self:GetParent():GetParent().help:SetText(L["Do not record history for this channel."]);
-            end);
-            button.noHistory:SetScript("OnLeave", function(self)
-                self:GetParent():GetParent().help:SetText("");
-            end);
-
-
-	    -- Don't play sounds
-            button.noSound = _G.CreateFrame("CheckButton", nil, button, "UICheckButtonTemplate");
-            button.noSound:SetPoint("TOPLEFT", button.noHistory, "TOPRIGHT", 100, 0);
-            button.noSound:SetScale(.75);
-            button.noSound.text = button.noSound:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-            button.noSound.text:SetPoint("LEFT", button.noSound, "RIGHT", 0, 0);
-            button.noSound.text:SetText(L["No Sound"]);
-            button.noSound:SetScript("OnClick", function(self)
-                    local name = self:GetParent().channelName;
-                    db.chat[channelType].channelSettings[name].noSound = self:GetChecked();
-            end)
-            button.noSound:SetScript("OnEnter", function(self)
-                self:GetParent():GetParent().help:SetJustifyH("LEFT");
-                self:GetParent():GetParent().help:SetText(L["Do not play sounds for this channel."]);
-            end);
-            button.noSound:SetScript("OnLeave", function(self)
-                self:GetParent():GetParent().help:SetText("");
-            end);
-
-
-
-            if(#self.buttons == 0) then
-                button:SetPoint("TOPLEFT");
-                button:SetPoint("TOPRIGHT", -25, 0);
-            else
-                button:SetPoint("TOPLEFT", self.buttons[#self.buttons], "BOTTOMLEFT");
-                button:SetPoint("TOPRIGHT", self.buttons[#self.buttons], "BOTTOMRIGHT");
-            end
-
-            button:SetScript("OnUpdate", function(self, elapsed)
-                    -- 12.1 removed the MouseIsOver global; the widget method replaces it.
-                    for _, border in pairs(self.border) do
-                        if(self:IsMouseOver()) then
-                            border:Show();
-                        else
-                            border:Hide();
-                        end
-                    end
-            end);
-
-            table.insert(self.buttons, button);
-        end
-        for i=1, 4 do
-            f.sub.list:createButton();
-        end
-        f.sub.list.help = f.sub.list:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-        f.sub.list.help:SetPoint("TOPLEFT", f.sub.list, "BOTTOMLEFT", 0, -2);
-        f.sub.list.help:SetPoint("BOTTOMRIGHT", f.sub.list, "BOTTOMRIGHT", 0, -12);
-        f.sub.list.help:SetText("");
-        f.sub.list.help:SetJustifyH("LEFT");
-        local font, height, flags = f.sub.list.help:GetFont();
-        f.sub.list.help:SetFont(font, 12, flags);
-
-
-        return f;
-    end
-
-    local function createGuildChat()
-        local f = createChatTemplate(_G.GUILD, "GuildChat", "guild");
-        return f;
-    end
-
-    local function createOfficerChat()
-        local f = createChatTemplate(_G.GUILD_RANK1_DESC, "OfficerChat", "officer");
-        return f;
-    end
-
-    local function createPartyChat()
-        local f = createChatTemplate(_G.PARTY, "PartyChat", "party");
-        return f;
-    end
-
-    local function createRaidChat()
-        local f = createChatTemplate(_G.RAID, "RaidChat", "raid");
-        return f;
-    end
-
-    local function createBattlegroundChat()
-        local f = createChatTemplate(_G.INSTANCE_CHAT, "BattlegroundChat", "battleground");
-        return f;
-    end
-
-    local function createSayChat()
-        local f = createChatTemplate(_G.SAY, "SayChat", "say");
-        return f;
-    end
-
-    local function createWorldChat()
-        local f = createChannelChatTemplate(L["World Chat"], "world", function() return getChannelList(true); end);
-        return f;
-    end
-
-    local function createCustomChat()
-        local f = createChannelChatTemplate(L["Custom Chat"], "custom", getChannelList);
-        return f;
-    end
-
-	local function createCommunityChat()
-        local f = createChannelChatTemplate(L["Community Chat"], "community", getCommunityGroupList);
-        return f;
-    end
-
     -- Exposed for the modern options UI (Sources/Options/ModernOptions.lua):
     -- the channel enumerations live in this scope.
     GetOptionsChannelList = getChannelList;
     GetOptionsCommunityList = getCommunityGroupList;
-
-    RegisterOptionFrame(L["Chat"], _G.GUILD, createGuildChat);
-    RegisterOptionFrame(L["Chat"], _G.GUILD_RANK1_DESC, createOfficerChat);
-    RegisterOptionFrame(L["Chat"], _G.PARTY, createPartyChat);
-    RegisterOptionFrame(L["Chat"], _G.RAID, createRaidChat);
-    RegisterOptionFrame(L["Chat"], _G.INSTANCE_CHAT, createBattlegroundChat);
-    RegisterOptionFrame(L["Chat"], _G.SAY, createSayChat);
-    RegisterOptionFrame(L["Chat"], L["World Chat"], createWorldChat);
-    RegisterOptionFrame(L["Chat"], L["Custom Chat"], createCustomChat);
-
-	if (_G.C_Club and _G.C_Club.GetSubscribedClubs) then
-    	RegisterOptionFrame(L["Chat"], L["Community Chat"], createCommunityChat);
-	end
 
     dPrint("Chat Options Initialized...");
     ChatOptions.optionsLoaded = true;

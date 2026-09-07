@@ -24,10 +24,15 @@
 ]]
 
 local _G = getfenv(0);
-local pairs, ipairs = pairs, ipairs;
-local type, tostring = type, tostring;
+local pairs = pairs;
+local ipairs = ipairs;
+local type = type;
+local tostring = tostring;
+local tonumber = tonumber;
 local pcall = pcall;
-local table, string, math = table, string, math;
+local table = table;
+local string = string;
+local math = math;
 
 -- Defined before the setfenv: C_Texture.GetAtlasInfo resolves helper
 -- mixins (Vector2DMixin) through the caller's environment, so calling
@@ -48,7 +53,6 @@ setfenv(1, WIM);
 -- scrollbar, corner close button, and search box).
 local fixedTargets = {
     "WIM3_HistoryFrame",
-    "WIM3_Options",
     "WIM3Menu",
     "WIM_LastModernMenu",
     "LibDBIcon10_WIM",
@@ -372,7 +376,6 @@ local function collectWimInfo()
         info.skinLoaded = skin and skin.title;
         info.modernOnly = (skin and skin.modernOnly) and true or false;
     end);
-    info.modernOptions = (db and db.modernOptions) and true or false;
     if(db and db.modernTheme) then
         local theme = {};
         for k, v in pairs(db.modernTheme) do

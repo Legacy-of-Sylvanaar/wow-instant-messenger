@@ -18,8 +18,6 @@
     <Script file="EditMode.lua" />
 
     <Script file="Options\Options.lua" />
-    <Script file="Options\OptionsTookKit.lua" />
-    <Script file="Options\CoreOptions.lua" />
     <Script file="Options\ModernSettings.lua" />
     <Include file="Options\ModernSettings.xml" />
     <Script file="Options\ModernOptions.lua" />
