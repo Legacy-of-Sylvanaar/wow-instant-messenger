@@ -15,6 +15,7 @@
     <Script file="Compression.lua" />
     <Script file="Clear.lua" />
     <Script file="OpCodes.lua" />
+    <Script file="EditMode.lua" />
 
     <Script file="Options\Options.lua" />
     <Script file="Options\OptionsTookKit.lua" />

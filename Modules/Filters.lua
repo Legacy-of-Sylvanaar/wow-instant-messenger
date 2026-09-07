@@ -55,10 +55,10 @@ local DefaultFilters = {
                     "^YOU ARE BURNING!\n"..
                     "^YOU ARE THE BOMB!\n"..
                     "VOLATILE INFECTION\n"..
-                    "^/"..
+                    "^/\n"..
                     "^GA[^A-Z]+\n"..
                     "^<METAMAP\n"..
-                    "^<CT",
+                    "^<CT\n"..
                     "^OQ[,S]",
         action = 2,
         stats = 0,
@@ -108,26 +108,32 @@ local maxLevel = 80;
 
 local Filters = CreateModule("Filters", true);
 
+-- User Level filters relied on Who lookups that no longer work; stored
+-- entries are removed with a notice so their disappearance is not silent.
+local function purgeUserLevelFilters(list)
+    local removed = 0;
+    for i = #list, 1, -1 do
+        if (list[i].type == 3) then
+            table.remove(list, i);
+            removed = removed + 1;
+        end
+    end
+    if (removed > 0) then
+        _G.DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0WIM|r: "
+            ..L["%d unsupported User Level filter(s) were removed."]:format(removed));
+    end
+end
+
 -- Whisper Filters
 function Filters:OnEnable()
-	-- filter out filters using Who lookups.
-	for i = #filters, 1, -1 do
-		if (filters[i].type == 3) then
-			table.remove(filters, i);
-		end
-	end
+    purgeUserLevelFilters(filters);
 end
 
 --Chat Filters
 local ChatFilters = CreateModule("ChatFilters");
 
 function ChatFilters:OnEnable()
-    -- filter out filters using Who lookups.
-    for i = #chatFilters, 1, -1 do
-        if (chatFilters[i].type == 3) then
-            table.remove(chatFilters, i);
-        end
-    end
+    purgeUserLevelFilters(chatFilters);
 end
 
 -- filtering
@@ -295,6 +301,14 @@ end
 
 -- Options UI
 
+local FILTER_STOCK_WIDTH, FILTER_STOCK_HEIGHT = 475, 390;
+
+-- Height beyond the stock frame goes to the pattern box; everything
+-- else keeps its place against the top and bottom edges.
+local function patternExtra(win)
+    return _G.math.max(0, (win:GetHeight() or FILTER_STOCK_HEIGHT) - FILTER_STOCK_HEIGHT);
+end
+
 local function createFilterFrame()
 	-- Changes for Patch 9.0.1 - Shadowlands, retail and classic
 	local win = CreateFrame("Frame", "WIM3_FilterFrame", _G.UIParent, "BackdropTemplate");
@@ -302,8 +316,8 @@ local function createFilterFrame()
     win:Hide();
     win.filter = {};
     -- set size and position
-    win:SetWidth(475);
-    win:SetHeight(390);
+    win:SetWidth(FILTER_STOCK_WIDTH);
+    win:SetHeight(FILTER_STOCK_HEIGHT);
     win:SetPoint("CENTER");
 
     -- set backdrop - changes for Patch 9.0.1 - Shadowlands, retail and classic
@@ -324,7 +338,21 @@ local function createFilterFrame()
 
     -- set script events
     win:SetScript("OnDragStart", function(self) self:StartMoving(); end);
-    win:SetScript("OnDragStop", function(self) self:StopMovingOrSizing(); end);
+    win:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing();
+        if(SaveFilterWindowPosition) then
+            SaveFilterWindowPosition(self);
+        end
+    end);
+    win:SetScript("OnSizeChanged", function(self)
+        local extra = patternExtra(self);
+        if(self.patternContainer) then
+            self.patternContainer:SetHeight(95 + extra);
+        end
+        if(self.wimModernChrome and self.wimModernChrome.well) then
+            self.wimModernChrome.well:SetHeight(111 + extra);
+        end
+    end);
 
     -- create and set title bar text
     win.title = win:CreateFontString(win:GetName().."Title", "OVERLAY", "ChatFontNormal");
@@ -420,13 +448,18 @@ local function createFilterFrame()
     win.patternContainer = CreateFrame("ScrollFrame", win:GetName().."PatternContainer", win, "UIPanelScrollFrameTemplate");
     win.patternContainer:SetPoint("TOPLEFT", win.byText, "BOTTOMLEFT", 0, -25);
     win.patternContainer:SetPoint("RIGHT", -50, 0);
-    win.patternContainer:SetHeight(95);
+    win.patternContainer:SetHeight(95 + patternExtra(win));
     options.AddFramedBackdrop(win.patternContainer);
     win.pattern = CreateFrame("EditBox", win:GetName().."Pattern", win.patternContainer);
     win.pattern:SetFontObject(_G.ChatFontNormal);
     win.patternContainer:SetScrollChild(win.pattern);
     win.pattern:SetWidth(win.patternContainer:GetWidth());
     win.pattern:SetHeight(200);
+    win.patternContainer:HookScript("OnSizeChanged", function(self, width)
+        if(width and width > 0) then
+            win.pattern:SetWidth(width);
+        end
+    end);
     win.pattern:SetMultiLine(true);
     win.pattern:SetAutoFocus(false);
     win.pattern:SetScript("OnTextChanged", function(self)
@@ -463,7 +496,7 @@ local function createFilterFrame()
     win.user.party:SetScript("OnClick", function(self) win.filter.party = self:GetChecked(); end);
 
     win.user.raid = CreateFrame("CheckButton", win.user:GetName().."Raid", win.user, "UICheckButtonTemplate");
-    win.user.raid:SetPoint("TOPLEFT", win.user:GetWidth()/2, 0);
+    win.user.raid:SetPoint("TOPLEFT", win.user, "TOP", 0, 0);
     _G.getglobal(win.user.raid:GetName().."Text"):SetText(L["Raid Members"]);
     win.user.raid:SetScript("OnShow", function(self) self:SetChecked(win.filter.raid); end);
     win.user.raid:SetScript("OnClick", function(self) win.filter.raid = self:GetChecked(); end);
@@ -631,7 +664,7 @@ local function createFilterFrame()
             info.func = win.action.click;
             DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
             info = {};
-            info.text = L["Blocked"];
+            info.text = L["Block"];
             info.value = 3;
             info.func = win.action.click;
             DDM.UIDropDownMenu_AddButton(info, DDM.UIDropDownMenu_MENU_LEVEL);
@@ -663,8 +696,8 @@ local function createFilterFrame()
     -- cancel / save
     win.border = win:CreateTexture(nil, "OVERLAY");
     win.border:SetHeight(1);
-    win.border:SetWidth(win:GetWidth() - 60);
-    win.border:SetPoint("BOTTOM", 0, 55);
+    win.border:SetPoint("BOTTOMLEFT", 30, 55);
+    win.border:SetPoint("BOTTOMRIGHT", -30, 55);
     win.border:SetColorTexture(1, 1, 1, .25);
     win.save = CreateFrame("Button", win:GetName().."Save", win, "UIPanelButtonTemplate");
     win.save:SetPoint("TOPRIGHT", win.border, "BOTTOMRIGHT", 0, -5);
@@ -685,17 +718,6 @@ local function createFilterFrame()
                 win.filter.enabled = true;
                 win.filter.stats = 0;
                 table.insert(filters, 1, win.filter);
-                -- The classic lists exist only once the classic window has
-                -- been built; the editor also serves the modern options.
-                if(win.isChat) then
-                    if(options.frame and options.frame.chatFilterList) then
-                        options.frame.chatFilterList.selected = 1;
-                    end
-                else
-                    if(options.frame and options.frame.filterList) then
-                        options.frame.filterList.selected = 1;
-                    end
-                end
             end
             win:Hide();
         end);
@@ -709,29 +731,20 @@ local function createFilterFrame()
     -- window actions
     win:SetScript("OnShow", function(self)
             _G.PlaySound(850);
-            if(options.frame) then
-                options.frame:Disable();
-            end
         end);
     win:SetScript("OnHide", function(self)
             self.saveIndex = nil;
             _G.PlaySound(851);
-            if(options.frame) then
-                options.frame:Enable();
-                local list = self.isChat and options.frame.chatFilterList
-                             or options.frame.filterList;
-                if(list) then
-                    list:Hide();
-                    list:Show();
-                end
-            end
-            -- Keep the modern filter lists in step too.
             if(options.NotifyModernSettings) then
                 options.NotifyModernSettings();
             end
         end);
 
     table.insert(_G.UISpecialFrames,win:GetName());
+
+    if(ApplyFilterWindowPosition) then
+        ApplyFilterWindowPosition(win);
+    end
 
     return win;
 end
@@ -832,7 +845,7 @@ local function buildModernChrome(win)
     local well = CreateFrame("Frame", nil, win);
     well:SetPoint("TOPLEFT", win.byText, "BOTTOMLEFT", -16, -17);
     well:SetPoint("RIGHT", win, "RIGHT", -14, 0);
-    well:SetHeight(111);
+    well:SetHeight(111 + patternExtra(win));
     well:SetFrameLevel(chrome:GetFrameLevel());
     well.bg = well:CreateTexture(nil, "BACKGROUND", nil, -7);
     well.bg:SetPoint("TOPLEFT", 2, -2);
@@ -1029,16 +1042,7 @@ end
 -- back when the classic options style is active.
 local function styleFilterCheckbox(check, modern)
     if(modern) then
-        check:SetSize(26, 26);
-        check:SetNormalAtlas("checkbox-minimal");
-        check:SetPushedAtlas("checkbox-minimal");
-        check:SetHighlightAtlas("checkbox-minimal", "ADD");
-        check:GetCheckedTexture():SetAtlas("checkmark-minimal");
-        local disabled = check.GetDisabledCheckedTexture
-            and check:GetDisabledCheckedTexture();
-        if(disabled) then
-            disabled:SetAtlas("checkmark-minimal-disabled");
-        end
+        StyleMinimalCheckbox(check, 26);
     else
         check:SetSize(32, 32);
         check:SetNormalTexture("Interface\\Buttons\\UI-CheckBox-Up");
@@ -1057,8 +1061,7 @@ local function styleFilterFrame(win)
     -- Modern dress follows the Modern skin, like the chat windows and
     -- the History Viewer, so a skin swap re-dresses a shown editor.
     local skin = GetSelectedSkin();
-    local modern = (db.modernOptions and skin and skin.modernOnly)
-        and true or false;
+    local modern = (skin and skin.modernOnly) and true or false;
     if(win.wimModernStyled == modern) then return; end
     win.wimModernStyled = modern;
     local close = win.close;
@@ -1170,7 +1173,7 @@ local function styleFilterFrame(win)
             win.patternContainer:ClearAllPoints();
             win.patternContainer:SetPoint("TOPLEFT", win.byText, "BOTTOMLEFT", 0, -25);
             win.patternContainer:SetPoint("RIGHT", -50, 0);
-            win.patternContainer:SetHeight(95);
+            win.patternContainer:SetHeight(95 + patternExtra(win));
             win.user:ClearAllPoints();
             win.user:SetPoint("TOPLEFT", win.patternContainer, "TOPLEFT");
             win.user:SetPoint("BOTTOMLEFT", win.patternContainer, "BOTTOMLEFT");

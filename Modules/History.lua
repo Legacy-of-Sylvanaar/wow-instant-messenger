@@ -50,12 +50,14 @@ db_defaults.history = {
         all = true
     },
     chat = {
-        preview = true,
-        previewCount = 25,
-        maxPer = true,
-        maxCount = 500,
-        ageLimit = true,
-        maxAge = 60*60*24*7*2,
+        guild = false,
+        officer = false,
+        party = false,
+        raid = false,
+        battleground = false,
+        say = false,
+        world = false,
+        custom = false,
     },
 };
 db_defaults.displayColors.historyIn = {
@@ -529,7 +531,7 @@ function History:PostEvent_WhisperInform(...)
 end
 
 local function deleteOldHistory(isChat)
-    local historyDB = isChat and db.history.chat or db.history;
+    local historyDB = db.history;
     local count = 0;
     for realm, characters in pairs(history) do
         for character, convos in pairs(characters) do
@@ -652,7 +654,7 @@ ChatHistory.OnWindowDestroyed = History.OnWindowDestroyed;
 
 function ChatHistory:OnEnableWIM()
     -- clean up history if asked to.
-    if(db.history.chat.ageLimit) then
+    if(db.history.ageLimit) then
         deleteOldHistory(true);
     end
 end
@@ -704,8 +706,8 @@ local function recordChannelChat(recordAs, ChannelType, ...)
         table.insert(history, record);
         -- Blob archive: this conversation now differs from its archived copy.
         MarkHistoryDirty(env.realm, env.character, recordAs);
-        if(WIM.db.history.chat.maxPer) then
-            pruneHistory(history, WIM.db.history.chat.maxCount);
+        if(WIM.db.history.maxPer) then
+            pruneHistory(history, WIM.db.history.maxCount);
         end
     end
 end
@@ -734,7 +736,7 @@ function ChatHistory:PostEvent_ChatMessage(event, ...)
         local recordAs;
         local isWorld = arg7 and arg7 > 0;
         local chatType = isWorld and "world" or "custom";
-        local channelName = string.split(" - ", arg9);
+        local channelName = GetChannelSettingsKey(arg9);
         local channelNumber = arg8;
         recordAs = channelName;
         if(recordAs and ((isWorld and db.history.chat.world) or (not isWorld and db.history.chat.custom))) then
@@ -845,7 +847,15 @@ local function createHistoryViewer()
 
     -- set script events
     win:SetScript("OnDragStart", function(self) self:StartMoving(); end);
-    win:SetScript("OnDragStop", function(self) self:StopMovingOrSizing(); end);
+    win:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing();
+        if (type(SaveHistoryWindowPosition) == "function") then
+            SaveHistoryWindowPosition(self);
+        end
+    end);
+    if (type(ApplyHistoryWindowPosition) == "function") then
+        ApplyHistoryWindowPosition(win);
+    end
 
     -- create and set title bar text
     win.title = win:CreateFontString(win:GetName().."Title", "OVERLAY", "ChatFontNormal");
@@ -3531,6 +3541,9 @@ local function createHistoryViewer()
             self:SetScript("OnUpdate", nil);
             self:GetParent().isSizing = false;
 	    self:GetParent():StopMovingOrSizing();
+            if (type(SaveHistoryWindowSize) == "function") then
+                SaveHistoryWindowSize(self:GetParent());
+            end
             win.nav.userList.scroll:Hide();
             win.nav.userList.scroll:Show();
         end);

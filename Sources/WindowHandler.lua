@@ -55,7 +55,7 @@ db_defaults.displayColors = {
 			},
                 useSkin = true,
                 useNative = {
-                        enabled = false,
+                        enabled = true,
                         whisper = true,
                         bnet = true,
                         say = true,
@@ -139,10 +139,6 @@ end
 
 db_defaults.fontSize = 12;
 db_defaults.windowAlpha = 80;
-db_defaults.windowOnTop = true;
-db_defaults.keepFocus = true;
-db_defaults.keepFocusRested = true;
-db_defaults.autoFocus = false;
 db_defaults.winSize = {
 		width = 333,
 		height = 245,
@@ -261,6 +257,18 @@ WindowParent = _G.CreateFrame("Frame", "WIM_UIParent", _G.UIParent);
 
 	WindowParent:SetScript("OnUpdate", function (self, elapsed)
 
+		-- Keep the container matched to the screen. Its size is
+		-- otherwise only captured on first show and goes stale on
+		-- resolution and scale changes, which skews the client's
+		-- move and size operations for every window anchored here.
+		local uiWidth, uiHeight = _G.UIParent:GetWidth(), _G.UIParent:GetHeight();
+		if(self:GetWidth() ~= uiWidth) then
+			self:SetWidth(uiWidth);
+		end
+		if(self:GetHeight() ~= uiHeight) then
+			self:SetHeight(uiHeight);
+		end
+
 		-- EditBoxInFocus & _EditBoxInFocus Management
 		-- if new edit box is focused, reset timer
 		if (EditBoxInFocus and self._editBoxInFocusElapsed) then
@@ -368,6 +376,10 @@ resizeFrame:Hide();
 resizeFrame.widgetName = "resize";
 resizeFrame:SetFrameStrata("TOOLTIP");
 resizeFrame.Attach = function(self, win)
+		if(self.isSizing) then
+			-- never reparent or restyle the grip mid-gesture
+			return;
+		end
 		if(win.widgets.close ~= GetMouseFocus() and win.type ~= "demo") then
 			self:SetParent(win);
 			self.parentWindow = win;
@@ -380,21 +392,76 @@ resizeFrame.Attach = function(self, win)
 		end
 	end
 resizeFrame.Reset = function(self)
+		if(self.isSizing) then
+			-- the gesture owns the grip until the button is
+			-- released; fast cursor swings drop mouse focus for a
+			-- frame and must not end the resize
+			return;
+		end
 		self:SetParent(WindowParent);
 		self:ClearAllPoints();
 		self:SetPoint("TOPLEFT");
 		self:Hide();
 	end
+-- Sizing is driven by hand from cursor deltas instead of StartSizing:
+-- the client's sizing operation misclamps against the resize bounds
+-- when the frame's effective scale is not 1, and lets screen clamping
+-- walk the frame sideways when the cursor leaves the screen.
 resizeFrame:SetScript("OnMouseDown", function(self)
+		local win = self.parentWindow;
 		self.isSizing = true;
-                self.parentWindow.customSize = true;
-		self.parentWindow:SetResizable(true);
-		self.parentWindow:StartSizing("BOTTOMRIGHT");
+                win.customSize = true;
+                win.isBeingSized = true;
+                -- pin the window by its top-left so growth extends
+                -- right and down, the way corner sizing reads
+                local es = win:GetEffectiveScale();
+                local left = win:SafeGetLeft() * es;
+                local top = win:SafeGetTop() * es;
+                win:ClearAllPoints();
+                win:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", left / es, top / es);
+                self.sizingStartX, self.sizingStartY = _G.GetCursorPosition();
+                self.sizingStartWidth = win:GetWidth();
+                self.sizingStartHeight = win:GetHeight();
+                self.sizingMinWidth, self.sizingMinHeight = 0, 0;
+                if(win.GetResizeBounds) then
+                        self.sizingMinWidth, self.sizingMinHeight = win:GetResizeBounds();
+                elseif(win.GetMinResize) then
+                        self.sizingMinWidth, self.sizingMinHeight = win:GetMinResize();
+                end
+                -- growth may only use the space between the window and
+                -- the right and bottom screen edges, or the screen
+                -- clamp starts walking the frame sideways; measured
+                -- against the live UIParent so a stale container can
+                -- never squeeze the cap below the floor
+                local pes = _G.UIParent:GetEffectiveScale();
+                self.sizingMaxWidth = _G.math.max(self.sizingMinWidth,
+                        (_G.UIParent:GetWidth() * pes - left) / es);
+                self.sizingMaxHeight = _G.math.max(self.sizingMinHeight, top / es);
 	end);
+resizeFrame.ApplySizing = function(self)
+                local win = self.parentWindow;
+                if(not win) then
+                        return;
+                end
+                local es = win:GetEffectiveScale();
+                if(not es or es <= 0) then
+                        return;
+                end
+                local x, y = _G.GetCursorPosition();
+                local width = self.sizingStartWidth + (x - self.sizingStartX) / es;
+                local height = self.sizingStartHeight + (self.sizingStartY - y) / es;
+                width = _G.math.max(self.sizingMinWidth, _G.math.min(width, self.sizingMaxWidth));
+                height = _G.math.max(self.sizingMinHeight, _G.math.min(height, self.sizingMaxHeight));
+                win:SetWidth(width);
+                win:SetHeight(height);
+        end
 resizeFrame:SetScript("OnMouseUp", function(self)
+                if(self.isSizing) then
+                        self:ApplySizing();
+                end
 		self.isSizing = false;
                 self.parentWindow.customSize = true;
-		self.parentWindow:StopMovingOrSizing();
+                self.parentWindow.isBeingSized = nil;
 		local tabStrip = self.parentWindow.tabStrip;
 		if(tabStrip) then
 			dPrint("Size sent to tab strip.");
@@ -408,6 +475,9 @@ resizeFrame:SetScript("OnHide", function(self)
                 end
         end);
 resizeFrame:SetScript("OnUpdate", function(self)
+		if(self.isSizing) then
+			self:ApplySizing();
+		end
 		if(self.isSizing and self.parentWindow and self.parentWindow.tabStrip) then
 			local curSize = self.parentWindow:GetWidth()..self.parentWindow:GetHeight();
 			if(self.prevSize ~= curSize) then
@@ -635,10 +705,32 @@ function updateScrollBars(parentWindow)
         end
 end
 
+-- Movement is driven by hand from cursor deltas instead of StartMoving:
+-- the client's move operation can teleport a scaled window on its
+-- first tick, by an offset that grows with every click. Positions are
+-- advanced from the frame's current rect each tick, so the screen
+-- clamp still applies and the window re-attaches to the cursor as
+-- soon as it leaves an edge.
+local function applyMovement(window)
+        local es = window:GetEffectiveScale();
+        if(not es or es <= 0) then
+                return;
+        end
+        local x, y = _G.GetCursorPosition();
+        local dx, dy = (x - window.moveLastX) / es, (y - window.moveLastY) / es;
+        window.moveLastX, window.moveLastY = x, y;
+        if(dx == 0 and dy == 0) then
+                return;
+        end
+        local left, top = window:SafeGetLeft() + dx, window:SafeGetTop() + dy;
+        window:ClearAllPoints();
+        window:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", left, top);
+end
+
 local function MessageWindow_MovementControler_OnDragStart(self)
     local window = getParentMessageWindow(self);
-    if(window) then
-        window:StartMoving();
+    if(window and not window.isMoving) then
+        window.moveLastX, window.moveLastY = _G.GetCursorPosition();
         window.isMoving = true;
     end
 end
@@ -648,7 +740,10 @@ local function MessageWindow_MovementControler_OnDragStop(self)
     if(window) then
 	local dropTo = helperFrame.attachedTo;
 	helperFrame:ResetState();
-        window:StopMovingOrSizing();
+        if(window.moveLastX) then
+                applyMovement(window);
+                window.moveLastX, window.moveLastY = nil, nil;
+        end
         window.isMoving = false;
         window.widgets.chat_display:Hide();
         window.widgets.chat_display:Show();
@@ -671,6 +766,7 @@ end
 
 -- this needs to be looked at. it isn't doing anything atm...
 local function MessageWindow_Frame_OnShow(self)
+        self.everShown = true;
         if(WindowParent.animUp) then
                 return;
         end
@@ -694,22 +790,23 @@ end
 -- this needs to be looked at. it isn't doing anything atm...
 local function MessageWindow_Frame_OnHide(self)
         if ( self.isMoving ) then
-		self:StopMovingOrSizing();
 		self.isMoving = false;
+                self.moveLastX, self.moveLastY = nil, nil;
         end
         self:ResetAnimation();
         if(self.type == "demo" and self.demoSave) then
                 -- save window placement settings.
                 db.winLoc.left = self:SafeGetLeft()*self:GetEffectiveScale();
                 db.winLoc.top = self:SafeGetTop()*self:GetEffectiveScale();
-                -- nil when the demo was opened from the modern options and
-                -- the classic window was never built.
-                if(options.frame) then
-                        options.frame:Enable();
-                end
+                local reopen = self.wimReopenSettings;
+                self.wimReopenSettings = nil;
                 self.demoSave = nil;
                 DestroyWindow(self);
                 WIM.DemoWindow = nil;
+                if(reopen and not _G.InCombatLockdown() and _G.Settings
+                   and _G.Settings.OpenToCategory and options.modernCategoryID) then
+                        _G.Settings.OpenToCategory(options.modernCategoryID);
+                end
         elseif(self.type ~= "demo") then
                 CallModuleFunction("OnWindowHide", self);
                 for widgetName, widgetObj in pairs(self.widgets) do
@@ -759,6 +856,9 @@ end
 
 
 local function MessageWindow_Frame_OnUpdate(self, elapsed)
+        if(self.isMoving and self.moveLastX) then
+                applyMovement(self);
+        end
 	-- window is visible, there aren't any messages waiting...
         updateTracker(self);
 	self.msgWaiting = false;
@@ -1330,12 +1430,7 @@ local function instantiateWindow(obj)
     end
 
     obj.GetRuleSet = function(self)
-        if(db.pop_rules[self.type]) then
-                local curState = db.pop_rules[self.type].alwaysOther and "other" or curState
-		return db.pop_rules[self.type][curState];
-	else
-                return db.pop_rules.whisper.other;
-        end
+        return GetPopRuleSet(self.type) or db.pop_rules.whisper.other;
     end
 
     -- PopUp rules
@@ -1442,6 +1537,16 @@ local function instantiateWindow(obj)
         end
 
         local minWidth, minHeight = GetSelectedSkin().message_window.min_width, GetSelectedSkin().message_window.min_height;
+        -- The skinner's layout-aware floor wins over the skin's static
+        -- one; without this the two writers disagree and ad-hoc
+        -- resizing can shrink windows until the shortcut column
+        -- overflows.
+        if(self.wimSkinMinWidth and self.wimSkinMinWidth > minWidth) then
+                minWidth = self.wimSkinMinWidth;
+        end
+        if(self.wimSkinMinHeight and self.wimSkinMinHeight > minHeight) then
+                minHeight = self.wimSkinMinHeight;
+        end
 
 	-- process registered widgets
 	for widgetName, widgetObj in pairs(obj.widgets) do
@@ -1468,13 +1573,23 @@ local function instantiateWindow(obj)
                         end
                 end
 	end
-		if self.SetResizeBounds then -- WoW 10.0
-			self:SetResizeBounds(minWidth, minHeight);
-		else
-        	self:SetMinResize(minWidth, minHeight);
+        -- Never rewrite bounds or force geometry while the user is
+        -- mid-drag on the resize grip: it breaks the sizing operation's
+        -- reference point and the window runs away.
+        if(not self.isBeingSized) then
+                if self.SetResizeBounds then -- WoW 10.0
+                        self:SetResizeBounds(minWidth, minHeight);
+                else
+                        self:SetMinResize(minWidth, minHeight);
+                end
+                self:SetWidth(_G.math.max(minWidth, self:GetWidth()));
+                self:SetHeight(_G.math.max(minHeight, self:GetHeight()));
         end
-        self:SetWidth(_G.math.max(minWidth, self:GetWidth()));
-        self:SetHeight(_G.math.max(minHeight, self:GetHeight()));
+        -- Publish the computed floor: the Edit Mode sliders clamp to the
+        -- same bounds ad-hoc resizing enforces, which widgets can raise
+        -- well past the skin's static minimums.
+        editModeWindowMin = editModeWindowMin or {};
+        editModeWindowMin[self.type] = { width = minWidth, height = minHeight };
         self.initialized = true;
     end
 
@@ -1578,6 +1693,7 @@ end
 -- load object into it's default state.
 local function loadWindowDefaults(obj)
 	obj:Hide();
+        obj.everShown = nil;
         obj.age = _G.GetTime();
         obj.hasMoved = false;
 
@@ -1794,16 +1910,17 @@ function DestroyWindow(playerNameOrObject)
 end
 
 function ShowDemoWindow()
-        -- Callable from either options UI: the classic window is only
-        -- involved (disabled while placing) when it is actually shown.
-        if(options.frame and options.frame:IsShown()) then
-                options.frame:Disable();
+        local reopenSettings = false;
+        if(_G.SettingsPanel and _G.SettingsPanel:IsShown() and _G.HideUIPanel) then
+                _G.HideUIPanel(_G.SettingsPanel);
+                reopenSettings = true;
         end
         if(not WIM.DemoWindow) then
                 WIM.DemoWindow = createWindow(L["Demo Window"], "demo");
         end
         WIM.DemoWindow:Show();
         WIM.DemoWindow.demoSave = true;
+        WIM.DemoWindow.wimReopenSettings = reopenSettings;
 end
 
 
