@@ -32,6 +32,18 @@ db_defaults.sounds = {
         msgout = false,
         msgout_sml = "Chat Blip",
 
+        guild = false,
+        officer = false,
+        party = false,
+        raid = false,
+        raidleader = false,
+        battleground = false,
+        battlegroundleader = false,
+        say = false,
+        world = false,
+        custom = false,
+        community = false,
+
         guild_sml = "Chat Blip",
         officer_sml = "Chat Blip",
         party_sml = "Chat Blip",
@@ -44,6 +56,7 @@ db_defaults.sounds = {
         custom_sml = "Chat Blip",
         community_sml = "Chat Blip",
     },
+    use_master = true,
     force_game_sound = false
 };
 
@@ -53,7 +66,7 @@ local soundFrame = _G.CreateFrame("Frame");
 
 
 local function enableGameSound()
-    if(db and db.force_game_sound) then
+    if(db and db.sounds and db.sounds.force_game_sound) then
         soundFrame.elapsed = 0;
         soundFrame:Show();
         SetCVar("Sound_EnableAllSound", "1");
@@ -86,9 +99,16 @@ local function playSound(smlKey)
     local path = SML:Fetch(SOUND, smlKey);
     if path then
         enableGameSound();
-        pcall(PlaySoundFile, path, "Master");
+        if (db and db.sounds and db.sounds.use_master) then
+            pcall(PlaySoundFile, path, "Master");
+        else
+            pcall(PlaySoundFile, path);
+        end
     end
 end
+
+-- Options preview plays through the same path the engine uses.
+PlayNotificationSound = playSound;
 
 --Whisper Sounds
 local Sounds = CreateModule("Sounds", true);
@@ -154,14 +174,14 @@ function ChatSounds:PostEvent_ChatMessage(event, ...)
                 playSound(db.sounds.chat.raidleader_sml);
             elseif(d.raid and (event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER")) then
                 playSound(db.sounds.chat.raid_sml);
-            elseif(d.raid and event == "CHAT_MSG_INSTANCE_CHAT_LEADER") then
+            elseif(d.battlegroundleader and event == "CHAT_MSG_INSTANCE_CHAT_LEADER") then
                 playSound(db.sounds.chat.battlegroundleader_sml);
-            elseif(d.raid and (event == "CHAT_MSG_INSTANCE_CHAT" or event == "CHAT_MSG_INSTANCE_CHAT_LEADER")) then
+            elseif(d.battleground and (event == "CHAT_MSG_INSTANCE_CHAT" or event == "CHAT_MSG_INSTANCE_CHAT_LEADER")) then
                 playSound(db.sounds.chat.battleground_sml);
-            elseif(d.say and event == "CHAT_MSG_SAY") then
+            elseif(d.say and (event == "CHAT_MSG_SAY" or event == "CHAT_MSG_EMOTE" or event == "CHAT_MSG_TEXT_EMOTE")) then
                 playSound(db.sounds.chat.say_sml);
             elseif(event == "CHAT_MSG_CHANNEL" and isWorld) then
-                local channelName = string.split(" - ", arg9);
+                local channelName = GetChannelSettingsKey(arg9);
                 local noSound = db.chat["world"] and db.chat["world"].channelSettings and
                                 db.chat["world"].channelSettings[channelName] and
                                 db.chat["world"].channelSettings[channelName].noSound;
@@ -173,7 +193,7 @@ function ChatSounds:PostEvent_ChatMessage(event, ...)
                     end
                 end
             elseif(event == "CHAT_MSG_CHANNEL") then
-                local channelName = string.split(" - ", arg9);
+                local channelName = GetChannelSettingsKey(arg9);
                 local noSound = db.chat["custom"] and db.chat["custom"].channelSettings and
                                 db.chat["custom"].channelSettings[channelName] and
                                 db.chat["custom"].channelSettings[channelName].noSound;

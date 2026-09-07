@@ -581,6 +581,15 @@ function UpdateSayOutputShortcut(obj)
 	updateSayOutputButton(obj);
 end
 
+function UpdateAllSayOutputShortcuts()
+	for widget in Widgets("shortcuts") do
+		local obj = widget.parentWindow;
+		if(obj and obj.type == "chat") then
+			updateSayOutputButton(obj);
+		end
+	end
+end
+
 local ShortcutBar_OnWindowShow = ShortcutBar.OnWindowShow;
 function ShortcutBar:OnWindowShow(obj)
 	ShortcutBar_OnWindowShow(self, obj);
@@ -590,10 +599,5 @@ function ShortcutBar:OnWindowShow(obj)
 end
 
 function ShortcutBar:OnSkinLoaded()
-	for widget in Widgets("shortcuts") do
-		local obj = widget.parentWindow;
-		if(obj and obj.type == "chat") then
-			updateSayOutputButton(obj);
-		end
-	end
+	UpdateAllSayOutputShortcuts();
 end

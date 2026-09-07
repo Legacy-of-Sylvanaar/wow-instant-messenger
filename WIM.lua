@@ -38,7 +38,7 @@ db_defaults = {
     enabled = true,
     showToolTips = true,
     modules = {},
-    alertedPrivateServer = false,
+    messageFormat = "Default",
 };
 
 -- WIM.env is an evironmental reference for the current instance of WIM.
@@ -1276,10 +1276,10 @@ function WIM:VARIABLES_LOADED()
 
     -- inherrit any new default options which wheren't shown in previous releases.
     inherritTable(db_defaults, db);
+    MigrateOptions();
     lists.gm = {};
 
-    -- load previous state into memory
-    curState = db.lastState;
+    curState = "other";
 
     SetEnabled(db.enabled);
     initialize();
@@ -1498,6 +1498,20 @@ function InChatMessagingLockdown()
 	else
 		return false;
 	end
+end
+
+function GetPopRuleSet(winType, state)
+    local rules = db and db.pop_rules and db.pop_rules[winType];
+    if (not rules) then
+        return db and db.pop_rules and db.pop_rules.whisper
+            and db.pop_rules.whisper.other;
+    end
+    state = state or curState;
+    local set = rules[state];
+    if (not set or (state ~= "other" and not set.custom)) then
+        set = rules.other;
+    end
+    return set;
 end
 
 local lastLockdownNotice = 0;

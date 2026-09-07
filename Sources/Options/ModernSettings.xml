@@ -42,6 +42,13 @@
         </Scripts>
     </Frame>
 
+    <Frame name="WIM3SettingsChatTypeListTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="308"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
     <Frame name="WIM3SettingsBugReportTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
         <Size y="104"/>
         <Scripts>
@@ -62,4 +69,26 @@
             <OnLoad method="OnLoad"/>
         </Scripts>
     </Frame>
+
+    <Frame name="WIM3SettingsTabStripTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="36"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <!-- Collapsible section header: the game's expandable-section base
+         template requires a derived mixin to supply CalculateHeight and
+         OnExpandedChanged (the base errors on click without them). -->
+    <EventFrame name="WIM3SettingsExpandableSectionTemplate" inherits="SettingsExpandableSectionTemplate" mixin="WIM3SettingsExpandableSectionMixin" virtual="true"/>
+
+    <!-- Sound dropdown row: the stock dropdown control plus a speaker
+         button that previews the selected sound. Pooled frames only
+         carry methods baked into their template, so the button rides in
+         a derived template the same way the expandable sections do. -->
+    <Frame name="WIM3SettingsSoundDropdownControlTemplate" inherits="SettingsDropdownControlTemplate" mixin="WIM3SettingsSoundDropdownControlMixin" virtual="true"/>
+
+    <!-- Sound row: the stock checkbox-plus-dropdown control (the Lock
+         Action Bars construction) plus the same speaker button. -->
+    <Frame name="WIM3SettingsSoundRowTemplate" inherits="SettingsCheckboxDropdownControlTemplate" mixin="WIM3SettingsSoundRowMixin" virtual="true"/>
 </Ui>

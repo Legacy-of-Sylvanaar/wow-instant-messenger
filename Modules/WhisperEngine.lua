@@ -44,6 +44,7 @@ local WhisperEngine = CreateModule("WhisperEngine", true);
 db_defaults.pop_rules.whisper = {
         --pop-up rule sets based off of your location
         resting = {
+            custom = true,
             onSend = true,
             onReceive = true,
             supress = true,
@@ -51,6 +52,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = true,
         },
         combat = {
+            custom = true,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -58,6 +60,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = false,
         },
         pvp = {
+            custom = false,
             onSend = true,
             onReceive = true,
             supress = true,
@@ -65,6 +68,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = false,
         },
         arena = {
+            custom = true,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -72,6 +76,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = false,
         },
         party = {
+            custom = false,
             onSend = true,
             onReceive = true,
             supress = true,
@@ -79,6 +84,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = false,
         },
         raid = {
+            custom = false,
             onSend = true,
             onReceive = true,
             supress = true,
@@ -92,7 +98,6 @@ db_defaults.pop_rules.whisper = {
             autofocus = false,
             keepfocus = false,
         },
-        alwaysOther = false,
         intercept = true,
 		obeyAutoFocusRules = false,
 		replyIncludesSent = false,
@@ -542,10 +547,13 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 
 		if (not frame._isWIM and not ignore and not block) then
 			-- execute appropriate supression rules
-			local curState = curState;
-			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-			if(WIM.db.pop_rules.whisper[curState].supress) then
-				return true
+			if(GetPopRuleSet("whisper").supress) then
+				local _, senderName = ...;
+				local user = FormatUserName(senderName);
+				local win = user and user ~= "" and Windows[safeName(user)];
+				if(win and win.everShown) then
+					return true
+				end
 			end
 		elseif (frame._isWIM and ignore or block) then
 			return true
@@ -555,7 +563,7 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 	elseif (event == "CHAT_MSG_SYSTEM") then
 		local msg = ...;
 
-		local curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
+		local ruleSet = GetPopRuleSet("whisper");
 
 		for check, pattern in pairs(CMS_PATTERNS) do
 			local user = FormatUserName(string.match(msg, pattern));
@@ -566,7 +574,7 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 					-- error message
 					if 'PLAYER_NOT_FOUND' == check or 'CHAT_IGNORED' == check then
 						if (not frame._isWIM) then
-							if(win:IsShown() and db.pop_rules.whisper[curState].supress or not win.msgSent) then
+							if(win:IsShown() and ruleSet.supress or not win.msgSent) then
 								return true;
 							end
 						else
@@ -579,7 +587,7 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 					-- system message
 					elseif 'FRIEND_ONLINE' == check or 'FRIEND_OFFLINE' == check then
 						if (not frame._isWIM) then
-							if(win:IsShown() and db.pop_rules.whisper[curState].supress) then
+							if(win:IsShown() and ruleSet.supress) then
 								return true;
 							end
 						else
@@ -876,8 +884,6 @@ function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(...)
 	local online = process == "FRIEND_ONLINE"
 	local offline = process == "FRIEND_OFFLINE"
 
-	local curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-
 	local _, accName = GetBNGetFriendInfoByID(bnSenderID)
 	local win = Windows[safeName(accName)]
 	if win then
@@ -928,9 +934,7 @@ local function editBoxUpdateHeader(self, internalCall)
 		-- SetAttribute and ChatEdit_UpdateHeader on Blizzard's secure
 		-- EditBox are forbidden then.
 		if (not InChatMessagingLockdown() and not InCombatLockdown() and target and db and db.enabled) then
-			local curState = curState;
-			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+			if (db.pop_rules.whisper.intercept) then
 
 				local bNetID;
 				if (chatType == "BN_WHISPER" or target:find("^|K")) then
@@ -975,9 +979,7 @@ local function replyTellHook (reTell, msg)
 		local target, chatType = GetLastWhisperTarget(reTell);
 
 		if target and chatType then
-			local curState = curState;
-			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+			if (db.pop_rules.whisper.intercept) then
 				if GetLastWhisperWindow(reTell) and _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
 					(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
 				end
@@ -990,10 +992,7 @@ local function sendBNetTell (tokenizedName)
 	-- used to close the editbox that is open.
 	if not InChatMessagingLockdown() and not InCombatLockdown() and db and db.enabled then
 
-		local curState = curState;
-		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-
-		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+		if (db.pop_rules.whisper.intercept) then
 			local bNetID = _G.BNet_GetBNetIDAccount(tokenizedName);
 			local win = getWhisperWindowByUser(tokenizedName, true, bNetID);
 

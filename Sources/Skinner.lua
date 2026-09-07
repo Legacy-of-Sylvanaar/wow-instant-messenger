@@ -25,12 +25,15 @@ local function getAtlasInfo(name)
         return C_Texture.GetAtlasInfo(name);
     end
 end
+-- Shared with the rest of the addon, so each file need not carry its
+-- own pre-namespace copy.
+WIM.GetAtlasInfo = getAtlasInfo;
 
 -- set namespace
 setfenv(1, WIM);
 
 db_defaults.skin = {
-    selected = "WIM Classic",
+    selected = "WIM Modern",
     font = "ChatFontNormal",
     font_outline = "",
     suggest = true,
@@ -50,11 +53,11 @@ db_defaults.modernTheme = {
     filterFrame = "rock",
     filterPanel = "darkmarble",
     filterCutout = false,
-    -- The typed message can wrap onto multiple lines. The row grows
-    -- with the message. A line limit is optional.
-    inputWrap = false,
-    inputWrapLimit = false,
-    inputWrapLines = 2,
+    -- The typed message wraps onto multiple lines and the row grows
+    -- with it, up to the line limit.
+    inputWrap = true,
+    inputWrapLimit = true,
+    inputWrapLines = 4,
     -- Roleplay profile integration. rpEnabled is the master switch and
     -- also controls the Open Profile shortcut. rpFields selects which
     -- profile fields replace the default display on whisper windows.
@@ -891,6 +894,26 @@ end
 -- Whatever scrollbar the template attached is hidden and a slim
 -- slider takes its place, built from the same pieces as the themed
 -- chat-window scrollbar. No-op without the atlases.
+-- The native settings checkbox art (the atlases behind the Settings
+-- panel's own checkboxes); where they are missing, the template art
+-- stays and is scaled instead. Returns whether the atlases were used.
+function StyleMinimalCheckbox(cb, size, fallbackScale)
+    if(GetAtlasInfo("checkbox-minimal") and GetAtlasInfo("checkmark-minimal")) then
+        cb:SetSize(size, size);
+        cb:SetNormalAtlas("checkbox-minimal");
+        cb:SetPushedAtlas("checkbox-minimal");
+        cb:SetHighlightAtlas("checkbox-minimal", "ADD");
+        cb:GetCheckedTexture():SetAtlas("checkmark-minimal");
+        local disabled = cb.GetDisabledCheckedTexture and cb:GetDisabledCheckedTexture();
+        if(disabled) then
+            disabled:SetAtlas("checkmark-minimal-disabled");
+        end
+        return true;
+    end
+    cb:SetScale(fallbackScale or .8);
+    return false;
+end
+
 function AttachMinimalScrollBar(scroll, host)
     if(not getAtlasInfo("minimal-scrollbar-small-thumb-middle")
             or not getAtlasInfo("minimal-scrollbar-track-top")) then
@@ -942,6 +965,36 @@ function AttachMinimalScrollBar(scroll, host)
     trackMiddle:SetAtlas("!minimal-scrollbar-track-middle");
     trackMiddle:SetPoint("TOPLEFT", trackTop, "BOTTOMLEFT");
     trackMiddle:SetPoint("BOTTOMRIGHT", trackBottom, "TOPRIGHT");
+
+    -- The stepper arrows the native minimal bar carries at each end,
+    -- children of the bar so they come and go with it.
+    local function makeArrow(direction)
+        local atlas = (direction == "up") and "minimal-scrollbar-arrow-top"
+            or "minimal-scrollbar-arrow-bottom";
+        if(not getAtlasInfo(atlas)) then return nil; end
+        local btn = CreateFrame("Button", nil, bar);
+        local info = getAtlasInfo(atlas);
+        btn:SetSize(info.width or 11, info.height or 9);
+        btn:SetNormalAtlas(atlas);
+        btn:SetPushedAtlas(getAtlasInfo(atlas.."-down") and (atlas.."-down") or atlas);
+        btn:SetHighlightAtlas(getAtlasInfo(atlas.."-over") and (atlas.."-over") or atlas, "BLEND");
+        btn:SetScript("OnClick", function()
+            local _, maxValue = bar:GetMinMaxValues();
+            local value = (bar:GetValue() or 0) + ((direction == "up") and -20 or 20);
+            if(value < 0) then value = 0; end
+            if(value > maxValue) then value = maxValue; end
+            bar:SetValue(value);
+        end);
+        return btn;
+    end
+    local arrowUp = makeArrow("up");
+    local arrowDown = makeArrow("down");
+    if(arrowUp) then
+        arrowUp:SetPoint("BOTTOM", bar, "TOP", 0, 2);
+    end
+    if(arrowDown) then
+        arrowDown:SetPoint("TOP", bar, "BOTTOM", 0, -2);
+    end
 
     local function sizeThumb()
         local trackHeight = bar:GetHeight() or 0;
@@ -1310,6 +1363,11 @@ function LayoutThemedHeader(obj)
         minHeight = skinWindow.min_height;
     end
     local minWidth = skinWindow.min_width or 256;
+    -- Remember the layout-aware floor: UpdateProps also writes resize
+    -- bounds and must not lower the minimum below what the header,
+    -- shortcut column and input row actually need.
+    obj.wimSkinMinWidth = minWidth;
+    obj.wimSkinMinHeight = minHeight;
     if(obj.SetResizeBounds) then
         obj:SetResizeBounds(minWidth, minHeight);
     elseif(obj.SetMinResize) then
@@ -1442,7 +1500,7 @@ function UpdateThemedInputDecor(obj)
         if(lines < 1) then lines = 1; end
         local theme = db.modernTheme or {};
         if(theme.inputWrapLimit) then
-            local capLines = theme.inputWrapLines or 2;
+            local capLines = theme.inputWrapLines or 4;
             if(capLines < 1) then capLines = 1; end
             if(capLines > 20) then capLines = 20; end
             if(lines > capLines) then lines = capLines; end
@@ -1537,6 +1595,10 @@ function LayoutThemedInput(obj)
     local wraps = theme.inputWrap and true or false;
 
     obj.wimBoxThemed = true;
+    -- The decor repaint skips when its inputs are unchanged, and the
+    -- line cap is not among them; a layout pass means the theme
+    -- changed, so the next repaint must run.
+    obj.wimDecorStamp = nil;
     -- No border decor on clients without the search-border art.
     if(input.capLeft) then
         input.capLeft:SetShown(not wraps);
@@ -2526,10 +2588,8 @@ function GetSelectedSkin()
     return SelectedSkin or SkinTable["WIM Classic"];
 end
 
--- Only the modern options UI offers modern-only skins. While one is
--- selected, the options style must not switch back to classic, because
--- the classic window could never offer the skin again. Code that
--- changes the style checks this function.
+-- True while a modern-only skin is selected. The Modern Skin theming
+-- controls are live only then.
 function SkinLocksOptionsStyle()
     local skin = GetSelectedSkin();
     return (skin and skin.modernOnly) and true or false;
@@ -2596,12 +2656,11 @@ function LoadSkin(skinName, immutableDB)
     if(RestyleFilterFrame) then
         RestyleFilterFrame();
     end
-
-    -- A modern-only skin requires the modern options UI (see
-    -- SkinLocksOptionsStyle). Selecting one turns that UI on.
-    if(SelectedSkin and SelectedSkin.modernOnly and db and not db.modernOptions
-            and SetOptionsStyle) then
-        SetOptionsStyle(true);
+    -- Native input colors only apply under modern skins; open input
+    -- boxes would otherwise keep the previous skin's color until they
+    -- are next shown.
+    if(UpdateAllInputColors) then
+        UpdateAllInputColors();
     end
 end
 

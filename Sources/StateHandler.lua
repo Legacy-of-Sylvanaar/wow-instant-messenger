@@ -8,10 +8,6 @@
 
 local WIM = WIM;
 
--- we want to know the current state since last login.
--- this information is loaded when WIM is initialized. Check WIM.lua
-WIM.db_defaults.lastState = "other";
-
 WIM.curState = "other";
 -- available states include: resting, combat, pvp, arena, raid, party, other
 
