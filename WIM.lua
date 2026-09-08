@@ -162,7 +162,7 @@ local function initialize()
                 _G.DEFAULT_CHAT_FRAME:AddMessage(L["WIM: community chat settings unavailable."]);
                 return;
             end
-            c.autoFocusStreams = not (c.autoFocusStreams ~= false);
+            c.autoFocusStreams = (c.autoFocusStreams == false);
             _G.DEFAULT_CHAT_FRAME:AddMessage(c.autoFocusStreams
                 and L["WIM community stream auto-focus ON. Takes effect at next login."]
                 or L["WIM community stream auto-focus OFF - the client may refuse sends to community channels. Takes effect at next login."]);
@@ -176,7 +176,7 @@ local function initialize()
                 _G.DEFAULT_CHAT_FRAME:AddMessage(L["WIM: community chat settings unavailable."]);
                 return;
             end
-            c.repairChannelReAdd = not (c.repairChannelReAdd == true);
+            c.repairChannelReAdd = (c.repairChannelReAdd ~= true);
             if(c.repairChannelReAdd) then
                 _G.DEFAULT_CHAT_FRAME:AddMessage(L["WIM channel re-add repair ON (experimental). On logins where the community stream is focused late, WIM removes and re-adds community channels to ChatFrame1 about 8s after login. If a re-add fails the channel must be restored from the chat settings UI."]);
                 -- Run one now. The flag is read when the timer fires rather than
