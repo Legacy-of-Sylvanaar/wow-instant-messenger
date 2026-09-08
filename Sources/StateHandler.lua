@@ -8,10 +8,6 @@
 
 local WIM = WIM;
 
--- we want to know the current state since last login.
--- this information is loaded when WIM is initialized. Check WIM.lua
-WIM.db_defaults.lastState = "other";
-
 WIM.curState = "other";
 -- available states include: resting, combat, pvp, arena, raid, party, other
 
@@ -21,7 +17,7 @@ local flag_combat = false;
 local flag_resting = IsResting();
 
 -- register events directly with main frame in order to preserve correct state when WIM is disabled.
-local workerFrame = getglobal("WIM_workerFrame");
+local workerFrame = _G["WIM_workerFrame"];
 
 -- combat detection
 workerFrame:RegisterEvent("PLAYER_REGEN_DISABLED");

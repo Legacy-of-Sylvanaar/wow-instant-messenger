@@ -24,6 +24,7 @@ local IsShiftKeyDown = IsShiftKeyDown;
 local select = select;
 local pairs = pairs;
 local type = type;
+local tostring = tostring;
 local unpack = unpack;
 local strsub = strsub;
 local time = time;
@@ -32,6 +33,9 @@ local GetGuildInfo = GetGuildInfo;
 local UnitClass = UnitClass;
 local UnitLevel = UnitLevel;
 local UnitRace = UnitRace;
+local InCombatLockdown = InCombatLockdown;
+local GetCommunitiesChannelColor = (ChatFrameUtil and ChatFrameUtil.GetCommunitiesChannelColor) or ChatFrame_GetCommunitiesChannelColor or function() return 1, 0.82, 0 end;
+local GetCommunityAndStreamName = (ChatFrameUtil and ChatFrameUtil.GetCommunityAndStreamName) or ChatFrame_GetCommunityAndStreamName;
 
 -- set namespace
 setfenv(1, WIM);
@@ -50,13 +54,91 @@ db_defaults.displayColors = {
 				b=0
 			},
                 useSkin = true,
+                useNative = {
+                        enabled = true,
+                        whisper = true,
+                        bnet = true,
+                        say = true,
+                        guild = true,
+                        officer = true,
+                        party = true,
+                        raid = true,
+                        instance = true,
+                        channel = true,
+                },
 	};
+
+-- The input field takes the color of the chat type it sends as, like
+-- the game's own chat box. A Modern skin option, inert under other
+-- skins like the rest of the theme settings.
+local function nativeColorsActive()
+	local native = db and db.displayColors and db.displayColors.useNative;
+	if(not (native and native.enabled)) then return nil; end
+	local skin = GetSelectedSkin and GetSelectedSkin();
+	return (skin and skin.modernOnly) and native or nil;
+end
+
+local function inputColorTarget(obj)
+	if(obj.type == "whisper" or obj.type == "w2w") then
+		if(obj.isBN) then
+			return "bnet", "BN_WHISPER";
+		end
+		return "whisper", "WHISPER";
+	elseif(obj.type == "chat") then
+		local chatType = obj.chatType;
+		if(chatType == "say") then
+			-- Follows the say window's output toggle.
+			return "say", GetSayOutputType and GetSayOutputType() or "SAY";
+		elseif(chatType == "guild") then
+			return "guild", "GUILD";
+		elseif(chatType == "officer") then
+			return "officer", "OFFICER";
+		elseif(chatType == "party") then
+			return "party", "PARTY";
+		elseif(chatType == "raid") then
+			return "raid", "RAID";
+		elseif(chatType == "battleground") then
+			return "instance", "INSTANCE_CHAT";
+		elseif(chatType == "channel") then
+			return "channel", "CHANNEL"..(obj.channelNumber or "");
+		elseif(chatType == "community") then
+			return "channel", "COMMUNITIES_CHANNEL";
+		end
+	end
+end
+
+function UpdateInputColor(obj)
+	local box = obj and obj.widgets and obj.widgets.msg_box;
+	if(not box) then return; end
+	local native = nativeColorsActive();
+	local key, token = inputColorTarget(obj);
+	local info = native and key and native[key]
+		and (_G.ChatTypeInfo[token or ""] or _G.ChatTypeInfo["CHANNEL"]);
+	if(info) then
+		box:SetTextColor(info.r, info.g, info.b);
+		obj.wimInputColored = true;
+	elseif(obj.wimInputColored) then
+		obj.wimInputColored = nil;
+		local widgetSkin = GetSelectedSkin().message_window.widgets.msg_box;
+		local color = widgetSkin and widgetSkin.font_color;
+		if(type(color) == "table") then
+			box:SetTextColor(_G.unpack(color));
+		elseif(color) then
+			box:SetTextColor(RGBHexToPercent(color));
+		else
+			box:SetTextColor(1, 1, 1);
+		end
+	end
+end
+
+function UpdateAllInputColors()
+	for box in Widgets("msg_box") do
+		UpdateInputColor(box.parentWindow);
+	end
+end
+
 db_defaults.fontSize = 12;
 db_defaults.windowAlpha = 80;
-db_defaults.windowOnTop = true;
-db_defaults.keepFocus = true;
-db_defaults.keepFocusRested = true;
-db_defaults.autoFocus = false;
 db_defaults.winSize = {
 		width = 333,
 		height = 245,
@@ -175,6 +257,18 @@ WindowParent = _G.CreateFrame("Frame", "WIM_UIParent", _G.UIParent);
 
 	WindowParent:SetScript("OnUpdate", function (self, elapsed)
 
+		-- Keep the container matched to the screen. Its size is
+		-- otherwise only captured on first show and goes stale on
+		-- resolution and scale changes, which skews the client's
+		-- move and size operations for every window anchored here.
+		local uiWidth, uiHeight = _G.UIParent:GetWidth(), _G.UIParent:GetHeight();
+		if(self:GetWidth() ~= uiWidth) then
+			self:SetWidth(uiWidth);
+		end
+		if(self:GetHeight() ~= uiHeight) then
+			self:SetHeight(uiHeight);
+		end
+
 		-- EditBoxInFocus & _EditBoxInFocus Management
 		-- if new edit box is focused, reset timer
 		if (EditBoxInFocus and self._editBoxInFocusElapsed) then
@@ -282,6 +376,10 @@ resizeFrame:Hide();
 resizeFrame.widgetName = "resize";
 resizeFrame:SetFrameStrata("TOOLTIP");
 resizeFrame.Attach = function(self, win)
+		if(self.isSizing) then
+			-- never reparent or restyle the grip mid-gesture
+			return;
+		end
 		if(win.widgets.close ~= GetMouseFocus() and win.type ~= "demo") then
 			self:SetParent(win);
 			self.parentWindow = win;
@@ -294,21 +392,76 @@ resizeFrame.Attach = function(self, win)
 		end
 	end
 resizeFrame.Reset = function(self)
+		if(self.isSizing) then
+			-- the gesture owns the grip until the button is
+			-- released; fast cursor swings drop mouse focus for a
+			-- frame and must not end the resize
+			return;
+		end
 		self:SetParent(WindowParent);
 		self:ClearAllPoints();
 		self:SetPoint("TOPLEFT");
 		self:Hide();
 	end
+-- Sizing is driven by hand from cursor deltas instead of StartSizing:
+-- the client's sizing operation misclamps against the resize bounds
+-- when the frame's effective scale is not 1, and lets screen clamping
+-- walk the frame sideways when the cursor leaves the screen.
 resizeFrame:SetScript("OnMouseDown", function(self)
+		local win = self.parentWindow;
 		self.isSizing = true;
-                self.parentWindow.customSize = true;
-		self.parentWindow:SetResizable(true);
-		self.parentWindow:StartSizing("BOTTOMRIGHT");
+                win.customSize = true;
+                win.isBeingSized = true;
+                -- pin the window by its top-left so growth extends
+                -- right and down, the way corner sizing reads
+                local es = win:GetEffectiveScale();
+                local left = win:SafeGetLeft() * es;
+                local top = win:SafeGetTop() * es;
+                win:ClearAllPoints();
+                win:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", left / es, top / es);
+                self.sizingStartX, self.sizingStartY = _G.GetCursorPosition();
+                self.sizingStartWidth = win:GetWidth();
+                self.sizingStartHeight = win:GetHeight();
+                self.sizingMinWidth, self.sizingMinHeight = 0, 0;
+                if(win.GetResizeBounds) then
+                        self.sizingMinWidth, self.sizingMinHeight = win:GetResizeBounds();
+                elseif(win.GetMinResize) then
+                        self.sizingMinWidth, self.sizingMinHeight = win:GetMinResize();
+                end
+                -- growth may only use the space between the window and
+                -- the right and bottom screen edges, or the screen
+                -- clamp starts walking the frame sideways; measured
+                -- against the live UIParent so a stale container can
+                -- never squeeze the cap below the floor
+                local pes = _G.UIParent:GetEffectiveScale();
+                self.sizingMaxWidth = _G.math.max(self.sizingMinWidth,
+                        (_G.UIParent:GetWidth() * pes - left) / es);
+                self.sizingMaxHeight = _G.math.max(self.sizingMinHeight, top / es);
 	end);
+resizeFrame.ApplySizing = function(self)
+                local win = self.parentWindow;
+                if(not win) then
+                        return;
+                end
+                local es = win:GetEffectiveScale();
+                if(not es or es <= 0) then
+                        return;
+                end
+                local x, y = _G.GetCursorPosition();
+                local width = self.sizingStartWidth + (x - self.sizingStartX) / es;
+                local height = self.sizingStartHeight + (self.sizingStartY - y) / es;
+                width = _G.math.max(self.sizingMinWidth, _G.math.min(width, self.sizingMaxWidth));
+                height = _G.math.max(self.sizingMinHeight, _G.math.min(height, self.sizingMaxHeight));
+                win:SetWidth(width);
+                win:SetHeight(height);
+        end
 resizeFrame:SetScript("OnMouseUp", function(self)
+                if(self.isSizing) then
+                        self:ApplySizing();
+                end
 		self.isSizing = false;
                 self.parentWindow.customSize = true;
-		self.parentWindow:StopMovingOrSizing();
+                self.parentWindow.isBeingSized = nil;
 		local tabStrip = self.parentWindow.tabStrip;
 		if(tabStrip) then
 			dPrint("Size sent to tab strip.");
@@ -322,6 +475,9 @@ resizeFrame:SetScript("OnHide", function(self)
                 end
         end);
 resizeFrame:SetScript("OnUpdate", function(self)
+		if(self.isSizing) then
+			self:ApplySizing();
+		end
 		if(self.isSizing and self.parentWindow and self.parentWindow.tabStrip) then
 			local curSize = self.parentWindow:GetWidth()..self.parentWindow:GetHeight();
 			if(self.prevSize ~= curSize) then
@@ -549,10 +705,32 @@ function updateScrollBars(parentWindow)
         end
 end
 
+-- Movement is driven by hand from cursor deltas instead of StartMoving:
+-- the client's move operation can teleport a scaled window on its
+-- first tick, by an offset that grows with every click. Positions are
+-- advanced from the frame's current rect each tick, so the screen
+-- clamp still applies and the window re-attaches to the cursor as
+-- soon as it leaves an edge.
+local function applyMovement(window)
+        local es = window:GetEffectiveScale();
+        if(not es or es <= 0) then
+                return;
+        end
+        local x, y = _G.GetCursorPosition();
+        local dx, dy = (x - window.moveLastX) / es, (y - window.moveLastY) / es;
+        window.moveLastX, window.moveLastY = x, y;
+        if(dx == 0 and dy == 0) then
+                return;
+        end
+        local left, top = window:SafeGetLeft() + dx, window:SafeGetTop() + dy;
+        window:ClearAllPoints();
+        window:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", left, top);
+end
+
 local function MessageWindow_MovementControler_OnDragStart(self)
     local window = getParentMessageWindow(self);
-    if(window) then
-        window:StartMoving();
+    if(window and not window.isMoving) then
+        window.moveLastX, window.moveLastY = _G.GetCursorPosition();
         window.isMoving = true;
     end
 end
@@ -562,7 +740,10 @@ local function MessageWindow_MovementControler_OnDragStop(self)
     if(window) then
 	local dropTo = helperFrame.attachedTo;
 	helperFrame:ResetState();
-        window:StopMovingOrSizing();
+        if(window.moveLastX) then
+                applyMovement(window);
+                window.moveLastX, window.moveLastY = nil, nil;
+        end
         window.isMoving = false;
         window.widgets.chat_display:Hide();
         window.widgets.chat_display:Show();
@@ -585,6 +766,7 @@ end
 
 -- this needs to be looked at. it isn't doing anything atm...
 local function MessageWindow_Frame_OnShow(self)
+        self.everShown = true;
         if(WindowParent.animUp) then
                 return;
         end
@@ -608,18 +790,23 @@ end
 -- this needs to be looked at. it isn't doing anything atm...
 local function MessageWindow_Frame_OnHide(self)
         if ( self.isMoving ) then
-		self:StopMovingOrSizing();
 		self.isMoving = false;
+                self.moveLastX, self.moveLastY = nil, nil;
         end
         self:ResetAnimation();
         if(self.type == "demo" and self.demoSave) then
                 -- save window placement settings.
                 db.winLoc.left = self:SafeGetLeft()*self:GetEffectiveScale();
                 db.winLoc.top = self:SafeGetTop()*self:GetEffectiveScale();
-                options.frame:Enable();
+                local reopen = self.wimReopenSettings;
+                self.wimReopenSettings = nil;
                 self.demoSave = nil;
                 DestroyWindow(self);
                 WIM.DemoWindow = nil;
+                if(reopen and not _G.InCombatLockdown() and _G.Settings
+                   and _G.Settings.OpenToCategory and options.modernCategoryID) then
+                        _G.Settings.OpenToCategory(options.modernCategoryID);
+                end
         elseif(self.type ~= "demo") then
                 CallModuleFunction("OnWindowHide", self);
                 for widgetName, widgetObj in pairs(self.widgets) do
@@ -669,6 +856,9 @@ end
 
 
 local function MessageWindow_Frame_OnUpdate(self, elapsed)
+        if(self.isMoving and self.moveLastX) then
+                applyMovement(self);
+        end
 	-- window is visible, there aren't any messages waiting...
         updateTracker(self);
 	self.msgWaiting = false;
@@ -1005,7 +1195,7 @@ local function instantiateWindow(obj)
         if(self.type == "chat" and self.chatType) then
 				if (self.chatType == "community") then
 					if (self.clubId and self.streamId) then
-						local r, g, b = _G.ChatFrameUtil.GetCommunitiesChannelColor(self.clubId, self.streamId)
+						local r, g, b = GetCommunitiesChannelColor(self.clubId, self.streamId)
 						local color = { r = r, g = g, b = b };
 
 						icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
@@ -1016,7 +1206,15 @@ local function instantiateWindow(obj)
 						);
 
 
-						self.theUser = _G.ChatFrameUtil.GetCommunityAndStreamName(self.clubId, self.streamId)
+						-- Only take the resolved name when there is one. Early in a
+						-- session GetCommunityAndStreamName can return empty, and
+						-- theUser must never become nil: it is the identity every
+						-- list and lookup displays.
+						local resolved = GetCommunityAndStreamName and GetCommunityAndStreamName(self.clubId, self.streamId);
+						dPrint("Community name resolve ["..tostring(self.clubId)..":"..tostring(self.streamId).."]: '"..tostring(resolved).."'");
+						if (type(resolved) == "string" and string.gsub(resolved, "[%s%-]", "") ~= "") then
+							self.theUser = resolved;
+						end
 						self.widgets.from:SetText(self.theUser);
 						self.widgets.from:SetTextColor(color.r, color.g, color.b);
 					end
@@ -1232,12 +1430,7 @@ local function instantiateWindow(obj)
     end
 
     obj.GetRuleSet = function(self)
-        if(db.pop_rules[self.type]) then
-                local curState = db.pop_rules[self.type].alwaysOther and "other" or curState
-		return db.pop_rules[self.type][curState];
-	else
-                return db.pop_rules.whisper.other;
-        end
+        return GetPopRuleSet(self.type) or db.pop_rules.whisper.other;
     end
 
     -- PopUp rules
@@ -1256,18 +1449,18 @@ local function instantiateWindow(obj)
 	if(forceResult == true) then
 		-- go by forceResult and ignore rules
 		if(self.tabStrip) then
-			-- if(not EditBoxInFocus) then
-					ShowContainer();
-					self.tabStrip:JumpToTab(self);
-					if(not getVisibleChatFrameEditBox() and (rules.autofocus or forceFocus)) then
-							self.widgets.msg_box:SetFocus();
-					end
-			-- end
+                                -- if(not EditBoxInFocus) then
+                                                ShowContainer();
+                                                self.tabStrip:JumpToTab(self);
+                                                if(not InCombatLockdown() and not getVisibleChatFrameEditBox() and (rules.autofocus or forceFocus)) then
+                                                        self.widgets.msg_box:SetFocus();
+                                                end
+                                -- end
 		else
                                 ShowContainer();
 				self:ResetAnimation();
 				self:Show();
-                                if((not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) or forceFocus) then
+                                if(not InCombatLockdown() and ((not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) or forceFocus)) then
                                         self.widgets.msg_box:SetFocus();
                                 end
 				local count = 0;
@@ -1295,7 +1488,7 @@ local function instantiateWindow(obj)
 				self:Show();
                                 setWindowAsFadedIn(self);
 			end
-                        if(self:IsVisible() and not getVisibleChatFrameEditBox and not EditBoxInFocus and rules.autofocus) then
+                        if(not InCombatLockdown() and self:IsVisible() and not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) then
                                 self.widgets.msg_box:SetFocus();
                         end
 		end
@@ -1344,32 +1537,59 @@ local function instantiateWindow(obj)
         end
 
         local minWidth, minHeight = GetSelectedSkin().message_window.min_width, GetSelectedSkin().message_window.min_height;
+        -- The skinner's layout-aware floor wins over the skin's static
+        -- one; without this the two writers disagree and ad-hoc
+        -- resizing can shrink windows until the shortcut column
+        -- overflows.
+        if(self.wimSkinMinWidth and self.wimSkinMinWidth > minWidth) then
+                minWidth = self.wimSkinMinWidth;
+        end
+        if(self.wimSkinMinHeight and self.wimSkinMinHeight > minHeight) then
+                minHeight = self.wimSkinMinHeight;
+        end
 
 	-- process registered widgets
 	for widgetName, widgetObj in pairs(obj.widgets) do
 		if(type(widgetObj.UpdateProps) == "function") then
 			widgetObj:UpdateProps();
 		end
-
-		if(widgetObj.type) then
-				if(widgetObj.enabled and string.match(widgetObj.type, obj.type)) then
-						widgetObj:Show();
-						local w, h = widgetObj:GetWidth(), widgetObj:GetHeight();
-						minWidth = _G.math.max(minWidth, (self:SafeGetLeft() - widgetObj:GetLeft()) + w + (widgetObj:GetRight() - self:SafeGetRight()));
-						-- Commenting this line out so widgets don't limit the min height.
-						-- minHeight = _G.math.max(minHeight, (self:SafeGetTop() - widgetObj:GetTop() - WindowParent:GetBottom()) + h + (widgetObj:GetBottom() - self:SafeGetBottom() - WindowParent:GetBottom()));
-				else
-						widgetObj:Hide()
-				end
-		end
+                if(widgetObj.type) then
+                        if(widgetObj.enabled and string.match(widgetObj.type, obj.type)) then
+                                widgetObj:Show();
+                                local w, h = widgetObj:GetWidth(), widgetObj:GetHeight();
+                                -- A widget's rectangle is nil until its
+                                -- anchor chain resolves (a suppressed pop-up
+                                -- window is created hidden and unpositioned);
+                                -- the window's own side is already
+                                -- Safe-wrapped.
+                                local wLeft, wRight = widgetObj:GetLeft(), widgetObj:GetRight();
+                                if(wLeft and wRight) then
+                                minWidth = _G.math.max(minWidth, (self:SafeGetLeft() - wLeft) + w + (wRight - self:SafeGetRight()));
+                                end
+                                -- Commenting this line out so widgets don't limit the min height.
+                                -- minHeight = _G.math.max(minHeight, (self:SafeGetTop() - widgetObj:GetTop() - WindowParent:GetBottom()) + h + (widgetObj:GetBottom() - self:SafeGetBottom() - WindowParent:GetBottom()));
+                        else
+                                widgetObj:Hide()
+                        end
+                end
 	end
-		if self.SetResizeBounds then -- WoW 10.0
-			self:SetResizeBounds(minWidth, minHeight);
-		else
-        	self:SetMinResize(minWidth, minHeight);
+        -- Never rewrite bounds or force geometry while the user is
+        -- mid-drag on the resize grip: it breaks the sizing operation's
+        -- reference point and the window runs away.
+        if(not self.isBeingSized) then
+                if self.SetResizeBounds then -- WoW 10.0
+                        self:SetResizeBounds(minWidth, minHeight);
+                else
+                        self:SetMinResize(minWidth, minHeight);
+                end
+                self:SetWidth(_G.math.max(minWidth, self:GetWidth()));
+                self:SetHeight(_G.math.max(minHeight, self:GetHeight()));
         end
-        self:SetWidth(_G.math.max(minWidth, self:GetWidth()));
-        self:SetHeight(_G.math.max(minHeight, self:GetHeight()));
+        -- Publish the computed floor: the Edit Mode sliders clamp to the
+        -- same bounds ad-hoc resizing enforces, which widgets can raise
+        -- well past the skin's static minimums.
+        editModeWindowMin = editModeWindowMin or {};
+        editModeWindowMin[self.type] = { width = minWidth, height = minHeight };
         self.initialized = true;
     end
 
@@ -1473,6 +1693,7 @@ end
 -- load object into it's default state.
 local function loadWindowDefaults(obj)
 	obj:Hide();
+        obj.everShown = nil;
         obj.age = _G.GetTime();
         obj.hasMoved = false;
 
@@ -1689,14 +1910,17 @@ function DestroyWindow(playerNameOrObject)
 end
 
 function ShowDemoWindow()
-        if(options.frame and options.frame:IsShown()) then
-                options.frame:Disable();
-                if(not WIM.DemoWindow) then
-                        WIM.DemoWindow = createWindow(L["Demo Window"], "demo");
-                end
-                WIM.DemoWindow:Show();
-                WIM.DemoWindow.demoSave = true;
+        local reopenSettings = false;
+        if(_G.SettingsPanel and _G.SettingsPanel:IsShown() and _G.HideUIPanel) then
+                _G.HideUIPanel(_G.SettingsPanel);
+                reopenSettings = true;
         end
+        if(not WIM.DemoWindow) then
+                WIM.DemoWindow = createWindow(L["Demo Window"], "demo");
+        end
+        WIM.DemoWindow:Show();
+        WIM.DemoWindow.demoSave = true;
+        WIM.DemoWindow.wimReopenSettings = reopenSettings;
 end
 
 
@@ -1982,6 +2206,13 @@ RegisterWidgetTrigger("close", "whisper,chat,w2w,demo", "OnClick", function(self
 	end);
 
 RegisterWidgetTrigger("close", "whisper,chat,w2w", "OnUpdate", function(self)
+                -- Themed windows swap their corner art through the
+                -- modifier watcher in Skinner.lua. This hover swap would
+                -- repaint the classic art files over it every frame.
+                if(self.parentWindow and self.parentWindow.wimChrome
+                        and self.parentWindow.wimChrome:IsShown()) then
+                        return;
+                end
                 local SelectedSkin = WIM:GetSelectedSkin();
 		if(GetMouseFocus() == self) then
 			if(IsShiftKeyDown() and self.curTextureIndex == 1) then
@@ -2087,6 +2318,21 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w,demo", "OnMouseUp", func
 
 --ItemRef Definitions
 local registeredItemRef = {};
+
+-- Handles WIM's registered custom link types (wim_url, filter notices,
+-- and so on) for any frame with hyperlinks. Returns true when a handler
+-- consumed the link. The message windows' handler and the History
+-- Viewer's chat pane both route through this.
+function DispatchItemRefHandler(link)
+    for cmd, fun in pairs(registeredItemRef) do
+        if(string.match(link, "^"..cmd..":")) then
+            fun(link);
+            return true;
+        end
+    end
+    return false;
+end
+
 function RegisterItemRefHandler(cmd, fun)
     registeredItemRef[cmd] = fun;
 end
@@ -2137,11 +2383,8 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 	end
 
 	-- registered ItemRef handlers
-	for cmd, fun in pairs(registeredItemRef) do
-		if(string.match(link, "^"..cmd..":")) then
-			fun(link);
-			return;
-		end
+	if(DispatchItemRefHandler(link)) then
+		return;
 	end
 
 	if t == 'player' then
@@ -2160,8 +2403,10 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkClick", fu
 
 	end
 
-	-- pass all other clicks to SetItemRef
-	_G.SetItemRef(link, text, button);
+	-- Pass all other clicks to SetItemRef. The frame argument matters:
+	-- the player context menu anchors to the clicked chat frame and
+	-- silently refuses to open without one.
+	_G.SetItemRef(link, text, button, self);
 end);
 --RegisterWidgetTrigger("chat_display", "whisper,chat,w2w","OnMessageScrollChanged", function(self) updateScrollBars(self:GetParent()); end);
 
@@ -2195,15 +2440,38 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkLeave", fu
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", function(self)
 		if(strsub(self:GetText(), 1, 1) == "/") then
-			EditBoxInFocus = nil;
-			_G.ChatFrame1EditBox:SetText(self:GetText());
-			if (_G.ChatFrameEditBoxBaseMixin and _G.ChatFrameEditBoxBaseMixin.SendText) then
-				_G.ChatFrameEditBoxBaseMixin.SendText(_G.ChatFrame1EditBox, 1);
+			-- Chat-type commands (/s, /e, /y ...) route through the
+			-- splitter: the default edit box sends one message and the
+			-- client drops everything past the length cap. Commands
+			-- that need a target or channel number keep the edit box.
+			local command, body = string.match(self:GetText(), "^(/%S+)%s+(.-)%s*$");
+			local chatType = command and body and body ~= ""
+				and _G.hash_ChatTypeInfoList
+				and _G.hash_ChatTypeInfoList[string.upper(command)];
+			if(chatType and chatType ~= "WHISPER" and chatType ~= "BN_WHISPER"
+					and chatType ~= "REPLY" and chatType ~= "CHANNEL"
+					and SendSplitMessage) then
+				if(not InChatMessagingLockdown()) then
+					SendSplitMessage("ALERT", "WIM", PreSendFilterText(body), chatType);
+					self:SetText("");
+				else
+					LockdownNotice();
+				end
 			else
-				_G.ChatEdit_SendText(_G.ChatFrame1EditBox, 1);
+				if(InChatMessagingLockdown()) then
+					LockdownNotice();
+					return;
+				end
+				EditBoxInFocus = nil;
+				_G.ChatFrame1EditBox:SetText(self:GetText());
+				if (_G.ChatFrameEditBoxBaseMixin and _G.ChatFrameEditBoxBaseMixin.SendText) then
+					_G.ChatFrameEditBoxBaseMixin.SendText(_G.ChatFrame1EditBox, 1);
+				else
+					_G.ChatEdit_SendText(_G.ChatFrame1EditBox, 1);
+				end
+				self:SetText("");
+				EditBoxInFocus = self;
 			end
-			self:SetText("");
-			EditBoxInFocus = self;
 		else
                         if(self:GetText() == "") then
 				self:Hide();
@@ -2219,6 +2487,10 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", func
 			self:Show();
                 end
 
+	end);
+
+RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnShow", function(self)
+		UpdateInputColor(self:GetParent());
 	end);
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEscapePressed", function(self)
@@ -2237,14 +2509,10 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnUpdate", function(s
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusGained", function(self)
                                 EditBoxInFocus = self;
-                                -- _G.ACTIVE_CHAT_EDIT_BOX = self; -- preserve linking abilities.
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusLost", function(self)
 								_EditBoxInFocus = EditBoxInFocus -- temporary reference
                                 EditBoxInFocus = nil;
-								-- if _G.ACTIVE_CHAT_EDIT_BOX == self then
-	                            --     _G.ACTIVE_CHAT_EDIT_BOX = nil;
-								-- end
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnMouseUp", function(self, button)
                                 libs.DropDownMenu.CloseDropDownMenus();
@@ -2265,15 +2533,14 @@ RegisterWidgetTrigger("msg_box", "whisper,w2w", "OnTabPressed", function(self)
                 		local whisperTarget = win.isBN and win.toonName or win.theUser
                 		local chatType = win.isBN and "BN_WHISPER" or "WHISPER"
                 		-- Lookup the next whisper target
-                		local nextWhisperTarget = (_G.ChatFrameUtil and _G.ChatFrameUtil.GetNextTellTarget or _G.ChatEdit_GetNextTellTarget)(whisperTarget,chatType)
+                		local ok, nextWhisperTarget = _G.pcall(_G.ChatFrameUtil and _G.ChatFrameUtil.GetNextTellTarget or _G.ChatEdit_GetNextTellTarget, whisperTarget, chatType)
 
-                		if nextWhisperTarget ~= "" then
+                		if ok and nextWhisperTarget and nextWhisperTarget ~= "" and not HasAnySecretValues(nextWhisperTarget) then
                 			win = GetWhisperWindowByUser(nextWhisperTarget);
                 			chatType = win.isBN and "BN_WHISPER" or "WHISPER"
                 			win:Hide();
                 			win:Pop(true); -- force popup
                 			win.widgets.msg_box:SetFocus();
-                			(_G.ChatFrameUtil and _G.ChatFrameUtil.SetLastTellTarget or _G.ChatEdit_SetLastTellTarget)(nextWhisperTarget,chatType);
                 		end
                 end
 	end);
@@ -2355,6 +2622,9 @@ escapeFrame.Hide = function(self)
                 end
                 -- lets do some checks first shall we?
                 local stack = _G.debugstack(1);
+                if(IsSecretValue(stack)) then
+                                return;
+                end
 		if(stack:match("TOGGLEWORLDMAP")) then
 				-- we do not want to close the windows.
                                 return;

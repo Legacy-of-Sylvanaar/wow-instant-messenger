@@ -1,0 +1,8 @@
+## Interface: 120100
+## Title: WIM Modern Skin
+## Notes: WIM Skin
+## Author: Avraelore (Moon Guard)
+## X-Category: MYADDONS_CATEGORY_CHAT
+## Dependencies: WIM
+
+skin.lua

@@ -1,7 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 
+    <Script file="Migrate.lua" />
     <Script file="SlashHandler.lua" />
     <Script file="ToolBox.lua" />
+    <Script file="DebugTrace.lua" />
     <Script file="ContextMenu.lua" />
     <Script file="Constants.lua" />
     <Script file="StateHandler.lua" />
@@ -14,8 +16,10 @@
     <Script file="Compression.lua" />
     <Script file="Clear.lua" />
     <Script file="OpCodes.lua" />
+    <Script file="EditMode.lua" />
 
     <Script file="Options\Options.lua" />
-    <Script file="Options\OptionsTookKit.lua" />
-    <Script file="Options\CoreOptions.lua" />
+    <Script file="Options\ModernSettings.lua" />
+    <Include file="Options\ModernSettings.xml" />
+    <Script file="Options\ModernOptions.lua" />
 </Ui>

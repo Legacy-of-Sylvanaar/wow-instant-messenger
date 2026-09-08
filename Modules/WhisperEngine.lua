@@ -30,6 +30,7 @@ local playerRealm = GetRealmName();
 local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
 local FlashClientIcon = FlashClientIcon;
 local ChatFrameUtil = ChatFrameUtil;
+local InCombatLockdown = InCombatLockdown;
 
 -- set name space
 setfenv(1, WIM);
@@ -43,6 +44,7 @@ local WhisperEngine = CreateModule("WhisperEngine", true);
 db_defaults.pop_rules.whisper = {
         --pop-up rule sets based off of your location
         resting = {
+            custom = true,
             onSend = true,
             onReceive = true,
             supress = true,
@@ -50,6 +52,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = true,
         },
         combat = {
+            custom = true,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -57,6 +60,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = false,
         },
         pvp = {
+            custom = false,
             onSend = true,
             onReceive = true,
             supress = true,
@@ -64,6 +68,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = false,
         },
         arena = {
+            custom = true,
             onSend = false,
             onReceive = false,
             supress = false,
@@ -71,6 +76,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = false,
         },
         party = {
+            custom = false,
             onSend = true,
             onReceive = true,
             supress = true,
@@ -78,6 +84,7 @@ db_defaults.pop_rules.whisper = {
             keepfocus = false,
         },
         raid = {
+            custom = false,
             onSend = true,
             onReceive = true,
             supress = true,
@@ -91,7 +98,6 @@ db_defaults.pop_rules.whisper = {
             autofocus = false,
             keepfocus = false,
         },
-        alwaysOther = false,
         intercept = true,
 		obeyAutoFocusRules = false,
 		replyIncludesSent = false,
@@ -166,6 +172,22 @@ local CHAT_EVENTS = {
 function WhisperEngine:OnEnableWIM()
 	for i = 1, #CHAT_EVENTS do
 		WhisperEngine:RegisterEvent(CHAT_EVENTS[i]);
+	end
+	_G.pcall(WhisperEngine.RegisterEvent, WhisperEngine, "PLAYER_REPORT_SUBMITTED");
+end
+
+function WhisperEngine:PLAYER_REPORT_SUBMITTED(guid)
+	if HasAnySecretValues(guid) or _G.type(guid) ~= "string" then
+		return;
+	end
+	local ok, _, _, _, _, _, name, realm = _G.pcall(_G.GetPlayerInfoByGUID, guid);
+	if not ok or _G.type(name) ~= "string" or name == "" then
+		return;
+	end
+	local fullName = (_G.type(realm) == "string" and realm ~= "") and (name.."-"..realm) or name;
+	local win = Windows[safeName(fullName)] or Windows[safeName(name)];
+	if win and win.widgets and win.widgets.chat_display and win.widgets.chat_display.Clear then
+		win.widgets.chat_display:Clear();
 	end
 end
 
@@ -340,27 +362,83 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 		return "\001\002"..paddString(#splitMessageLinks, "0", string.len(theLink)-4).."\003\004";
 	end);
 
+	-- A word longer than the limit cannot fit in any chunk; the
+	-- reconstruction below never breaks a word, so such a word went out
+	-- as one oversized message. Break it at the limit so each slice is
+	-- sent as its own message. Links are already reduced to short
+	-- placeholders above and stay whole.
+	theMsg = string.gsub(theMsg, "%S+", function(word)
+		if(string.len(word) <= messageLimit) then
+			return nil;
+		end
+		local parts = {};
+		for s=1, string.len(word), messageLimit do
+			table.insert(parts, string.sub(word, s, s + messageLimit - 1));
+		end
+		return table.concat(parts, " ");
+	end);
+
 	-- split up each word.
 	SplitToTable(theMsg, "%s", splitMessage);
 
 	--reconstruct message into chunks of no more than 255 characters.
+	local chunks = {};
 	local chunk = "";
 	for i=1, #splitMessage + 1 do
-		if(splitMessage[i] and string.len(chunk) + string.len(splitMessage[i]) < messageLimit) then
+		-- The chunk carries a trailing space per word, so equality means
+		-- the content fits the limit exactly once that space is trimmed.
+		if(splitMessage[i] and string.len(chunk) + string.len(splitMessage[i]) <= messageLimit) then
 			chunk = chunk..splitMessage[i].." ";
 		else
+			chunk = string.gsub(chunk, "%s+$", "");
 			-- reinsert links of necessary
 			chunk = string.gsub(chunk, "\001\002%d+\003\004", function(link)
 				local index = _G.tonumber(string.match(link, "(%d+)"));
 				return splitMessageLinks[index] or link;
 			end);
-
-			if(isBN) then
-				(_G.C_BattleNet and _G.C_BattleNet.SendWhisper or _G.BNSendWhisper)(Windows[safeName(to)].bn.id, chunk);
-			else
-                (_G.C_ChatInfo and _G.C_ChatInfo.SendChatMessage or _G.SendChatMessage)(chunk, CHANNEL, EXTRA, to)
+			if(chunk ~= "") then
+				table.insert(chunks, chunk);
 			end
 			chunk = (splitMessage[i] or "").." ";
+		end
+	end
+
+	local function send(text)
+		if InChatMessagingLockdown() then
+			LockdownNotice();
+			return;
+		end
+
+		if(isBN) then
+			(_G.C_BattleNet and _G.C_BattleNet.SendWhisper or _G.BNSendWhisper)(Windows[safeName(to)].bn.id, text);
+		else
+			(_G.C_ChatInfo and _G.C_ChatInfo.SendChatMessage or _G.SendChatMessage)(text, CHANNEL, EXTRA, to);
+		end
+	end
+
+	-- A long burst can trip the server's chat throttle, so messages
+	-- past the second go out paced. Two kinds of send must stay
+	-- synchronous: with Gopher (Emote Splitter) loaded its own queue
+	-- paces and confirms everything, and the protected types (say and
+	-- yell in the open world, channels) are only accepted inside the
+	-- keypress that sent them -- a deferred send would be dropped, a
+	-- synchronous burst goes through.
+	local protected = (((CHANNEL == "SAY" or CHANNEL == "YELL")
+		and not _G.IsInInstance()) or CHANNEL == "CHANNEL");
+	if(_G.LibGopher or protected) then
+		for i=1, #chunks do
+			send(chunks[i]);
+		end
+	else
+		for i=1, #chunks do
+			if(i <= 2) then
+				send(chunks[i]);
+			else
+				local text = chunks[i];
+				_G.C_Timer.After(0.25 * (i - 2), function()
+					send(text);
+				end);
+			end
 		end
 	end
 
@@ -380,6 +458,7 @@ RegisterWidgetTrigger("msg_box", "whisper", "OnEnterPressed", function(self)
 
 		-- do not send if in chat messaging lockdown (12.0.0+)
 		if InChatMessagingLockdown() then
+			LockdownNotice();
 			return;
 		end
 
@@ -436,7 +515,9 @@ function GetLastWhisperWindow (sent)
 		if win then
 			win.widgets.msg_box.setText = 1;
 			win:Pop(true); -- force popup
-			win.widgets.msg_box:SetFocus();
+			if (not InCombatLockdown()) then
+				win.widgets.msg_box:SetFocus();
+			end
 		end
 		return win;
 	end
@@ -466,10 +547,13 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 
 		if (not frame._isWIM and not ignore and not block) then
 			-- execute appropriate supression rules
-			local curState = curState;
-			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-			if(WIM.db.pop_rules.whisper[curState].supress) then
-				return true
+			if(GetPopRuleSet("whisper").supress) then
+				local _, senderName = ...;
+				local user = FormatUserName(senderName);
+				local win = user and user ~= "" and Windows[safeName(user)];
+				if(win and win.everShown) then
+					return true
+				end
 			end
 		elseif (frame._isWIM and ignore or block) then
 			return true
@@ -479,7 +563,7 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 	elseif (event == "CHAT_MSG_SYSTEM") then
 		local msg = ...;
 
-		local curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
+		local ruleSet = GetPopRuleSet("whisper");
 
 		for check, pattern in pairs(CMS_PATTERNS) do
 			local user = FormatUserName(string.match(msg, pattern));
@@ -490,7 +574,7 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 					-- error message
 					if 'PLAYER_NOT_FOUND' == check or 'CHAT_IGNORED' == check then
 						if (not frame._isWIM) then
-							if(win:IsShown() and db.pop_rules.whisper[curState].supress or not win.msgSent) then
+							if(win:IsShown() and ruleSet.supress or not win.msgSent) then
 								return true;
 							end
 						else
@@ -503,7 +587,7 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 					-- system message
 					elseif 'FRIEND_ONLINE' == check or 'FRIEND_OFFLINE' == check then
 						if (not frame._isWIM) then
-							if(win:IsShown() and db.pop_rules.whisper[curState].supress) then
+							if(win:IsShown() and ruleSet.supress) then
 								return true;
 							end
 						else
@@ -800,8 +884,6 @@ function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(...)
 	local online = process == "FRIEND_ONLINE"
 	local offline = process == "FRIEND_OFFLINE"
 
-	local curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-
 	local _, accName = GetBNGetFriendInfoByID(bnSenderID)
 	local win = Windows[safeName(accName)]
 	if win then
@@ -817,7 +899,7 @@ end
 --------------------------------------
 
 -- hook SendChatMessage to track sent messages
-hooksecurefunc(_G.C_ChatInfo or _G, "SendChatMessage", function(...)
+hooksecurefunc((_G.C_ChatInfo and _G.C_ChatInfo.SendChatMessage) and _G.C_ChatInfo or _G, "SendChatMessage", function(...)
 	if HasAnySecretValues(...) then
 		return;
 	end
@@ -848,11 +930,11 @@ local function editBoxUpdateHeader(self, internalCall)
 	if (chatType == "WHISPER" or chatType == "BN_WHISPER") then
 		local target = tellTarget and _G.Ambiguate(tellTarget, "none");
 
-		-- handle the whisper interception
-		if (not InChatMessagingLockdown() and target and db and db.enabled) then
-			local curState = curState;
-			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+		-- Handle the whisper interception. Skipped during combat:
+		-- SetAttribute and ChatEdit_UpdateHeader on Blizzard's secure
+		-- EditBox are forbidden then.
+		if (not InChatMessagingLockdown() and not InCombatLockdown() and target and db and db.enabled) then
+			if (db.pop_rules.whisper.intercept) then
 
 				local bNetID;
 				if (chatType == "BN_WHISPER" or target:find("^|K")) then
@@ -887,7 +969,7 @@ end
 
 -- ReplyTell and ReplyTell2 hooking
 local function replyTellHook (reTell, msg)
-	if (not InChatMessagingLockdown() and db and db.enabled) then
+	if (not InChatMessagingLockdown() and not InCombatLockdown() and db and db.enabled) then
 		local _tellTarget, _chatType = unpack(reTell and lastToldTarget or lastTellTarget or {});
 
 		if (HasAnySecretValues(_tellTarget, _chatType)) then
@@ -897,23 +979,10 @@ local function replyTellHook (reTell, msg)
 		local target, chatType = GetLastWhisperTarget(reTell);
 
 		if target and chatType then
-			local curState = curState;
-			curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-			if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+			if (db.pop_rules.whisper.intercept) then
 				if GetLastWhisperWindow(reTell) and _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
 					(_G.ChatFrameEditBoxMixin and _G.ChatFrameEditBoxMixin.OnEscapePressed or _G.ChatEdit_OnEscapePressed)(_G.LAST_ACTIVE_CHAT_EDIT_BOX)
 				end
-
-			-- have default UI handle the reply
-			elseif _G.LAST_ACTIVE_CHAT_EDIT_BOX and _G.LAST_ACTIVE_CHAT_EDIT_BOX.widgetName ~= "msg_box" then
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("chatType", chatType);
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX:SetAttribute("tellTarget", target);
-
-				(ChatFrameUtil and ChatFrameUtil.ActivateChat or _G.ChatEdit_ActivateChat)(_G.LAST_ACTIVE_CHAT_EDIT_BOX);
-
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX.text = msg or "";
-				_G.LAST_ACTIVE_CHAT_EDIT_BOX.setText = 1;
-				(_G.LAST_ACTIVE_CHAT_EDIT_BOX.UpdateHeader or _G.ChatEdit_UpdateHeader)(_G.LAST_ACTIVE_CHAT_EDIT_BOX, true);
 			end
 		end
 	end
@@ -921,12 +990,9 @@ end
 
 local function sendBNetTell (tokenizedName)
 	-- used to close the editbox that is open.
-	if not InChatMessagingLockdown() and db and db.enabled then
+	if not InChatMessagingLockdown() and not InCombatLockdown() and db and db.enabled then
 
-		local curState = curState;
-		curState = db.pop_rules.whisper.alwaysOther and "other" or curState;
-
-		if (db.pop_rules.whisper.intercept and db.pop_rules.whisper[curState].onSend) then
+		if (db.pop_rules.whisper.intercept) then
 			local bNetID = _G.BNet_GetBNetIDAccount(tokenizedName);
 			local win = getWhisperWindowByUser(tokenizedName, true, bNetID);
 
@@ -968,9 +1034,6 @@ if ChatFrameUtil and ChatFrameUtil.ActivateChat then
 	end);
 
 	hooksecurefunc(_G.ChatFrameUtil, "SendBNetTell", sendBNetTell);
-
-	-- by not allowing Blizzard to keep its own log of lastTellTargets, it prevents secret issues.
-	_G.ChatFrameUtil.SetLastTellTarget = function (target, chatType) end
 else
 	-- build list of reply commands
 	local replyCommands = {};
@@ -1001,7 +1064,6 @@ else
 	)
 
 	hooksecurefunc(_G, "ChatFrame_SendBNetTell", sendBNetTell);
-	_G.ChatEdit_SetLastTellTarget = function (target, chatType) end
 end
 
 

@@ -1,0 +1,94 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+
+    <!-- Custom element rows for the native Settings vertical layout.
+         Heights double as the rows' extents in the settings scroll list.
+         The shared mixin (defined in ModernSettings.lua) forwards Init to
+         the per-row data table. -->
+
+    <!-- Grouped color panel (the Accessibility > Colors construction);
+         the real height rides in on the initializer's extent. -->
+    <Frame name="WIM3SettingsColorPanelTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="180"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="WIM3SettingsPreviewTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="96"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="WIM3SettingsFontBrowserTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="310"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="WIM3SettingsFilterListTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="250"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="WIM3SettingsChannelListTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="216"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="WIM3SettingsChatTypeListTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="308"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="WIM3SettingsBugReportTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="104"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="WIM3SettingsCreditsTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="300"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="WIM3SettingsNoteTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="64"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <Frame name="WIM3SettingsTabStripTemplate" virtual="true" mixin="WIM3SettingsElementMixin">
+        <Size y="36"/>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+        </Scripts>
+    </Frame>
+
+    <!-- Collapsible section header: the game's expandable-section base
+         template requires a derived mixin to supply CalculateHeight and
+         OnExpandedChanged (the base errors on click without them). -->
+    <EventFrame name="WIM3SettingsExpandableSectionTemplate" inherits="SettingsExpandableSectionTemplate" mixin="WIM3SettingsExpandableSectionMixin" virtual="true"/>
+
+    <!-- Sound dropdown row: the stock dropdown control plus a speaker
+         button that previews the selected sound. Pooled frames only
+         carry methods baked into their template, so the button rides in
+         a derived template the same way the expandable sections do. -->
+    <Frame name="WIM3SettingsSoundDropdownControlTemplate" inherits="SettingsDropdownControlTemplate" mixin="WIM3SettingsSoundDropdownControlMixin" virtual="true"/>
+
+    <!-- Sound row: the stock checkbox-plus-dropdown control (the Lock
+         Action Bars construction) plus the same speaker button. -->
+    <Frame name="WIM3SettingsSoundRowTemplate" inherits="SettingsCheckboxDropdownControlTemplate" mixin="WIM3SettingsSoundRowMixin" virtual="true"/>
+</Ui>

@@ -14,6 +14,9 @@ local function formatDetails(window, guild, level, race, class)
 end
 
 
+-- History Viewer header accents match the standard gold UI label color.
+local hvHeaderR, hvHeaderG, hvHeaderB = GameFontNormal:GetTextColor();
+
 --Default window skin
 local WIM_ClassicSkin = {
     title = "WIM Classic",
@@ -258,6 +261,7 @@ local WIM_ClassicSkin = {
                         guild = "Interface\\Icons\\INV_Shirt_GuildTabard_01",
                         friend = "Interface\\Icons\\ACHIEVEMENT_REPUTATION_01",
                         ignore = "Interface\\Icons\\Spell_Holy_Silence",
+                        rpprofile = "Interface\\Icons\\INV_Misc_Book_09",
                     }
                 }
             }
@@ -276,7 +280,7 @@ local WIM_ClassicSkin = {
                 NormalTexture = "Interface\\MoneyFrame\\Arrow-Left-Up",
                 PushedTexture = "Interface\\MoneyFrame\\Arrow-Left-Down",
                 DisabledTexture = "Interface\\MoneyFrame\\Arrow-Left-Disabled",
-                HighlightTexture = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Default\\TabArrowLeft",
+                HighlightTexture = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Default\\tab_left_arrow",
                 HighlightAlphaMode = "ADD",
                 height = 20,
                 width = 20,
@@ -285,7 +289,7 @@ local WIM_ClassicSkin = {
                 NormalTexture = "Interface\\MoneyFrame\\Arrow-Right-Up",
                 PushedTexture = "Interface\\MoneyFrame\\Arrow-Right-Down",
                 DisabledTexture = "Interface\\MoneyFrame\\Arrow-Right-Disabled",
-                HighlightTexture = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Default\\TabArrowRight",
+                HighlightTexture = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Default\\tab_right_arrow",
                 HighlightAlphaMode = "ADD",
                 height = 20,
                 width = 20,
@@ -296,11 +300,11 @@ local WIM_ClassicSkin = {
             {"BOTTOMLEFT", "window", "TOPLEFT", 38, -4},
             {"BOTTOMRIGHT", "window", "TOPRIGHT", -20, -4}
         },
+        -- Tab labels track the font object exactly (size and flags
+        -- included), matching the FontString template they are created
+        -- from; skins may override any of the font properties here.
         text = {
             font = "ChatFontNormal",
-            font_color = {1, 1, 1},
-            font_height = 12,
-            font_flags = ""
         },
         vertical = false,
     },
@@ -321,6 +325,49 @@ local WIM_ClassicSkin = {
 			font = "FriendsFont_Normal",
 			font_height = 12,
 			font_flags = ""
+		}
+	},
+	history_viewer = {
+		backdrop = {
+			bgFile = "Interface\\AddOns\\"..WIM.addonTocName.."\\Sources\\Options\\Textures\\Frame_Background",
+			edgeFile = "Interface\\AddOns\\"..WIM.addonTocName.."\\Sources\\Options\\Textures\\Frame",
+			tile = true, tileSize = 64, edgeSize = 64,
+			insets = { left = 64, right = 64, top = 64, bottom = 64 }
+		},
+		title = {
+			font = "ChatFontNormal",
+			font_height = 16,
+			font_flags = "",
+			font_color = {1, 1, 1},
+			points = {
+				{"TOPLEFT", "window", "TOPLEFT", 50, -20}
+			}
+		},
+		-- Filters header and search label.
+		header = {
+			font = "ChatFontNormal",
+			font_color = { hvHeaderR, hvHeaderG, hvHeaderB }
+		},
+		-- Thin separator lines between the panes.
+		divider_color = {1, 1, 1, .25},
+		-- Wider bands: filters header strip, search bar, view tabs.
+		strip_color = {1, 1, 1, .25},
+		-- Conversation and date list rows.
+		row = {
+			font = "ChatFontNormal",
+			font_color = {1, 1, 1},
+			highlight = {
+				texture = "Interface\\QuestFrame\\UI-QuestLogTitleHighlight",
+				alpha_mode = "ADD",
+				color = {.196, .388, .5}
+			}
+		},
+		-- Message display area, text export box and search input.
+		content = {
+			font = "ChatFontNormal"
+		},
+		tab = {
+			font = "ChatFontSmall"
 		}
 	},
     emoticons = {

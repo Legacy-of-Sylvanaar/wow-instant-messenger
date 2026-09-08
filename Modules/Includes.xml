@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
+    <Script file="BuildInfo.lua"/>
     <Script file="WhisperEngine.lua"/>
     <Script file="ChatEngine.lua"/>
     <Script file="MinimapIcon.lua"/>
@@ -17,7 +18,8 @@
     <Script file="Expose.lua"/>
     <Script file="ClickControl.lua"/>
     <Script file="OffScreenTracker.lua"/>
-    <Script file="alias.lua"/>
     <Script file="AddonCompartment.lua"/>
+    <Script file="RPProfiles.lua"/>
+    <Script file="UISnapshot.lua"/>
 
 </Ui>

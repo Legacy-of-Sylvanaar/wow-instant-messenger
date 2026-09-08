@@ -66,6 +66,9 @@ local function applySkinToTab(tab, skinTable)
         hlt:ClearAllPoints();
         hlt:SetAllPoints();
     end
+    if(skinTable.text) then
+        SetWidgetFont(tab.text, skinTable.text);
+    end
 end
 
 -- update tabStip with propper skin layout.
