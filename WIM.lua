@@ -17,7 +17,7 @@ setfenv(1, WIM);
 
 -- Core information
 addonTocName = "WIM";
-version = "3.18.0";
+version = "@project-version@";
 beta = false; -- flags current version as beta.
 debug = false; -- turn debugging on and off. True whenever debugLevel >= 1.
 debugLevel = 0; -- 0 off, 1 normal, 2 verbose event tracing (Sources/DebugTrace.lua).
