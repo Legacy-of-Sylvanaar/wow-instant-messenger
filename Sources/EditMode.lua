@@ -159,6 +159,10 @@ end
 
 -- A slider row the way the game's own system dialog builds them; nil when
 -- the template is unavailable (the dialog then simply has no sliders).
+local function roundedValue(value)
+    return math.floor(value + 0.5);
+end
+
 local function makeSliderRow(container, label, minValue, maxValue, formatter, onChanged)
     local ok, row = pcall(CreateFrame, "Frame", nil, container,
         "EditModeSettingSliderTemplate");
@@ -194,7 +198,7 @@ local function makeSliderRow(container, label, minValue, maxValue, formatter, on
                 [_G.MinimalSliderWithSteppersMixin.Label.Right] =
                     _G.CreateMinimalSliderFormatter(
                         _G.MinimalSliderWithSteppersMixin.Label.Right,
-                        self.wimFormatter),
+                        self.wimFormatter or roundedValue),
             };
         end
         local minNow = self.wimMin;
@@ -615,9 +619,9 @@ local function buildWindowEntry()
     end
 
     addEntrySliders(entry, {
-        { key = "width",  label = L["Default Width"], max = 800,
+        { key = "width",  label = L["Width"],  max = 800,
           min = function() return (windowMinSize()); end },
-        { key = "height", label = L["Default Height"], max = 600,
+        { key = "height", label = L["Height"], max = 600,
           min = function() local _, minHeight = windowMinSize(); return minHeight; end },
         { key = "scale",  label = L["Window Scale"],   min = 10,  max = 400,
           formatter = function(value) return value .. "%"; end },
@@ -666,7 +670,7 @@ local function placedSize(spec)
     end
     local live = _G[spec.global];
     if (live) then
-        return live:GetWidth(), live:GetHeight();
+        return math.floor(live:GetWidth() + 0.5), math.floor(live:GetHeight() + 0.5);
     end
     return spec.stockWidth, spec.stockHeight;
 end

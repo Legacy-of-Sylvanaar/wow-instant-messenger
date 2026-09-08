@@ -1459,9 +1459,9 @@ RegisterModernPage(function(category, ui)
             ui.Button(layout, L["Set Window Spawn Location"], L["Set Window Spawn Location"],
                 function() ShowDemoWindow(); end,
                 L["Opens a placement window; drag it to where new windows should appear, then close it to save the spot."]);
-            ui.Slider(cat, L["Default Width"], 333, 150, 800, 1,
+            ui.Slider(cat, L["Width"], 333, 150, 800, 1,
                 db.winSize, "width", nil, props, px);
-            ui.Slider(cat, L["Default Height"], 245, 80, 600, 1,
+            ui.Slider(cat, L["Height"], 245, 80, 600, 1,
                 db.winSize, "height", nil, props, px);
             ui.Slider(cat, L["Window Scale"], 100, 10, 400, 1,
                 db.winSize, "scale", nil, props, pct);

@@ -210,8 +210,6 @@ WIM.AddLocale("koKR", {
     ["Credits"] = "제작자 명단",
     ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "이것은 이모티콘과 URL이 모두 포함된 긴 메시지입니다 8). WIM의 홈페이지는 www.WIMAddon.com입니다.",
     ["Preview"] = "미리보기",
-    ["Default Width"] = "기본 너비",
-    ["Default Height"] = "기본 높이",
     ["Window Scale"] = "창 크기 비율",
     ["Set Window Spawn Location"] = "창 생성 위치 설정",
     ["Up"] = "위",

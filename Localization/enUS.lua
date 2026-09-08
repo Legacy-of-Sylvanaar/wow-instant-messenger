@@ -220,8 +220,6 @@ WIM.AddLocale("enUS", {
 	-- Shorter display text than the key: the full key overflowed the options
 	-- panel's right edge (Window Behavior). The key stays untouched so every
 	-- other locale keeps its translation.
-    ["Default Width"] = true,
-    ["Default Height"] = true,
     ["Window Scale"] = true,
     ["Set Window Spawn Location"] = true,
     ["Up"] = true,

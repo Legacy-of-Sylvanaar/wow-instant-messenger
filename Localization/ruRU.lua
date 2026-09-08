@@ -211,8 +211,6 @@ WIM.AddLocale("ruRU", {
 	["Credits"] = "Титры",
 	["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "Это длинное сообщение, которое содержит и смайлики и адреса/ссылки 8). Домашняя страничка WIM'а: www.WIMAddon.com.",
 	["Preview"] = "Пред просмотр",
-	["Default Width"] = "Стандартная ширина",
-	["Default Height"] = "Стандартная высота",
 	["Window Scale"] = "Масштаб окна",
 	["Set Window Spawn Location"] = "Установка места появления окна",
 	["Up"] = "Вверх",

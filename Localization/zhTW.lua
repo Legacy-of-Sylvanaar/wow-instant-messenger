@@ -211,8 +211,6 @@ WIM.AddLocale("zhTW", {
     ["Credits"] = "榮譽",
     ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "這一段很長的訊息是給你觀看設定後的顯示效果用的。 其中包含網址連接與心情符號 8)。 我們的網址是 www.WIMAddon.com",
     ["Preview"] = "預覽",
-    ["Default Width"] = "預設寬度",
-    ["Default Height"] = "預設高度",
     ["Window Scale"] = "視窗縮放",
     ["Set Window Spawn Location"] = "設定視窗出現位置",
     ["Up"] = "上",

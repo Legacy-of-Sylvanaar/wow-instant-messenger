@@ -209,8 +209,6 @@ WIM.AddLocale("ptBR", {
     ["Credits"] = "Créditos",
     ["This is a long message which contains both emoticons and urls 8). WIM's home is www.WIMAddon.com."] = "Esta é uma mensagem longa que contém emoticons e URLs 8). A página do WIM é www.WIMAddon.com.",
     ["Preview"] = "Previsualização",
-    ["Default Width"] = "Largura padrão",
-    ["Default Height"] = "Altura padrão",
     ["Window Scale"] = "Escala da janela",
     ["Set Window Spawn Location"] = "Definir o local do surgimento da janela",
     ["Up"] = "Cima",
