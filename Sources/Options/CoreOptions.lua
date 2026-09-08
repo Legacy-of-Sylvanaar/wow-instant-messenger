@@ -36,11 +36,15 @@ local function General_Main()
     frame.welcome.cb2 = frame.welcome:CreateCheckButton(L["Display Minimap Icon"], WIM.modules.MinimapIcon, "enabled", nil, function(self, button) EnableModule("MinimapIcon", self:GetChecked()); end);
     frame.welcome.cb2:CreateCheckButton(L["Unlock from Minimap"], db.minimap, "free", nil, function(self, button) modules.MinimapIcon:OnEnable() end);
     frame.welcome.cb2:CreateCheckButton(L["<Right-Click> to show unread messages."], db.minimap, "rightClickNew");
+    -- Persistent History: list recent conversations from saved history in the Whispers menu.
+    local function refreshMenu() if(WIM.Menu) then WIM.Menu:Refresh(); end end
+    frame.welcome.cb2.recent = frame.welcome.cb2:CreateCheckButton(L["Show recent whispers from history."], db.minimap.recent, "enabled", nil, refreshMenu);
+    frame.welcome.cb2.recent:CreateCheckButton(L["Include whispers from all my characters."], db.minimap.recent, "accountWide", nil, refreshMenu);
 
-	frame.welcome.nextOffSetY = -75;
+	frame.welcome.nextOffSetY = -130;
 
 	if _G.AddonCompartmentFrame then
-		frame.welcome.nextOffSetY = -60;
+		frame.welcome.nextOffSetY = -115;
 		frame.welcome.ac = frame.welcome:CreateCheckButton(L["Display Addon Compartment Icon"], WIM.modules.AddonCompartment, "enabled", nil, function(self, button) EnableModule("AddonCompartment", self:GetChecked()); end);
 		frame.welcome.nextOffSetY = -25;
 	end

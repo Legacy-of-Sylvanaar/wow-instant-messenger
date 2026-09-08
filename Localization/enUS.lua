@@ -333,6 +333,8 @@ WIM.AddLocale("enUS", {
 	["Dialog"] = ENABLE_DIALOG,
 	["Tooltip"] = true,
     ["Unlock from Minimap"] = true,
+    ["Show recent whispers from history."] = true,
+    ["Include whispers from all my characters."] = true,
 	["Press <Tab> to advance to next tell target."] = true,
 	["Force sounds when game sound is disabled."] = true,
     ["Colorize names."] = true,
