@@ -26,7 +26,7 @@ jobs:
         uses: BigWigsMods/packager@master
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/alpha' }}
         with:
-          args: -S
+          args: -S -n "{package-name}-{project-date-integer}-{project-abbreviated-hash}{nolib}{classic}:{project-date-integer}-{project-abbreviated-hash}{classic}{nolib}"
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
