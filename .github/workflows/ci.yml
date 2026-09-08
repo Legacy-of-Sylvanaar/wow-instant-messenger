@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - master
+      - alpha
     tags:
       - "*"
   pull_request:
     branches:
       - master
+      - alpha
 
 jobs:
   build:
