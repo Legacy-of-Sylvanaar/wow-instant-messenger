@@ -2,15 +2,11 @@ name: CI
 
 on:
   push:
-    branches:
-      - master
-      - alpha
+    branches: [alpha]
     tags:
       - "*"
   pull_request:
-    branches:
-      - master
-      - alpha
+    branches: [alpha]
 
 jobs:
   build:
@@ -26,9 +22,20 @@ jobs:
         with:
           args: "--no-color -q"
 
-      - name: Create Package
+      - name: Create Alpha Package
         uses: BigWigsMods/packager@master
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/alpha' }}
+        with:
+          args: -S
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+          WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+
+      - name: Create Beta or Release Package
+        uses: BigWigsMods/packager@master
+        if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
         with:
           args: -S
         env:
