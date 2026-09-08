@@ -576,7 +576,7 @@ WIM.AddLocale("enUS", {
     ["Hidden-Windows Indicator"] = true,
     ["Hide During Combat"] = true,
     ["Hide windows during combat and restore them after."] = true,
-    ["Hides these messages from the game's chat frame so they appear only in WIM. Per-type and per-channel 'Never Suppress' exceptions on the Conversations pages win. A message is never hidden while its WIM window has not yet been shown."] = true,
+    ["Hides these messages from the game's chat frame so they appear only in WIM. Per-type and per-channel 'Never Suppress' exceptions on the Conversations pages win. A message is not hidden when no WIM window would show it."] = true,
     ["Hiding"] = true,
     ["Hiding waits until you finish typing your message."] = true,
     ["History Preview Received"] = true,

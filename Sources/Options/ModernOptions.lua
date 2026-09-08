@@ -76,7 +76,7 @@ local situationRules = {
     { key = "keepfocus", label = L["Keep Focus"],
       tip = L["Keeps the keyboard focus in the input box after sending a message."] },
     { key = "supress", label = L["Show Only in WIM"],
-      tip = L["Hides these messages from the game's chat frame so they appear only in WIM. Per-type and per-channel 'Never Suppress' exceptions on the Conversations pages win. A message is never hidden while its WIM window has not yet been shown."] },
+      tip = L["Hides these messages from the game's chat frame so they appear only in WIM. Per-type and per-channel 'Never Suppress' exceptions on the Conversations pages win. A message is not hidden when no WIM window would show it."] },
 };
 
 local situationHolders = {};

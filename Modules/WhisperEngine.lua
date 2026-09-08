@@ -229,6 +229,10 @@ function WhisperEngine:OnDisable()
 	end
 end
 
+local function realmKey(realm)
+	return string.lower((string.gsub(realm, "[%s%-]", "")));
+end
+
 local function safeName(user)
 	-- nil check. For some reason, events get modified by other addons and return nil for user.
 	if _G.type(user) ~= "string" or user == "" then
@@ -238,7 +242,7 @@ local function safeName(user)
 	-- check if cross realm or if realm is included and the same as player, then strip realm
 	if string.find(user or "", "-") then
 		local player, realm = user:match("^(.-)-(.-)$");
-		if string.lower(realm) == string.lower(env.realm) then
+		if realm and env.realm and realmKey(realm) == realmKey(env.realm) then
 			user = player;
 		end
 	end
@@ -549,9 +553,8 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 			-- execute appropriate supression rules
 			if(GetPopRuleSet("whisper").supress) then
 				local _, senderName = ...;
-				local user = FormatUserName(senderName);
-				local win = user and user ~= "" and Windows[safeName(user)];
-				if(win and win.everShown) then
+				local win = Windows[safeName(senderName)];
+				if(WindowWillShow("whisper", win)) then
 					return true
 				end
 			end

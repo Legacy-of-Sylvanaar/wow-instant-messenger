@@ -1515,6 +1515,14 @@ function GetPopRuleSet(winType, state)
     return set;
 end
 
+function WindowWillShow(winType, win, neverPop)
+    if (win and win.everShown) then
+        return true;
+    end
+    local rules = GetPopRuleSet(winType);
+    return (rules and rules.onReceive and not neverPop) and true or false;
+end
+
 local lastLockdownNotice = 0;
 function LockdownNotice()
 	local now = _G.GetTime();

@@ -402,7 +402,7 @@ function Guild.ChatMessageEventFilter (frame, event, ...)
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.guild.neverSuppress and getRuleSet().supress) then
 			local win = Guild.guildWindow;
-			if(win and win.everShown) then
+			if(WindowWillShow("chat", win, db.chat.guild.neverPop)) then
 				return true
 			end
 		end
@@ -545,7 +545,7 @@ function Officer.ChatMessageEventFilter (frame, event, ...)
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.officer.neverSuppress and getRuleSet().supress) then
 			local win = Officer.officerWindow;
-			if(win and win.everShown) then
+			if(WindowWillShow("chat", win, db.chat.officer.neverPop)) then
 				return true
 			end
 		end
@@ -686,7 +686,7 @@ function Party.ChatMessageEventFilter (frame, event, ...)
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.party.neverSuppress and getRuleSet().supress) then
 			local win = Party.partyWindow;
-			if(win and win.everShown) then
+			if(WindowWillShow("chat", win, db.chat.party.neverPop)) then
 				return true
 			end
 		end
@@ -871,7 +871,7 @@ function Raid.ChatMessageEventFilter (frame, event, ...)
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.raid.neverSuppress and getRuleSet().supress) then
 			local win = Raid.raidWindow;
-			if(win and win.everShown) then
+			if(WindowWillShow("chat", win, db.chat.raid.neverPop)) then
 				return true
 			end
 		end
@@ -1091,7 +1091,7 @@ function Battleground.ChatMessageEventFilter (frame, event, ...)
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.battleground.neverSuppress and getRuleSet().supress) then
 			local win = Battleground.battlegroundWindow;
-			if(win and win.everShown) then
+			if(WindowWillShow("chat", win, db.chat.battleground.neverPop)) then
 				return true
 			end
 		end
@@ -1248,7 +1248,7 @@ function Say.ChatMessageEventFilter (frame, event, ...)
 	if (not frame._isWIM and not ignore and not block) then
 		if(not db.chat.say.neverSuppress and getRuleSet().supress) then
 			local win = Windows[_G.SAY];
-			if(win and win.everShown) then
+			if(WindowWillShow("chat", win, db.chat.say.neverPop)) then
 				return true
 			end
 		end
@@ -2055,7 +2055,7 @@ function Channel.ChatMessageEventFilter (frame, event, ...)
 			-- deliver normally
 		elseif(not neverSuppress and getRuleSet().supress and db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].monitor) then
 			local win = Windows[channelName];
-			if(win and win.everShown) then
+			if(WindowWillShow("chat", win, db.chat[isWorld and "world" or "custom"].channelSettings[channelName].neverPop)) then
 				return true
 			end
 		end
@@ -2084,7 +2084,7 @@ function Channel.ChatMessageCommunitiesEventFilter (frame, event, ...)
 	local win = Windows[name];
 	local suppress = (not neverSuppress and getRuleSet().supress
 	                  and settings and settings.monitor
-	                  and win and win.everShown) and true or false;
+	                  and WindowWillShow("chat", win, settings.neverPop)) and true or false;
 
 	-- Whether a community message reaches the default chat frame has been
 	-- reported as intermittent across logins. Two inputs can vary and this
