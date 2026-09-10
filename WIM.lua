@@ -203,7 +203,7 @@ local function initialize()
 		LoadSkin(GetSelectedSkin().title, true);
 	end
 
-    CallModuleFunction("OnInitialized");
+    CallModuleFunctionAll("OnInitialized");
     WindowParent:Show();
     dPrint("WIM initialized...");
 end
@@ -1276,6 +1276,8 @@ function WIM:VARIABLES_LOADED()
             SerializeDirtyHistory();
         end);
     end
+
+	CallModuleFunctionAll("OnBeforeInitialized");
 
     -- inherrit any new default options which wheren't shown in previous releases.
     inherritTable(db_defaults, db);
