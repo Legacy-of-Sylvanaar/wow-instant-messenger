@@ -525,6 +525,11 @@ helperFrame:SetScript("OnUpdate", function(self)
 					win = obj.parentWindow;
 				end
 
+				-- make sure we have a WIM message window
+				if (not win.isWimWindow) then
+					return;
+				end
+
 				if(win == WIM.DemoWindow) then
 					return;
 				end
