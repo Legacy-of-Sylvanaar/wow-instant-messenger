@@ -363,7 +363,7 @@ local translations = {
 
 	-- Debugging & development slash commands --
 	["Clear the captured debug log."] = "Borra el registro de depuración capturado.",
-	["Set debugging level: /wim debug [0|1|2]. 2 adds verbose chat event tracing."] = "Establece el nivel de depuración: /wim debug [0|1|2]. 2 añade seguimiento detallado de eventos de chat.",
+	["Set debugging level: /wim debug [0||1||2]. 2 adds verbose chat event tracing."] = "Establece el nivel de depuración: /wim debug [0||1||2]. 2 añade seguimiento detallado de eventos de chat.",
 	["Snapshot the next modern context menu while it is open."] = "Toma una instantánea del siguiente menú contextual moderno mientras esté abierto.",
 	["Snapshot UI widget state for skin development: /wim snap all | <Frame.Dot.Path> (bare /wim snap lists the arguments)."] = "Guarda el estado de los widgets de la interfaz para el desarrollo de estilos: /wim snap all | <Frame.Dot.Path> (/wim snap sin argumentos lista las opciones).",
 

@@ -151,7 +151,7 @@ local function initialize()
                       or "ON (level 2, verbose event tracing)";
             _G.DEFAULT_CHAT_FRAME:AddMessage("WIM debug "..desc
                 ..(level > 0 and " - captured to SavedVariablesPerCharacter (WIM3_DebugLog), written on logout or /reload." or "."));
-        end, L["Set debugging level: /wim debug [0|1|2]. 2 adds verbose chat event tracing."]);
+        end, L["Set debugging level: /wim debug [0||1||2]. 2 adds verbose chat event tracing."]);
     RegisterSlashCommand("focusstreams", function()
             -- Diagnostic A/B switch. With this off WIM leaves community stream
             -- focusing entirely to the client, which lets the client's own

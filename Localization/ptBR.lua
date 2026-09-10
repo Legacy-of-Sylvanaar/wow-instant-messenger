@@ -361,7 +361,7 @@ WIM.AddLocale("ptBR", {
 
 	-- Debugging & development slash commands --
 	["Clear the captured debug log."] = "Limpa o log de depuração capturado.",
-	["Set debugging level: /wim debug [0|1|2]. 2 adds verbose chat event tracing."] = "Define o nível de depuração: /wim debug [0|1|2]. 2 adiciona rastreamento detalhado de eventos de bate-papo.",
+	["Set debugging level: /wim debug [0||1||2]. 2 adds verbose chat event tracing."] = "Define o nível de depuração: /wim debug [0||1||2]. 2 adiciona rastreamento detalhado de eventos de bate-papo.",
 	["Snapshot the next modern context menu while it is open."] = "Captura uma instantâneo do próximo menu de contexto moderno enquanto estiver aberto.",
 	["Snapshot UI widget state for skin development: /wim snap all | <Frame.Dot.Path> (bare /wim snap lists the arguments)."] = "Captura o estado dos widgets da interface para desenvolvimento de skins: /wim snap all | <Frame.Dot.Path> (/wim snap sem argumentos lista as opções).",
 

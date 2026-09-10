@@ -362,7 +362,7 @@ WIM.AddLocale("koKR", {
 
     -- Debugging & development slash commands --
     ["Clear the captured debug log."] = "캡처된 디버그 로그를 지웁니다.",
-    ["Set debugging level: /wim debug [0|1|2]. 2 adds verbose chat event tracing."] = "디버깅 수준을 설정합니다: /wim debug [0|1|2]. 2는 자세한 채팅 이벤트 추적을 추가합니다.",
+    ["Set debugging level: /wim debug [0||1||2]. 2 adds verbose chat event tracing."] = "디버깅 수준을 설정합니다: /wim debug [0||1||2]. 2는 자세한 채팅 이벤트 추적을 추가합니다.",
     ["Snapshot the next modern context menu while it is open."] = "열려 있는 다음 현대식 컨텍스트 메뉴의 스냅샷을 찍습니다.",
     ["Snapshot UI widget state for skin development: /wim snap all | <Frame.Dot.Path> (bare /wim snap lists the arguments)."] = "스킨 개발을 위해 UI 위젯 상태를 기록합니다: /wim snap all | <Frame.Dot.Path> (인수 없이 /wim snap을 입력하면 목록이 표시됩니다).",
 

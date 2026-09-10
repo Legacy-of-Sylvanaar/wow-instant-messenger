@@ -363,7 +363,7 @@ WIM.AddLocale("deDE", {
 
     -- Debugging & development slash commands --
     ["Clear the captured debug log."] = "Gespeichertes Debug-Protokoll löschen.",
-    ["Set debugging level: /wim debug [0|1|2]. 2 adds verbose chat event tracing."] = "Debugging-Stufe festlegen: /wim debug [0|1|2]. 2 fügt ausführliche Chat-Ereignisverfolgung hinzu.",
+    ["Set debugging level: /wim debug [0||1||2]. 2 adds verbose chat event tracing."] = "Debugging-Stufe festlegen: /wim debug [0||1||2]. 2 fügt ausführliche Chat-Ereignisverfolgung hinzu.",
     ["Snapshot the next modern context menu while it is open."] = "Momentaufnahme des nächsten modernen Kontextmenüs erstellen, während es geöffnet ist.",
     ["Snapshot UI widget state for skin development: /wim snap all | <Frame.Dot.Path> (bare /wim snap lists the arguments)."] = "Zustand der UI-Widgets für die Skin-Entwicklung festhalten: /wim snap all | <Frame.Dot.Path> (/wim snap ohne Argument listet die Möglichkeiten auf).",
 

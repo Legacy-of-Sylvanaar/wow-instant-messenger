@@ -364,7 +364,7 @@ WIM.AddLocale("zhTW", {
 
     -- Debugging & development slash commands --
     ["Clear the captured debug log."] = "清除已擷取的除錯日誌。",
-    ["Set debugging level: /wim debug [0|1|2]. 2 adds verbose chat event tracing."] = "設定除錯等級：/wim debug [0|1|2]。2 會加入詳細的聊天事件追蹤。",
+    ["Set debugging level: /wim debug [0||1||2]. 2 adds verbose chat event tracing."] = "設定除錯等級：/wim debug [0||1||2]。2 會加入詳細的聊天事件追蹤。",
     ["Snapshot the next modern context menu while it is open."] = "在下一個現代右鍵選單開啟時為其擷取快照。",
     ["Snapshot UI widget state for skin development: /wim snap all | <Frame.Dot.Path> (bare /wim snap lists the arguments)."] = "擷取介面元件狀態供外觀開發使用：/wim snap all | <Frame.Dot.Path>（直接輸入 /wim snap 會列出參數）。",
 
