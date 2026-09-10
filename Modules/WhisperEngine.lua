@@ -132,8 +132,8 @@ local WhisperQueue_Index = {}; -- a quick reference to an active index
 
 local CF_MessageEventHandler_orig; -- used for a hook of the chat frame. Messaage filter handlers aren't sufficient.
 
-local addToTableUnique = addToTableUnique;
-local removeFromTable = removeFromTable;
+local addToTableUnique = utils.addToTableUnique;
+local removeFromTable = utils.removeFromTable;
 
 local recentSent = {};
 local maxRecent = 10;
@@ -153,7 +153,7 @@ local function updateMinimapAlerts()
     elseif(count > 0) then
         alertPushed = true;
         local color = db.displayColors.wispIn;
-        MinimapPushAlert(L["Whispers"], RGBPercentToHex(color.r, color.g, color.b), count);
+        MinimapPushAlert(L["Whispers"], utils.color.RGBPercentToHex(color.r, color.g, color.b), count);
 --        DisplayTutorial(L["Whisper Received!"], L["You received a whisper which was hidden due to your current activity. You can change how whispers behave in WIM's options by typing"].." |cff69ccf0/wim|r");
     end
 end
@@ -281,7 +281,7 @@ local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
 		end
 	else
 		user = string.gsub(user," ","") -- Drii: WoW build15050 whisper bug for x-realm server with space
-	    user = fromEvent and user or FormatUserName(user);
+	    user = fromEvent and user or utils.FormatUserName(user);
 	end
 
     if(not user or user == "") then
@@ -363,7 +363,7 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 	-- parse out links as to not split them incorrectly.
 	theMsg, results = string.gsub(theMsg, "(|H[^|]+|h.-|h|r)", function(theLink)
 		table.insert(splitMessageLinks, theLink);
-		return "\001\002"..paddString(#splitMessageLinks, "0", string.len(theLink)-4).."\003\004";
+		return "\001\002"..utils.paddString(#splitMessageLinks, "0", string.len(theLink)-4).."\003\004";
 	end);
 
 	-- A word longer than the limit cannot fit in any chunk; the
@@ -383,7 +383,7 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 	end);
 
 	-- split up each word.
-	SplitToTable(theMsg, "%s", splitMessage);
+	utils.SplitToTable(theMsg, "%s", splitMessage);
 
 	--reconstruct message into chunks of no more than 255 characters.
 	local chunks = {};
@@ -569,7 +569,7 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 		local ruleSet = GetPopRuleSet("whisper");
 
 		for check, pattern in pairs(CMS_PATTERNS) do
-			local user = FormatUserName(string.match(msg, pattern));
+			local user = utils.FormatUserName(string.match(msg, pattern));
 			if (user) then
 				local win = Windows[safeName(user)];
 
@@ -908,7 +908,7 @@ hooksecurefunc((_G.C_ChatInfo and _G.C_ChatInfo.SendChatMessage) and _G.C_ChatIn
 	end
 
 	if(select(2, ...) == "WHISPER") then
-		local win = Windows[safeName(FormatUserName(select(4, ...))) or "NIL"];
+		local win = Windows[safeName(utils.FormatUserName(select(4, ...))) or "NIL"];
 		if(win) then
 			win.msgSent = true;
 		end

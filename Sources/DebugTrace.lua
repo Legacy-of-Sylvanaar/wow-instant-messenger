@@ -93,7 +93,7 @@ traceFrame:SetScript("OnEvent", function(self, event, ...)
         line = line.." (+"..(count - shown).." more)";
     end
 
-    WIM.LogLine(line);
+    WIM.utils.debug.LogLine(line);
 end);
 
 function WIM.StartEventTrace()
@@ -110,7 +110,7 @@ function WIM.StartEventTrace()
     end
     traceFrame.tracing = true;
 
-    WIM.LogLine("TRACE: started, "..(#TRACE_EVENTS - #skipped).." of "..#TRACE_EVENTS.." events registered."
+    WIM.utils.debug.LogLine("TRACE: started, "..(#TRACE_EVENTS - #skipped).." of "..#TRACE_EVENTS.." events registered."
         ..(#skipped > 0 and (" Unavailable on this client: "..table.concat(skipped, ", ")) or ""));
 end
 
@@ -120,5 +120,5 @@ function WIM.StopEventTrace()
     end
     traceFrame:UnregisterAllEvents();
     traceFrame.tracing = false;
-    WIM.LogLine("TRACE: stopped.");
+    WIM.utils.debug.LogLine("TRACE: stopped.");
 end

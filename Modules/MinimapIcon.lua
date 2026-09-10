@@ -7,7 +7,7 @@ local math = math;
 local table = table;
 local pairs = pairs;
 local string = string;
-local GetMouseFocus = WIM.GetMouseTopFocus;
+local GetMouseFocus = WIM.utils.compat.GetMouseTopFocus;
 local IsShiftKeyDown = IsShiftKeyDown;
 
 -- set namespace
@@ -198,12 +198,12 @@ local function createMinimapIcon()
 				local minimap = self:GetParent();
 				if(NotificationIndex > #Notifications or not Notifications[NotificationIndex]) then
 				    minimap.icon:Show();
-				    minimap.backGround:SetGradient("VERTICAL", getGradientFromColor(IconColor));
+				    minimap.backGround:SetGradient("VERTICAL", utils.color.getGradientFromColor(IconColor));
 				    minimap.text:Hide();
 				    NotificationIndex = 0; -- will be incremented at end of loop
 				else
 				    minimap:SetText(Notifications[NotificationIndex].text);
-				    minimap.backGround:SetGradient("VERTICAL", getGradientFromColor(Notifications[NotificationIndex].color));
+				    minimap.backGround:SetGradient("VERTICAL", utils.color.getGradientFromColor(Notifications[NotificationIndex].color));
 				    minimap.text:Show();
 				    minimap.icon:Hide();
 				end
@@ -216,7 +216,7 @@ local function createMinimapIcon()
 				local minimap = self:GetParent();
 				minimap.text:Hide();
 				minimap.icon:Show();
-				minimap.backGround:SetGradient("VERTICAL", getGradientFromColor(IconColor));
+				minimap.backGround:SetGradient("VERTICAL", utils.color.getGradientFromColor(IconColor));
 				flash:Hide();
 			    end
 			end

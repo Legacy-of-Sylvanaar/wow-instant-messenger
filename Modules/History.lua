@@ -18,6 +18,8 @@ local pcall = pcall;
 local ipairs = ipairs;
 local math = math;
 local tostring = tostring;
+local copyTable = WIM.utils.copyTable;
+local addToTableUnique = WIM.utils.addToTableUnique;
 
 local DDM = WIM.libs.DropDownMenu;
 
@@ -3511,12 +3513,9 @@ local function createHistoryViewer()
         end);
     win.content.textFrame.text.AddMessage = function(self, msg, r, g, b)
             local color;
-            --if(r and g and b) then
-            --    color = RGBPercentToHex(r, g, b);
-            --end
             msg = msg:gsub("|c[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]", "");
             msg = msg:gsub("|r", "");
-            --self:SetText(self:GetText()..(color and "|cff"..color or "")..msg..(color and "|r" or "").."\n");
+
             self:SetText(self:GetText()..msg.."\n");
         end;
 
@@ -4113,8 +4112,8 @@ table.insert(ViewTypes, {
 	            frame.noEscapedStrings = nil;
                     frame.noEmoticons = true;
 	            frame.nextStamp = msg.time;
-                    local chatColor = "[color=#"..RGBPercentToHex(color.r, color.g, color.b).."]";
-                    local chatColorPattern = "%[color%=%#"..RGBPercentToHex(color.r, color.g, color.b).."%]%s*%[%/color%]";
+                    local chatColor = "[color=#"..utils.color.RGBPercentToHex(color.r, color.g, color.b).."]";
+                    local chatColorPattern = "%[color%=%#"..utils.color.RGBPercentToHex(color.r, color.g, color.b).."%]%s*%[%/color%]";
 	            msg = applyMessageFormatting(frame, "CHAT_MSG_"..(msg.event or "WHISPER"), msg.msg, msg.from)
 	            msg = applyStringModifiers(msg, frame);
 	            msg = msg:gsub("|c[0-9A-Fa-f][0-9A-Fa-f]([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])|Hwim_url:([^|]*)|h.-|h|r", "[/color][url=%2][color=#%1]%2[/color][/url]"..chatColor);
@@ -4148,8 +4147,8 @@ table.insert(ViewTypes, {
 	            frame.noEscapedStrings = nil;
                     frame.noEmoticons = true;
 	            frame.nextStamp = msg.time;
-                    local chatColor = "<font color='#"..RGBPercentToHex(color.r, color.g, color.b).."'>";
-                    local chatColorPattern = "%<font color%='%#"..RGBPercentToHex(color.r, color.g, color.b).."'%>%s*%<%/font%>";
+                    local chatColor = "<font color='#"..utils.color.RGBPercentToHex(color.r, color.g, color.b).."'>";
+                    local chatColorPattern = "%<font color%='%#"..utils.color.RGBPercentToHex(color.r, color.g, color.b).."'%>%s*%<%/font%>";
 	            msg = applyMessageFormatting(frame, "CHAT_MSG_"..(msg.event or "WHISPER"), msg.msg, msg.from)
 	            msg = applyStringModifiers(msg, frame);
 

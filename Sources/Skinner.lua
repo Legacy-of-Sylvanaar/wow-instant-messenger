@@ -2785,7 +2785,7 @@ function SetWidgetFont(obj, widgetSkinTable)
         if(type(widgetSkinTable.font_color) == "table") then
             obj:SetTextColor(unpack(widgetSkinTable.font_color));
         else
-            obj:SetTextColor(RGBHexToPercent(widgetSkinTable.font_color));
+            obj:SetTextColor(utils.color.RGBHexToPercent(widgetSkinTable.font_color));
         end
     end
 end

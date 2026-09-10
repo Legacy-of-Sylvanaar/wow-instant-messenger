@@ -144,7 +144,7 @@ local function initialize()
             if(not level) then
                 level = (debugLevel or 0) > 0 and 0 or 1;
             end
-            level = SetDebugLevel(level);
+            level = utils.debug.SetDebugLevel(level);
 
             local desc = (level == 0 and "OFF")
                       or (level == 1 and "ON (level 1, normal)")
@@ -630,7 +630,7 @@ function WIM:VARIABLES_LOADED()
     -- Sources/ToolBox.lua for why this is per-character.
     _G.WIM3_DebugLog = _G.WIM3_DebugLog or {};
     _G.WIM3_DebugLog.lines = _G.WIM3_DebugLog.lines or {};
-    SetDebugLevel(_G.WIM3_DebugLog.level or 0);
+    utils.debug.SetDebugLevel(_G.WIM3_DebugLog.level or 0);
 
     _G.WIM3_Data = _G.WIM3_Data or {};
     db = _G.WIM3_Data;
@@ -647,7 +647,7 @@ function WIM:VARIABLES_LOADED()
 	CallModuleFunctionAll("OnBeforeInitialized");
 
     -- inherrit any new default options which wheren't shown in previous releases.
-    inherritTable(db_defaults, db);
+    utils.inherritTable(db_defaults, db);
     MigrateOptions();
     lists.gm = {};
 

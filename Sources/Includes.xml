@@ -2,7 +2,7 @@
 
     <Script file="Migrate.lua" />
     <Script file="SlashHandler.lua" />
-    <Script file="ToolBox.lua" />
+    <Script file="Utilities.lua" />
     <Script file="DebugTrace.lua" />
     <Script file="ContextMenu.lua" />
     <Script file="Constants.lua" />

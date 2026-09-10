@@ -1707,7 +1707,7 @@ RegisterModernPage(function(category, ui)
         end
         local function normalizedFormat()
             local formats = GetMessageFormattingList();
-            if (isInTable(formats, db.messageFormat)) then
+            if (utils.isInTable(formats, db.messageFormat)) then
                 return db.messageFormat;
             end
             return formats[1];

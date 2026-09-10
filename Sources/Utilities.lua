@@ -1,10 +1,15 @@
 local WIM = WIM;
 
+local utils = {}
+
+WIM.utils = utils;
+
 --------------------------------------
 --     Compatibility Functions      --
 --------------------------------------
+utils.compat = {}
 
-function WIM.GetMouseTopFocus()
+function utils.compat.GetMouseTopFocus()
 	-- Interface 11.0+
 	if (GetMouseFoci) then
 		return GetMouseFoci()[1]
@@ -21,22 +26,21 @@ end
 --------------------------------------
 
 -- Simple shallow copy for copying defaults
-function copyTable(src, dest)
+function utils.copyTable(src, dest)
         if type(dest) ~= type(src) and type(src) == "table" then dest = {} end
         if type(src) == "table" then
     		for k,v in pairs(src) do
     			if type(v) == "table" then
     				-- try to index the key first so that the metatable creates the defaults, if set, and use that table
-    				v = copyTable(v, dest[k])
+    				v = utils.copyTable(v, dest[k])
     			end
     			dest[k] = v
     		end
     	end
     	return dest or src
 end
-WIM.copyTable = copyTable;
 
-function WIM.inherritTable(src, dest, ...)
+function utils.inherritTable(src, dest, ...)
         if(type(src) == "table") then
                 if(type(dest) ~= "table") then dest = {}; end
                 for k, v in pairs(src) do
@@ -49,7 +53,7 @@ function WIM.inherritTable(src, dest, ...)
                         end
                         if(not ignoredKey) then
                                 if(type(v) == "table") then
-                                        dest[k] = WIM.inherritTable(v, dest[k], ...);
+                                        dest[k] = utils.inherritTable(v, dest[k], ...);
                                 else
                                         if(dest[k] == nil) then
                                                 dest[k] = v
@@ -69,7 +73,7 @@ end
 
 -- a simple function to add an item to a table checking for duplicates.
 -- this is ok, since the table is never too large to slow things down.
-function WIM.addToTableUnique(tbl, item, prioritize)
+function utils.addToTableUnique(tbl, item, prioritize)
     for i=1,table.getn(tbl) do
         if(tbl[i] == item) then
             return false;
@@ -84,7 +88,7 @@ function WIM.addToTableUnique(tbl, item, prioritize)
 end
 
 -- remove item from table. Return true if removed, false otherwise.
-function WIM.removeFromTable(tbl, item)
+function utils.removeFromTable(tbl, item)
     for i=1,table.getn(tbl) do
         if(tbl[i] == item) then
             table.remove(tbl, i);
@@ -94,7 +98,7 @@ function WIM.removeFromTable(tbl, item)
     return false;
 end
 
-function WIM.isInTable(tbl, val)
+function utils.isInTable(tbl, val)
         for i=1, #tbl do
                 if(tbl[i] == val) then
                         return true;
@@ -103,13 +107,13 @@ function WIM.isInTable(tbl, val)
         return false;
 end
 
-function WIM.packTable (...)
+function utils.packTable (...)
 	local tbl = { ... };
 	tbl.n = select('#', ...);
 	return tbl;
 end
 
-function WIM.unpackTable (tbl)
+function utils.unpackTable (tbl)
 	return unpack(tbl, tbl.n);
 end
 ----------------------------------------------
@@ -117,7 +121,7 @@ end
 ----------------------------------------------
 
 
-function WIM.FormatUserName(user)
+function utils.FormatUserName(user)
 	if(user ~= nil and not string.find(user, "^|K")) then
 		if (not string.find(user, "-")) then
 			user = string.gsub(user, "[A-Z]", string.lower);
@@ -129,7 +133,7 @@ function WIM.FormatUserName(user)
 	return user;
 end
 
-function WIM.GetNameAndServer(user)
+function utils.GetNameAndServer(user)
 	local name, realm = string.split("-", user)
 	if realm then
 		realm = string.gsub(realm, "^[A-Z]", string.lower)
@@ -143,8 +147,8 @@ function WIM.GetNameAndServer(user)
 	return name, realm
 end
 
-function WIM.GetReadableName(user)
-	local name, realm = WIM.GetNameAndServer(user)
+function utils.GetReadableName(user)
+	local name, realm = utils.GetNameAndServer(user)
 	return name..(realm and " - "..realm or "")
 end
 
@@ -158,17 +162,19 @@ end
 -- linear and as such, can now be given any color and
 -- have the same gradient effect applied.
 
-function WIM.RGBPercentToHex(r, g, b)
+utils.color = {};
+
+function utils.color.RGBPercentToHex(r, g, b)
         return string.format ("%.2x%.2x%.2x",r*255,g*255,b*255);
 end
 
-function WIM.RGBHexToPercent(rgbStr)
+function utils.color.RGBHexToPercent(rgbStr)
         local R, G, B = string.sub(rgbStr, 1, 2), string.sub(rgbStr, 3, 4), string.sub(rgbStr, 5, 6);
         return tonumber(R, 16)/255, tonumber(G, 16)/255, tonumber(B, 16)/255;
 end
 
-function WIM.RGBHextoHSVPerc(rgbStr)
-    local R, G, B = WIM.RGBHexToPercent(rgbStr);
+function utils.color.RGBHextoHSVPerc(rgbStr)
+    local R, G, B = utils.color.RGBHexToPercent(rgbStr);
     local i, x, v, f;
     x = math.min(R, G);
     x = math.min(x, B);
@@ -195,7 +201,7 @@ function WIM.RGBHextoHSVPerc(rgbStr)
     end
 end
 
-function WIM.HSVPerctoRGBPerc(H, S, V)
+function utils.color.HSVPerctoRGBPerc(H, S, V)
     local m, n, f, i;
     if(H == nil) then
         return V, V, V;
@@ -231,7 +237,7 @@ end
 
 -- pass rgb as signle arg hex, or triple arg rgb percent.
 -- entering ! before a hex, will return a solid color.
-function WIM.getGradientFromColor_Legacy(...)
+function utils.color.getGradientFromColor_Legacy(...)
     local h, s, v, s1, v1, s2, v2;
     if(select("#", ...) == 0) then
         return 0, 0, 0, 0, 0, 0;
@@ -241,10 +247,10 @@ function WIM.getGradientFromColor_Legacy(...)
             local R, G, B = string.sub(rgbStr, 1, 2), string.sub(rgbStr, 3, 4), string.sub(rgbStr, 5, 6);
             return tonumber(R, 16)/255, tonumber(G, 16)/255, tonumber(B, 16)/255, tonumber(R, 16)/255, tonumber(G, 16)/255, tonumber(B, 16)/255;
         else
-            h, s, v = WIM.RGBHextoHSVPerc(select(1, ...));
+            h, s, v = utils.color.RGBHextoHSVPerc(select(1, ...));
         end
     else
-        h, s, v = WIM.RGBHextoHSVPerc(string.format ("%.2x%.2x%.2x",select(1, ...), select(2, ...), select(3, ...)));
+        h, s, v = utils.color.RGBHextoHSVPerc(string.format ("%.2x%.2x%.2x",select(1, ...), select(2, ...), select(3, ...)));
     end
 
     s1 = math.min(1, s+.29/2);
@@ -252,14 +258,14 @@ function WIM.getGradientFromColor_Legacy(...)
     s2 = math.max(0, s-.29/2);
     v2 = math.min(1, s+.57/2);
 
-    local r1, g1, b1 = WIM.HSVPerctoRGBPerc(h, s1, v1);
-    local r2, g2, b2 = WIM.HSVPerctoRGBPerc(h, s2, v2);
+    local r1, g1, b1 = utils.color.HSVPerctoRGBPerc(h, s1, v1);
+    local r2, g2, b2 = utils.color.HSVPerctoRGBPerc(h, s2, v2);
 
     return r1, g1, b1, r2, g2, b2;
 end
 
-function WIM.getGradientFromColor(...)
-	local r1, g1, b1, r2, g2, b2 = WIM.getGradientFromColor_Legacy(...)
+function utils.color.getGradientFromColor(...)
+	local r1, g1, b1, r2, g2, b2 = utils.color.getGradientFromColor_Legacy(...)
 
 	return { r = r1, g = g1, b = b1, a = 1 }, { r = r2, g = g2, b = b2, a = 1 }
 end
@@ -268,7 +274,7 @@ end
 --------------------------------------
 --         String Functions         --
 --------------------------------------
-function WIM.paddString(str, paddingChar, minLength, paddRight)
+function utils.paddString(str, paddingChar, minLength, paddRight)
     str = tostring(str or "");
     paddingChar = tostring(paddingChar or " ");
     minLength = tonumber(minLength or 0);
@@ -282,7 +288,7 @@ function WIM.paddString(str, paddingChar, minLength, paddRight)
     return str;
 end
 
-function WIM.gSplit(splitBy, str)
+function utils.gSplit(splitBy, str)
 	local index = 0
     return function()
         index = index + 1;
@@ -290,7 +296,7 @@ function WIM.gSplit(splitBy, str)
     end
 end
 
-function WIM.SplitToTable(str, inSplitPattern, outResults )
+function utils.SplitToTable(str, inSplitPattern, outResults )
   if not outResults then
     return;
   end
@@ -311,7 +317,7 @@ end
 --------------------------------------
 --         Macro Functions          --
 --------------------------------------
-function WIM.SendToFocused (msg, typeFilter) -- typeFilter: whiser | chat | null
+function utils.SendToFocused (msg, typeFilter) -- typeFilter: whiser | chat | null
 	local focus = (WIM.EditBoxInFocus or WIM._EditBoxInFocus)
 	local win = focus and focus:GetParent()
 
@@ -341,8 +347,13 @@ end
 --   1  normal: the dPrint messages WIM has always emitted, chat + log
 --   2  verbose: adds raw chat event tracing, log only
 --      (Sources/DebugTrace.lua)
-WIM.DEBUG_LOG_MAX = 6000;   -- ring buffer length; level 2 fills this quickly
-WIM.DEBUG_LINE_MAX = 500;   -- per-line truncation
+
+utils.debug = {
+	DEBUG_LOG_MAX = 6000,   -- ring buffer length; level 2 fills this quickly
+	DEBUG_LINE_MAX = 500,   -- per-line truncation
+}
+
+local debug = utils.debug;
 
 -- Millisecond timestamps.
 --
@@ -378,7 +389,7 @@ do
     end);
 end
 
-function WIM.LogStamp()
+function debug.LogStamp()
     if (not alignEpoch) then
         -- Alignment has not completed yet (the first frame or two after load).
         -- Print no fraction rather than a misleading one.
@@ -394,47 +405,48 @@ end
 
 -- Shared by dPrint and tPrint. Appends one timestamped line to the on-disk ring
 -- buffer, bounded at both ends so a long trace session cannot grow without limit.
-function WIM.LogLine(line)
+function debug.LogLine(line)
     local log = WIM3_DebugLog;
     if (type(log) ~= "table" or type(log.lines) ~= "table") then
         return;
     end
 
-    if (#line > WIM.DEBUG_LINE_MAX) then
-        line = string.sub(line, 1, WIM.DEBUG_LINE_MAX).."...[truncated]";
+    if (#line > debug.DEBUG_LINE_MAX) then
+        line = string.sub(line, 1, debug.DEBUG_LINE_MAX).."...[truncated]";
     end
-    log.lines[#log.lines + 1] = WIM.LogStamp().."  "..line;
+    log.lines[#log.lines + 1] = debug.LogStamp().."  "..line;
 
     -- Drop the oldest half in one pass when full, rather than shifting the whole
     -- table on every append.
-    if (#log.lines > WIM.DEBUG_LOG_MAX) then
+    if (#log.lines > debug.DEBUG_LOG_MAX) then
         local keep = {};
-        for i = math.floor(WIM.DEBUG_LOG_MAX / 2) + 1, #log.lines do
+        for i = math.floor(debug.DEBUG_LOG_MAX / 2) + 1, #log.lines do
             keep[#keep + 1] = log.lines[i];
         end
         log.lines = keep;
     end
 end
 
-function WIM.dPrint(t)
+function debug.dPrint(t)
     if not WIM.debug then
         return;
     end
     local line = tostring(t);
     DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[WIM Debug]:|r "..line);
-    WIM.LogLine(line);
+    debug.LogLine(line);
 end
+WIM.dPrint = debug.dPrint; -- Expose debug.dPrint through the WIM namespace for convenience.
 
 -- Trace output. Log only, never the chat frame: level 2 is far too
 -- noisy to read live, and the on-disk log is the useful artifact.
-function WIM.tPrint(t)
+function debug.tPrint(t)
     if ((WIM.debugLevel or 0) < 2) then
         return;
     end
-    WIM.LogLine(tostring(t));
+    debug.LogLine(tostring(t));
 end
 
-function WIM.SetDebugLevel(level)
+function debug.SetDebugLevel(level)
     level = tonumber(level) or 0;
     if (level < 0) then level = 0; end
     if (level > 2) then level = 2; end
@@ -456,7 +468,7 @@ function WIM.SetDebugLevel(level)
     -- Every capture (re)start writes a header line, so any excerpt a user
     -- pastes into a bug report carries the version context with it.
     if (level >= 1) then
-        WIM.LogSessionHeader(level);
+        debug.LogSessionHeader(level);
     end
 
     return level;
@@ -466,9 +478,9 @@ end
 -- locale and character. GetRealmName() can legitimately be nil this early in
 -- VARIABLES_LOADED; the per-character SavedVariables path identifies the
 -- character regardless, so "?" placeholders are acceptable there.
-function WIM.LogSessionHeader(level)
+function debug.LogSessionHeader(level)
     local gameVersion, build, _, interface = GetBuildInfo();
-    WIM.LogLine(("=== WIM %s | level %d | WoW %s (build %s, interface %s) | %s | %s-%s ==="):format(
+    debug.LogLine(("=== WIM %s | level %d | WoW %s (build %s, interface %s) | %s | %s-%s ==="):format(
         tostring(WIM.version), level or WIM.debugLevel or 0,
         tostring(gameVersion), tostring(build), tostring(interface),
         tostring(GetLocale()),
@@ -477,7 +489,7 @@ function WIM.LogSessionHeader(level)
 end
 
 
-function dumpGlobals()
+function utils.dumpGlobals()
     local tmp = {};
     for var, _ in pairs(_G) do
         table.insert(tmp, var);

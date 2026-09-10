@@ -48,7 +48,7 @@ function createCanvas()
                 dPrint("Received more then alotted pixels.");
                 break;
             end
-            self.pixels[count]:SetTexture(RGBHexToPercent(color));
+            self.pixels[count]:SetTexture(utils.color.RGBHexToPercent(color));
         end
         dPrint(count.." points laoded.");
     end

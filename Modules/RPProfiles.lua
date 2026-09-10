@@ -176,7 +176,7 @@ local function ensureTooltip(win)
         local fields = selectedFields();
         local tooltip = _G.GameTooltip;
         tooltip:SetOwner(self, "ANCHOR_RIGHT");
-        tooltip:SetText(rp.name or GetReadableName(win.theUser), 1, 0.82, 0);
+        tooltip:SetText(rp.name or utils.GetReadableName(win.theUser), 1, 0.82, 0);
         if(fields.title and rp.title and rp.title ~= "") then
             tooltip:AddLine(rp.title, 1, 1, 1);
         end
@@ -191,7 +191,7 @@ local function ensureTooltip(win)
         if(#line > 0) then
             tooltip:AddLine(table.concat(line, " "), 1, 1, 1);
         end
-        tooltip:AddLine(GetReadableName(win.theUser), 0.5, 0.5, 0.5);
+        tooltip:AddLine(utils.GetReadableName(win.theUser), 0.5, 0.5, 0.5);
         tooltip:Show();
     end);
     tip:SetScript("OnLeave", function()
@@ -244,13 +244,13 @@ local function applyToWindow(win)
         if(name or title) then
             -- Short titles read as prefixes ("Warlord Grommash").
             text = (title and (title.." ") or "")
-                ..(name or GetReadableName(win.theUser));
+                ..(name or utils.GetReadableName(win.theUser));
         end
         if(text) then
             from:SetText(text);
             win.wimRPNameShown = true;
         elseif(win.wimRPNameShown) then
-            from:SetText(GetReadableName(win.theUser));
+            from:SetText(utils.GetReadableName(win.theUser));
             win.wimRPNameShown = nil;
         end
     end
@@ -319,7 +319,7 @@ local function hookWindow(win)
         local race = (fields.race and rp.race and rp.race ~= "" and rp.race) or self.race;
         local class = (fields.class and rp.class and rp.class ~= "" and rp.class) or self.class;
         if(class and class ~= "" and fields.color and rp.colorR) then
-            class = "|cff"..RGBPercentToHex(rp.colorR, rp.colorG, rp.colorB)..class.."|r";
+            class = "|cff"..utils.color.RGBPercentToHex(rp.colorR, rp.colorG, rp.colorB)..class.."|r";
         end
         local line = {};
         if(race and race ~= "") then table.insert(line, race); end

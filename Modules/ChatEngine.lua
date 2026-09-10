@@ -1541,9 +1541,9 @@ local function logChatFrameChannels(tag)
 			for j = 1, #list do
 				parts[#parts + 1] = tostring(list[j]);
 			end
-			tPrint("ChannelList ["..tag.."] ChatFrame"..i..": "..table.concat(parts, ", "));
+			utils.debug.tPrint("ChannelList ["..tag.."] ChatFrame"..i..": "..table.concat(parts, ", "));
 		elseif (frame and list == nil and i == 1) then
-			tPrint("ChannelList ["..tag.."] ChatFrame1: channelList is nil");
+			utils.debug.tPrint("ChannelList ["..tag.."] ChatFrame1: channelList is nil");
 		end
 	end
 end
@@ -2313,7 +2313,7 @@ function ChatAlerts:PostEvent_ChatMessage(event, ...)
         local showAlert = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].showAlerts;
         if(showAlert and win and not win:IsVisible() and win.unreadCount) then
             local color = _G.ChatTypeInfo["CHANNEL"..arg8] or _G.NORMAL_FONT_COLOR;
-            MinimapPushAlert(win.theUser, RGBPercentToHex(color.r, color.g, color.b), win.unreadCount);
+            MinimapPushAlert(win.theUser, utils.color.RGBPercentToHex(color.r, color.g, color.b), win.unreadCount);
         end
 	elseif(event == "CLUB_MESSAGE_ADDED") then
 		if (arg3) then
@@ -2332,7 +2332,7 @@ function ChatAlerts:PostEvent_ChatMessage(event, ...)
 		local color = { r = r, g = g, b = b };
 
 		if(showAlert and not win:IsVisible() and win.unreadCount) then
-			MinimapPushAlert(win.theUser, RGBPercentToHex(color.r, color.g, color.b), win.unreadCount);
+			MinimapPushAlert(win.theUser, utils.color.RGBPercentToHex(color.r, color.g, color.b), win.unreadCount);
 		end
     else
         local win;
@@ -2353,7 +2353,7 @@ function ChatAlerts:PostEvent_ChatMessage(event, ...)
         if(win and not win:IsVisible() and win.unreadCount and win.unreadCount > 0) then
             local chat_type = win.chatType == "battleground" and "INSTANCE_CHAT" or string.upper(win.chatType);
             local color = _G.ChatTypeInfo[chat_type] or _G.NORMAL_FONT_COLOR; -- Drii: ticket 344 color error if party/instance chat handled by WIM
-            MinimapPushAlert(win.theUser, RGBPercentToHex(color.r, color.g, color.b), win.unreadCount);
+            MinimapPushAlert(win.theUser, utils.color.RGBPercentToHex(color.r, color.g, color.b), win.unreadCount);
         end
     end
 end

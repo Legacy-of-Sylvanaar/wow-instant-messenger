@@ -42,7 +42,7 @@ options.creditsText = {
 -- shows what was changed and when.
 function options.DebugSetting(source, key, value)
     if ((debugLevel or 0) >= 2) then
-        tPrint("SETTING ["..source.."] "..tostring(key).." = "..tostring(value));
+        utils.debug.tPrint("SETTING ["..source.."] "..tostring(key).." = "..tostring(value));
     end
 end
 

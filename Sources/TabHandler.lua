@@ -4,7 +4,7 @@ local WIM = WIM;
 local _G = _G;
 local CreateFrame = CreateFrame;
 local IsShiftKeyDown = IsShiftKeyDown;
-local GetMouseFocus = WIM.GetMouseTopFocus;
+local GetMouseFocus = WIM.utils.compat.GetMouseTopFocus;
 local table = table;
 local pairs = pairs;
 local math = math;
@@ -27,10 +27,10 @@ local tabGroups = {};
 
 -- a simple function to add an item to a table checking for duplicates.
 -- this is ok, since the table is never too large to slow things down.
-local addToTableUnique = addToTableUnique;
+local addToTableUnique = utils.addToTableUnique;
 
 -- remove item from table. Return true if removed, false otherwise.
-local removeFromTable = removeFromTable;
+local removeFromTable = utils.removeFromTable;
 
 -- sorting functions
 local function sortTabs(a, b)

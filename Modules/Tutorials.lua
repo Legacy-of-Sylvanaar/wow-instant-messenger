@@ -165,7 +165,7 @@ function _G.TutorialFrame_Update(currentTutorial)
     if(theButton) then
         theButton:Hide();
     end
-    WIM.addToTableUnique(TUTORIAL_HISTORY, currentTutorial);
+    WIM.utils.addToTableUnique(TUTORIAL_HISTORY, currentTutorial);
     if(string.match(currentTutorial, "^[0-9]+$")) then
         --Blizzard Tutorial, resume...
         dPrint("Blizzard Tutorial ID: "..currentTutorial);

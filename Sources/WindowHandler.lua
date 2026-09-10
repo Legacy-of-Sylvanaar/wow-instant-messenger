@@ -17,7 +17,7 @@ local _G = _G;
 local CreateFrame = CreateFrame;
 local UIFrameFadeIn = UIFrameFadeIn;
 local UIFrameFadeOut = UIFrameFadeOut;
-local GetMouseFocus = WIM.GetMouseTopFocus;
+local GetMouseFocus = WIM.utils.compat.GetMouseTopFocus;
 local table = table;
 local string = string;
 local IsShiftKeyDown = IsShiftKeyDown;
@@ -124,7 +124,7 @@ function UpdateInputColor(obj)
 		if(type(color) == "table") then
 			box:SetTextColor(_G.unpack(color));
 		elseif(color) then
-			box:SetTextColor(RGBHexToPercent(color));
+			box:SetTextColor(utils.color.RGBHexToPercent(color));
 		else
 			box:SetTextColor(1, 1, 1);
 		end
@@ -1173,7 +1173,7 @@ local function instantiateWindow(obj)
 
 			local eventArgs;
 			if isChatLineCensored then
-				eventArgs = packTable(...)
+				eventArgs = utils.packTable(...)
 			end
 
 			self:AddMessage(str, r, g, b, info.id, undef, undef, event, eventArgs, messageFormatter);
@@ -1264,7 +1264,7 @@ local function instantiateWindow(obj)
                 if(constants.classes[self.class]) then
                         self.classColor = constants.classes[self.class].color;
                         if(GetSelectedSkin().message_window.widgets.from.use_class_color) then
-                            self.widgets.from:SetTextColor(RGBHexToPercent(constants.classes[self.class].color));
+                            self.widgets.from:SetTextColor(utils.color.RGBHexToPercent(constants.classes[self.class].color));
                         end
                 end
           end
@@ -1327,7 +1327,7 @@ local function instantiateWindow(obj)
 					self.bn.id = id;
 					-- self.widgets.from:SetText(self.theUser.." - "..toonName);
 					if (toonName and toonName ~= "") then
-                        self.widgets.from:SetText(GetReadableName(self.theUser).." ("..toonName..")");
+                        self.widgets.from:SetText(utils.GetReadableName(self.theUser).." ("..toonName..")");
                     end
 					self:UpdateIcon();
 					if (client == _G.BNET_CLIENT_WOW) then
@@ -1505,7 +1505,7 @@ local function instantiateWindow(obj)
 
 		self.user = name
 		self.theUser = name
-		self.widgets.from:SetText(GetReadableName(name))
+		self.widgets.from:SetText(utils.GetReadableName(name))
 	end
 
 	-- at this state the message is no longer classified as a new window, reset flag.
@@ -1719,8 +1719,8 @@ local function loadWindowDefaults(obj)
 
 	obj.widgets.Backdrop:SetAlpha(1);
 
-	obj.widgets.from:SetText(GetReadableName(obj.theUser));
-	obj.widgets.from:SetTextColor(RGBHexToPercent(GetSelectedSkin().message_window.widgets.from.font_color));
+	obj.widgets.from:SetText(utils.GetReadableName(obj.theUser));
+	obj.widgets.from:SetTextColor(utils.color.RGBHexToPercent(GetSelectedSkin().message_window.widgets.from.font_color));
 
 	obj.widgets.char_info:SetText("");
 
@@ -1859,7 +1859,7 @@ local function destroyWindow(userNameOrObj)
         obj.initialized = nil;
 		dPrint("Window '"..obj:GetName().."' destroyed.");
 		CallModuleFunction("OnWindowDestroyed", obj);
-        removeFromTable(windowsByAge, obj);
+        utils.removeFromTable(windowsByAge, obj);
     end
 end
 
@@ -1953,11 +1953,11 @@ function Widgets(widgetName)
 end
 
 function RegisterStringModifier(fun, prioritize)
-	addToTableUnique(StringModifiers, fun, prioritize);
+	utils.addToTableUnique(StringModifiers, fun, prioritize);
 end
 
 function UnregisterStringModifier(fun)
-	removeFromTable(StringModifiers, fun);
+	utils.removeFromTable(StringModifiers, fun);
 end
 
 function RegisterMessageFormatting(name, fun)
