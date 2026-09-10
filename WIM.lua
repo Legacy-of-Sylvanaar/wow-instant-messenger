@@ -577,17 +577,19 @@ function EnableModule(moduleName, enabled)
     end
 end
 
-function CallModuleFunction(funName, ...)
-    -- notify all enabled modules.
+
+local function callModuleFunction(funName, force, ...)
     dPrint("Calling Module Function: "..funName);
     for module, tData in pairs(WIM.modules) do
         local fun = tData[funName];
-        if(type(fun) == "function" and tData.enabled) then
+        if(type(fun) == "function" and (force or tData.enabled)) then
                 dPrint(" +--"..module);
                 fun(tData, ...);
         end
     end
 end
+function CallModuleFunction(funName, ...) callModuleFunction(funName, false, ...); end
+function CallModuleFunctionAll(funName, ...) callModuleFunction(funName, true, ...); end
 --------------------------------------
 --          Event Handlers          --
 --------------------------------------
