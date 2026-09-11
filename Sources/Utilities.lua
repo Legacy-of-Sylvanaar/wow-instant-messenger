@@ -497,3 +497,11 @@ function utils.dumpGlobals()
     table.sort(tmp);
     return tmp;
 end
+
+function utils.debug.dump(...)
+	if (select('#', ...) > 1) then
+		_G.DevTools_Dump({...})
+	else
+		_G.DevTools_Dump(...);
+	end
+end
