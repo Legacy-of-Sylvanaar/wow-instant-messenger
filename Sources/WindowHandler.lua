@@ -2453,9 +2453,14 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", func
 			local chatType = command and body and body ~= ""
 				and _G.hash_ChatTypeInfoList
 				and _G.hash_ChatTypeInfoList[string.upper(command)];
-			if(chatType and chatType ~= "WHISPER" and chatType ~= "BN_WHISPER"
-					and chatType ~= "REPLY" and chatType ~= "CHANNEL"
-					and SendSplitMessage) then
+
+			if(
+				chatType
+				and SendSplitMessage
+				and not chatType:match("WHISPER")
+				and chatType ~= 'REPLY'
+				and chatType ~= 'CHANNEL'
+			) then
 				if(not InChatMessagingLockdown()) then
 					SendSplitMessage("ALERT", "WIM", PreSendFilterText(body), chatType);
 					self:SetText("");
@@ -2478,19 +2483,19 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", func
 				EditBoxInFocus = self;
 			end
 		else
-                        if(self:GetText() == "") then
+            if(self:GetText() == "") then
 				self:Hide();
 				self:Show();
-                                return;
+                return;
 			end
-                end
-                -- keep focus or not
-                if(self:GetParent():GetRuleSet().keepfocus) then
-                        self:SetFocus();
-                else
-                        self:Hide();
+		end
+		-- keep focus or not
+		if(self:GetParent():GetRuleSet().keepfocus) then
+			self:SetFocus();
+		else
+			self:Hide();
 			self:Show();
-                end
+		end
 
 	end);
 
