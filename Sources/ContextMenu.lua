@@ -154,16 +154,16 @@ local function describeItems(menu, description)
                 description:CreateCheckbox(item.text,
                     function()
                         if(type(item.checked) == "function") then
-                            return item.checked() and true or false;
+                            return item.checked(item) and true or false;
                         end
                         return item.checked and true or false;
                     end,
                     function()
-                        if(item.func) then item.func(); end
+                        if(type(item.func) == "function") then item.func(item); end
                     end);
             else
                 description:CreateButton(item.text, function()
-                    if(item.func) then item.func(); end
+                    if(type(item.func) == "function") then item.func(item); end
                 end);
             end
         end
