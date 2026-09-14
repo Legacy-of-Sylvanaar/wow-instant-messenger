@@ -1520,21 +1520,21 @@ local function instantiateWindow(obj)
 
     obj.UpdateProps = function(self)
         self:SetFrameStrata(db.winSize.strata);
-	self:SetScale(db.winSize.scale/100);
-	self.widgets.Backdrop:SetAlpha(db.windowAlpha/100);
-	local Path,_,Flags = self.widgets.chat_display:GetFont();
-        self:SetClampedToScreen(not WindowParent.animUp and db.clampToScreen);
-	self.widgets.chat_display:SetFont(Path or _G["ChatFontNormal"]:GetFont(),db.fontSize+2,Flags);
-	self.widgets.chat_display:SetAlpha(1);
-	self.widgets.chat_display:SetIndentedWordWrap(db.wordwrap_indent);
-	self.widgets.msg_box:SetAlpha(1);
-	self.widgets.msg_box:SetAltArrowKeyMode(db.ignoreArrowKeys);
+		self:SetScale(db.winSize.scale/100);
+		self.widgets.Backdrop:SetAlpha(db.windowAlpha/100);
+		local Path,_,Flags = self.widgets.chat_display:GetFont();
+		self:SetClampedToScreen(not WindowParent.animUp and db.clampToScreen);
+		self.widgets.chat_display:SetFont(Path or _G["ChatFontNormal"]:GetFont(),db.fontSize+2,Flags);
+		self.widgets.chat_display:SetAlpha(1);
+		self.widgets.chat_display:SetIndentedWordWrap(db.wordwrap_indent);
+		self.widgets.msg_box:SetAlpha(1);
+		self.widgets.msg_box:SetAltArrowKeyMode(db.ignoreArrowKeys);
 
-	self.widgets.from:SetAlpha(1);
-	self.widgets.char_info:SetAlpha(1);
-	self.widgets.close:SetAlpha(db.windowAlpha / 100);
-	self.widgets.scroll_up:SetAlpha(db.windowAlpha / 100);
-	self.widgets.scroll_down:SetAlpha(db.windowAlpha / 100);
+		self.widgets.from:SetAlpha(1);
+		self.widgets.char_info:SetAlpha(1);
+		self.widgets.close:SetAlpha(db.windowAlpha / 100);
+		self.widgets.scroll_up:SetAlpha(db.windowAlpha / 100);
+		self.widgets.scroll_down:SetAlpha(db.windowAlpha / 100);
 
         if(not self.customSize) then
                 self:SetWidth(db.winSize.width);
@@ -1553,43 +1553,51 @@ local function instantiateWindow(obj)
                 minHeight = self.wimSkinMinHeight;
         end
 
-	-- process registered widgets
-	for widgetName, widgetObj in pairs(obj.widgets) do
-		if(type(widgetObj.UpdateProps) == "function") then
-			widgetObj:UpdateProps();
+		-- process registered widgets
+		for widgetName, widgetObj in pairs(obj.widgets) do
+			if(type(widgetObj.UpdateProps) == "function") then
+				widgetObj:UpdateProps();
+			end
+				if(widgetObj.type) then
+					if(widgetObj.enabled and string.match(widgetObj.type, obj.type)) then
+						widgetObj:Show();
+						local w, h = widgetObj:GetWidth(), widgetObj:GetHeight();
+						-- A widget's rectangle is nil until its
+						-- anchor chain resolves (a suppressed pop-up
+						-- window is created hidden and unpositioned);
+						-- the window's own side is already
+						-- Safe-wrapped.
+						local wLeft, wRight = widgetObj:GetLeft(), widgetObj:GetRight();
+						if(wLeft and wRight) then
+						minWidth = _G.math.max(minWidth, (self:SafeGetLeft() - wLeft) + w + (wRight - self:SafeGetRight()));
+						end
+						-- Commenting this line out so widgets don't limit the min height.
+						-- minHeight = _G.math.max(minHeight, (self:SafeGetTop() - widgetObj:GetTop() - WindowParent:GetBottom()) + h + (widgetObj:GetBottom() - self:SafeGetBottom() - WindowParent:GetBottom()));
+					else
+						widgetObj:Hide()
+					end
+				end
 		end
-                if(widgetObj.type) then
-                        if(widgetObj.enabled and string.match(widgetObj.type, obj.type)) then
-                                widgetObj:Show();
-                                local w, h = widgetObj:GetWidth(), widgetObj:GetHeight();
-                                -- A widget's rectangle is nil until its
-                                -- anchor chain resolves (a suppressed pop-up
-                                -- window is created hidden and unpositioned);
-                                -- the window's own side is already
-                                -- Safe-wrapped.
-                                local wLeft, wRight = widgetObj:GetLeft(), widgetObj:GetRight();
-                                if(wLeft and wRight) then
-                                minWidth = _G.math.max(minWidth, (self:SafeGetLeft() - wLeft) + w + (wRight - self:SafeGetRight()));
-                                end
-                                -- Commenting this line out so widgets don't limit the min height.
-                                -- minHeight = _G.math.max(minHeight, (self:SafeGetTop() - widgetObj:GetTop() - WindowParent:GetBottom()) + h + (widgetObj:GetBottom() - self:SafeGetBottom() - WindowParent:GetBottom()));
-                        else
-                                widgetObj:Hide()
-                        end
-                end
-	end
         -- Never rewrite bounds or force geometry while the user is
         -- mid-drag on the resize grip: it breaks the sizing operation's
         -- reference point and the window runs away.
         if(not self.isBeingSized) then
-                if self.SetResizeBounds then -- WoW 10.0
-                        self:SetResizeBounds(minWidth, minHeight);
-                else
-                        self:SetMinResize(minWidth, minHeight);
-                end
-                self:SetWidth(_G.math.max(minWidth, self:GetWidth()));
-                self:SetHeight(_G.math.max(minHeight, self:GetHeight()));
+			if self.SetResizeBounds then -- WoW 10.0
+					self:SetResizeBounds(minWidth, minHeight);
+			else
+					self:SetMinResize(minWidth, minHeight);
+			end
+			self:SetWidth(_G.math.max(minWidth, self:GetWidth()));
+			self:SetHeight(_G.math.max(minHeight, self:GetHeight()));
         end
+
+		-- Modern Skin related properties
+		if (obj.wimChrome) then
+			obj.wimChrome:SetAlpha(db.windowAlpha/100);
+			obj.wimChrome.well:SetAlpha(db.windowAlpha/100);
+			obj.wimChrome.scrollBar:SetAlpha(db.windowAlpha/100);
+		end
+
         -- Publish the computed floor: the Edit Mode sliders clamp to the
         -- same bounds ad-hoc resizing enforces, which widgets can raise
         -- well past the skin's static minimums.
