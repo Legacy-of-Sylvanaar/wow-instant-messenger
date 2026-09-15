@@ -33,7 +33,9 @@ WIM.GetAtlasInfo = getAtlasInfo;
 setfenv(1, WIM);
 
 db_defaults.skin = {
-    selected = "WIM Modern",
+	-- default skin to "WIM Modern" for retail and use "WIM Classic" for classic and classic expansions
+    -- TODO: add trap for WoW Forever -- it also uses the retail UI.
+	selected = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE and "WIM Modern" or "WIM Classic",
     font = "ChatFontNormal",
     font_outline = "",
     suggest = true,
