@@ -34,10 +34,19 @@ local WIM_ModernSkin = {
             bottom_right = { width = 16, height = 16 }
         },
         widgets = {
+			history = {
+				points = {
+                    {"TOPRIGHT", "window", "TOPRIGHT", -28, -2}
+                }
+			},
             -- The themed right-side column stacks down from its top;
             -- the classic layout stacks up from the window bottom.
             shortcuts = {
-                stack = "DOWN"
+                stack = "DOWN",
+				points = {
+                    {"TOPLEFT", "chat_display", "TOPRIGHT", 28, 4},
+                    {"BOTTOMRIGHT", "chat_display", "BOTTOMRIGHT", 28 + 22, 0}
+                },
             }
         }
     },
@@ -49,7 +58,11 @@ local WIM_ModernSkin = {
                 HighlightTexture = path.."tab_flash.png",
                 HighlightAlphaMode = "ADD"
             }
-        }
+        },
+		points = {
+            {"BOTTOMLEFT", "window", "TOPLEFT", 50, -2},
+            {"BOTTOMRIGHT", "window", "TOPRIGHT", -20, -2}
+        },
     },
     -- The menus use the game's own context-menu panel: the chamfered
     -- frame that current right-click menus draw. `style` routes WIM's

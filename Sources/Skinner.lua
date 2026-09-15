@@ -2456,20 +2456,11 @@ function ApplyModernThemeToWindow(obj)
     -- buttons span its edges) and the icons disappear.
     local history = widgets.history;
     local columnAnchor = chrome.well;
-    if(history) then
-        history:ClearAllPoints();
-        history:SetPoint("TOP", chrome.well, "TOPRIGHT", 15, 0);
-        columnAnchor = history;
-    end
-    if(widgets.shortcuts) then
-        widgets.shortcuts:SetSize(22, 150);
-        widgets.shortcuts:ClearAllPoints();
-        if(columnAnchor == history) then
-            widgets.shortcuts:SetPoint("TOP", history, "BOTTOM", 0, -4);
-        else
-            widgets.shortcuts:SetPoint("TOP", chrome.well, "TOPRIGHT", 15, 0);
-        end
-    end
+    -- if(history) then
+    --     history:ClearAllPoints();
+    --     history:SetPoint("TOP", chrome.well, "TOPRIGHT", 15, 0);
+    --     columnAnchor = history;
+    -- end
 
     -- The class icon becomes the circled portrait in the carved
     -- corner, like the community icon on the Guild & Communities
