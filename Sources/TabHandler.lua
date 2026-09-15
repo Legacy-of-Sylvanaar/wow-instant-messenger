@@ -249,6 +249,10 @@ local function createTabGroup()
             win:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0);
         end);
         tab.dragFrame:SetScript("OnDragStop", function(self)
+			if not self.dragging then
+				return;
+			end
+
             self:StopMovingOrSizing();
             self.dragging = nil;
 
