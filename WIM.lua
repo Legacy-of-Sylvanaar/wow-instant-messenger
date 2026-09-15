@@ -929,10 +929,10 @@ end
 );
 ]]
 
-function NextTick(func)
+function NextTick(func, waitMs)
 	if(type(func) == "function") then
 		if _G.C_Timer and _G.C_Timer.After then
-			_G.C_Timer.After(0, func);
+			_G.C_Timer.After((waitMs or 0) / 1000, func);
 		else
 			func();
 		end
