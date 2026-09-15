@@ -242,6 +242,7 @@ local function createTabGroup()
             self.dragging = true;
             self:StartMoving();
             local win = self.parentTab.childObj;
+			NextTick(function () win:Raise(); end)
             win.isMoving = true;
             self.draggedObject = win;
             self.parentWindow = win;
