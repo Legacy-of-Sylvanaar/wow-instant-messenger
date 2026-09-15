@@ -228,7 +228,11 @@ local function createTabGroup()
         end);
         tab.dragFrame:SetScript("OnLeave", function(self)
             self:SetScript("OnUpdate", nil);
-            self:Hide();
+			NextTick(function ()
+				if not self:GetScript("OnUpdate") then
+					self:Hide();
+				end
+			end, 100);
         end);
         tab.dragFrame:SetScript("OnShow", function(self)
             self.marker:Show();
@@ -407,12 +411,12 @@ local function createTabGroup()
                 end
             end
             if(index) then -- just incase.
-                    -- we need to adjust the offset to make sure the selected tab is shown.
-                    if((self.curOffset + count) < index) then
-                        self.curOffset = index - count;
-                    elseif(index - 1 < self.curOffset) then
-                        self.curOffset = index - 1;
-                    end
+				-- we need to adjust the offset to make sure the selected tab is shown.
+				if((self.curOffset + count) < index) then
+					self.curOffset = index - count;
+				elseif(index - 1 < self.curOffset) then
+					self.curOffset = index - 1;
+				end
             end
         end
 
@@ -427,11 +431,11 @@ local function createTabGroup()
 		self.nextButton:Show();
 		self.prevButton:Show();
 
-                self.prevButton.parentWindow = self:GetParent();
-                self.nextButton.parentWindow = self:GetParent();
+		self.prevButton.parentWindow = self:GetParent();
+		self.nextButton.parentWindow = self:GetParent();
 
 		if(self.curOffset <= 0) then
-                        self.curOffset = 0;
+			self.curOffset = 0;
 			self.prevButton:Disable();
 		else
 			self.prevButton:Enable();
