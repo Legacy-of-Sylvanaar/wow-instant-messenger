@@ -2460,6 +2460,8 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", func
 			local command, body = string.match(self:GetText(), "^(/%S+)%s+(.-)%s*$");
 			local chatType = command and body and body ~= ""
 				and _G.hash_ChatTypeInfoList
+				and _G.hash_ChatTypeInfoList[string.upper(command)]
+				and _G.ChatTypeInfo[_G.hash_ChatTypeInfoList[string.upper(command)]]
 				and _G.hash_ChatTypeInfoList[string.upper(command)];
 
 			if(
@@ -2521,7 +2523,7 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnUpdate", function(s
 		if(self.setText == 1) then
 			self.setText = 0;
 			self:SetText(self.textToSet or "");
-                        self.textToSet = "";
+			self.textToSet = "";
 		end
 	end);
 
