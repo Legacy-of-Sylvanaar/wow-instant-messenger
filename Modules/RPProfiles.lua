@@ -43,7 +43,7 @@ local function integrationEnabled()
     -- The integration is part of the modern skin. Classic skins keep
     -- WIM's default identity, details, and class icons.
     local skin = GetSelectedSkin and GetSelectedSkin();
-    return (skin and skin.modernOnly) and true or false;
+    return (skin and skin.schema_version == 2) and true or false;
 end
 
 -- Returns the installed profile viewer, if any: Total RP 3's register

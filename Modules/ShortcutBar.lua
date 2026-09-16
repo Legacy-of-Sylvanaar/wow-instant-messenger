@@ -510,7 +510,7 @@ local SAY_NAMES = { SAY = _G.SAY, YELL = _G.YELL, EMOTE = _G.EMOTE };
 
 local function sayOutputAllowed(obj)
 	local skin = GetSelectedSkin();
-	return (obj and obj.chatType == "say" and skin and skin.modernOnly)
+	return (obj and obj.chatType == "say" and skin and skin.schema_version == 2)
 		and true or false;
 end
 

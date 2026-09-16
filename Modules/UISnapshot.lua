@@ -374,7 +374,7 @@ local function collectWimInfo()
     pcall(function()
         local skin = GetSelectedSkin();
         info.skinLoaded = skin and skin.title;
-        info.modernOnly = (skin and skin.modernOnly) and true or false;
+        info.modernSkin = (skin and skin.schema_version == 2) and true or false;
     end);
     if(db and db.modernTheme) then
         local theme = {};

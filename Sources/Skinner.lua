@@ -2247,7 +2247,7 @@ end);
 function ApplyModernThemeToWindow(obj)
     local theme = db and db.modernTheme;
     local skin = GetSelectedSkin();
-    local active = (theme and skin and skin.modernOnly) and true or false;
+    local active = (theme and skin and skin.schema_version == 2) and true or false;
     local widgets = obj.widgets;
     local bd = widgets and widgets.Backdrop;
     if(not (bd and bd.bg and widgets.chat_display)) then return; end
@@ -2522,7 +2522,7 @@ function ApplyModernThemeToWindow(obj)
                 -- ordering; the chrome's visibility alone lags it.
                 if(self.wimChrome and self.wimChrome:IsShown()
                         and self.wimChrome.hasPortrait
-                        and GetSelectedSkin().modernOnly) then
+                        and GetSelectedSkin().schema_version == 2) then
                     if(self.wimChrome.lite) then
                         LiteRepaintPortrait(self);
                     else
@@ -2585,7 +2585,7 @@ end
 -- controls are live only then.
 function SkinLocksOptionsStyle()
     local skin = GetSelectedSkin();
-    return (skin and skin.modernOnly) and true or false;
+    return (skin and skin.schema_version == 2) and true or false;
 end
 
 -- A skin's `title` doubles as its identity: RegisterSkin stores skins as
@@ -2824,16 +2824,16 @@ function GetSkinTable(skinName)
     return SkinTable[skinName];
 end
 
-function GetRegisteredSkins(includeModernOnly)
+function GetRegisteredSkins(includeModernSkins)
     -- this function isn't called much so its ok to create a little garbage.
     local list = {};
     local selected = GetSelectedSkin().title;
     for skin, skinTable in pairs(SkinTable) do
-        -- Skins flagged modernOnly appear only when the caller asks for
+        -- Skins flagged `schema_version == 2` appear only when the caller asks for
         -- them (the modern options UI). Other callers still see such a
         -- skin while it is the active selection, so their dropdown
         -- always shows the current state correctly.
-        if(includeModernOnly or not skinTable.modernOnly or skin == selected) then
+        if(includeModernSkins or skinTable.schema_version ~= 2 or skin == selected) then
             table.insert(list, skin);
         end
     end

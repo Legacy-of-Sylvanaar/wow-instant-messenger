@@ -75,7 +75,7 @@ local function nativeColorsActive()
 	local native = db and db.displayColors and db.displayColors.useNative;
 	if(not (native and native.enabled)) then return nil; end
 	local skin = GetSelectedSkin and GetSelectedSkin();
-	return (skin and skin.modernOnly) and native or nil;
+	return (skin and skin.schema_version == 2) and native or nil;
 end
 
 local function inputColorTarget(obj)
