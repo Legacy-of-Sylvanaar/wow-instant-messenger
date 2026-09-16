@@ -14,6 +14,7 @@ local goldR, goldG, goldB = GameFontNormal:GetTextColor();
 local WIM_ModernSkin = {
     title = "WIM Modern",
     version = "1.0.0",
+	schema_version = 2,
     author = "Avraelore (Moon Guard)",
     website = "https://github.com/Legacy-of-Sylvanaar/wow-instant-messenger",
     -- Offered only where the caller asks for modern-only skins (the

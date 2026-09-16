@@ -21,6 +21,7 @@ local hvHeaderR, hvHeaderG, hvHeaderB = GameFontNormal:GetTextColor();
 local WIM_ClassicSkin = {
     title = "WIM Classic",
     version = "1.0.0",
+	schema_version = 1,
     author = "Pazza <Bronzebeard>",
     website = "http://www.wimaddon.com",
     message_window = {
