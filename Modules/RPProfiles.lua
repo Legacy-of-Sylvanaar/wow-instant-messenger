@@ -22,6 +22,13 @@ setfenv(1, WIM);
 -- profile, falls back to the default value.
 local RPProfiles = CreateModule("RPProfiles", true);
 
+-- Roleplay profile integration. rpEnabled is the master switch and
+-- also controls the Open Profile shortcut. rpFields selects which
+-- profile fields replace the default display on whisper windows.
+-- When rpFields is empty, the default display stays unchanged.
+db_defaults.modernTheme.rpEnabled = false;
+db_defaults.modernTheme.rpFields = {};
+
 local EMPTY_FIELDS = {};
 local function selectedFields()
     local theme = db and db.modernTheme;

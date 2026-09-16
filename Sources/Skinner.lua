@@ -4,7 +4,6 @@ local WIM = WIM;
 local _G = _G;
 local table = table;
 local pairs = pairs;
-local ipairs = ipairs;
 local tostring = tostring;
 local string = string;
 local math = math;
@@ -12,8 +11,6 @@ local debugstack = debugstack;
 local type = type;
 local unpack = unpack;
 local setmetatable = setmetatable;
-local getmetatable = getmetatable;
-local rawget = rawget;
 local CreateFrame = CreateFrame;
 local pcall = pcall;
 
@@ -60,12 +57,6 @@ db_defaults.modernTheme = {
     inputWrap = true,
     inputWrapLimit = true,
     inputWrapLines = 4,
-    -- Roleplay profile integration. rpEnabled is the master switch and
-    -- also controls the Open Profile shortcut. rpFields selects which
-    -- profile fields replace the default display on whisper windows.
-    -- When rpFields is empty, the default display stays unchanged.
-    rpEnabled = false,
-    rpFields = {},
 };
 
 -- The panel art the modern skin background pickers offer: the game's
