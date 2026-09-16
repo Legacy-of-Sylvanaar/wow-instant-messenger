@@ -1061,7 +1061,7 @@ local function styleFilterFrame(win)
     -- Modern dress follows the Modern skin, like the chat windows and
     -- the History Viewer, so a skin swap re-dresses a shown editor.
     local skin = GetSelectedSkin();
-    local modern = (skin and skin.modernOnly) and true or false;
+    local modern = true; -- (skin and skin.schema_version == 2) and true or false;
     if(win.wimModernStyled == modern) then return; end
     win.wimModernStyled = modern;
     local close = win.close;

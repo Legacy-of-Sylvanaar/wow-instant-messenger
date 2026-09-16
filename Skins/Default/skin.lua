@@ -13,13 +13,12 @@ local function formatDetails(window, guild, level, race, class)
     return "|cffffffff"..table.concat(details, ' ').."|r";
 end
 
-
--- History Viewer header accents match the standard gold UI label color.
-local hvHeaderR, hvHeaderG, hvHeaderB = GameFontNormal:GetTextColor();
+-- Standard gold UI label color, for the panel title and section headers.
+local goldR, goldG, goldB = GameFontNormal:GetTextColor();
 
 --Default window skin
 local WIM_ClassicSkin = {
-    title = "WIM Classic",
+	title = "WIM Classic",
     version = "1.0.0",
 	schema_version = 1,
     author = "Pazza <Bronzebeard>",
@@ -309,59 +308,114 @@ local WIM_ClassicSkin = {
         },
         vertical = false,
     },
+	-- The menus use the game's own context-menu panel: the chamfered
+    -- frame that current right-click menus draw. `style` routes WIM's
+    -- context menus through the Menu API. `background_atlas` gives the
+    -- whispers/chats menu the same art. The toast pair below is the
+    -- fallback for clients without either.
 	menu = {
-		edge = "Interface\\AddOns\\"..WIM.addonTocName.."\\Modules\\Textures\\Menu",
-		edge_size = 32,
-		background = "Interface\\AddOns\\"..WIM.addonTocName.."\\Modules\\Textures\\Menu_bg",
-		tile = true,
-		tile_size = 32,
-		insets = { left = 32, right = 32, top = 32, bottom = 32 },
-		title = {
-			font = "ChatFontNormal",
+		style = "context",
+        background_atlas = "common-dropdown-bg",
+        edge = "Interface\\FriendsFrame\\UI-Toast-Border",
+        edge_size = 12,
+        background = "Interface\\FriendsFrame\\UI-Toast-Background",
+        tile = false,
+        tile_size = 0,
+        insets = { left = 5, right = 5, top = 5, bottom = 5 },
+        -- Section headers use the native menus' gold, like the unit
+        -- menu's "Loot Options" header.
+        title = {
+            font = "ChatFontNormal",
 			font_color = {1, 1, 1},
 			font_height = 11,
 			font_flags = ""
-		},
+        },
 		button = {
 			font = "FriendsFont_Normal",
 			font_height = 12,
 			font_flags = ""
-		}
+		},
 	},
 	history_viewer = {
-		backdrop = {
-			bgFile = "Interface\\AddOns\\"..WIM.addonTocName.."\\Sources\\Options\\Textures\\Frame_Background",
-			edgeFile = "Interface\\AddOns\\"..WIM.addonTocName.."\\Sources\\Options\\Textures\\Frame",
-			tile = true, tileSize = 64, edgeSize = 64,
-			insets = { left = 64, right = 64, top = 64, bottom = 64 }
-		},
+		-- The full standard-panel construction: metal nine-slice frame,
+        -- rock background, recessed inset wells, as used by frames like
+        -- Guild & Communities. The backdrop below is only the fallback
+        -- for clients without the nine-slice layouts.
+        frame_style = "panel",
+        backdrop = {
+            bgFile = "Interface\\FriendsFrame\\UI-Toast-Background",
+            edgeFile = "Interface\\FriendsFrame\\UI-Toast-Border",
+            tile = false, tileSize = 0, edgeSize = 12,
+            insets = { left = 5, right = 5, top = 5, bottom = 5 }
+        },
 		title = {
-			font = "ChatFontNormal",
-			font_height = 16,
+			-- Native panels title their band in the standard 12px gold.
+            -- The height must be set here, or the classic skin's 16
+            -- inherits through.
+            font = "GameFontNormal",
+            font_height = 12,
 			font_flags = "",
-			font_color = {1, 1, 1},
-			points = {
-				{"TOPLEFT", "window", "TOPLEFT", 50, -20}
-			}
+            font_color = {goldR, goldG, goldB},
+            -- The text's CENTER pins to the band's center (the band
+            -- spans the window's top 20.5px), moved 1.5px down. The
+            -- string rectangle includes descender space, so
+            -- rect-centered text sits high; this centers the capital
+            -- height instead (measured against a screenshot's pixel
+            -- rows).
+            points = {
+                {"CENTER", "window", "TOP", 0, -11.5}
+            }
 		},
+		-- Native widget styles: the standard red corner X (the
+        -- RedButton atlas family current panels use), the Settings
+        -- panel's minimal scrollbars, and the stock search box. Bare
+        -- names are atlases.
+        close = {
+            NormalTexture = "RedButton-Exit",
+            PushedTexture = "RedButton-exit-pressed",
+            HighlightTexture = "RedButton-Highlight",
+            HighlightAlphaMode = "ADD",
+            -- The Settings panel renders this same button at 24x24 on
+            -- its frame corner at TOPRIGHT (1, 0), filling the title
+            -- band.
+            width = 24, height = 24,
+            points = {
+                {"TOPRIGHT", "window", "TOPRIGHT", 1, 0}
+            }
+        },
+		scrollbar_style = "minimal",
+        search_style = "native",
+        dropdown_style = "modern",
+        -- The loading indicator as the game's standard casting bar.
+        loader_style = "native",
+        -- The Settings panel's arrangement: view tabs at the top left,
+        -- the search box at the top right of the band under the title
+        -- bar, panes flush at top and bottom, resize grip in the frame
+        -- corner.
+        layout = "flush",
+        -- View tabs in the Settings panel's own tab plates.
+        tab_style = "native",
 		-- Filters header and search label.
 		header = {
-			font = "ChatFontNormal",
-			font_color = { hvHeaderR, hvHeaderG, hvHeaderB }
+			font = "GameFontHighlightMedium",
+            font_color = {1, 1, 1},
+            atlas = "Options_CategoryHeader_1"
 		},
 		-- Thin separator lines between the panes.
-		divider_color = {1, 1, 1, .25},
+		divider_color = {0, 0, 0, 0},
 		-- Wider bands: filters header strip, search bar, view tabs.
-		strip_color = {1, 1, 1, .25},
+        strip_color = {0, 0, 0, .35},
 		-- Conversation and date list rows.
 		row = {
 			font = "ChatFontNormal",
-			font_color = {1, 1, 1},
-			highlight = {
-				texture = "Interface\\QuestFrame\\UI-QuestLogTitleHighlight",
-				alpha_mode = "ADD",
-				color = {.196, .388, .5}
-			}
+			font_color = {goldR, goldG, goldB},
+            highlight = {
+                atlas = "Options_List_Hover"
+            },
+            selected = {
+                atlas = "Options_List_Active",
+                font_color = {1, 1, 1}
+            }
 		},
 		-- Message display area, text export box and search input.
 		content = {
