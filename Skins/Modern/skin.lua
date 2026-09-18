@@ -22,7 +22,7 @@ local WIM_ModernSkin = {
         -- The themed construction needs this much height for the header
         -- band, some message well, and the input row. Below it, the
         -- in-well scrollbar and the side column overflow the frame.
-        min_height = 150,
+        min_height = 225,
         -- The texture is a 64px nine-slice on the classic .25 coordinate
         -- grid; only the rendered corner size changes.
         backdrop = {
@@ -32,6 +32,41 @@ local WIM_ModernSkin = {
             bottom_right = { width = 16, height = 16 }
         },
         widgets = {
+			from = {
+				points = {
+                    {"LEFT", "window", "TOPLEFT", 56, -11.5},
+                    {"RIGHT", "window", "TOPRIGHT", -27, -11.5}
+                },
+				font = "GameFontNormal",
+				font_height = 14,
+				-- the following properties are only applied if more than one points define a binding box.
+				-- otherwise the string just runs on in a straight line.
+				align = "CENTER", -- horizontal alignment
+				justify = "MIDDLE", -- vertical alignment
+				wrap = false, -- disable word wrap
+				fit = true, -- enable automatic fitting of the text to the available space
+			},
+			char_info = {
+				points = {
+                    {"TOPLEFT", "window", "TOPLEFT", 56, -24},
+                    {"BOTTOMRIGHT", "window", "TOPRIGHT", -27, -54}
+                },
+				-- the following properties are only applied if more than one points define a binding box.
+				-- otherwise the string just runs on in a straight line.
+				align = "CENTER", -- horizontal alignment
+				justify = "MIDDLE", -- vertical alignment
+				non_space_wrap = true, -- enable non-space wrapped
+				wrap = true, -- enable word wrap,
+				line_spacing = 3,
+				fit = true, -- enable automatic fitting of the text to the available space
+			},
+			chat_display = {
+                points = {
+					{"TOP", "char_info", "BOTTOM", 0, -8},
+                    {"LEFT", "window", "LEFT", 24, 0},
+                    {"BOTTOMRIGHT", "window", "BOTTOMRIGHT", -38, 39}
+                }
+            },
 			history = {
 				points = {
                     {"TOPRIGHT", "window", "TOPRIGHT", -28, -2}

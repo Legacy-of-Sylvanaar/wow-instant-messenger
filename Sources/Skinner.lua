@@ -1231,17 +1231,23 @@ local function resolveRelativeTo(obj, relativeTo)
     return relativeTo or obj;
 end
 
-local function fitHeaderLine(fs, base, avail, wraps)
-    if(not (fs and base) or not avail or avail <= 0) then return; end
-    fs:SetFont(base.path, base.size, base.flags);
+local function fitHeaderLine(fs, avail, wraps)
+	local skin = fs.widgetName and GetSelectedSkin().message_window.widgets[fs.widgetName];
+
+	if (not fs or not skin or not avail or avail <= 0) then return; end
+
+	local path, _, flags = fs:GetFont();
+    fs:SetFont(path, skin.font_height or 12, flags);
+
     local width = fs.GetUnboundedStringWidth
         and fs:GetUnboundedStringWidth() or fs:GetStringWidth();
+
     if(width and width > avail) then
-        local size = math.floor(base.size * avail / width);
+        local size = math.floor((skin.font_height or 12) * avail / width);
         if(size >= HEADER_MIN_FONT) then
-            fs:SetFont(base.path, size, base.flags);
+            fs:SetFont(path, size, flags);
         elseif(not wraps) then
-            fs:SetFont(base.path, HEADER_MIN_FONT, base.flags);
+            fs:SetFont(path, HEADER_MIN_FONT, flags);
         end
         -- A wrapping string keeps the skin font size and wraps when
         -- even the minimum size cannot fit its longest line.
@@ -1254,59 +1260,43 @@ function LayoutThemedHeader(obj)
     if(not (chrome and chrome:IsShown() and widgets)) then return; end
     local from, info = widgets.from, widgets.char_info;
 
-    -- Center the title text in the band. The band's optical center is
-    -- y -11.5 (the History Viewer's measurement). The usable span runs
-    -- from the portrait circle (x 53.5) to the corner button (left
-    -- edge -23).
-    if(from and obj.wimFromBaseFont) then
-        from:ClearAllPoints();
-        from:SetPoint("LEFT", obj, "TOPLEFT", 56, -11.5);
-        from:SetPoint("RIGHT", obj, "TOPRIGHT", -27, -11.5);
-        from:SetJustifyH("CENTER");
-        from:SetWordWrap(false);
-        fitHeaderLine(from, obj.wimFromBaseFont, from:GetWidth(), false);
-    end
+	local skin = GetSelectedSkin();
+
+	local fontStrings = {'from', 'char_info'};
+	for i=1, #fontStrings do
+		if (widgets and widgets[fontStrings[i]]) then
+			local widget = widgets[fontStrings[i]];
+
+			-- -- debug: create a visual box around the widget to see its bounds
+			-- if (not widget.box) then
+			-- 	widget.box = widget:GetParent():CreateTexture(nil, "OVERLAY")
+			-- 	widget.box:SetColorTexture(0, 1, 0, 0.4) -- Semi-transparent bright green
+			-- 	widget.box:SetAllPoints(widget)
+			-- end
+
+			local fs = widget;
+			local widgetSkin = skin.message_window.widgets[fontStrings[i]];
+			if (widgetSkin and widgetSkin.points and (#widgetSkin.points > 1 or (widgetSkin.width and widgetSkin.height))) then
+				fs:SetJustifyH(widgetSkin.align or "LEFT");
+				fs:SetJustifyV(widgetSkin.justify or "TOP");
+				fs:SetWordWrap(widgetSkin.wrap or false);
+				fs:SetSpacing(widgetSkin.line_spacing or 0);
+				fs:SetNonSpaceWrap(widgetSkin.non_space_wrap or false);
+				if (widgetSkin.fit) then
+					fitHeaderLine(fs, fs:GetWidth(), (widgetSkin.wrap or false));
+				end
+			end
+		end
+	end
 
     local infoBottom = -28;
-    if(info and obj.wimInfoBaseFont) then
-        info:ClearAllPoints();
-        -- Use the same span as the title above, so both center on the
-        -- same axis.
-        info:SetPoint("TOPLEFT", obj, "TOPLEFT", 56, -28);
-        info:SetPoint("TOPRIGHT", obj, "TOPRIGHT", -27, -28);
-        info:SetJustifyH("CENTER");
-        info:SetWordWrap(true);
-        info:SetNonSpaceWrap(true);
-        -- Spacing between the full-title row and the race/class row.
-        -- Without it, descenders and apostrophes of adjacent rows
-        -- touch.
-        info:SetSpacing(3);
-        fitHeaderLine(info, obj.wimInfoBaseFont, info:GetWidth(), true);
-        infoBottom = -28 - (info:GetStringHeight() or 0);
-    end
 
     -- The well (display top +6) starts below the circle or below the
     -- details text, whichever reaches lower. It never rises above the
     -- skin's own baseline.
     local basePoints = skinWidgetPoints("chat_display");
     local display = widgets.chat_display;
-    local headerHeight = 54;
     if(display and basePoints) then
-        local wellTop = infoBottom - 4;
-        if(chrome.hasPortrait and wellTop > -54) then wellTop = -54; end
-        local baseTop;
-        for i=1, #basePoints do
-            if(string.find(basePoints[i][1], "TOP")) then
-                baseTop = basePoints[i][5] or 0;
-            end
-        end
-        local deltaY = 0;
-        local desiredTop = wellTop - 6;
-        if(baseTop) then
-            if(desiredTop > baseTop) then desiredTop = baseTop; end
-            deltaY = desiredTop - baseTop;
-        end
-        headerHeight = -desiredTop;
         display:ClearAllPoints();
         for i=1, #basePoints do
             local p = basePoints[i];
@@ -1318,53 +1308,44 @@ function LayoutThemedHeader(obj)
             -- gave the input box.
             if(string.find(p[1], "RIGHT")) then x = x - 18; end
             if(string.find(p[1], "LEFT")) then x = x - 12; end
-            if(string.find(p[1], "TOP")) then y = y + deltaY;
-            elseif(string.find(p[1], "BOTTOM")) then y = y + (obj.wimBoxExtra or 0); end
-            display:SetPoint(p[1], resolveRelativeTo(obj, p[2]), p[3], x, y);
+            if(string.find(p[1], "TOP")) then y = y;
+            elseif(string.find(p[1], "BOTTOM")) then
+				y = y + (obj.wimBoxExtra or 0);
+			end
+
+			display:SetPoint(p[1], resolveRelativeTo(obj, p[2]), p[3], x, y);
         end
     end
 
     -- Dynamic minimum height: the header, the current right-side
     -- column (its buttons hang from the well's top), and the input row
     -- must all fit inside the frame.
-    local column = 0;
-    local history = widgets.history;
-    if(history and history:IsShown()) then
-        column = column + (history:GetHeight() or 0) + 4;
-    end
-    local shortcuts = widgets.shortcuts;
-    if(shortcuts and shortcuts:IsShown()) then
-        local buttons = { shortcuts:GetChildren() };
-        for i=1, #buttons do
-            if(buttons[i]:IsShown()) then
-                column = column + (buttons[i]:GetHeight() or 0) + 2;
-            end
-        end
-    end
-    local skinWindow = GetSelectedSkin().message_window;
+
+    local skinWindow = skin.message_window;
     -- In wrap mode the box's content height has no limit. The
     -- scroller's view height is the row's real footprint.
-    local inputRow = 26;
-    if(obj.wimBoxInScroll) then
-        inputRow = obj.wimInputRowH or inputRow;
-    elseif(widgets.msg_box) then
-        inputRow = widgets.msg_box:GetHeight() or inputRow;
-    end
-    local inputHeight = inputRow + 30;
-    local minHeight = headerHeight + math.max(column, 60) + inputHeight;
-    if(skinWindow.min_height and minHeight < skinWindow.min_height) then
-        minHeight = skinWindow.min_height;
-    end
-    local minWidth = skinWindow.min_width or 256;
-    -- Remember the layout-aware floor: UpdateProps also writes resize
-    -- bounds and must not lower the minimum below what the header,
-    -- shortcut column and input row actually need.
-    obj.wimSkinMinWidth = minWidth;
-    obj.wimSkinMinHeight = minHeight;
+
+    -- local inputRow = 26;
+    -- if(obj.wimBoxInScroll) then
+    --     inputRow = obj.wimInputRowH or inputRow;
+    -- elseif(widgets.msg_box) then
+    --     inputRow = widgets.msg_box:GetHeight() or inputRow;
+    -- end
+    -- local inputHeight = inputRow + 30;
+    -- local minHeight = headerHeight + math.max(column, 60) + inputHeight;
+    -- if(skinWindow.min_height and minHeight < skinWindow.min_height) then
+    --     minHeight = skinWindow.min_height;
+    -- end
+    -- local minWidth = skinWindow.min_width or 256;
+    -- -- Remember the layout-aware floor: UpdateProps also writes resize
+    -- -- bounds and must not lower the minimum below what the header,
+    -- -- shortcut column and input row actually need.
+    obj.wimSkinMinWidth = skinWindow.min_width or 256;
+    obj.wimSkinMinHeight = skinWindow.min_height or 150;
     if(obj.SetResizeBounds) then
-        obj:SetResizeBounds(minWidth, minHeight);
+        obj:SetResizeBounds(obj.wimSkinMinWidth, obj.wimSkinMinHeight);
     elseif(obj.SetMinResize) then
-        obj:SetMinResize(minWidth, minHeight);
+        obj:SetMinResize(obj.wimSkinMinWidth, obj.wimSkinMinHeight);
     end
 end
 
@@ -2270,6 +2251,7 @@ function ApplyModernThemeToWindow(obj)
     bd.t:SetShown(skinShown); bd.b:SetShown(skinShown);
     bd.l:SetShown(skinShown); bd.r:SetShown(skinShown);
     bd.bg:SetShown(skinShown);
+
     -- Themed windows show the class icon only as the circled portrait
     -- (below). Without the portrait layout the icon would extend past
     -- the window's top-left corner, over the chrome.
@@ -2282,6 +2264,7 @@ function ApplyModernThemeToWindow(obj)
     if(obj.wimChrome) then
         obj.wimChrome:SetShown(chrome ~= nil);
         obj.wimChrome.well:SetShown(chrome ~= nil);
+
         if(obj.wimChrome.input) then
             obj.wimChrome.input:SetShown(chrome ~= nil);
         end
@@ -2289,13 +2272,17 @@ function ApplyModernThemeToWindow(obj)
             obj.wimChrome.scrollBar:SetShown(chrome ~= nil);
         end
     end
+
     if(widgets.class_icon) then
         local hasPortrait = obj.wimChrome and obj.wimChrome.hasPortrait;
+
         widgets.class_icon:SetShown(skinShown or (chrome ~= nil and hasPortrait and true or false));
+
         if(skinShown and obj.wimPortraitMasked) then
             widgets.class_icon:RemoveMaskTexture(obj.wimPortraitMask);
             obj.wimPortraitMasked = nil;
         end
+
         -- Restore the construction-time size unless the classic skin
         -- sizes the widget itself; the skin pass reapplies points but
         -- SetWidgetRect only sizes widgets the skin table sizes, so
@@ -2304,13 +2291,16 @@ function ApplyModernThemeToWindow(obj)
             local widgetSkin = skin and skin.message_window
                 and skin.message_window.widgets
                 and skin.message_window.widgets.class_icon;
+
             if(not (widgetSkin and type(widgetSkin.width) == "number")) then
                 widgets.class_icon:SetWidth(obj.wimIconBaseSize[1]);
             end
+
             if(not (widgetSkin and type(widgetSkin.height) == "number")) then
                 widgets.class_icon:SetHeight(obj.wimIconBaseSize[2]);
             end
         end
+
         -- The lite paint pass leaves a per-class icon file at full
         -- texture coordinates on the widget. The classic skin pass
         -- restores the sheet texture but not the cell coordinates, so
@@ -2321,31 +2311,35 @@ function ApplyModernThemeToWindow(obj)
             obj:UpdateIcon();
         end
     end
+
     if(not chrome) then
         if(obj.wimBackdropLevel) then
             bd.bg:GetParent():SetFrameLevel(obj.wimBackdropLevel);
         end
+
         -- Classic skins take the input box back: out of the wrap-mode
         -- scroller, single-line again, with skin anchors and insets.
         if(obj.wimBoxInScroll or obj.wimBoxBaseInsets) then
             RestoreThemedInput(obj, false);
         end
+
         -- The skin pass resets these widgets, and this teardown runs
         -- last by design. UpdateCharDetails runs between the two, and
         -- its themed wrapper lays the header out again while the
         -- chrome is still shown. Return the header widgets to the
         -- skin's own geometry here.
-        if(obj.wimFromBaseFont) then
-            ApplySkinToWidget(widgets.chat_display);
-            if(widgets.from) then
-                ApplySkinToWidget(widgets.from);
-            end
-            if(widgets.char_info) then
-                ApplySkinToWidget(widgets.char_info);
-                widgets.char_info:SetSpacing(0);
-            end
-        end
-        return;
+		ApplySkinToWidget(widgets.chat_display);
+
+		if(widgets.from) then
+			ApplySkinToWidget(widgets.from);
+		end
+
+		if(widgets.char_info) then
+			ApplySkinToWidget(widgets.char_info);
+			widgets.char_info:SetSpacing(0);
+		end
+
+		return;
     end
 
     -- The class icon, name, and details live on the Backdrop host
@@ -2353,25 +2347,12 @@ function ApplyModernThemeToWindow(obj)
     -- its rock fill. Raise it while themed; the classic path above
     -- restores it.
     local backdropHost = bd.bg:GetParent();
+
     if(obj.wimBackdropLevel == nil) then
         obj.wimBackdropLevel = backdropHost:GetFrameLevel();
     end
     backdropHost:SetFrameLevel(obj:GetFrameLevel() + 2);
 
-    -- Header layout baselines. The layouts derive geometry from the
-    -- skin's own point data on every run, so repeated runs cannot
-    -- drift. Only the fonts need to be captured.
-    if(widgets.from) then
-        -- The title band text uses the History Viewer's gold 12px
-        -- style. This is the baseline size the fit shrinks from.
-        local fontPath = _G.GameFontNormal:GetFont();
-        widgets.from:SetTextColor(_G.GameFontNormal:GetTextColor());
-        obj.wimFromBaseFont = { path = fontPath, size = 12, flags = "" };
-    end
-    if(widgets.char_info) then
-        local path, size, flags = widgets.char_info:GetFont();
-        if(path) then obj.wimInfoBaseFont = { path = path, size = size, flags = flags }; end
-    end
     if(widgets.msg_box) then
         -- UpdateProps re-applies the saved window height. While the
         -- wrapped row holds borrowed height, that reset would leave
@@ -2409,6 +2390,7 @@ function ApplyModernThemeToWindow(obj)
             widgets.msg_box:HookScript("OnCursorChanged", decor);
         end
     end
+
     if(not obj.wimHeaderSizeHooked) then
         obj.wimHeaderSizeHooked = true;
         obj:HookScript("OnSizeChanged", function(self)
@@ -2418,6 +2400,7 @@ function ApplyModernThemeToWindow(obj)
             end
         end);
     end
+
     if(not obj.wimCharDetailsWrapped) then
         obj.wimCharDetailsWrapped = true;
         local origUpdateCharDetails = obj.UpdateCharDetails;
@@ -2428,6 +2411,7 @@ function ApplyModernThemeToWindow(obj)
             end
         end;
     end
+
     if(chrome.scrollBar) then
         local up, down = widgets.scroll_up, widgets.scroll_down;
         if(up and down) then
