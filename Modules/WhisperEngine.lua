@@ -254,8 +254,10 @@ local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
 			return bnWin;
 		end
 	else
-		user = string.gsub(user," ","") -- Drii: WoW build15050 whisper bug for x-realm server with space
-	    user = fromEvent and user or FormatUserName(user);
+		if not _G.RegionalUniqueNamesEnabled or not _G.RegionalUniqueNamesEnabled() then
+			user = string.gsub(user," ","") -- Drii: WoW build15050 whisper bug for x-realm server with space
+	    end
+		user = fromEvent and user or FormatUserName(user);
 	end
 
     if(not user or user == "") then
