@@ -254,10 +254,15 @@ local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
 			return bnWin;
 		end
 	else
-		if not _G.RegionalUniqueNamesEnabled or not _G.RegionalUniqueNamesEnabled() then
-			user = string.gsub(user," ","") -- Drii: WoW build15050 whisper bug for x-realm server with space
-	    end
-		user = fromEvent and user or FormatUserName(user);
+		-- Drii: WoW build15050 whisper bug for x-realm server with space.
+		-- Only strip spaces from the realm part: WoW Forever characters have a
+		-- first and last name ("Firstname Lastname"), so the space in the
+		-- character name itself must be kept.
+		local namePart, realmPart = string.match(user, "^(.-)%-(.*)$");
+		if realmPart then
+			user = namePart .. "-" .. string.gsub(realmPart, " ", "");
+		end
+	    user = fromEvent and user or FormatUserName(user);
 	end
 
     if(not user or user == "") then
