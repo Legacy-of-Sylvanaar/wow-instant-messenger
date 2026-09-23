@@ -6,6 +6,7 @@ local string = string;
 local pairs = pairs;
 local tostring = tostring;
 local tonumber = tonumber;
+local select = select;
 local type = type;
 local math = math;
 local pcall = pcall;
@@ -13,6 +14,9 @@ local CreateFrame = CreateFrame;
 
 --set namespace
 setfenv(1, WIM);
+
+local buildNumber = select(4, _G.GetBuildInfo())
+local isForever = buildNumber >= 16000 and buildNumber < 20000
 
 -- ---------------------------------------------------------------------------
 -- Option pages (Options > AddOns > WIM).
@@ -83,7 +87,7 @@ local situationHolders = {};
 local TAB_HEIGHT = 37;
 local TAB_SEAT = 13;
 local TAB_STACK = 26;
-local TAB_INDENT = 37;
+local TAB_INDENT = not isForever and 37 or 16;
 local RULE_ROW_HEIGHT = 30;
 local RULE_PANEL_HEIGHT = 36 + (#situationRules + 1) * RULE_ROW_HEIGHT;
 local situationTabOrder = {"other", "arena", "combat", "pvp", "raid", "party", "resting"};
