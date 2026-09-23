@@ -196,7 +196,9 @@ function ui.Subcategory(parentCategory, name, description)
 end
 
 function ui.Header(layout, name, tooltip)
-    layout:AddInitializer(_G.CreateSettingsListSectionHeaderInitializer(name, tooltip));
+	local init = _G.CreateSettingsListSectionHeaderInitializer(name, tooltip);
+    layout:AddInitializer(init);
+	return { init = init };
 end
 
 -- shownPredicate hides the row (and keeps it out of search) while it
