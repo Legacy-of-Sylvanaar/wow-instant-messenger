@@ -2,17 +2,14 @@
 -- This file will act as a slug to polyfill using WoW globals.
 
 local buildNumber = select(4, _G.GetBuildInfo())
-local isModernApi = buildNumber >= 30401--This needs review
+-- WoW Forever reports interface 16001 (1.60.x) but runs on the modern client,
+-- so it needs the modern path as well. Otherwise the minimap right-click menu
+-- silently fails to open.
+local isForever = buildNumber >= 16000 and buildNumber < 20000
+local isModernApi = buildNumber >= 30401
 
-if (not isModernApi) then
-	local DDM = _G.LibStub and _G.LibStub:GetLibrary("LibDropDownMenu", true);
-
-	if (not DDM) then
-		-- Packaged external is unavailable (dev checkout or no other addon embedding it);
-		-- register a stub whose unresolved lookups fall back to the WoW global api.
-		DDM = _G.LibStub and _G.LibStub:NewLibrary("LibDropDownMenu", 1) or {};
-		setmetatable(DDM, { __index = function(_, key) return _G[key]; end });
-	end
+if (not isModernApi and not isForever) then
+	local DDM = LibStub:GetLibrary("LibDropDownMenu");
 
 	local k, v
 	for k,v in pairs (DDM) do
