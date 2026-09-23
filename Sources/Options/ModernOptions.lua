@@ -1639,7 +1639,7 @@ RegisterModernPage(function(category, ui)
     local modernActive = function() return SkinLocksOptionsStyle(); end;
 
     do
-        local cat = ui.Subcategory(folder, L["Skin"],
+        local cat, layout = ui.Subcategory(folder, L["Message Window"],
         L["The skin and window chrome."]);
         local function skinItems()
             local skins = GetRegisteredSkins(true);
@@ -1668,6 +1668,139 @@ RegisterModernPage(function(category, ui)
             modules.ShortcutBar, "enabled",
             L["Shows the row of shortcut buttons on message windows. Turning this off takes effect after the next interface reload."],
             function(value) EnableModule("ShortcutBar", value); end);
+
+		-- -- modern-only skin theming note
+		-- local themingNoteHolder;
+        -- local function ensureThemingNote()
+        --     if (not themingNoteHolder) then
+        --         local noteHolder = CreateFrame("Frame");
+        --         noteHolder:Hide();
+        --         local text = noteHolder:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
+        --         text:SetPoint("TOPLEFT", 37, -8);
+        --         text:SetPoint("TOPRIGHT", -37, -8);
+        --         text:SetJustifyH("LEFT");
+        --         text:SetSpacing(3);
+        --         text:SetTextColor(.8, .8, .8);
+        --         text:SetText(L["These settings style WIM's modern-only skins (such as WIM Modern), which are built from the game's own interface art. They are available while a modern-only skin is selected on the Skin page; with a classic skin active they are greyed out."]);
+        --         noteHolder.text = text;
+        --         themingNoteHolder = noteHolder;
+        --     end
+        --     return themingNoteHolder;
+        -- end
+        -- ui.Custom(layout, "WIM3SettingsNoteTemplate", {
+        --     onInit = options.HolderRowInit(ensureThemingNote),
+        --     -- Measured from the localized text; the template height
+        --     -- clipped longer translations.
+        --     getExtent = function()
+        --         local width = (options.SettingsListWidth and options.SettingsListWidth() or 600) - 74;
+        --         return 16 + math.ceil(options.WrappedHeight(ensureThemingNote().text, width));
+        --     end,
+        -- });
+
+		local function backgroundItems()
+            local items = {};
+            local list = GetChromeBackgrounds and GetChromeBackgrounds() or {};
+            for i = 1, #list do
+                table.insert(items, { value = list[i].key, text = L[list[i].label] });
+            end
+            return items;
+        end
+
+		local modernControls = {};
+        local function modern(control, ...)
+            table.insert(modernControls, control);
+            return ui.Tags(control, ...);
+        end
+
+        modern(ui.Dropdown(cat, L["Frame Background"], "rock",
+            backgroundItems, db.modernTheme, "chatFrame", nil, reskin), "message window");
+        modern(ui.Dropdown(cat, L["Message Area Background"], "darkmarble",
+            backgroundItems, db.modernTheme, "chatPanel", nil, reskin), "message window");
+        modern(ui.Checkbox(cat, L["See-Through Frame"],
+            false, db.modernTheme, "chatCutout",
+            L["Draws the window frame background only around the message area, so a clear message area background (None or Transparent) shows the game world behind the window."],
+            reskin), "message window", "cut-out");
+
+        modern(ui.Header(layout, L["Input Field"], L["The message box at the bottom of each window."]));
+        local wrapControl = modern(ui.Checkbox(cat, L["Multi-Line Input"],
+            true, db.modernTheme, "inputWrap",
+            L["The input field wraps long messages onto multiple lines, growing downward with the message instead of scrolling it on one line."],
+            reskin), "wrap");
+        local wrapLimit = modern(ui.Checkbox(cat, L["Limit Height"],
+            true, db.modernTheme, "inputWrapLimit",
+            L["Caps how far the input field grows; past the limit the message scrolls inside it."],
+            reskin), "wrap");
+        ui.DependsOn(wrapLimit, wrapControl);
+        local wrapLines = modern(ui.Slider(cat, L["Maximum Lines"], 4, 1, 20, 1,
+            db.modernTheme, "inputWrapLines",
+            L["The most lines the input field grows to before the message scrolls inside it."],
+            reskin), "wrap");
+        ui.DependsOn(wrapLines, wrapLimit);
+        local refreshInput = function()
+            if (UpdateAllInputColors) then UpdateAllInputColors(); end
+        end;
+        local nativeMaster = modern(ui.Checkbox(cat, L["Native Input Colors"],
+            true, db.displayColors.useNative, "enabled",
+            L["The message being typed takes the color of the chat type it will send as, like the game's own chat box."],
+            refreshInput), "color", "input");
+        local nativeApply = modern(ui.MultiDropdown(cat, L["Apply To"], {
+            { key = "whisper", text = L["Whispers"] },
+            { key = "bnet",    text = L["Battle.net Whispers"] },
+            { key = "say",     text = _G.SAY },
+            { key = "guild",   text = _G.GUILD },
+            { key = "officer", text = _G.GUILD_RANK1_DESC },
+            { key = "party",   text = _G.PARTY },
+            { key = "raid",    text = _G.RAID },
+            { key = "instance", text = _G.INSTANCE_CHAT },
+            { key = "channel", text = _G.CHANNELS },
+        }, db.displayColors, "useNative", nil, L["None"], refreshInput,
+            db_defaults.displayColors.useNative), "color", "input");
+        ui.DependsOn(nativeApply, nativeMaster);
+
+		modern(ui.Header(layout, L["Roleplay Profiles"],
+            L["Total RP 3 and Mary Sue Protocol profile display on whisper windows."]));
+        local rpEnable = modern(ui.Checkbox(cat, L["Show Roleplay Profiles"],
+            false, db.modernTheme, "rpEnabled",
+            L["Whisper windows show roleplay profile fields from Total RP 3 or any Mary Sue Protocol addon, and gain an Open RP Profile button on their shortcut bar that opens the partner's profile in the installed viewer. Requires the WIM Modern skin."],
+            function()
+                if (RefreshRPProfiles) then
+                    RefreshRPProfiles();
+                end
+            end), "roleplay", "rp", "trp");
+        local rpFieldsControl = modern(ui.MultiDropdown(cat, L["Profile Fields"], {
+            { key = "firstName", text = L["First Name"],
+              tooltip = L["The profile's first name, shown as the window's name text."] },
+            { key = "lastName", text = L["Last Name"],
+              tooltip = L["The profile's last name, shown as the window's name text."] },
+            { key = "title", text = L["Title"],
+              tooltip = L["The short title, shown on the window's details line."] },
+            { key = "fullTitle", text = L["Full Title"],
+              tooltip = L["The long title, shown on the window's details line and portrait tooltip."] },
+            { key = "race", text = L["Race"],
+              tooltip = L["The custom race, replacing the character's race on the details line."] },
+            { key = "class", text = L["Class"],
+              tooltip = L["The custom class, replacing the character's class on the details line."] },
+            { key = "portrait", text = L["Portrait"],
+              tooltip = L["The profile's icon, replacing the class icon."] },
+            { key = "color", text = L["Name & Class Color"],
+              tooltip = L["The profile's custom color, applied to the window's name text and to the class on the details line."] },
+        }, db.modernTheme, "rpFields",
+            L["Whisper windows show the selected fields from the partner's Total RP 3 or Mary Sue Protocol profile. Fields left unselected -- or without profile data -- keep the standard display."],
+            L["None (game default)"],
+            function()
+                if (RefreshRPProfiles) then
+                    RefreshRPProfiles();
+                end
+            end,
+            db_defaults.modernTheme.rpFields), "roleplay", "rp", "trp");
+        ui.DependsOn(rpFieldsControl, rpEnable);
+
+		for i = 1, #modernControls do
+            local control = modernControls[i];
+            if (control and control.init and control.init.AddModifyPredicate) then
+                control.init:AddShownPredicate(modernActive);
+            end
+        end
     end
 
     do
@@ -1804,35 +1937,8 @@ RegisterModernPage(function(category, ui)
     -- Everything the WIM Modern skin exposes, one section per surface;
     -- the roleplay integration is part of that skin too.
     do
-        local cat, layout = ui.Subcategory(folder, L["WIM Modern Skin"],
-        L["Backgrounds, input field, and roleplay profile options for the WIM Modern skin."]);
-
-        local themingNoteHolder;
-        local function ensureThemingNote()
-            if (not themingNoteHolder) then
-                local noteHolder = CreateFrame("Frame");
-                noteHolder:Hide();
-                local text = noteHolder:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
-                text:SetPoint("TOPLEFT", 37, -8);
-                text:SetPoint("TOPRIGHT", -37, -8);
-                text:SetJustifyH("LEFT");
-                text:SetSpacing(3);
-                text:SetTextColor(.8, .8, .8);
-                text:SetText(L["These settings style WIM's modern-only skins (such as WIM Modern), which are built from the game's own interface art. They are available while a modern-only skin is selected on the Skin page; with a classic skin active they are greyed out."]);
-                noteHolder.text = text;
-                themingNoteHolder = noteHolder;
-            end
-            return themingNoteHolder;
-        end
-        ui.Custom(layout, "WIM3SettingsNoteTemplate", {
-            onInit = options.HolderRowInit(ensureThemingNote),
-            -- Measured from the localized text; the template height
-            -- clipped longer translations.
-            getExtent = function()
-                local width = (options.SettingsListWidth and options.SettingsListWidth() or 600) - 74;
-                return 16 + math.ceil(options.WrappedHeight(ensureThemingNote().text, width));
-            end,
-        });
+        local cat, layout = ui.Subcategory(folder, L["Interface"],
+        L["Backgrounds and customization for WIM interface."]);
 
         local function backgroundItems()
             local items = {};
@@ -1845,124 +1951,29 @@ RegisterModernPage(function(category, ui)
         local reapplyFilter = function()
             if (RestyleFilterFrame) then RestyleFilterFrame(); end
         end;
-        local modernControls = {};
-        local function modern(control, ...)
-            table.insert(modernControls, control);
-            return ui.Tags(control, ...);
-        end
-
-        ui.Header(layout, L["Message Windows"], L["The whisper and chat windows."]);
-        modern(ui.Dropdown(cat, L["Frame Background"], "rock",
-            backgroundItems, db.modernTheme, "chatFrame", nil, reskin), "message window");
-        modern(ui.Dropdown(cat, L["Message Area Background"], "darkmarble",
-            backgroundItems, db.modernTheme, "chatPanel", nil, reskin), "message window");
-        modern(ui.Checkbox(cat, L["See-Through Frame"],
-            false, db.modernTheme, "chatCutout",
-            L["Draws the window frame background only around the message area, so a clear message area background (None or Transparent) shows the game world behind the window."],
-            reskin), "message window", "cut-out");
-
-        ui.Header(layout, L["Input Field"], L["The message box at the bottom of each window."]);
-        local wrapControl = modern(ui.Checkbox(cat, L["Multi-Line Input"],
-            true, db.modernTheme, "inputWrap",
-            L["The input field wraps long messages onto multiple lines, growing downward with the message instead of scrolling it on one line."],
-            reskin), "wrap");
-        local wrapLimit = modern(ui.Checkbox(cat, L["Limit Height"],
-            true, db.modernTheme, "inputWrapLimit",
-            L["Caps how far the input field grows; past the limit the message scrolls inside it."],
-            reskin), "wrap");
-        ui.DependsOn(wrapLimit, wrapControl);
-        local wrapLines = modern(ui.Slider(cat, L["Maximum Lines"], 4, 1, 20, 1,
-            db.modernTheme, "inputWrapLines",
-            L["The most lines the input field grows to before the message scrolls inside it."],
-            reskin), "wrap");
-        ui.DependsOn(wrapLines, wrapLimit);
-        local refreshInput = function()
-            if (UpdateAllInputColors) then UpdateAllInputColors(); end
-        end;
-        local nativeMaster = modern(ui.Checkbox(cat, L["Native Input Colors"],
-            true, db.displayColors.useNative, "enabled",
-            L["The message being typed takes the color of the chat type it will send as, like the game's own chat box."],
-            refreshInput), "color", "input");
-        local nativeApply = modern(ui.MultiDropdown(cat, L["Apply To"], {
-            { key = "whisper", text = L["Whispers"] },
-            { key = "bnet",    text = L["Battle.net Whispers"] },
-            { key = "say",     text = _G.SAY },
-            { key = "guild",   text = _G.GUILD },
-            { key = "officer", text = _G.GUILD_RANK1_DESC },
-            { key = "party",   text = _G.PARTY },
-            { key = "raid",    text = _G.RAID },
-            { key = "instance", text = _G.INSTANCE_CHAT },
-            { key = "channel", text = _G.CHANNELS },
-        }, db.displayColors, "useNative", nil, L["None"], refreshInput,
-            db_defaults.displayColors.useNative), "color", "input");
-        ui.DependsOn(nativeApply, nativeMaster);
 
         ui.Header(layout, L["History Viewer"], L["The message history window."]);
-        modern(ui.Dropdown(cat, L["Frame Background"], "rock",
-            backgroundItems, db.modernTheme, "frame", nil, reskin), "history viewer");
-        modern(ui.Dropdown(cat, L["Navigation List Background"], "darkmarble",
-            backgroundItems, db.modernTheme, "panels", nil, reskin), "history viewer");
-        modern(ui.Dropdown(cat, L["Content Background"], "darkmarble",
-            backgroundItems, db.modernTheme, "content", nil, reskin), "history viewer");
-        modern(ui.Checkbox(cat, L["See-Through Frame"],
+        ui.Dropdown(cat, L["Frame Background"], "rock",
+            backgroundItems, db.modernTheme, "frame", nil, reskin);
+        ui.Dropdown(cat, L["Navigation List Background"], "darkmarble",
+            backgroundItems, db.modernTheme, "panels", nil, reskin);
+        ui.Dropdown(cat, L["Content Background"], "darkmarble",
+            backgroundItems, db.modernTheme, "content", nil, reskin);
+        ui.Checkbox(cat, L["See-Through Frame"],
             false, db.modernTheme, "cutout",
             L["Draws the frame background only around the panels, so a clear panel background (None or Transparent) shows the game world behind the viewer."],
-            reskin), "history viewer", "cut-out");
+            reskin);
 
         ui.Header(layout, L["Filter Editor"], L["The window for adding and editing whisper and chat filters."]);
-        modern(ui.Dropdown(cat, L["Frame Background"], "rock",
-            backgroundItems, db.modernTheme, "filterFrame", nil, reapplyFilter), "filter editor");
-        modern(ui.Dropdown(cat, L["Filter Panel Background"], "darkmarble",
-            backgroundItems, db.modernTheme, "filterPanel", nil, reapplyFilter), "filter editor");
-        modern(ui.Checkbox(cat, L["See-Through Frame"],
+        ui.Dropdown(cat, L["Frame Background"], "rock",
+            backgroundItems, db.modernTheme, "filterFrame", nil, reapplyFilter);
+        ui.Dropdown(cat, L["Filter Panel Background"], "darkmarble",
+            backgroundItems, db.modernTheme, "filterPanel", nil, reapplyFilter);
+        ui.Checkbox(cat, L["See-Through Frame"],
             false, db.modernTheme, "filterCutout",
             L["Draws the frame background only around the filter area, so a clear filter area background (None or Transparent) shows the game world behind the editor."],
-            reapplyFilter), "filter editor", "cut-out");
+            reapplyFilter);
 
-        ui.Header(layout, L["Roleplay Profiles"],
-            L["Total RP 3 and Mary Sue Protocol profile display on whisper windows."]);
-        local rpEnable = modern(ui.Checkbox(cat, L["Show Roleplay Profiles"],
-            false, db.modernTheme, "rpEnabled",
-            L["Whisper windows show roleplay profile fields from Total RP 3 or any Mary Sue Protocol addon, and gain an Open RP Profile button on their shortcut bar that opens the partner's profile in the installed viewer. Requires the WIM Modern skin."],
-            function()
-                if (RefreshRPProfiles) then
-                    RefreshRPProfiles();
-                end
-            end), "roleplay", "rp", "trp");
-        local rpFieldsControl = modern(ui.MultiDropdown(cat, L["Profile Fields"], {
-            { key = "firstName", text = L["First Name"],
-              tooltip = L["The profile's first name, shown as the window's name text."] },
-            { key = "lastName", text = L["Last Name"],
-              tooltip = L["The profile's last name, shown as the window's name text."] },
-            { key = "title", text = L["Title"],
-              tooltip = L["The short title, shown on the window's details line."] },
-            { key = "fullTitle", text = L["Full Title"],
-              tooltip = L["The long title, shown on the window's details line and portrait tooltip."] },
-            { key = "race", text = L["Race"],
-              tooltip = L["The custom race, replacing the character's race on the details line."] },
-            { key = "class", text = L["Class"],
-              tooltip = L["The custom class, replacing the character's class on the details line."] },
-            { key = "portrait", text = L["Portrait"],
-              tooltip = L["The profile's icon, replacing the class icon."] },
-            { key = "color", text = L["Name & Class Color"],
-              tooltip = L["The profile's custom color, applied to the window's name text and to the class on the details line."] },
-        }, db.modernTheme, "rpFields",
-            L["Whisper windows show the selected fields from the partner's Total RP 3 or Mary Sue Protocol profile. Fields left unselected -- or without profile data -- keep the standard display."],
-            L["None (game default)"],
-            function()
-                if (RefreshRPProfiles) then
-                    RefreshRPProfiles();
-                end
-            end,
-            db_defaults.modernTheme.rpFields), "roleplay", "rp", "trp");
-        ui.DependsOn(rpFieldsControl, rpEnable);
-
-        for i = 1, #modernControls do
-            local control = modernControls[i];
-            if (control and control.init and control.init.AddModifyPredicate) then
-                control.init:AddModifyPredicate(modernActive);
-            end
-        end
     end
 end);
 
