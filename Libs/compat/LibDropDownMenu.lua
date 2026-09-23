@@ -6,9 +6,9 @@ local buildNumber = select(4, _G.GetBuildInfo())
 -- so it needs the modern path as well. Otherwise the minimap right-click menu
 -- silently fails to open.
 local isForever = buildNumber >= 16000 and buildNumber < 20000
-local isModernApi = buildNumber >= 30401 or isForever --This needs review
+local isModernApi = buildNumber >= 30401
 
-if (not isModernApi) then
+if (not isModernApi and not isForever) then
 	local DDM = LibStub:GetLibrary("LibDropDownMenu");
 
 	local k, v
