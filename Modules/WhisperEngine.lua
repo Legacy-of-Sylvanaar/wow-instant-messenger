@@ -288,7 +288,7 @@ local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
 		if realmPart then
 			user = namePart .. "-" .. string.gsub(realmPart, " ", "");
 		end
-	    user = fromEvent and user or FormatUserName(user);
+	    user = fromEvent and user or utils.FormatUserName(user);
 	end
 
     if(not user or user == "") then
