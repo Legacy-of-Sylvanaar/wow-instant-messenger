@@ -4551,6 +4551,20 @@ function History:OnBeforeInitialized()
     -- load some environment data EARLIER than before; the history assembly
     -- below needs env.realm and env.character.
     env.realm = _G.GetRealmName();
+
+	-- Determine the realm based on active game rules playing on Forever since there aren't any realms.
+	if isForever then
+		if _G.C_GameRules.IsGameRuleActive(_G.Enum.GameRule.HardcoreRuleset) then
+			env.realm = "Hardcore"
+		elseif _G.C_GameRules.IsGameRuleActive(_G.Enum.GameRule.RPRuleset) then
+			env.realm = "RP"
+		elseif _G.C_GameRules.IsGameRuleActive(_G.Enum.GameRule.PvPRuleset) then
+			env.realm = "PvP"
+		else
+			env.realm = "PvE"
+		end
+	end
+
     env.character = _G.UnitName("player");
 
     -- History storage. WIM3_History is the legacy holding pen: earlier versions
