@@ -24,6 +24,7 @@ debugLevel = 0; -- 0 off, 1 normal, 2 verbose event tracing (Sources/DebugTrace.
 useProtocol2 = true; -- test switch for new W2W Protocol. (Dev use only)
 local buildNumber = select(4, _G.GetBuildInfo());
 isModernApi = buildNumber >= 90001; -- Still needed for non synced invite API and for classID checks
+isForever = buildNumber >= 16000 and buildNumber < 20000
 
 constants = {}; -- constants such as class colors will be stored here. (includes female class names).
 modules = {}; -- module table. consists of all registerd WIM modules/plugins/skins. (treated the same).

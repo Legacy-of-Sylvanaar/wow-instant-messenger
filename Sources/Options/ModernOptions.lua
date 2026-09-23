@@ -15,9 +15,6 @@ local CreateFrame = CreateFrame;
 --set namespace
 setfenv(1, WIM);
 
-local buildNumber = select(4, _G.GetBuildInfo())
-local isForever = buildNumber >= 16000 and buildNumber < 20000
-
 -- ---------------------------------------------------------------------------
 -- Option pages (Options > AddOns > WIM).
 --
