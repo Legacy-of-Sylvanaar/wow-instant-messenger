@@ -419,19 +419,8 @@ function ApplySkinToWindow(obj)
     local close = obj.widgets.close;
     ApplySkinToWidget(close);
     -- close button is a special case... so do the following extra work.
-    if(close.curTextureIndex == 1) then
-        close:SetNormalTexture(SelectedSkin.message_window.widgets.close.state_hide.NormalTexture);
-        close:SetPushedTexture(SelectedSkin.message_window.widgets.close.state_hide.PushedTexture);
-        close:SetHighlightTexture(SelectedSkin.message_window.widgets.close.state_hide.HighlightTexture, SelectedSkin.message_window.widgets.close.state_hide.HighlightAlphaMode);
-    else
-        close:SetNormalTexture(SelectedSkin.message_window.widgets.close.state_close.NormalTexture);
-        close:SetPushedTexture(SelectedSkin.message_window.widgets.close.state_close.PushedTexture);
-        close:SetHighlightTexture(SelectedSkin.message_window.widgets.close.state_close.HighlightTexture, SelectedSkin.message_window.widgets.close.state_close.HighlightAlphaMode);
-    end
-    -- Setting a state texture file does not reset texture coordinates,
-    -- and the themed corner button windows its states into padded art
-    -- (ApplyRedButtonArt); without the reset the classic art draws
-    -- cropped and off-center after a switch back.
+
+	-- reset texture coordinates for the close button states
     local closeStates = { close:GetNormalTexture(), close:GetPushedTexture(),
         close:GetHighlightTexture() };
     for i = 1, #closeStates do
@@ -439,6 +428,8 @@ function ApplySkinToWindow(obj)
             closeStates[i]:SetTexCoord(0, 1, 0, 1);
         end
     end
+
+	close.curTextureIndex = 0; -- force widget to redraw itself
 
     --scroll_up button
     local scroll_up = obj.widgets.scroll_up;
@@ -2180,41 +2171,6 @@ function DarkenModernDropdown(dropdown)
     end);
 end
 
-function UpdateThemedCloseArt(obj)
-    local close = obj.widgets and obj.widgets.close;
-    if(not (close and close.GetNormalTexture)) then return; end
-    local closes = _G.IsShiftKeyDown() or close.curTextureIndex == 2;
-    local normal = close:GetNormalTexture();
-    local pushed = close:GetPushedTexture();
-    local highlight = close:GetHighlightTexture();
-    if(normal) then
-        ApplyRedButtonArt(normal, closes and "RedButton-Exit" or "redbutton-condense");
-    end
-    if(pushed) then
-        ApplyRedButtonArt(pushed, closes and "RedButton-exit-pressed" or "redbutton-condense-pressed");
-    end
-    if(highlight) then
-        ApplyRedButtonArt(highlight, "RedButton-Highlight");
-        highlight:SetBlendMode("ADD");
-    end
-    close:SetSize(24, 24);
-    close:ClearAllPoints();
-    close:SetPoint("TOPRIGHT", obj, "TOPRIGHT", 1, 0);
-end
-
--- Live art swap while SHIFT is pressed or released over themed windows.
-local shiftWatcher = CreateFrame("Frame");
-shiftWatcher:RegisterEvent("MODIFIER_STATE_CHANGED");
-shiftWatcher:SetScript("OnEvent", function(_, _, key)
-    if(key ~= "LSHIFT" and key ~= "RSHIFT") then return; end
-    local windowList = WindowSoupBowl.windows;
-    for i=1, #windowList do
-        local win = windowList[i].obj;
-        if(win and win.wimChrome and win.wimChrome:IsShown()) then
-            UpdateThemedCloseArt(win);
-        end
-    end
-end);
 
 function ApplyModernThemeToWindow(obj)
     local theme = db and db.modernTheme;
@@ -2532,10 +2488,6 @@ function ApplyModernThemeToWindow(obj)
     if(cutout) then
         ApplyChromeBackgroundToStrips(chrome.strips, chrome.bg, theme.chatFrame);
     end
-
-    -- The corner button: minimize glyph at rest, the X while SHIFT
-    -- is held (see UpdateThemedCloseArt).
-    UpdateThemedCloseArt(obj);
 end
 
 local function deleteStyleFileEntries(theTable)

@@ -80,7 +80,26 @@ local WIM_ModernSkin = {
                     {"TOPLEFT", "chat_display", "TOPRIGHT", 28, 4},
                     {"BOTTOMRIGHT", "chat_display", "BOTTOMRIGHT", 28 + 22, 0}
                 },
-            }
+            },
+			close = {
+				state_hide = {
+                    NormalTexture = "RedButton-Condense",
+                    PushedTexture = "RedButton-Condense-Pressed",
+                    HighlightTexture = "RedButton-Highlight",
+                    HighlightAlphaMode = "ADD"
+                },
+                state_close = {
+                    NormalTexture = "RedButton-Exit",
+                    PushedTexture = "RedButton-Exit-Pressed",
+                    HighlightTexture = "RedButton-Highlight",
+                    HighlightAlphaMode = "ADD"
+                },
+				width = 24,
+                height = 24,
+                points = {
+                    {"TOPRIGHT", "window", "TOPRIGHT", -2, 1}
+                }
+			}
         }
     },
     tab_strip = {

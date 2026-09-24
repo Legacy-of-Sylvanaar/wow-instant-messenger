@@ -2219,30 +2219,28 @@ RegisterWidgetTrigger("close", "whisper,chat,w2w,demo", "OnClick", function(self
 	end);
 
 RegisterWidgetTrigger("close", "whisper,chat,w2w", "OnUpdate", function(self)
-                -- Themed windows swap their corner art through the
-                -- modifier watcher in Skinner.lua. This hover swap would
-                -- repaint the classic art files over it every frame.
-                if(self.parentWindow and self.parentWindow.wimChrome
-                        and self.parentWindow.wimChrome:IsShown()) then
-                        return;
-                end
-                local SelectedSkin = WIM:GetSelectedSkin();
-		if(GetMouseFocus() == self) then
-			if(IsShiftKeyDown() and self.curTextureIndex == 1) then
-				self:SetNormalTexture(SelectedSkin.message_window.widgets.close.state_close.NormalTexture);
-				self:SetPushedTexture(SelectedSkin.message_window.widgets.close.state_close.PushedTexture);
-				self:SetHighlightTexture(SelectedSkin.message_window.widgets.close.state_close.HighlightTexture, SelectedSkin.message_window.widgets.close.state_close.HighlightAlphaMode);
-				self.curTextureIndex = 2;
-			elseif(not IsShiftKeyDown() and self.curTextureIndex == 2) then
-				self:SetNormalTexture(SelectedSkin.message_window.widgets.close.state_hide.NormalTexture);
-				self:SetPushedTexture(SelectedSkin.message_window.widgets.close.state_hide.PushedTexture);
-				self:SetHighlightTexture(SelectedSkin.message_window.widgets.close.state_hide.HighlightTexture, SelectedSkin.message_window.widgets.close.state_hide.HighlightAlphaMode);
-				self.curTextureIndex = 1;
-			end
-		elseif(self.curTextureIndex == 2) then
-			self:SetNormalTexture(SelectedSkin.message_window.widgets.close.state_hide.NormalTexture);
-			self:SetPushedTexture(SelectedSkin.message_window.widgets.close.state_hide.PushedTexture);
-			self:SetHighlightTexture(SelectedSkin.message_window.widgets.close.state_hide.HighlightTexture, SelectedSkin.message_window.widgets.close.state_hide.HighlightAlphaMode);
+		-- Set texture based on shift key state
+
+		local SelectedSkin = WIM:GetSelectedSkin();
+		if(GetMouseFocus() == self and IsShiftKeyDown() and self.curTextureIndex == 1) then
+			local normal = SelectedSkin.message_window.widgets.close.state_close.NormalTexture;
+			local pushed = SelectedSkin.message_window.widgets.close.state_close.PushedTexture;
+			local highlight = SelectedSkin.message_window.widgets.close.state_close.HighlightTexture;
+			local highlightAlphaMode = SelectedSkin.message_window.widgets.close.state_close.HighlightAlphaMode;
+
+			if GetAtlasInfo(normal) then self:SetNormalAtlas(normal); else self:SetNormalTexture(normal); end
+			if GetAtlasInfo(pushed) then self:SetPushedAtlas(pushed); else self:SetPushedTexture(pushed); end
+			if GetAtlasInfo(highlight) then self:SetHighlightAtlas(highlight, highlightAlphaMode); else self:SetHighlightTexture(highlight, highlightAlphaMode); end
+			self.curTextureIndex = 2;
+		elseif(not (GetMouseFocus() == self and IsShiftKeyDown()) and self.curTextureIndex ~= 1) then
+			local normal = SelectedSkin.message_window.widgets.close.state_hide.NormalTexture;
+			local pushed = SelectedSkin.message_window.widgets.close.state_hide.PushedTexture;
+			local highlight = SelectedSkin.message_window.widgets.close.state_hide.HighlightTexture;
+			local highlightAlphaMode = SelectedSkin.message_window.widgets.close.state_hide.HighlightAlphaMode;
+
+			if GetAtlasInfo(normal) then self:SetNormalAtlas(normal); else self:SetNormalTexture(normal); end
+			if GetAtlasInfo(pushed) then self:SetPushedAtlas(pushed); else self:SetPushedTexture(pushed); end
+			if GetAtlasInfo(highlight) then self:SetHighlightAtlas(highlight, highlightAlphaMode); else self:SetHighlightTexture(highlight, highlightAlphaMode); end
 			self.curTextureIndex = 1;
 		end
 	end);
