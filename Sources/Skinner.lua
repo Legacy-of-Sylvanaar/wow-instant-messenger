@@ -13,21 +13,13 @@ local unpack = unpack;
 local setmetatable = setmetatable;
 local CreateFrame = CreateFrame;
 local pcall = pcall;
-
--- Defined before the setfenv. C_Texture.GetAtlasInfo looks up
--- Vector2DMixin in the calling function's environment, so namespaced
--- code must not call it directly.
-local function getAtlasInfo(name)
-    if (C_Texture and C_Texture.GetAtlasInfo) then
-        return C_Texture.GetAtlasInfo(name);
-    end
-end
 -- Shared with the rest of the addon, so each file need not carry its
 -- own pre-namespace copy.
-WIM.GetAtlasInfo = getAtlasInfo;
 
 -- set namespace
 setfenv(1, WIM);
+
+local getAtlasInfo = utils.skin.getAtlasInfo
 
 db_defaults.skin = {
 	-- default skin to "WIM Modern" for retail and use "WIM Classic" for classic and classic expansions
@@ -882,7 +874,7 @@ end
 -- panel's own checkboxes); where they are missing, the template art
 -- stays and is scaled instead. Returns whether the atlases were used.
 function StyleMinimalCheckbox(cb, size, fallbackScale)
-    if(GetAtlasInfo("checkbox-minimal") and GetAtlasInfo("checkmark-minimal")) then
+    if(getAtlasInfo("checkbox-minimal") and getAtlasInfo("checkmark-minimal")) then
         cb:SetSize(size, size);
         cb:SetNormalAtlas("checkbox-minimal");
         cb:SetPushedAtlas("checkbox-minimal");

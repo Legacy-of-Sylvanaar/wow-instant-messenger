@@ -528,7 +528,7 @@ end
 -- UnlockHighlight, so callers are unchanged. Where the atlases are
 -- missing the quest-title highlight serves both roles, as before.
 function options.SkinListRow(button, text)
-    if (GetAtlasInfo("Options_List_Hover")) then
+    if (utils.skin.getAtlasInfo("Options_List_Hover")) then
         button:SetHighlightTexture("Interface\\Buttons\\WHITE8X8");
         local highlight = button:GetHighlightTexture();
         highlight:SetAtlas("Options_List_Hover");
@@ -538,7 +538,7 @@ function options.SkinListRow(button, text)
     else
         button:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD");
     end
-    if (not GetAtlasInfo("Options_List_Active")) then
+    if (not utils.skin.getAtlasInfo("Options_List_Active")) then
         return;
     end
     local selected = button:CreateTexture(nil, "ARTWORK");
@@ -565,10 +565,10 @@ end
 -- the addon's own arrows where the atlases are missing.
 function options.StyleStepper(button, direction)
     local atlas = (direction == "up") and "minimal-scrollbar-arrow-top" or "minimal-scrollbar-arrow-bottom";
-    if (GetAtlasInfo(atlas)) then
+    if (utils.skin.getAtlasInfo(atlas)) then
         button:SetNormalAtlas(atlas);
-        button:SetPushedAtlas(GetAtlasInfo(atlas.."-down") and (atlas.."-down") or atlas);
-        button:SetHighlightAtlas(GetAtlasInfo(atlas.."-over") and (atlas.."-over") or atlas, "BLEND");
+        button:SetPushedAtlas(utils.skin.getAtlasInfo(atlas.."-down") and (atlas.."-down") or atlas);
+        button:SetHighlightAtlas(utils.skin.getAtlasInfo(atlas.."-over") and (atlas.."-over") or atlas, "BLEND");
     else
         local file = "Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\"..direction;
         button:SetNormalTexture(file);

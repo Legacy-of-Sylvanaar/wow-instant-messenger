@@ -1,8 +1,10 @@
 local WIM = WIM;
+local type = type;
+
 
 local utils = {}
-
 WIM.utils = utils;
+
 
 --------------------------------------
 --     Compatibility Functions      --
@@ -334,6 +336,113 @@ do
 			focus:SetFocus()
 		end
 	end
+end
+
+--------------------------------------
+--        Skinning Functions        --
+--------------------------------------
+do
+	utils.skin = {};
+	local skin = utils.skin;
+
+	-- helper to check if atlas exists
+	skin.getAtlasInfo = function (name)
+		setfenv(1, _G); -- required by getAtlasInfo
+		return C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(name) or nil;
+	end;
+
+	-- Atlas Fallbacks
+	do
+		local fallbackAtlasDefinitions = {};
+
+		-- allow a skin to register a fallback if atlas does not exist.
+		skin.registerAtlasFallback = function(name, fallback)
+			-- required
+			if (not name or type(name) ~= "string" or not fallback) then
+				return;
+			end
+
+			if type(fallback) == "string" then
+				fallback = { path = fallback, texture_coord = {0, 1, 0, 1} };
+			elseif type(fallback) == "table" then
+				-- path is required
+				if not fallback.path then
+					return;
+				end
+
+				-- add texture coordinates if missing
+				if not fallback.texture_coord then
+					fallback.texture_coord = {0, 1, 0, 1};
+				end
+			end
+
+			fallbackAtlasDefinitions[name:lower()] = fallback;
+		end
+
+		skin.getAtlasFallbackInfo = function(name)
+			return fallbackAtlasDefinitions[name:lower()];
+		end
+	end
+
+
+	-- funType can be "Normal", "Pressed", "Highlight", etc.
+	-- frame is the UI element to which the texture will be applied.
+	-- texture can be an atlas reference or a backup atlas definition a path (string) or a table containing texture information.
+	--	example: { path="Interface\\Buttons\\UI-Panel-Button-Up", texture_coord={0,1,0,1} }
+	-- Additional arguments (...) for example: "SetHighlight*" takes a second AlphaMode argument.
+	local function applySmartTexture(funType, frame, texture, ...)
+		-- requirements
+		if not frame or not texture then return; end
+		if type(texture) ~= "string" and type(texture) ~= "table" then return; end
+
+		-- if string then it is an atlas, check if it exists, if it doesn't,
+		-- check fallback atlas definitions and use as table.
+		local isAtlas = false;
+		if type(texture) == "string" then
+			local atlasInfo = skin.getAtlasInfo(texture);
+			if atlasInfo then
+				isAtlas = true;
+			else
+				local fallbackInfo = skin.getAtlasFallbackInfo(texture);
+				if fallbackInfo then
+					texture = fallbackInfo;
+				else
+					texture = { path = texture, texture_coord = {0, 1, 0, 1} };
+				end
+			end
+		end
+
+		-- at this point, isAtlas indicates the type of the texture
+		-- if it's a table, it is assumed to be a path with additional info parameters.
+
+		local setFun = frame["Set" .. (funType or "") .. (isAtlas and "Atlas" or "Texture")];
+		local getFun = frame["Get" .. (funType or "") .. (isAtlas and "Atlas" or "Texture")];
+
+		-- trap to make sure the function we're trying to call actually exists
+		if not setFun then return; end
+
+		-- apply the texture using the appropriate function based on its type
+		if isAtlas then
+			setFun(frame, texture, ...);
+			return getFun and getFun(frame) or nil;
+		else
+			local tex = setFun(frame, texture.path, ...);
+			if (texture.texture_coord and getFun) then
+				local tex= getFun(frame);
+				if tex then
+					tex:SetTexCoord(unpack(texture.texture_coord));
+					return tex
+				end
+			end
+			return nil
+		end
+	end
+
+	function skin.applySmartTexture(...) return applySmartTexture(nil, ...); end
+	function skin.applySmartNormalTexture(...) return applySmartTexture("Normal", ...); end
+	function skin.applySmartPushedTexture(...) return applySmartTexture("Pushed", ...); end
+	function skin.applySmartDisabledTexture(...) return applySmartTexture("Disabled", ...); end
+	function skin.applySmartHighlightTexture(...) return applySmartTexture("Highlight", ...); end
 end
 
 --------------------------------------
