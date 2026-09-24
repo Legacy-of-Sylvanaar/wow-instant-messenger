@@ -426,7 +426,7 @@ do
 			setFun(frame, texture, ...);
 			return getFun and getFun(frame) or nil;
 		else
-			local tex = setFun(frame, texture.path, ...);
+			setFun(frame, texture.path, ...);
 			if (texture.texture_coord and getFun) then
 				local tex= getFun(frame);
 				if tex then
