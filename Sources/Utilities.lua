@@ -358,22 +358,31 @@ do
 		-- allow a skin to register a fallback if atlas does not exist.
 		skin.registerAtlasFallback = function(name, fallback)
 			-- required
-			if (not name or type(name) ~= "string" or not fallback) then
+			if (not name or type(name) ~= "string" or not fallback or type(fallback) ~= "table") then
 				return;
 			end
 
 			if type(fallback) == "string" then
-				fallback = { path = fallback, texture_coord = {0, 1, 0, 1} };
+				fallback = { path = fallback };
 			elseif type(fallback) == "table" then
 				-- path is required
 				if not fallback.path then
 					return;
 				end
 
-				-- add texture coordinates if missing
-				if not fallback.texture_coord then
-					fallback.texture_coord = {0, 1, 0, 1};
+				if (not fallback.texture_coord) then
+					fallback.texture_coord = {
+						fallback.leftTexCoord or 0,
+						fallback.rightTexCoord or 1,
+						fallback.topTexCoord or 0,
+						fallback.bottomTexCoord or 1
+					};
 				end
+
+				-- add texture coordinates if missing
+				-- if not fallback.texture_coord then
+				-- 	fallback.texture_coord = {0, 1, 0, 1};
+				-- end
 			end
 
 			fallbackAtlasDefinitions[name:lower()] = fallback;
@@ -390,7 +399,7 @@ do
 	-- texture can be an atlas reference or a backup atlas definition a path (string) or a table containing texture information.
 	--	example: { path="Interface\\Buttons\\UI-Panel-Button-Up", texture_coord={0,1,0,1} }
 	-- Additional arguments (...) for example: "SetHighlight*" takes a second AlphaMode argument.
-	local function applySmartTexture(funType, frame, texture, ...)
+	local function applyTexture(funType, frame, texture, ...)
 		-- requirements
 		if not frame or not texture then return; end
 		if type(texture) ~= "string" and type(texture) ~= "table" then return; end
@@ -407,7 +416,7 @@ do
 				if fallbackInfo then
 					texture = fallbackInfo;
 				else
-					texture = { path = texture, texture_coord = {0, 1, 0, 1} };
+					texture = { path = texture, --[[texture_coord = {0, 1, 0, 1}]] };
 				end
 			end
 		end
@@ -430,7 +439,19 @@ do
 			if (texture.texture_coord and getFun) then
 				local tex= getFun(frame);
 				if tex then
-					tex:SetTexCoord(unpack(texture.texture_coord));
+					frame:SetTexCoord(unpack(texture.texture_coord));
+
+					if texture.size then
+						frame:SetWidth(texture.size[1]);
+						frame:SetHeight(texture.size[2]);
+					else
+						if texture.width then frame:SetWidth(texture.width); end
+						if texture.height then frame:SetHeight(texture.height); end
+					end
+
+					frame:SetHorizTile(texture.tilesHorizontally or false)
+					frame:SetVertTile(texture.tilesVertically or false)
+
 					return tex
 				end
 			end
@@ -438,11 +459,62 @@ do
 		end
 	end
 
-	function skin.applySmartTexture(...) return applySmartTexture(nil, ...); end
-	function skin.applySmartNormalTexture(...) return applySmartTexture("Normal", ...); end
-	function skin.applySmartPushedTexture(...) return applySmartTexture("Pushed", ...); end
-	function skin.applySmartDisabledTexture(...) return applySmartTexture("Disabled", ...); end
-	function skin.applySmartHighlightTexture(...) return applySmartTexture("Highlight", ...); end
+	function skin.applyTexture(...) return applyTexture(nil, ...); end
+	function skin.applyNormalTexture(...) return applyTexture("Normal", ...); end
+	function skin.applyPushedTexture(...) return applyTexture("Pushed", ...); end
+	function skin.applyDisabledTexture(...) return applyTexture("Disabled", ...); end
+	function skin.applyHighlightTexture(...) return applyTexture("Highlight", ...); end
+
+	skin.nineSlice = {}
+	-- a SetTexCoord wrapper that stacks transformations on top of the original coordinates
+	local nsSetTexCoord = function(self, left, right, top, bottom)
+		local w = right - left;
+		local h = bottom - top;
+
+		local tLeft, tRight, tTop, tBottom = unpack(self._transform or {0, 1, 0, 1});
+
+		self:_SetTexCoord(
+			left + (tLeft * w),
+			left + (tRight * w),
+			top + (tTop * h),
+			top + (tBottom * h)
+		);
+	end
+
+	-- a custom version of SetupPieceVisual used to draw using texture path instead of an atlas.
+	skin.nineSlice.SetupPieceVisualsUsingPath = function (container, piece, setupInfo, pieceLayout, textureKit, userLayout)
+		-- SetupTextureCoordinates
+		local left, right, top, bottom = 0, 1, 0, 1;
+
+		local pieceMirrored = pieceLayout.mirrorLayout;
+		if pieceMirrored == nil then
+			pieceMirrored = userLayout and userLayout.mirrorLayout;
+		end
+
+		if pieceMirrored then
+			if setupInfo.mirrorVertical then
+				top, bottom = bottom, top;
+			end
+
+			if setupInfo.mirrorHorizontal then
+				left, right = right, left;
+			end
+		end
+
+		-- hook SetTexCoord to preserve the original coordinates before any modifications
+		piece._SetTexCoord = piece.SetTexCoord;
+		piece.SetTexCoord = nsSetTexCoord;
+		piece._transform = {left, right, top, bottom};
+
+		skin.applyTexture(piece, pieceLayout.atlas or pieceLayout.texture, true);
+
+		piece:SetHorizTile(setupInfo and setupInfo.tileHorizontal or false);
+		piece:SetVertTile(setupInfo and setupInfo.tileVertical or false);
+
+		-- cleanup hooks
+		piece.SetTexCoord = piece._SetTexCoord;
+		piece._transform = nil
+	end
 end
 
 --------------------------------------

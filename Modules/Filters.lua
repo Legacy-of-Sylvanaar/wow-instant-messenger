@@ -822,13 +822,10 @@ local function buildModernChrome(win)
     chrome:SetAllPoints();
     chrome:SetFrameLevel(_G.math.max(win:GetFrameLevel() - 2, 0));
     local built;
-    if(HasPortraitPanelArt()) then
-        local apply = _G.NineSliceUtil and _G.NineSliceUtil.ApplyLayoutByName;
-        built = apply and _G.pcall(apply, chrome, "ButtonFrameTemplateNoPortrait");
-    else
-        chrome.metal = BuildLiteMetalFrame(chrome, false);
-        built = chrome.metal and true or false;
-    end
+
+	local apply = _G.NineSliceUtil and _G.NineSliceUtil.ApplyLayoutByName;
+	built = apply and _G.pcall(apply, chrome, "WIMModernSkinStandardFrame");
+
     if(not built) then
         chrome:Hide();
         win.wimModernChrome = false;

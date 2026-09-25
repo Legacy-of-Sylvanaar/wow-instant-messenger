@@ -479,56 +479,6 @@ function HasPortraitPanelArt()
     return portraitPanelArt;
 end
 
--- The Modern frame from the addon's own copies of the retail pieces,
--- for clients whose nine-slice layouts lack the art (see
--- HasPortraitPanelArt). Geometry comes from a retail widget dump and
--- the pieces anchor corner to corner, so the frame follows any window
--- size, exactly like the layout it stands in for. The edge files are
--- pre-tiled power-of-two sheets; the texcoord windows trim their
--- padding. Pieces draw at OVERLAY like the retail layout's, above the
--- fills and below the portrait's frame.
-function BuildLiteMetalFrame(frame, portraitCorner)
-    local path = "Interface\\AddOns\\"..addonTocName.."\\Skins\\Modern\\";
-    local ART = 150 / 256;   -- art region inside the padded canvases
-    local function piece(file, l, r, t, b)
-        local tex = frame:CreateTexture(nil, "OVERLAY");
-        tex:SetTexture(path..file..".png");
-        tex:SetTexCoord(l, r, t, b);
-        return tex;
-    end
-    -- The portrait corner's left pieces sit 5px further out than the
-    -- plain corner's (-13 against -8), same as the retail layouts.
-    local leftInset = portraitCorner and -13 or -8;
-    local tl = piece(portraitCorner and "metal_corner_topleft_portrait"
-        or "metal_corner_topleft", 0, ART, 0, ART);
-    tl:SetSize(75, 75);
-    tl:SetPoint("TOPLEFT", leftInset, 16);
-    local tr = piece("metal_corner_topright", 0, ART, 0, ART);
-    tr:SetSize(75, 75);
-    tr:SetPoint("TOPRIGHT", 4, 16);
-    local bl = piece("metal_corner_bottomleft", 0, 1, 0, 1);
-    bl:SetSize(32, 32);
-    bl:SetPoint("BOTTOMLEFT", leftInset, -3);
-    local br = piece("metal_corner_bottomright", 0, 1, 0, 1);
-    br:SetSize(32, 32);
-    br:SetPoint("BOTTOMRIGHT", 4, -3);
-    local top = piece("metal_edge_top", 0, 1, 0, ART);
-    top:SetPoint("TOPLEFT", tl, "TOPRIGHT");
-    top:SetPoint("BOTTOMRIGHT", tr, "BOTTOMLEFT");
-    local bottom = piece("metal_edge_bottom", 0, 1, 0, 1);
-    bottom:SetPoint("TOPLEFT", bl, "TOPRIGHT");
-    bottom:SetPoint("BOTTOMRIGHT", br, "BOTTOMLEFT");
-    local left = piece("metal_edge_left", 0, ART, 0, 1);
-    left:SetPoint("TOPLEFT", tl, "BOTTOMLEFT");
-    left:SetPoint("TOPRIGHT", tl, "BOTTOMRIGHT");
-    left:SetPoint("BOTTOM", bl, "TOP");
-    local right = piece("metal_edge_right", 0, ART, 0, 1);
-    right:SetPoint("TOPLEFT", tr, "BOTTOMLEFT");
-    right:SetPoint("TOPRIGHT", tr, "BOTTOMRIGHT");
-    right:SetPoint("BOTTOM", br, "TOP");
-    return { tl, tr, bl, br, top, bottom, left, right };
-end
-
 -- Modern skin styling for the message windows. While such a skin is
 -- selected, each window uses the History Viewer's construction at a
 -- smaller size: the standard metal nine-slice frame, a title band with
@@ -550,18 +500,9 @@ local function buildWindowChrome(obj)
     -- 13px outside the frame, 5px further than the plain layout's, which
     -- puts the left rail at about -1..+4. The fill's left inset must
     -- follow the applied layout or a gap opens against the rail.
-    chrome.hasPortrait = (apply and (pcall(apply, chrome, "PortraitFrameTemplate")
-        or pcall(apply, chrome, "ButtonFrameTemplate"))) and true or false;
-    if(not chrome.hasPortrait) then
-        -- Lite chrome, for clients whose nine-slice layouts lack this
-        -- art (classic era): the same frame, built from the shipped
-        -- copies of the retail pieces at the retail geometry. Only the
-        -- portrait paint path stays era-specific (LiteRepaintPortrait).
-        chrome.lite = true;
-        chrome.hasPortrait = true;
-        chrome.metal = BuildLiteMetalFrame(chrome, true);
-    end
-    local bgLeft = chrome.hasPortrait and 2 or 7;
+    chrome.hasPortrait = (apply and (pcall(apply, chrome, "WIMModernSkinMessageWindow"))) and true or false;
+
+    local bgLeft = 2;
     local bgRight = 0;
     local bgBottom = 3;
 
@@ -603,7 +544,7 @@ local function buildWindowChrome(obj)
     -- footprint on the fill and on the cut-out strips. Without it, a
     -- translucent window shows the fill's edge crossing the circle
     -- behind the icon.
-    if(chrome.hasPortrait and chrome.bg.AddMaskTexture) then
+    if(chrome.bg.AddMaskTexture) then
         local hole = chrome:CreateMaskTexture();
         -- PNG textures resolve only with their extension spelled out.
         hole:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Skins\\Modern\\portrait_hole_mask.png",

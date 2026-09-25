@@ -2228,9 +2228,9 @@ RegisterWidgetTrigger("close", "whisper,chat,w2w", "OnUpdate", function(self)
 			local highlight = SelectedSkin.message_window.widgets.close.state_close.HighlightTexture;
 			local highlightAlphaMode = SelectedSkin.message_window.widgets.close.state_close.HighlightAlphaMode;
 
-			utils.skin.applySmartNormalTexture(self, normal)
-			utils.skin.applySmartPushedTexture(self, pushed)
-			utils.skin.applySmartHighlightTexture(self, highlight, highlightAlphaMode)
+			utils.skin.applyNormalTexture(self, normal)
+			utils.skin.applyPushedTexture(self, pushed)
+			utils.skin.applyHighlightTexture(self, highlight, highlightAlphaMode)
 			self.curTextureIndex = 2;
 		elseif(not (GetMouseFocus() == self and IsShiftKeyDown()) and self.curTextureIndex ~= 1) then
 			local normal = SelectedSkin.message_window.widgets.close.state_hide.NormalTexture;
@@ -2238,9 +2238,9 @@ RegisterWidgetTrigger("close", "whisper,chat,w2w", "OnUpdate", function(self)
 			local highlight = SelectedSkin.message_window.widgets.close.state_hide.HighlightTexture;
 			local highlightAlphaMode = SelectedSkin.message_window.widgets.close.state_hide.HighlightAlphaMode;
 
-			utils.skin.applySmartNormalTexture(self, normal)
-			utils.skin.applySmartPushedTexture(self, pushed)
-			utils.skin.applySmartHighlightTexture(self, highlight, highlightAlphaMode)
+			utils.skin.applyNormalTexture(self, normal)
+			utils.skin.applyPushedTexture(self, pushed)
+			utils.skin.applyHighlightTexture(self, highlight, highlightAlphaMode)
 			self.curTextureIndex = 1;
 		end
 	end);

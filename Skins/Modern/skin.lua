@@ -11,6 +11,77 @@ local path = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Modern\\";
 -- Standard gold UI label color, for the panel title and section headers.
 local goldR, goldG, goldB = GameFontNormal:GetTextColor();
 
+local function getNineSliceLayout (usePortrait)
+	return {
+		BottomEdge = {
+			atlas = "_UI-Frame-Metal-EdgeBottom",
+			layer = "OVERLAY",
+			x = 0,	x1 = 0,	y = 0,	y1 = 0,
+		},
+		BottomLeftCorner = {
+			atlas = "UI-Frame-Metal-CornerBottomLeft",
+			layer = "OVERLAY",
+			x = -13, y = -3,
+		},
+		BottomRightCorner = {
+			atlas = "UI-Frame-Metal-CornerBottomRight",
+			layer = "OVERLAY",
+			x = 4,	y = -3,
+		},
+		LeftEdge = {
+			atlas = "!UI-Frame-Metal-EdgeLeft",
+			layer = "OVERLAY",
+			x = 0,	x1 = 0,	y = 0,	y1 = 0,
+		},
+		RightEdge = {
+			atlas = "!UI-Frame-Metal-EdgeRight",
+			layer = "OVERLAY",
+			x = 0,	x1 = 0,	y = 0,	y1 = 0,
+		},
+		TopEdge = {
+			atlas = "_UI-Frame-Metal-EdgeTop",
+			layer = "OVERLAY",
+			x = 0,	x1 = 0,	y = 0,	y1 = 0,
+		},
+		TopLeftCorner = {
+			atlas = usePortrait and "UI-Frame-PortraitMetal-CornerTopLeft" or "UI-Frame-Metal-CornerTopLeft",
+			layer = "OVERLAY",
+			x = -13, y = 16,
+		},
+		TopRightCorner = {
+			atlas = "UI-Frame-Metal-CornerTopRight",
+			layer = "OVERLAY",
+			x = 4,	y = 16,
+		},
+		disableSharpening = true,
+
+		-- Need to reference SetupPieceVisualsUsingPath in order to use a texture path over an atlas.
+		setupPieceVisualsFunction = WIM.utils.skin.nineSlice.SetupPieceVisualsUsingPath
+	}
+end
+
+-- Define an adaptive 9-slice layout for the modern skin.
+NineSliceUtil.AddLayout(
+	-- layout name
+	"WIMModernSkinMessageWindow",
+
+	-- layout data
+	NineSliceLayouts["PortraitFrameTemplate"] or
+	NineSliceLayouts["ButtonFrameTemplate"] or
+	-- fallback layout if the others are not available ie: Era
+	getNineSliceLayout(true)
+);
+
+NineSliceUtil.AddLayout(
+	-- layout name
+	"WIMModernSkinStandardFrame",
+
+	-- layout data
+	NineSliceLayouts["PortraitFrameTemplate"] and
+		NineSliceLayouts["ButtonFrameTemplateNoPortrait"] or
+		getNineSliceLayout()
+);
+
 local WIM_ModernSkin = {
 	title = "WIM Modern",
     version = "1.0.0",
@@ -31,6 +102,9 @@ local WIM_ModernSkin = {
             bottom_left = { width = 16, height = 16 },
             bottom_right = { width = 16, height = 16 }
         },
+		chrome = {
+			layout = "WIMModernSkinMessageWindow"
+		},
         widgets = {
 			from = {
 				points = {
@@ -119,3 +193,70 @@ local WIM_ModernSkin = {
 };
 
 WIM.RegisterSkin(WIM_ModernSkin);
+
+-- Classic Era doesn't have the following Atlases defined,
+-- so we are defining our own backups.
+do
+	local add = WIM.utils.skin.registerAtlasFallback;
+	local ART = 150 / 256;
+
+	add("_UI-Frame-Metal-EdgeBottom", {
+		path = path.."metal_edge_bottom.png",
+		texture_coord = {0, 1, 0, 1},
+		size = {32, 32},
+		tilesHorizontally = true,
+	});
+
+	add("UI-Frame-Metal-CornerBottomLeft", {
+		path = path.."metal_corner_bottomleft.png",
+		texture_coord = {0, 1, 0, 1},
+		size = {32, 32},
+	});
+
+	add("UI-Frame-Metal-CornerBottomRight", {
+		path = path.."metal_corner_bottomright.png",
+		texture_coord = {0, 1, 0, 1},
+		size = {32, 32},
+	});
+
+	add("!UI-Frame-Metal-EdgeLeft", {
+		path = path.."metal_edge_left.png",
+		texture_coord = {0, ART, 0, 1},
+		size = {75, 32},
+		tilesVertically = true,
+	});
+
+	add("!UI-Frame-Metal-EdgeRight", {
+		path = path.."metal_edge_right.png",
+		texture_coord = {0, ART, 0, 1},
+		size = {75, 32},
+		tilesVertically = true,
+	});
+
+	add("_UI-Frame-Metal-EdgeTop", {
+		path = path.."metal_edge_top.png",
+		texture_coord = {0, 1, 0, ART},
+		size = {32, 75},
+		tilesHorizontally = true,
+	});
+
+	add("UI-Frame-PortraitMetal-CornerTopLeft", {
+		path = path.."metal_corner_topleft_portrait.png",
+		texture_coord = {0, ART, 0, ART},
+		size = {75, 75},
+	});
+
+	add("UI-Frame-Metal-CornerTopLeft", {
+		path = path.."metal_corner_topleft.png",
+		texture_coord = {0, ART, 0, ART},
+		size = {75, 75},
+	});
+
+	add("UI-Frame-Metal-CornerTopRight", {
+		path = path.."metal_corner_topright.png",
+		texture_coord = {0, ART, 0, ART},
+		size = {75, 75},
+	});
+
+
+end
