@@ -436,21 +436,24 @@ do
 			return getFun and getFun(frame) or nil;
 		else
 			setFun(frame, texture.path, ...);
-			if (texture.texture_coord and getFun) then
+			if (getFun) then
 				local tex= getFun(frame);
+				local target = funType and funType ~= "" and tex or frame;
 				if tex then
-					frame:SetTexCoord(unpack(texture.texture_coord));
-
-					if texture.size then
-						frame:SetWidth(texture.size[1]);
-						frame:SetHeight(texture.size[2]);
-					else
-						if texture.width then frame:SetWidth(texture.width); end
-						if texture.height then frame:SetHeight(texture.height); end
+					if (texture.texture_coord) then
+						target:SetTexCoord(unpack(texture.texture_coord));
 					end
 
-					frame:SetHorizTile(texture.tilesHorizontally or false)
-					frame:SetVertTile(texture.tilesVertically or false)
+					if texture.size then
+						target:SetWidth(texture.size[1]);
+						target:SetHeight(texture.size[2]);
+					else
+						if texture.width then target:SetWidth(texture.width); end
+						if texture.height then target:SetHeight(texture.height); end
+					end
+
+					target:SetHorizTile(texture.tilesHorizontally or false)
+					target:SetVertTile(texture.tilesVertically or false)
 
 					return tex
 				end
