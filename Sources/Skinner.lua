@@ -1695,39 +1695,6 @@ function LayoutThemedInput(obj)
     UpdateThemedInputDecor(obj);
 end
 
--- The themed close button shows the minimize glyph at rest (click
--- hides the window) and swaps to the X while SHIFT is held, because
--- SHIFT-click closes the conversation. The art always shows what the
--- click will do. curTextureIndex 2 is the always-close state.
--- The corner-button art. Retail resolves these atlas names to 2x art,
--- but classic flavors ship only the 1x sheet, which upscales blurry at
--- the 24px button size; clients without the portrait panel art paint
--- the addon's shipped copies of the retail 2x pieces instead. The art
--- occupies 36x38 of each padded 64x64 file. Returns true when the name
--- is one of the corner-button pieces.
-local SHIPPED_RED_BUTTONS = {
-    ["RedButton-Exit"] = "redbutton_exit",
-    ["RedButton-exit-pressed"] = "redbutton_exit_pressed",
-    ["redbutton-condense"] = "redbutton_condense",
-    ["redbutton-condense-pressed"] = "redbutton_condense_pressed",
-    ["RedButton-Highlight"] = "redbutton_highlight",
-};
-function ApplyRedButtonArt(texture, atlasName)
-    local shipped = texture and SHIPPED_RED_BUTTONS[atlasName];
-    if(not shipped) then
-        return false;
-    end
-    if(HasPortraitPanelArt()) then
-        texture:SetAtlas(atlasName);
-        texture:SetTexCoord(0, 1, 0, 1);
-    else
-        texture:SetTexture("Interface\\AddOns\\"..addonTocName
-            .."\\Skins\\Modern\\"..shipped..".png");
-        texture:SetTexCoord(0, 36 / 64, 0, 38 / 64);
-    end
-    return true;
-end
-
 -- Era's build of the modern menus and dropdowns paints classic-styled
 -- atlas variants whose names differ from the retail ones only by a
 -- "-classic-" infix. Where this client also carries the retail member,

@@ -813,7 +813,7 @@ end
 
 local function createHistoryViewer()
 	-- Changes for Patch 9.0.1 - Shadowlands, retail and classic
-	local win = CreateFrame("Frame", "WIM3_HistoryFrame", _G.UIParent, "BackdropTemplate");
+	local win = CreateFrame("Frame", "WIM3_HistoryFrame", _G.UIParent);
 
     win:Hide();
     win.filter = {};
@@ -821,14 +821,6 @@ local function createHistoryViewer()
     win:SetWidth(700);
     win:SetHeight(505);
     win:SetPoint("CENTER");
-
-    -- set backdrop - changes for Patch 9.0.1 - Shadowlands
-    win.backdropInfo = {bgFile = "Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\Frame_Background",
-        edgeFile = "Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\Frame",
-        tile = true, tileSize = 64, edgeSize = 64,
-        insets = { left = 64, right = 64, top = 64, bottom = 64 }};
-
-	win:ApplyBackdrop();
 
     -- set basic frame properties
     win:SetClampedToScreen(true);
@@ -869,10 +861,11 @@ local function createHistoryViewer()
     -- create close button
     win.close = CreateFrame("Button", win:GetName().."Close", win);
     win.close.parentWindow = win;   -- lets skin points anchor to "window"
-    win.close:SetWidth(18); win.close:SetHeight(18);
-    win.close:SetPoint("TOPRIGHT", -24, -20);
-    win.close:SetNormalTexture("Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipRed");
-    win.close:SetHighlightTexture("Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\close", "BLEND");
+    win.close:SetWidth(23); win.close:SetHeight(23 * (38/36));
+    win.close:SetPoint("TOPRIGHT", 1, 0);
+	utils.skin.applyNormalTexture(win.close, "RedButton-Exit2x");
+	utils.skin.applyPushedTexture(win.close, "RedButton-Exit-Pressed2x");
+	utils.skin.applyHighlightTexture(win.close, "RedButton-Highlight2x");
     win.close:SetScript("OnClick", function(self)
             self:GetParent():Hide();
         end);
@@ -1007,79 +1000,6 @@ local function createHistoryViewer()
         texture:SetDesaturated(false);
         texture:SetVertexColor(1, 1, 1);
         texture:SetAlpha(1);
-    end
-
-    -- Close art may be a texture path or an atlas name (no path
-    -- separator). Atlas states reset their texcoords: SetTexCoord
-    -- windows within an atlas member, so coords left by the frame's
-    -- original art would crop the new glyph.
-    local function applyCloseArt(texture, art, blend)
-        if(not texture or not art) then return; end
-        -- Corner-button pieces route through the shipped copies on
-        -- clients whose own sheet is low resolution; the helper sets
-        -- its own texcoord window.
-        if(ApplyRedButtonArt(texture, art)) then
-            if(blend) then texture:SetBlendMode(blend); end
-            return;
-        end
-        if(string.find(art, "\\", 1, true)) then
-            texture:SetTexture(art);
-        elseif(getAtlasInfo(art)) then
-            texture:SetAtlas(art);
-        else
-            return;
-        end
-        texture:SetTexCoord(0, 1, 0, 1);
-        if(blend) then texture:SetBlendMode(blend); end
-    end
-
-    local function applyCloseStyle(hv)
-        local close = win.close;
-        if(hv.close) then
-            if(not close.wimSavedArt) then
-                local point, relativeTo, relativePoint, offX, offY = close:GetPoint(1);
-                close.wimSavedArt = {
-                    normal = saveTextureState(close:GetNormalTexture()),
-                    highlight = saveTextureState(close:GetHighlightTexture()),
-                    pushed = close:GetPushedTexture()
-                        and saveTextureState(close:GetPushedTexture()) or nil,
-                    width = close:GetWidth(), height = close:GetHeight(),
-                    point = point, relativeTo = relativeTo,
-                    relativePoint = relativePoint, offX = offX, offY = offY,
-                };
-            end
-            applyCloseArt(close:GetNormalTexture(), hv.close.NormalTexture);
-            if(hv.close.PushedTexture) then
-                if(not close:GetPushedTexture()) then
-                    close:SetPushedTexture("Interface\\Buttons\\WHITE8X8");
-                end
-                applyCloseArt(close:GetPushedTexture(), hv.close.PushedTexture);
-            end
-            applyCloseArt(close:GetHighlightTexture(), hv.close.HighlightTexture,
-                hv.close.HighlightAlphaMode);
-            if(hv.close.width) then close:SetWidth(hv.close.width); end
-            if(hv.close.height) then close:SetHeight(hv.close.height); end
-            if(hv.close.points) then
-                SetWidgetRect(close, { points = hv.close.points });
-            end
-        elseif(close.wimSavedArt) then
-            local saved = close.wimSavedArt;
-            restoreTextureState(close:GetNormalTexture(), saved.normal);
-            restoreTextureState(close:GetHighlightTexture(), saved.highlight);
-            local pushed = close:GetPushedTexture();
-            if(pushed) then
-                if(saved.pushed) then
-                    restoreTextureState(pushed, saved.pushed);
-                else
-                    pushed:SetTexture(nil);
-                end
-            end
-            close:SetWidth(saved.width);
-            close:SetHeight(saved.height);
-            close:ClearAllPoints();
-            close:SetPoint(saved.point, saved.relativeTo, saved.relativePoint,
-                saved.offX, saved.offY);
-        end
     end
 
     local scrollFrameNames = {
@@ -1595,7 +1515,7 @@ local function createHistoryViewer()
         -- rails draw in the OVERLAY layer above it): butting the fill
         -- against the rail cores leaves their anti-aliased inner edges
         -- see-through.
-        chrome.bg = chrome:CreateTexture(nil, "BACKGROUND", nil, -8);
+        chrome.bg = chrome:CreateTexture(nil, "BACKGROUND", nil);
         chrome.bg:SetTexture("Interface\\FrameGeneral\\UI-Background-Rock", true, true);
         chrome.bg:SetHorizTile(true);
         chrome.bg:SetVertTile(true);
@@ -1607,7 +1527,7 @@ local function createHistoryViewer()
         -- right differs from the native -3: this art's right rail core
         -- runs past the window edge (-3.5..+1), and stopping short of
         -- the edge leaves the rail's half-opaque band see-through.
-        chrome.bg:SetPoint("TOPLEFT", 7, -18);
+        chrome.bg:SetPoint("TOPLEFT", 0, -18);
         chrome.bg:SetPoint("BOTTOMRIGHT", 0, 3);
         win.wimChromeBg = chrome.bg;
 
@@ -1734,25 +1654,6 @@ local function createHistoryViewer()
         local hv = skin.history_viewer;
         if(not hv) then return; end
         win.appliedSkin = skin;
-
-        if(applyFrameStyle(hv)) then
-            win:SetBackdrop(nil);
-        else
-            win.backdropInfo = {
-                bgFile = hv.backdrop.bgFile,
-                edgeFile = hv.backdrop.edgeFile,
-                tile = hv.backdrop.tile,
-                tileSize = hv.backdrop.tileSize,
-                edgeSize = hv.backdrop.edgeSize,
-                insets = {
-                    left = hv.backdrop.insets.left,
-                    right = hv.backdrop.insets.right,
-                    top = hv.backdrop.insets.top,
-                    bottom = hv.backdrop.insets.bottom,
-                },
-            };
-            win:ApplyBackdrop();
-        end
 
         SetWidgetFont(win.title, hv.title);
         SetWidgetRect(win.title, hv.title);
@@ -1918,7 +1819,7 @@ local function createHistoryViewer()
         end
         win.RefreshTabVisuals();
 
-        applyCloseStyle(hv);
+		applyFrameStyle(hv);
         applyScrollbarStyle(hv);
         applySearchStyle(hv);
     end
@@ -3858,11 +3759,9 @@ local function createHistoryViewer()
             -- Repaint the states through the shared corner-button
             -- helper, so clients with the low-resolution sheet get the
             -- shipped 2x pieces here too.
-            ApplyRedButtonArt(pb.delete:GetNormalTexture(), "RedButton-Exit");
-            ApplyRedButtonArt(pb.delete:GetPushedTexture(), "RedButton-exit-pressed");
-            ApplyRedButtonArt(pb.delete:GetHighlightTexture(), "RedButton-Highlight");
-            pb.delete:GetHighlightTexture():SetBlendMode("ADD");
-            pb.delete:GetHighlightTexture():SetAlpha(1);
+			utils.skin.applyNormalTexture(pb.delete, "RedButton-Exit2x");
+			utils.skin.applyPushedTexture(pb.delete, "RedButton-exit-pressed2x");
+			utils.skin.applyHighlightTexture(pb.delete, "RedButton-Highlight2x", "ADD");
         else
             if(pb.bar.wimTrack) then
                 pb.bar.wimTrack:Hide();

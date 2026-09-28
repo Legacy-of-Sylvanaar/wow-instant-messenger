@@ -311,7 +311,7 @@ end
 
 local function createFilterFrame()
 	-- Changes for Patch 9.0.1 - Shadowlands, retail and classic
-	local win = CreateFrame("Frame", "WIM3_FilterFrame", _G.UIParent, "BackdropTemplate");
+	local win = CreateFrame("Frame", "WIM3_FilterFrame", _G.UIParent);
 
     win:Hide();
     win.filter = {};
@@ -319,14 +319,6 @@ local function createFilterFrame()
     win:SetWidth(FILTER_STOCK_WIDTH);
     win:SetHeight(FILTER_STOCK_HEIGHT);
     win:SetPoint("CENTER");
-
-    -- set backdrop - changes for Patch 9.0.1 - Shadowlands, retail and classic
-    win.backdropInfo = {bgFile = "Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\Frame_Background",
-        edgeFile = "Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\Frame",
-        tile = true, tileSize = 64, edgeSize = 64,
-        insets = { left = 64, right = 64, top = 64, bottom = 64 }};
-
-	win:ApplyBackdrop();
 
     -- set basic frame properties
     win:SetClampedToScreen(true);
@@ -833,7 +825,7 @@ local function buildModernChrome(win)
     end
     -- The same fill geometry the History Viewer measured for this art.
     chrome.bg = chrome:CreateTexture(nil, "BACKGROUND", nil, -8);
-    chrome.bg:SetPoint("TOPLEFT", 7, -18);
+    chrome.bg:SetPoint("TOPLEFT", 0, -18);
     chrome.bg:SetPoint("BOTTOMRIGHT", 0, 3);
 
     -- The pattern well: even margins to the frame edges, dressed in
@@ -1071,10 +1063,6 @@ local function styleFilterFrame(win)
         end
     end
     if(modern) then
-        -- ClearBackdrop discards backdropInfo; keep it for the swap
-        -- back to the classic dress.
-        win.wimSavedBackdropInfo = win.wimSavedBackdropInfo or win.backdropInfo;
-        if(win.ClearBackdrop) then win:ClearBackdrop(); else win:SetBackdrop(nil); end
         if(chrome) then
             chrome:Show();
             chrome.well:Show();
@@ -1134,16 +1122,13 @@ local function styleFilterFrame(win)
         if(win.wimSlimBar ~= "unavailable") then
             SetMinimalScrollBarShown(win.patternContainer, win.wimSlimBar, true);
         end
-        close:SetSize(24, 24);
+        close:SetSize(23, 23 * (38/36));
         close:ClearAllPoints();
         close:SetPoint("TOPRIGHT", 1, 0);
-        close:SetNormalAtlas("RedButton-Exit");
-        close:SetPushedAtlas("RedButton-exit-pressed");
-        close:SetHighlightAtlas("RedButton-Highlight", "ADD");
-        ApplyRedButtonArt(close:GetNormalTexture(), "RedButton-Exit");
-        ApplyRedButtonArt(close:GetPushedTexture(), "RedButton-exit-pressed");
-        ApplyRedButtonArt(close:GetHighlightTexture(), "RedButton-Highlight");
-        close:GetHighlightTexture():SetBlendMode("ADD");
+        utils.skin.applyNormalTexture(close, "RedButton-Exit2x");
+        utils.skin.applyPushedTexture(close, "RedButton-exit-pressed2x");
+        utils.skin.applyHighlightTexture(close, "RedButton-Highlight2x", "ADD");
+
         win.title:ClearAllPoints();
         win.title:SetPoint("TOP", 0, -4);
         win.title:SetTextColor(_G.GameFontNormal:GetTextColor());
@@ -1189,10 +1174,6 @@ local function styleFilterFrame(win)
         end
         if(win.wimModernFill) then win.wimModernFill:Hide(); end
         if(win.wimPlate) then win.wimPlate:Hide(); end
-        win.backdropInfo = win.backdropInfo or win.wimSavedBackdropInfo;
-        if(win.backdropInfo) then
-            win:ApplyBackdrop();
-        end
         if(win.wimSlimBar and win.wimSlimBar ~= "unavailable") then
             SetMinimalScrollBarShown(win.patternContainer, win.wimSlimBar, false);
         end

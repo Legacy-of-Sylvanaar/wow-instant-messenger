@@ -157,21 +157,21 @@ local WIM_ModernSkin = {
             },
 			close = {
 				state_hide = {
-                    NormalTexture = "RedButton-Condense",
-                    PushedTexture = "RedButton-Condense-Pressed",
-                    HighlightTexture = "RedButton-Highlight",
+                    NormalTexture = "RedButton-Condense2x",
+                    PushedTexture = "RedButton-Condense-Pressed2x",
+                    HighlightTexture = "RedButton-Highlight2x",
                     HighlightAlphaMode = "ADD"
                 },
                 state_close = {
-                    NormalTexture = "RedButton-Exit",
-                    PushedTexture = "RedButton-Exit-Pressed",
-                    HighlightTexture = "RedButton-Highlight",
+                    NormalTexture = "RedButton-Exit2x",
+                    PushedTexture = "RedButton-Exit-Pressed2x",
+                    HighlightTexture = "RedButton-Highlight2x",
                     HighlightAlphaMode = "ADD"
                 },
-				width = 24,
-                height = 24,
+				width = 23,
+                height = 23 * (38/36),
                 points = {
-                    {"TOPRIGHT", "window", "TOPRIGHT", -2, 1}
+                    {"TOPRIGHT", "window", "TOPRIGHT", 1, 0}
                 }
 			}
         }
@@ -198,65 +198,112 @@ WIM.RegisterSkin(WIM_ModernSkin);
 -- so we are defining our own backups.
 do
 	local add = WIM.utils.skin.registerAtlasFallback;
-	local ART = 150 / 256;
 
 	add("_UI-Frame-Metal-EdgeBottom", {
-		path = path.."metal_edge_bottom.png",
-		texture_coord = {0, 1, 0, 1},
-		size = {32, 32},
+		path = path.."uiframemetalhorizontal2x.png",
+		texture_coord = {0, .5, 0.59765625, 0.84765625},
+		size = {16, 32},
 		tilesHorizontally = true,
 	});
 
 	add("UI-Frame-Metal-CornerBottomLeft", {
-		path = path.."metal_corner_bottomleft.png",
-		texture_coord = {0, 1, 0, 1},
+		path = path.."uiframemetal2x.png",
+		texture_coord = {0.298828125, 0.423828125, 0.298828125, 0.423828125},
 		size = {32, 32},
 	});
 
 	add("UI-Frame-Metal-CornerBottomRight", {
-		path = path.."metal_corner_bottomright.png",
-		texture_coord = {0, 1, 0, 1},
+		path = path.."uiframemetal2x.png",
+		texture_coord = {0.427734375, 0.552734375, 0.298828125, 0.423828125},
 		size = {32, 32},
 	});
 
 	add("!UI-Frame-Metal-EdgeLeft", {
-		path = path.."metal_edge_left.png",
-		texture_coord = {0, ART, 0, 1},
-		size = {75, 32},
+		path = path.."uiframemetalvertical2x.png",
+		texture_coord = {0.001953125, 0.294921875, 0, 1},
+		size = {75, 16},
 		tilesVertically = true,
 	});
 
 	add("!UI-Frame-Metal-EdgeRight", {
-		path = path.."metal_edge_right.png",
-		texture_coord = {0, ART, 0, 1},
-		size = {75, 32},
+		path = path.."uiframemetalvertical2x.png",
+		texture_coord = {0.298828125, 0.591796875, 0, 1},
+		size = {75, 16},
 		tilesVertically = true,
 	});
 
 	add("_UI-Frame-Metal-EdgeTop", {
-		path = path.."metal_edge_top.png",
-		texture_coord = {0, 1, 0, ART},
+		path = path.."uiframemetalhorizontal2x.png",
+		texture_coord = {0, 1, 0.00390625, 0.58984375},
 		size = {32, 75},
 		tilesHorizontally = true,
 	});
 
 	add("UI-Frame-PortraitMetal-CornerTopLeft", {
-		path = path.."metal_corner_topleft_portrait.png",
-		texture_coord = {0, ART, 0, ART},
+		path = path.."uiframemetal2x.png",
+		texture_coord = {0.001953125, 0.294921875, 0.298828125, 0.591796875},
+		size = {75, 75},
+	});
+
+	add("UI-Frame-PortraitMetal-CornerTopLeftSmall", {
+		path = path.."uiframemetal2x.png",
+		texture_coord = {0.001953125, 0.294921875, 0.595703125, 0.888671875},
 		size = {75, 75},
 	});
 
 	add("UI-Frame-Metal-CornerTopLeft", {
-		path = path.."metal_corner_topleft.png",
-		texture_coord = {0, ART, 0, ART},
+		path = path.."uiframemetal2x.png",
+		texture_coord = {0.001953125, 0.294921875, 0.001953125, 0.294921875},
 		size = {75, 75},
 	});
 
 	add("UI-Frame-Metal-CornerTopRight", {
-		path = path.."metal_corner_topright.png",
-		texture_coord = {0, ART, 0, ART},
+		path = path.."uiframemetal2x.png",
+		texture_coord = {0.298828125, 0.591796875, 0.001953125, 0.294921875},
 		size = {75, 75},
 	});
 
+	-- high rez buttons - era clients are using too low of a resolution.
+	add("RedButton-Exit2x", {
+		path = path.."redbutton2x.png",
+		texture_coord = {0.15234375, 0.29296875, 0.0078125, 0.3046875},
+		size = {36, 38},
+	});
+
+	add("RedButton-Exit-Disabled2x", {
+		path = path.."redbutton2x.png",
+		texture_coord = {0.15234375, 0.29296875, 0.0078125, 0.6171875},
+		size = {36, 38},
+	});
+
+	add("RedButton-Exit-Pressed2x", {
+		path = path.."redbutton2x.png",
+		texture_coord = {0.15234375, 0.29296875, 0.6328125, 0.9296875},
+		size = {36, 38},
+	});
+
+	add("RedButton-Condense2x", {
+		path = path.."redbutton2x.png",
+		texture_coord = {0.00390625, 0.14453125, 0.0078125, 0.3046875},
+		size = {36, 38},
+	});
+
+	add("RedButton-Condense-Disabled2x", {
+		path = path.."redbutton2x.png",
+		texture_coord = {0.00390625, 0.14453125, 0.3203125, 0.6171875},
+		size = {36, 38},
+	});
+
+	add("RedButton-Condense-Pressed2x", {
+		path = path.."redbutton2x.png",
+		texture_coord = {0.00390625, 0.14453125, 0.6328125, 0.9296875},
+		size = {36, 38},
+	});
+
+	add("RedButton-Highlight2x", {
+		path = path.."redbutton2x.png",
+		texture_coord = {0.44921875, 0.58984375, 0.0078125, 0.3046875},
+		size = {36, 38},
+	});
 
 end
