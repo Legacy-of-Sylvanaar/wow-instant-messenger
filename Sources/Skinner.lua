@@ -986,7 +986,7 @@ end
 -- (centered) and pushes the well down instead of overflowing into it.
 -- The layout reruns on resize and on text changes, always from the
 -- skin baseline the theme pass captured.
-local HEADER_MIN_FONT = 10;
+local HEADER_MIN_FONT = 6;
 
 local INPUT_LEFT_PULL = 12;
 -- The character counter sits on its own strip between the input row
