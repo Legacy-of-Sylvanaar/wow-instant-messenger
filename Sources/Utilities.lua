@@ -29,6 +29,8 @@ end
 --          Table Functions         --
 --------------------------------------
 do
+	utils.table = {}
+
 	-- Simple shallow copy for copying defaults
 	function utils.copyTable(src, dest)
 			if type(dest) ~= type(src) and type(src) == "table" then dest = {} end
@@ -119,6 +121,19 @@ do
 
 	function utils.unpackTable (tbl)
 		return unpack(tbl, tbl.n);
+	end
+
+	function utils.table.spread (...)
+		local result = {};
+		for i=1, select("#", ...) do
+			local tbl = select(i, ...);
+			if(type(tbl) == "table") then
+				for k, v in pairs(tbl) do
+					result[k] = v;
+				end
+			end
+		end
+		return result;
 	end
 end
 
