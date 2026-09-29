@@ -539,24 +539,24 @@ local function buildWindowChrome(obj)
     stripRight:SetPoint("BOTTOM", display, "BOTTOM", 0, -6);
     chrome.strips = { stripTop, stripBottom, stripLeft, stripRight };
 
-    -- Cut the frame fill out behind the circled portrait. An inverse
-    -- circular mask (white field, clear circle) covers the portrait's
-    -- footprint on the fill and on the cut-out strips. Without it, a
-    -- translucent window shows the fill's edge crossing the circle
-    -- behind the icon.
-    if(chrome.bg.AddMaskTexture) then
-        local hole = chrome:CreateMaskTexture();
-        -- PNG textures resolve only with their extension spelled out.
-        hole:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Skins\\Modern\\portrait_hole_mask.png",
-            "CLAMPTOWHITE", "CLAMPTOWHITE");
-        hole:SetPoint("CENTER", obj, "TOPLEFT", 25.5, -22);
-        hole:SetSize(56, 56);
-        chrome.bg:AddMaskTexture(hole);
-        for i = 1, #chrome.strips do
-            chrome.strips[i]:AddMaskTexture(hole);
-        end
-        chrome.portraitHole = hole;
-    end
+    -- -- Cut the frame fill out behind the circled portrait. An inverse
+    -- -- circular mask (white field, clear circle) covers the portrait's
+    -- -- footprint on the fill and on the cut-out strips. Without it, a
+    -- -- translucent window shows the fill's edge crossing the circle
+    -- -- behind the icon.
+    -- if(chrome.bg.AddMaskTexture) then
+    --     local hole = chrome:CreateMaskTexture();
+    --     -- PNG textures resolve only with their extension spelled out.
+    --     hole:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Skins\\Modern\\portrait_hole_mask.png",
+    --         "CLAMPTOWHITE", "CLAMPTOWHITE");
+    --     hole:SetPoint("CENTER", obj, "TOPLEFT", 25.5, -22);
+    --     hole:SetSize(56, 56);
+    --     chrome.bg:AddMaskTexture(hole);
+    --     for i = 1, #chrome.strips do
+    --         chrome.strips[i]:AddMaskTexture(hole);
+    --     end
+    --     chrome.portraitHole = hole;
+    -- end
 
     -- Message well: a recessed inset around the display area. The well
     -- extends 24px past the display on the right. The theme pulls the
@@ -974,93 +974,6 @@ function SetMinimalScrollBarShown(scroll, bar, useSlim)
         else
             bar:Hide();
         end
-    end
-end
-
--- The class-icon cells contain transparent padding, which makes the
--- emblem look small inside the portrait ring. Zoom the current cell's
--- texture coordinates inward so the emblem fills the circle. This runs
--- after every UpdateIcon (which resets the cell), so repeated runs are
--- safe.
-function ZoomPortraitIcon(obj)
-    local icon = obj.widgets and obj.widgets.class_icon;
-    if(not icon) then return; end
-    -- Roleplay profile portraits are full-frame images, not emblem
-    -- cells. Their crop is applied where they are painted.
-    if(obj.wimRPIcon) then return; end
-    local ulx, uly, _, lly, urx = icon:GetTexCoord();
-    local left, right, top, bottom = ulx, urx, uly, lly;
-    local w, h = right - left, bottom - top;
-    if(w <= 0 or h <= 0) then return; end
-    -- Measured from the class-icon sheet: the emblem fills only the
-    -- middle ~58% of its cell, with a ~20% transparent inset on each
-    -- side. The zoom inset is slightly larger than that margin so the
-    -- emblem spans the full circle instead of floating inside it. The
-    -- circular mask hides the small overshoot at the edges.
-    local ix, iy = w * 0.22, h * 0.22;
-    icon:SetTexCoord(left + ix, right - ix, top + iy, bottom - iy);
-end
-
--- The lite portrait's paint pass. Era clients sample a mask texture
--- through the masked texture's own texture coordinates, so a
--- sprite-sheet cell defeats the circle mask: the sampled patch of the
--- mask is all white and the square cell renders uncut. Textures at
--- full coordinates clip fine. So the icon is repainted from the
--- per-class icon file at full coordinates, filling the circle; the
--- roleplay icon just drops its baked-border crop. Windows with
--- neither (Game Master tags) keep the sheet cell, inscribed small
--- enough to sit inside the circular field.
-function LiteRepaintPortrait(obj)
-    local icon = obj.widgets and obj.widgets.class_icon;
-    if(not icon) then return; end
-    obj.wimLitePainted = true;
-    if(obj.wimRPIcon) then
-        icon:SetTexCoord(0, 1, 0, 1);
-        icon:SetSize(56, 56);
-        dPrint("LitePortrait "..(obj:GetName() or "?")..": rp, 56");
-        return;
-    end
-    if(obj.type == "chat") then
-        -- The chat-type icon is a soft alpha blob with wide transparent
-        -- margins; it shapes itself, so it takes retail's zoom crop at
-        -- the full portrait size and the blob spans the circle.
-        ZoomPortraitIcon(obj);
-        icon:SetSize(56, 56);
-        dPrint("LitePortrait "..(obj:GetName() or "?")..": chat, 56 zoomed");
-        return;
-    end
-    local entry = obj.class and constants.classes[obj.class];
-    local tag = entry and entry.tag and string.gsub(entry.tag, "F$", "");
-    local file = tag and tag ~= "GM" and "Interface\\Icons\\ClassIcon_"..tag;
-    if(file and (not _G.GetFileIDFromPath or _G.GetFileIDFromPath(file))) then
-        icon:SetTexture(file);
-        icon:SetTexCoord(0, 1, 0, 1);
-        icon:SetSize(56, 56);
-        dPrint("LitePortrait "..(obj:GetName() or "?")..": file "
-            ..tostring(tag)..", 56");
-    else
-        -- Unknown class so far (a window opened before any class data,
-        -- like an intercepted /w): the sheet's blank emblem is circular
-        -- with a ~20% transparent inset, so cropping exactly to the
-        -- inset inscribes it in the field at full size with nothing
-        -- left for the missing mask to clip. Square cells (Battle.net
-        -- client logos, GM tags) keep the small inscribed cell.
-        if(not tag and not obj.isBN) then
-            local ulx, uly, _, lly, urx = icon:GetTexCoord();
-            local left, right, top, bottom = ulx, urx, uly, lly;
-            local w, h = right - left, bottom - top;
-            if(w > 0 and h > 0) then
-                local ix, iy = w * 0.19, h * 0.19;
-                icon:SetTexCoord(left + ix, right - ix, top + iy, bottom - iy);
-                icon:SetSize(56, 56);
-                dPrint("LitePortrait "..(obj:GetName() or "?")..": blank, 56");
-                return;
-            end
-        end
-        ZoomPortraitIcon(obj);
-        icon:SetSize(36, 36);
-        dPrint("LitePortrait "..(obj:GetName() or "?")..": fallback, 36"
-            ..", class="..tostring(obj.class));
     end
 end
 
@@ -2129,45 +2042,6 @@ function ApplyModernThemeToWindow(obj)
         end
     end
 
-    if(widgets.class_icon) then
-        local hasPortrait = obj.wimChrome and obj.wimChrome.hasPortrait;
-
-        widgets.class_icon:SetShown(skinShown or (chrome ~= nil and hasPortrait and true or false));
-
-        if(skinShown and obj.wimPortraitMasked) then
-            widgets.class_icon:RemoveMaskTexture(obj.wimPortraitMask);
-            obj.wimPortraitMasked = nil;
-        end
-
-        -- Restore the construction-time size unless the classic skin
-        -- sizes the widget itself; the skin pass reapplies points but
-        -- SetWidgetRect only sizes widgets the skin table sizes, so
-        -- the themed 56px would survive the switch back.
-        if(skinShown and obj.wimIconBaseSize) then
-            local widgetSkin = skin and skin.message_window
-                and skin.message_window.widgets
-                and skin.message_window.widgets.class_icon;
-
-            if(not (widgetSkin and type(widgetSkin.width) == "number")) then
-                widgets.class_icon:SetWidth(obj.wimIconBaseSize[1]);
-            end
-
-            if(not (widgetSkin and type(widgetSkin.height) == "number")) then
-                widgets.class_icon:SetHeight(obj.wimIconBaseSize[2]);
-            end
-        end
-
-        -- The lite paint pass leaves a per-class icon file at full
-        -- texture coordinates on the widget. The classic skin pass
-        -- restores the sheet texture but not the cell coordinates, so
-        -- without a repaint the icon shows the whole sheet. The chrome
-        -- is hidden above, so this repaint stays on the classic path.
-        if(skinShown and obj.wimLitePainted) then
-            obj.wimLitePainted = nil;
-            obj:UpdateIcon();
-        end
-    end
-
     if(not chrome) then
         if(obj.wimBackdropLevel) then
             bd.bg:GetParent():SetFrameLevel(obj.wimBackdropLevel);
@@ -2292,84 +2166,6 @@ function ApplyModernThemeToWindow(obj)
     --     history:SetPoint("TOP", chrome.well, "TOPRIGHT", 15, 0);
     --     columnAnchor = history;
     -- end
-
-    -- The class icon becomes the circled portrait in the carved
-    -- corner, like the community icon on the Guild & Communities
-    -- panel. The ring's opening is 49px across, centered at
-    -- (26, -25.5) in window coordinates (measured from the corner
-    -- piece's pixels). The icon draws slightly larger so it meets the
-    -- ring's inner lip, and its texture cell zooms in past the cell's
-    -- transparent padding so the emblem fills the circle.
-    if(widgets.class_icon and chrome.hasPortrait) then
-        local icon = widgets.class_icon;
-        icon:ClearAllPoints();
-        -- The ring's gold band has an inner diameter of about 53px,
-        -- centered at (25.5, -22) in window coordinates (measured from
-        -- the opaque runs along the corner piece's center row and
-        -- column). The icon slightly overlaps the lip's anti-aliasing.
-        icon:SetPoint("CENTER", obj, "TOPLEFT", 25.5, -22);
-        -- The construction-time size comes from the window template,
-        -- not the skin table, so the teardown must put it back itself
-        -- (SetWidgetRect only sizes widgets the skin table sizes).
-        if(not obj.wimIconBaseSize) then
-            local baseWidth, baseHeight = icon:GetSize();
-            obj.wimIconBaseSize = { baseWidth or 64, baseHeight or 64 };
-        end
-        -- The lite portrait may re-size the icon per paint (see
-        -- LiteRepaintPortrait); this is the retail size and the lite
-        -- starting point.
-        icon:SetSize(56, 56);
-        dPrint("ThemedPortrait "..(obj:GetName() or "?")
-            ..": block sized 56, lite="..tostring(chrome.lite and true or false));
-        if(not obj.wimPortraitMask) then
-            local mask = icon:GetParent():CreateMaskTexture();
-            -- CircleMaskScalable's circle reaches the mask's edges,
-            -- while the portrait alpha-mask file has built-in padding
-            -- that leaves the visible circle short of the ring. The
-            -- atlas path is also the reliable one: a mask given the
-            -- file id directly can report as attached yet fail to
-            -- clip. The file id stays as the fallback.
-            local usedAtlas = mask.SetAtlas
-                and pcall(mask.SetAtlas, mask, "CircleMaskScalable")
-                and mask:GetAtlas() ~= nil;
-            if(not usedAtlas) then
-                mask:SetTexture(3605349,
-                    "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE");
-            end
-            mask:SetAllPoints(icon);
-            obj.wimPortraitMask = mask;
-        end
-        if(not obj.wimPortraitMasked) then
-            icon:AddMaskTexture(obj.wimPortraitMask);
-            obj.wimPortraitMasked = true;
-        end
-        if(not obj.wimUpdateIconWrapped) then
-            obj.wimUpdateIconWrapped = true;
-            local origUpdateIcon = obj.UpdateIcon;
-            obj.UpdateIcon = function(self, ...)
-                origUpdateIcon(self, ...);
-                -- The selected-skin check keeps this off the themed
-                -- path during a skin switch regardless of teardown
-                -- ordering; the chrome's visibility alone lags it.
-                if(self.wimChrome and self.wimChrome:IsShown()
-                        and self.wimChrome.hasPortrait
-                        and GetSelectedSkin().schema_version == 2) then
-                    if(self.wimChrome.lite) then
-                        LiteRepaintPortrait(self);
-                    else
-                        ZoomPortraitIcon(self);
-                    end
-                end
-            end;
-        end
-        -- A full repaint, not just a zoom. The zoom multiplies the
-        -- icon's current coordinates, so zooming an already-zoomed
-        -- icon shrinks the emblem one step further on every settings
-        -- change that reapplies the skin. The repaint resets the
-        -- coordinates before the wrapper above zooms them once.
-        obj:UpdateIcon();
-    end
-
 
     local cutout = theme.chatCutout and true or false;
     chrome.bg:SetShown(not cutout);

@@ -1195,6 +1195,20 @@ local function instantiateWindow(obj)
         end
     end
 
+	local function applyClassIconMask(icon)
+		if (GetSelectedSkin().message_window.widgets.class_icon.is_round) then
+			icon.mask = icon.mask or icon:GetParent():CreateMaskTexture();
+			icon.mask:SetAtlas("CircleMaskScalable");
+			icon.mask:SetAllPoints(icon);
+			icon:AddMaskTexture(icon.mask);
+		else
+			if(icon.mask) then
+				icon:RemoveMaskTexture(icon.mask);
+				icon.mask:SetTexture(nil);
+			end
+		end
+	end
+
     obj.UpdateIcon = function(self)
         local icon = self.widgets.class_icon;
         if(self.type == "chat" and self.chatType) then
@@ -1203,13 +1217,11 @@ local function instantiateWindow(obj)
 						local r, g, b = GetCommunitiesChannelColor(self.clubId, self.streamId)
 						local color = { r = r, g = g, b = b };
 
-						icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
 						icon:SetTexCoord(0,1,0,1);
-						icon:SetGradient("VERTICAL",
-							{ r = color.r, g = color.g, b = color.b, a = 1},
-							{ r = color.r, g = color.g, b = color.b, a = 1 }
-						);
-
+						utils.skin.applyTexture(icon, GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
+						icon:SetSize(GetSelectedSkin().message_window.widgets.class_icon.width, GetSelectedSkin().message_window.widgets.class_icon.height);
+						icon:SetVertexColor(color.r, color.g, color.b, 1);
+						applyClassIconMask(icon);
 
 						-- Only take the resolved name when there is one. Early in a
 						-- session GetCommunityAndStreamName can return empty, and
@@ -1224,16 +1236,15 @@ local function instantiateWindow(obj)
 						self.widgets.from:SetTextColor(color.r, color.g, color.b);
 					end
 				else
-					icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
+					icon:SetTexCoord(0,1,0,1);
+					utils.skin.applyTexture(icon, GetSelectedSkin().message_window.widgets.class_icon.chatAlphaMask);
+					icon:SetSize(GetSelectedSkin().message_window.widgets.class_icon.width, GetSelectedSkin().message_window.widgets.class_icon.height);
 					local chat_type = self.chatType == "battleground" and "INSTANCE_CHAT" or string.upper(self.chatType);
 					local color = _G.ChatTypeInfo[chat_type]; -- Drii: ticket 344
-					icon:SetTexCoord(0,1,0,1);
-					icon:SetGradient("VERTICAL",
-						{ r = color.r, g = color.g, b = color.b, a = 1},
-						{ r = color.r, g = color.g, b = color.b, a = 1 }
-					);
+					icon:SetVertexColor(color.r, color.g, color.b, 1);
+					applyClassIconMask(icon);
 					if(GetSelectedSkin().message_window.widgets.from.use_class_color) then
-									self.widgets.from:SetTextColor(color.r, color.g, color.b);
+						self.widgets.from:SetTextColor(color.r, color.g, color.b);
 					end
 				end
         else
@@ -1252,19 +1263,23 @@ local function instantiateWindow(obj)
 						icon:SetTexture(GetSelectedSkin().message_window.widgets.client_icon.texture);
                 		icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.client_icon['bnd']));
 					end
+					applyClassIconMask(icon);
                 elseif(self.class == "") then
                 	classTag = "blank"
                 	icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.texture);
                 	icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.class_icon[classTag]));
-                else
+					applyClassIconMask(icon);
+				else
                 	if(constants.classes[self.class]) then
                 		classTag = string.lower(constants.classes[self.class].tag);
                         classTag = string.gsub(classTag, "f$", "");
                 	else
                 		classTag = "blank";
                 	end
-                	icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.texture);
-                	icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.class_icon[classTag]));
+
+					icon:SetTexture(GetSelectedSkin().message_window.widgets.class_icon.texture);
+					icon:SetTexCoord(unpack(GetSelectedSkin().message_window.widgets.class_icon[classTag]));
+					applyClassIconMask(icon);
                 end
                 if(constants.classes[self.class]) then
                         self.classColor = constants.classes[self.class].color;

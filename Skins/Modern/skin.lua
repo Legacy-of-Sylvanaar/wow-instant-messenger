@@ -106,6 +106,44 @@ local WIM_ModernSkin = {
 			layout = "WIMModernSkinMessageWindow"
 		},
         widgets = {
+			class_icon = {
+                texture = "Interface\\AddOns\\"..WIM.addonTocName.."\\skins\\Modern\\modern-icons.png",
+                chatAlphaMask = "LoadingScreen-Gradient",
+                width = 58,
+                height = 58,
+                points = {
+                    {"CENTER", "window", "TOPLEFT", 25.5, -22.5}
+                },
+                is_round = true,
+                blank = {390/1024, 520/1024, 0, 130/1024},
+                druid = {0, 130/1024, 260/1024, 390/1024},
+                hunter = {0, 130/1024, 520/1024, 650/1024},
+                mage = {0, 130/1024, 650/1024, 780/1024},
+                paladin = {130/1024, 260/1024, 0, 130/1024},
+                priest = {130/1024, 260/1024, 130/1024, 260/1024},
+                rogue = {130/1024, 260/1024, 260/1024, 390/1024},
+                shaman = {130/1024, 260/1024, 390/1024, 520/1024},
+                warlock = {130/1024, 260/1024, 520/1024, 650/1024},
+                warrior = {130/1024, 260/1024, 650/1024, 780/1024},
+                deathknight = {0, 130/1024, 0, 130/1024},
+                monk = {0, 130/1024, 780/1024, 905/1024},
+                gm = {520/1024, 650/1024, 0, 130/1024},
+                demonhunter = {0, 130/1024, 130/1024, 260/1024},
+				evoker = {0, 130/1024, 390/1024, 520/1024},
+            },
+			client_icon = {
+                texture = "Interface\\AddOns\\"..WIM.addonTocName.."\\skins\\Modern\\modern-icons.png",
+
+                hots = {894/1024, 1, 520/1024, 650/1024},
+                vipr = {764/1024, 894/1024, 260/1024, 390/1024},
+                dsty2 = {764/1024, 894/1024, 390/1024, 520/1024},
+                ow = {764/1024, 894/1024, 520/1024, 650/1024},
+                hs = {764/1024, 894/1024, 130/1024, 260/1024},
+                sc1 = {894/1024, 1, 130/1024, 260/1024},
+                sc2 = {894/1024, 1, 260/1024, 390/1024},
+                d3 = {894/1024, 1, 390/1024, 520/1024},
+                bnd = {764/1024, 894/1024, 0, 130/1024}
+            },
 			from = {
 				points = {
                     {"LEFT", "window", "TOPLEFT", 56, -11.5},
@@ -304,6 +342,12 @@ do
 		path = path.."redbutton2x.png",
 		texture_coord = {0.44921875, 0.58984375, 0.0078125, 0.3046875},
 		size = {36, 38},
+	});
+
+	add("LoadingScreen-Gradient", {
+		path = path.."modern-icons.png",
+		texture_coord = {766/1024, 1, 766/1024, 1},
+		size = {256, 256},
 	});
 
 end
