@@ -1178,7 +1178,7 @@ local function instantiateWindow(obj)
 
 			local eventArgs;
 			if isChatLineCensored then
-				eventArgs = utils.packTable(...)
+				eventArgs = utils.table.packTable(...)
 			end
 
 			self:AddMessage(str, r, g, b, info.id, undef, undef, event, eventArgs, messageFormatter);
@@ -1887,7 +1887,7 @@ local function destroyWindow(userNameOrObj)
         obj.initialized = nil;
 		dPrint("Window '"..obj:GetName().."' destroyed.");
 		CallModuleFunction("OnWindowDestroyed", obj);
-        utils.removeFromTable(windowsByAge, obj);
+        utils.table.removeFromTable(windowsByAge, obj);
     end
 end
 
@@ -1981,11 +1981,11 @@ function Widgets(widgetName)
 end
 
 function RegisterStringModifier(fun, prioritize)
-	utils.addToTableUnique(StringModifiers, fun, prioritize);
+	utils.table.addToTableUnique(StringModifiers, fun, prioritize);
 end
 
 function UnregisterStringModifier(fun)
-	utils.removeFromTable(StringModifiers, fun);
+	utils.table.removeFromTable(StringModifiers, fun);
 end
 
 function RegisterMessageFormatting(name, fun)
@@ -2030,15 +2030,15 @@ function ShowAllWindows(type)
 	type = type and string.lower(type) or nil;
 	for i=1, #WindowSoupBowl.windows do
 		if(WindowSoupBowl.windows[i].inUse and WindowSoupBowl.windows[i].obj.type == (type or WindowSoupBowl.windows[i].obj.type)) then
-                                local obj = WindowSoupBowl.windows[i] and WindowSoupBowl.windows[i].obj;
-                                if(obj.tabStrip and #obj.tabStrip.attached > 1) then
-                                                if(addToTableUnique(showAllTbl, obj.tabStrip)) then
-                                                                obj.tabStrip.selected.obj:Pop(true);
-                                                end
-                                else
-                                                WindowSoupBowl.windows[i].obj:Pop(true);
-                                end
-                end
+			local obj = WindowSoupBowl.windows[i] and WindowSoupBowl.windows[i].obj;
+			if(obj.tabStrip and #obj.tabStrip.attached > 1) then
+				if(utils.table.addToTableUnique(showAllTbl, obj.tabStrip)) then
+					obj.tabStrip.selected.obj:Pop(true);
+				end
+			else
+				WindowSoupBowl.windows[i].obj:Pop(true);
+			end
+		end
 	end
         -- clean table
         for key, _ in pairs(showAllTbl) do
@@ -2051,16 +2051,16 @@ function ShowAllUnreadWindows(type)
         type = type and string.lower(type) or nil;
 	for i=1, #WindowSoupBowl.windows do
 		if(WindowSoupBowl.windows[i].inUse and WindowSoupBowl.windows[i].obj.type == (type or WindowSoupBowl.windows[i].obj.type)) then
-                        local obj = WindowSoupBowl.windows[i] and WindowSoupBowl.windows[i].obj;
-                        if(obj and obj.unreadCount and obj.unreadCount > 0) then
-                                if(obj.tabStrip) then
-                                        if(addToTableUnique(showAllUnreadTbl, obj.tabStrip)) then
-                        			WindowSoupBowl.windows[i].obj:Pop(true);
-                                        end
-                                else
-                                        WindowSoupBowl.windows[i].obj:Pop(true);
-                                end
-                        end
+			local obj = WindowSoupBowl.windows[i] and WindowSoupBowl.windows[i].obj;
+			if(obj and obj.unreadCount and obj.unreadCount > 0) then
+				if(obj.tabStrip) then
+					if(utils.table.addToTableUnique(showAllUnreadTbl, obj.tabStrip)) then
+						WindowSoupBowl.windows[i].obj:Pop(true);
+					end
+				else
+					WindowSoupBowl.windows[i].obj:Pop(true);
+				end
+			end
 		end
 	end
         -- clean table

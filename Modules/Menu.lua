@@ -521,7 +521,7 @@ end
 function Menu:OnWindowCreated(obj)
     -- add obj to specified list & Update
     if(obj.type == "whisper" or obj.type == "chat") then
-        utils.addToTableUnique(lists[obj.type], obj);
+        utils.table.addToTableUnique(lists[obj.type], obj);
         WIM.Menu:Refresh();
     end
 end
@@ -530,7 +530,7 @@ function Menu:OnWindowDestroyed(obj)
     -- remove obj to specified list & Update
     obj.widgets.close.forceShift = nil;
     if(obj.type == "whisper" or obj.type == "chat") then
-        utils.removeFromTable(lists[obj.type], obj);
+        utils.table.removeFromTable(lists[obj.type], obj);
         WIM.Menu:Refresh();
     end
 end

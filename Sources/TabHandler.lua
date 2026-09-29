@@ -27,10 +27,10 @@ local tabGroups = {};
 
 -- a simple function to add an item to a table checking for duplicates.
 -- this is ok, since the table is never too large to slow things down.
-local addToTableUnique = utils.addToTableUnique;
+local addToTableUnique = utils.table.addToTableUnique;
 
 -- remove item from table. Return true if removed, false otherwise.
-local removeFromTable = utils.removeFromTable;
+local removeFromTable = utils.table.removeFromTable;
 
 -- sorting functions
 local function sortTabs(a, b)

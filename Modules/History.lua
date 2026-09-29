@@ -18,8 +18,8 @@ local pcall = pcall;
 local ipairs = ipairs;
 local math = math;
 local tostring = tostring;
-local copyTable = WIM.utils.copyTable;
-local addToTableUnique = WIM.utils.addToTableUnique;
+local copyTable = WIM.utils.table.copyTable;
+local addToTableUnique = WIM.utils.table.addToTableUnique;
 
 local DDM = WIM.libs.DropDownMenu;
 

@@ -32,13 +32,13 @@ do
 	utils.table = {}
 
 	-- Simple shallow copy for copying defaults
-	function utils.copyTable(src, dest)
+	function utils.table.copyTable(src, dest)
 			if type(dest) ~= type(src) and type(src) == "table" then dest = {} end
 			if type(src) == "table" then
 				for k,v in pairs(src) do
 					if type(v) == "table" then
 						-- try to index the key first so that the metatable creates the defaults, if set, and use that table
-						v = utils.copyTable(v, dest[k])
+						v = utils.table.copyTable(v, dest[k])
 					end
 					dest[k] = v
 				end
@@ -46,7 +46,7 @@ do
 			return dest or src
 	end
 
-	function utils.inherritTable(src, dest, ...)
+	function utils.table.inheritTable(src, dest, ...)
 			if(type(src) == "table") then
 					if(type(dest) ~= "table") then dest = {}; end
 					for k, v in pairs(src) do
@@ -59,7 +59,7 @@ do
 							end
 							if(not ignoredKey) then
 									if(type(v) == "table") then
-											dest[k] = utils.inherritTable(v, dest[k], ...);
+											dest[k] = utils.table.inheritTable(v, dest[k], ...);
 									else
 											if(dest[k] == nil) then
 													dest[k] = v
@@ -79,7 +79,7 @@ do
 
 	-- a simple function to add an item to a table checking for duplicates.
 	-- this is ok, since the table is never too large to slow things down.
-	function utils.addToTableUnique(tbl, item, prioritize)
+	function utils.table.addToTableUnique(tbl, item, prioritize)
 		for i=1,table.getn(tbl) do
 			if(tbl[i] == item) then
 				return false;
@@ -94,7 +94,7 @@ do
 	end
 
 	-- remove item from table. Return true if removed, false otherwise.
-	function utils.removeFromTable(tbl, item)
+	function utils.table.removeFromTable(tbl, item)
 		for i=1,table.getn(tbl) do
 			if(tbl[i] == item) then
 				table.remove(tbl, i);
@@ -104,7 +104,7 @@ do
 		return false;
 	end
 
-	function utils.isInTable(tbl, val)
+	function utils.table.isInTable(tbl, val)
 			for i=1, #tbl do
 					if(tbl[i] == val) then
 							return true;
@@ -113,13 +113,13 @@ do
 			return false;
 	end
 
-	function utils.packTable (...)
+	function utils.table.packTable (...)
 		local tbl = { ... };
 		tbl.n = select('#', ...);
 		return tbl;
 	end
 
-	function utils.unpackTable (tbl)
+	function utils.table.unpackTable (tbl)
 		return unpack(tbl, tbl.n);
 	end
 

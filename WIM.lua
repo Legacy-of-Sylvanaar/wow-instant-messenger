@@ -648,7 +648,7 @@ function WIM:VARIABLES_LOADED()
 	CallModuleFunctionAll("OnBeforeInitialized");
 
     -- inherrit any new default options which wheren't shown in previous releases.
-    utils.inherritTable(db_defaults, db);
+    utils.table.inheritTable(db_defaults, db);
     MigrateOptions();
     lists.gm = {};
 

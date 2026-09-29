@@ -132,8 +132,8 @@ local WhisperQueue_Index = {}; -- a quick reference to an active index
 
 local CF_MessageEventHandler_orig; -- used for a hook of the chat frame. Messaage filter handlers aren't sufficient.
 
-local addToTableUnique = utils.addToTableUnique;
-local removeFromTable = utils.removeFromTable;
+local addToTableUnique = utils.table.addToTableUnique;
+local removeFromTable = utils.table.removeFromTable;
 
 local recentSent = {};
 local maxRecent = 10;
