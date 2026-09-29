@@ -2352,6 +2352,11 @@ function RegisterSkin(skinTable)
     -- inherrit missing data from default skin.
     linkSkinTable(SkinTable["WIM Classic"], skinTable);
 
+	-- modern skins should inherit from the WIM Modern skin, which inherrits from the WIM Classic skin.
+	if (skinTable.schema_version == 2 and SkinTable["WIM Modern"]) then
+		linkSkinTable(SkinTable["WIM Modern"], skinTable);
+	end
+
     -- finalize registration
     SkinTable[skinTable.title] = skinTable;
 
