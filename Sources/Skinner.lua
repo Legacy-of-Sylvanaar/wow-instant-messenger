@@ -539,24 +539,6 @@ local function buildWindowChrome(obj)
     stripRight:SetPoint("BOTTOM", display, "BOTTOM", 0, -6);
     chrome.strips = { stripTop, stripBottom, stripLeft, stripRight };
 
-    -- -- Cut the frame fill out behind the circled portrait. An inverse
-    -- -- circular mask (white field, clear circle) covers the portrait's
-    -- -- footprint on the fill and on the cut-out strips. Without it, a
-    -- -- translucent window shows the fill's edge crossing the circle
-    -- -- behind the icon.
-    -- if(chrome.bg.AddMaskTexture) then
-    --     local hole = chrome:CreateMaskTexture();
-    --     -- PNG textures resolve only with their extension spelled out.
-    --     hole:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Skins\\Modern\\portrait_hole_mask.png",
-    --         "CLAMPTOWHITE", "CLAMPTOWHITE");
-    --     hole:SetPoint("CENTER", obj, "TOPLEFT", 25.5, -22);
-    --     hole:SetSize(56, 56);
-    --     chrome.bg:AddMaskTexture(hole);
-    --     for i = 1, #chrome.strips do
-    --         chrome.strips[i]:AddMaskTexture(hole);
-    --     end
-    --     chrome.portraitHole = hole;
-    -- end
 
     -- Message well: a recessed inset around the display area. The well
     -- extends 24px past the display on the right. The theme pulls the
@@ -2077,10 +2059,37 @@ function ApplyModernThemeToWindow(obj)
 		return;
     end
 
-    -- The class icon, name, and details live on the Backdrop host
+	-- if class_icon is round punch through the portrait hole mask so the background doesn't bleed through.
+	if (widgets.class_icon and chrome and chrome.bg and chrome.bg.AddMaskTexture) then
+		-- reset if exists
+		if (chrome.portraitHole) then
+			chrome.bg:RemoveMaskTexture(chrome.portraitHole);
+			for i = 1, #chrome.strips do
+				chrome.strips[i]:RemoveMaskTexture(chrome.portraitHole);
+			end
+			chrome.portraitHole:ClearAllPoints();
+			chrome.portraitHole:SetTexture(nil);
+		end
+
+		if (skin.message_window.widgets.class_icon.is_round) then
+			local hole = chrome.portraitHole or chrome:CreateMaskTexture();
+			-- PNG textures resolve only with their extension spelled out.
+			hole:SetTexture("Interface\\AddOns\\"..addonTocName.."\\Skins\\Modern\\portrait_hole_mask.png", "CLAMPTOWHITE", "CLAMPTOWHITE");
+			hole:SetPoint("CENTER", widgets.class_icon, "CENTER");
+			hole:SetSize(skin.message_window.widgets.class_icon.width, skin.message_window.widgets.class_icon.height);
+			chrome.bg:AddMaskTexture(hole);
+			for i = 1, #chrome.strips do
+				chrome.strips[i]:AddMaskTexture(hole);
+			end
+			chrome.portraitHole = hole;
+		end
+	end
+
+	-- The class icon, name, and details live on the Backdrop host
     -- frame, which shares a level with the chrome and would draw under
     -- its rock fill. Raise it while themed; the classic path above
     -- restores it.
+
     local backdropHost = bd.bg:GetParent();
 
     if(obj.wimBackdropLevel == nil) then
