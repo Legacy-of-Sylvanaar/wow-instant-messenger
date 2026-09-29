@@ -1998,6 +1998,11 @@ function ApplyModernThemeToWindow(obj)
     end
     local chrome = active and obj.wimChrome or nil;
 
+	if (chrome) then
+		local apply = _G.NineSliceUtil and _G.NineSliceUtil.ApplyLayoutByName;
+		local success = (apply and (pcall(apply, chrome, skin.message_window.chrome.layout)))
+	end
+
     -- One debug-log line per apply/teardown transition; steady-state
     -- passes stay quiet.
     if(obj.wimThemeWasActive ~= active) then
