@@ -277,6 +277,12 @@ WIM.RegisterSkin({
 				wrap = false, -- enable word wrap,
 				fit = true, -- enable automatic fitting of the text to the available space
 			},
+			from = {
+				points = {
+                    {"LEFT", "window", "TOPLEFT", 46, -11.5},
+                    {"RIGHT", "window", "TOPRIGHT", -27, -11.5}
+                },
+			}
 		}
 	}
 })
