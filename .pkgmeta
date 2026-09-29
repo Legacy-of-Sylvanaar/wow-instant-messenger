@@ -16,3 +16,4 @@ tools-used:
 
 ignore:
     - test_serializer.lua
+    - "*.psd"
