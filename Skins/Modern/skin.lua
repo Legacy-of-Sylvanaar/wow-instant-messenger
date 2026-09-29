@@ -72,6 +72,24 @@ NineSliceUtil.AddLayout(
 	getNineSliceLayout(true)
 );
 
+-- /dump NineSliceLayouts["WIMModernSkinMessageWindowCompact"]
+NineSliceUtil.AddLayout(
+	-- layout name
+	"WIMModernSkinMessageWindowCompact",
+
+	-- inherit main layout
+	WIM.utils.table.spread(
+		NineSliceUtil.GetLayout("WIMModernSkinMessageWindow"),
+		{
+			TopLeftCorner = {
+				atlas = "UI-Frame-PortraitMetal-CornerTopLeftSmall",
+				layer = "OVERLAY",
+				x = -13, y = 16,
+			},
+		}
+	)
+);
+
 NineSliceUtil.AddLayout(
 	-- layout name
 	"WIMModernSkinStandardFrame",
@@ -231,6 +249,37 @@ local WIM_ModernSkin = {
 };
 
 WIM.RegisterSkin(WIM_ModernSkin);
+
+WIM.RegisterSkin({
+	title = "WIM Modern - Compact",
+	version = "1.0.0",
+	schema_version = 2,
+	author = "Avraelore (Moon Guard)",
+    website = "https://github.com/Legacy-of-Sylvanaar/wow-instant-messenger",
+	message_window = {
+		chrome = {
+			layout = "WIMModernSkinMessageWindowCompact"
+		},
+		widgets = {
+			class_icon = {
+				width = 35,
+                height = 35,
+                points = {
+                    {"CENTER", "window", "TOPLEFT", 13.5, -18}
+                },
+			},
+			char_info = {
+				points = {
+                    {"TOPLEFT", "window", "TOPLEFT", 46, -26},
+                    {"BOTTOMRIGHT", "window", "TOPRIGHT", -27, -43}
+                },
+				font_height = 10,
+				wrap = false, -- enable word wrap,
+				fit = true, -- enable automatic fitting of the text to the available space
+			},
+		}
+	}
+})
 
 -- Classic Era doesn't have the following Atlases defined,
 -- so we are defining our own backups.
