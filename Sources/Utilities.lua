@@ -533,6 +533,11 @@ do
 		piece.SetTexCoord = piece._SetTexCoord;
 		piece._transform = nil
 	end
+
+	function skin.isAtlas2x(atlas)
+		local info = C_Texture.GetAtlasInfo(atlas);
+		return info and info.rawSize and info.width <= info.rawSize.x / 2 and info.height <= info.rawSize.y / 2;
+	end
 end
 
 --------------------------------------
