@@ -422,7 +422,7 @@ local function createMenu()
     local menu = CreateFrame("Frame", "WIM3Menu", _G.UIParent);
     menu:Hide(); -- testing only.
     menu:SetClampedToScreen(true);
-    menu:SetFrameStrata("DIALOG");
+    menu:SetFrameStrata("FULLSCREEN_DIALOG");
     menu:SetToplevel(true);
     menu:SetWidth(180);
     menu:SetHeight(200);

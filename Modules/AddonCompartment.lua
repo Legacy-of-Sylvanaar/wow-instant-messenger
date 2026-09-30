@@ -35,10 +35,17 @@ local data = {
             Menu:ClearAllPoints();
             if(Menu:IsShown()) then
                 Menu:Hide();
-            else
-                Menu:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0);
+			else
+				local button = utils.compat.GetMouseTopFocus();
+                Menu:SetPoint("TOPRIGHT", button or menu, "TOPLEFT", 0, 0);
                 Menu:Show();
+
+				menu:HookScript("OnHide", function()
+					Menu:Hide();
+				end);
             end
+
+			return true;
         else
             if(db.minimap.rightClickNew) then
                 if(_G.IsShiftKeyDown()) then
