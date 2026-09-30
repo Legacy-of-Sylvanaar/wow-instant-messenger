@@ -1623,32 +1623,39 @@ local function instantiateWindow(obj)
 
     obj.Hide_Normal = obj.Hide;
     obj.Hide = function(self, animate)
-	if(not self:IsShown() or self.animation.mode) then
-		-- don't do anything if window is already hidden.
-		return;
-	end
-	if(not animate) then
-		self:Hide_Normal();
-		self:ResetAnimation();
-	else
+		local fromSettingsPanel = _G.string.match(_G.debugstack(), "OpenSettingsPanel") and true or false
 
-		if(not db.winAnimation) then
+		-- don't close when opening settings window
+		if fromSettingsPanel then
+			return;
+		end
+
+		if(not self:IsShown() or self.animation.mode) then
+			-- don't do anything if window is already hidden.
+			return;
+		end
+		if(not animate) then
 			self:Hide_Normal();
 			self:ResetAnimation();
 		else
-			self.widgets.chat_display:SetParent(_G.UIParent);
-			self.widgets.chat_display:Hide();
-			local a = self.animation;
-			obj:SetClampedToScreen(false);
-			a.initLeft = self:SafeGetLeft();
-			a.initTop = self:SafeGetTop();
-			a.to = MinimapIcon or nil;
-			a.elapsed, a.time = 0, .5;
-                        a.scaleLimit = .001 -- _G.math.max(_G.math.ceil((100-_G.UIParent:GetScale()*100)/2)/100 + .04, .01);
-			a.mode = "HIDE"; -- this starts the animation
-			dPrint("Animation Started: "..self:GetName());
+
+			if(not db.winAnimation) then
+				self:Hide_Normal();
+				self:ResetAnimation();
+			else
+				self.widgets.chat_display:SetParent(_G.UIParent);
+				self.widgets.chat_display:Hide();
+				local a = self.animation;
+				obj:SetClampedToScreen(false);
+				a.initLeft = self:SafeGetLeft();
+				a.initTop = self:SafeGetTop();
+				a.to = MinimapIcon or nil;
+				a.elapsed, a.time = 0, .5;
+							a.scaleLimit = .001 -- _G.math.max(_G.math.ceil((100-_G.UIParent:GetScale()*100)/2)/100 + .04, .01);
+				a.mode = "HIDE"; -- this starts the animation
+				dPrint("Animation Started: "..self:GetName());
+			end
 		end
-	end
     end
     obj.ResetAnimation = function(self)
 	if(self.animation.mode) then
