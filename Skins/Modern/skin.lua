@@ -7,6 +7,8 @@
 -- art.
 
 local path = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Modern\\";
+local isAtlas2x = WIM.utils.skin.isAtlas2x;
+local useRedButton2x = not isAtlas2x("RedButton-Exit")
 
 -- Standard gold UI label color, for the panel title and section headers.
 local goldR, goldG, goldB = GameFontNormal:GetTextColor();
@@ -213,15 +215,15 @@ local WIM_ModernSkin = {
             },
 			close = {
 				state_hide = {
-                    NormalTexture = "RedButton-Condense2x",
-                    PushedTexture = "RedButton-Condense-Pressed2x",
-                    HighlightTexture = "RedButton-Highlight2x",
+                    NormalTexture = useRedButton2x and "RedButton-Condense2x" or "RedButton-Condense",
+                    PushedTexture = useRedButton2x and "RedButton-Condense-Pressed2x" or "RedButton-Condense-Pressed",
+                    HighlightTexture = useRedButton2x and "RedButton-Highlight2x" or "RedButton-Highlight",
                     HighlightAlphaMode = "ADD"
                 },
                 state_close = {
-                    NormalTexture = "RedButton-Exit2x",
-                    PushedTexture = "RedButton-Exit-Pressed2x",
-                    HighlightTexture = "RedButton-Highlight2x",
+                    NormalTexture = useRedButton2x and "RedButton-Exit2x" or "RedButton-Exit",
+                    PushedTexture = useRedButton2x and "RedButton-Exit-Pressed2x" or "RedButton-Exit-Pressed",
+                    HighlightTexture = useRedButton2x and "RedButton-Highlight2x" or "RedButton-Highlight",
                     HighlightAlphaMode = "ADD"
                 },
 				width = 23,

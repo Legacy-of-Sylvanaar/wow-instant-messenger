@@ -21,6 +21,9 @@ local tostring = tostring;
 local copyTable = WIM.utils.table.copyTable;
 local addToTableUnique = WIM.utils.table.addToTableUnique;
 
+local isAtlas2x = WIM.utils.skin.isAtlas2x;
+local useRedButton2x = not isAtlas2x("RedButton-Exit")
+
 local DDM = WIM.libs.DropDownMenu;
 
 -- C_Texture.GetAtlasInfo resolves helper mixins (Vector2DMixin) through
@@ -863,9 +866,9 @@ local function createHistoryViewer()
     win.close.parentWindow = win;   -- lets skin points anchor to "window"
     win.close:SetWidth(23); win.close:SetHeight(23 * (38/36));
     win.close:SetPoint("TOPRIGHT", 1, 0);
-	utils.skin.applyNormalTexture(win.close, "RedButton-Exit2x");
-	utils.skin.applyPushedTexture(win.close, "RedButton-Exit-Pressed2x");
-	utils.skin.applyHighlightTexture(win.close, "RedButton-Highlight2x");
+	utils.skin.applyNormalTexture(win.close, useRedButton2x and "RedButton-Exit2x" or "RedButton-Exit");
+	utils.skin.applyPushedTexture(win.close, useRedButton2x and "RedButton-Exit-Pressed2x" or "RedButton-Exit-Pressed");
+	utils.skin.applyHighlightTexture(win.close, useRedButton2x and "RedButton-Highlight2x" or "RedButton-Highlight");
     win.close:SetScript("OnClick", function(self)
             self:GetParent():Hide();
         end);

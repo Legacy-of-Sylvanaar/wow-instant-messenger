@@ -11,6 +11,9 @@ local unpack = unpack;
 local time = time;
 local select = select;
 
+local isAtlas2x = WIM.utils.skin.isAtlas2x;
+local useRedButton2x = not isAtlas2x("RedButton-Exit")
+
 -- Defined before the setfenv: C_Texture.GetAtlasInfo resolves helper
 -- mixins (Vector2DMixin) through the caller's environment, so calling
 -- it from inside the WIM environment throws. Same pattern as
@@ -1125,9 +1128,9 @@ local function styleFilterFrame(win)
         close:SetSize(23, 23 * (38/36));
         close:ClearAllPoints();
         close:SetPoint("TOPRIGHT", 1, 0);
-        utils.skin.applyNormalTexture(close, "RedButton-Exit2x");
-        utils.skin.applyPushedTexture(close, "RedButton-exit-pressed2x");
-        utils.skin.applyHighlightTexture(close, "RedButton-Highlight2x", "ADD");
+        utils.skin.applyNormalTexture(close, useRedButton2x and "RedButton-Exit2x" or "RedButton-Exit");
+        utils.skin.applyPushedTexture(close, useRedButton2x and "RedButton-Exit-Pressed2x" or "RedButton-Exit-Pressed");
+        utils.skin.applyHighlightTexture(close, useRedButton2x and "RedButton-Highlight2x" or "RedButton-Highlight", "ADD");
 
         win.title:ClearAllPoints();
         win.title:SetPoint("TOP", 0, -4);
