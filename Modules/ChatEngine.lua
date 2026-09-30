@@ -2031,8 +2031,11 @@ local function loadChatOptions()
             end
 
             button:SetScript("OnUpdate", function(self, elapsed)
+					local mouseOver = GetMouseTopFocus();
+					if not mouseOver then return; end;
+
                     for _, border in pairs(self.border) do
-                        if(_G.MouseIsOver(self)) then
+                        if(mouseOver == self or mouseOver:GetParent() == self) then
                             border:Show();
                         else
                             border:Hide();
