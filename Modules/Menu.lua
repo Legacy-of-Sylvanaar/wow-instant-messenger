@@ -41,7 +41,7 @@ local function sortWindows(a, b)
     end
 end
 
-function isMouseOver()
+local function isMouseOver()
 	-- can optionaly exclude an object
 	local x,y = _G.GetCursorPosition();
 	local menu = WIM.Menu;
