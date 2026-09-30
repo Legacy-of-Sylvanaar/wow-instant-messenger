@@ -48,7 +48,7 @@ local function isMouseOver()
         if(not menu) then
             return false;
         else
-            local x1, y1 = menu:GetLeft()*menu:GetEffectiveScale(), menu:GetTop()*menu:GetEffectiveScale();
+            local x1, y1 = (menu:GetLeft() or 0)*menu:GetEffectiveScale(), (menu:GetTop() or 0)*menu:GetEffectiveScale();
             local x2, y2 = x1 + menu:GetWidth()*menu:GetEffectiveScale(), y1 - menu:GetHeight()*menu:GetEffectiveScale();
             if(x >= x1 and x <= x2 and y <= y1 and y >= y2) then
                 return true;
