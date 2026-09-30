@@ -430,6 +430,7 @@ do
 				local fallbackInfo = skin.getAtlasFallbackInfo(texture);
 				if fallbackInfo then
 					texture = fallbackInfo;
+					texture._atlas = true;
 				else
 					texture = { path = texture, --[[texture_coord = {0, 1, 0, 1}]] };
 				end
@@ -465,6 +466,21 @@ do
 					else
 						if texture.width then target:SetWidth(texture.width); end
 						if texture.height then target:SetHeight(texture.height); end
+					end
+
+					if (texture._atlas and target.SetTextureSliceMargins) then
+						if (type(texture.sliceData) == "table") then
+							utils.debug.dump(texture)
+							target:SetTextureSliceMargins(
+								texture.sliceData.marginLeft or 0,
+								texture.sliceData.marginTop or 0,
+								texture.sliceData.marginRight or 0,
+								texture.sliceData.marginBottom or 0
+							)
+							target:SetTextureSliceMode(texture.sliceData.sliceMode or 0);
+						else
+							target:ClearTextureSlice();
+						end
 					end
 
 					target:SetHorizTile(texture.tilesHorizontally or false)
