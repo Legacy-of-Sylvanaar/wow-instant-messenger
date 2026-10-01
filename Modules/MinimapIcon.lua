@@ -23,6 +23,13 @@ db_defaults.minimap = {
         point = "CENTER",
         x = 0,
         y = 0
+    },
+    -- Persistent History: fill the Whispers menu with recent conversations
+    -- pulled from saved history so they survive a reload/relog.
+    recent = {
+        enabled = false,     -- off by default; menu behaves exactly as before.
+        count = 10,          -- how many recent conversations to list.
+        accountWide = false, -- false = this character only, true = every character on the account.
     }
 };
 
