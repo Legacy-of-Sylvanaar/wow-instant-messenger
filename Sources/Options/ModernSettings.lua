@@ -33,7 +33,7 @@ setfenv(1, WIM);
 
 options.creditsText = {
     "Pazza <Bronzebeard-US>\n\n",
-    "MysticalOS\nHumfras\nSylvaanar\n\nStewarta <Emerald Dream - EU>\n\nAvraelore <Moon Guard - US> - Modern skin & options\n\nAstaldo <Bronzebeard - EU>\nZeke <Coilfang - US>\nMorphieus <Spinebreaker>\nNachonut <Bronzebeard - US>\n\nChiaki <Frostwolf - EU> - deDE\n"..
+    "MysticalOS\nHumfras\nSylvaanar\n\nStewarta <Emerald Dream - EU>\n\nAvraelore <Moon Guard - US> - Modern skin & options\n\nAstaldo/RoadBlock <Bronzebeard - EU>\nZeke <Coilfang - US>\nMorphieus <Spinebreaker>\nNachonut <Bronzebeard - US>\n\nChiaki <Frostwolf - EU> - deDE\n"..
     "BlueNyx <bluenyx@gmail.com> - koKR\nStingerSoft <stingersoft@iti.lt> - ruRU\nJunxian <junxian1121@hotmail.com> - zhCN & zhTW\nWoopy <Woopy#1685 - NA> - esES & esMX\n\n\nAstrosloth and Zezerat are noobs! ;-p"
 };
 
