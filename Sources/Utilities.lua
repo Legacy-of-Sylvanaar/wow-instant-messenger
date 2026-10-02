@@ -362,6 +362,10 @@ do
 
 	-- helper to check if atlas exists
 	skin.getAtlasInfo = function (name)
+		if (type(name) ~= "string") then
+			return nil;
+		end
+
 		setfenv(1, _G); -- required by getAtlasInfo
 		return C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(name) or nil;
 	end;
