@@ -146,7 +146,7 @@ local function createButton(parent)
 			highlight:SetVertexColor(unpack(skin.menu.item.highlight.color or {1, 1, 1, 1}));
 			highlight:ClearAllPoints();
 			highlight:SetHeight(button:GetHeight());
-			local points = skin.menu.item.highlight.points or {};
+			points = skin.menu.item.highlight.points or {};
 			if (#points > 0) then
 				for _, point in ipairs(points) do
 					highlight:SetPoint(unpack(point));
