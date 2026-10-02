@@ -49,6 +49,9 @@ db_defaults.modernTheme = {
     inputWrap = true,
     inputWrapLimit = true,
     inputWrapLines = 4,
+
+	-- menu options
+	menuGroups = false,
 };
 
 -- The panel art the modern skin background pickers offer: the game's
@@ -2391,6 +2394,7 @@ end
 
 
 function SetWidgetFont(obj, widgetSkinTable)
+	widgetSkinTable = widgetSkinTable or {};
     -- first check what font is being requested, height is applied here.
     if(widgetSkinTable.font) then
 		local _font = (db.skin.suggest or not obj._allowCustomFont) and widgetSkinTable.font or db.skin.font or widgetSkinTable.font;

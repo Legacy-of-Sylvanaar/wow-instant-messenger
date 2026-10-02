@@ -314,26 +314,74 @@ local WIM_ClassicSkin = {
     -- whispers/chats menu the same art. The toast pair below is the
     -- fallback for clients without either.
 	menu = {
-		style = "context",
-        background_atlas = "common-dropdown-bg",
-        edge = "Interface\\FriendsFrame\\UI-Toast-Border",
-        edge_size = 12,
-        background = "Interface\\FriendsFrame\\UI-Toast-Background",
-        tile = false,
-        tile_size = 0,
-        insets = { left = 5, right = 5, top = 5, bottom = 5 },
-        -- Section headers use the native menus' gold, like the unit
-        -- menu's "Loot Options" header.
+		-- `texture` or `backdropInfo` must be set, but not both.
+		-- `backdropInfo` will  be used if both are provided..
+		texture = "common-dropdown-bg",
+		textureAlpha = 0.93, -- To set backdrop alpha use `backdropInfo.bgColor` and `backdropInfo.edgeColor`.
+		backdropInfo = {
+			bgFile = "Interface\\AddOns\\"..WIM.addonTocName.."\\Modules\\Textures\\Menu_bg",
+        	edgeFile = "Interface\\AddOns\\"..WIM.addonTocName.."\\Modules\\Textures\\Menu",
+        	tile = true,
+			tileSize = 32,
+			edgeSize = 32,
+        	insets = { left = 32, right = 32, top = 32, bottom = 32 },
+			-- bgColor = {1, 1, 1, 1},
+			-- edgeColor = {1, 1, 1, 1},
+		},
+
+		minHeight = 10,
+		edgeOffsets = {16, 16, 17, 12}, -- left, right, top bottom (spacing to edge of visible frame)
+		padding = {4, 4, 0, 4}, -- left, right, top, bottom
+		gap = 0, -- spacing between groups
+
         title = {
             font = "ChatFontNormal",
 			font_color = {1, 1, 1},
 			font_height = 11,
-			font_flags = ""
+			font_flags = "",
+			height = 14,
+			align = "RIGHT",
+			justify = "MIDDLE",
         },
-		button = {
-			font = "FriendsFont_Normal",
-			font_height = 12,
-			font_flags = ""
+		item = {
+			height = 20,
+			marginTop = 2,
+			marginBottom = 2,
+			text = {
+				font = "FriendsFont_Normal",
+				font_height = 12,
+				font_flags = "",
+				font_color = {1, 1, 1},
+				align = "LEFT",
+				justify = "MIDDLE",
+				margin = 50,
+				points = {
+					{"LEFT", 0, 0}, -- avoid LEFT and RIGHT points to allow for dynamic sizing.
+				}
+			},
+			highlight = {
+				texture = "Options_List_Active",
+				color = {1, 1, 1, 1},
+				blendMode = "ADD",
+				points = {
+					{"TOPLEFT", 0, 0},
+					{"BOTTOMRIGHT", -20, 0}
+				}
+			},
+			close = {
+				width = 16,
+				height = 16,
+				points = {
+					{"RIGHT", 0, 0}
+				}
+			},
+			status = {
+				width = 14,
+				height = 14,
+				points = {
+					{"RIGHT", -20, 0},
+				}
+			}
 		},
 	},
 	history_viewer = {
@@ -346,7 +394,7 @@ local WIM_ClassicSkin = {
             bgFile = "Interface\\FriendsFrame\\UI-Toast-Background",
             edgeFile = "Interface\\FriendsFrame\\UI-Toast-Border",
             tile = false, tileSize = 0, edgeSize = 12,
-            insets = { left = 5, right = 5, top = 5, bottom = 5 }
+            insets = { left = 5, right = 5, top = 5, bottom = 5 },
         },
 		title = {
 			-- Native panels title their band in the standard 12px gold.

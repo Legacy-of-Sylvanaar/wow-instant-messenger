@@ -248,6 +248,38 @@ local WIM_ModernSkin = {
             {"BOTTOMRIGHT", "window", "TOPRIGHT", -20, -2}
         },
     },
+	menu = {
+		-- `texture` or `backdropInfo` must be set, but not both.
+		-- `backdropInfo` will  be used if both are provided..
+		texture = "common-dropdown-bg",
+		textureAlpha = 0.93,
+		backdropInfo = false,
+		edgeOffsets = {9, 9, 8, 12},
+		padding = {8, 8, 8, 8},
+		gap = 20,
+		minHeight = 5,
+		title = {
+			font = "GameFontNormal",
+			font_color = {1, 0.82, 0},
+			font_height = 12,
+			align = "LEFT",
+		},
+		item = {
+			height = 20,
+			marginTop = 4,
+			marginBottom = 2,
+			text = {
+				font = "GameFontNormal",
+				font_color = {1, 1, 1},
+				font_height = 12,
+				align = "LEFT",
+			},
+			highlight = {
+				texture = "auctionhouse-ui-row-select",
+				color = {1, 0.82, 0},
+			}
+		}
+	}
 };
 
 WIM.RegisterSkin(WIM_ModernSkin);
@@ -405,6 +437,20 @@ do
 		path = path.."modern-icons.png",
 		texture_coord = {766/1024, 1, 766/1024, 1},
 		size = {256, 256},
+	});
+
+	add("common-dropdown-bg2x", {
+		path = "interface\\common\\commondropdown2x",
+		texture_coord = {0.0009765625, 0.1337890625, 0.357421875, 0.623046875},
+		sliceData={
+			marginBottom=38,
+			sliceMode=0,
+			marginLeft=32,
+			marginRight=32,
+			marginTop=26
+		},
+		width=68,
+		height=68,
 	});
 
 end
