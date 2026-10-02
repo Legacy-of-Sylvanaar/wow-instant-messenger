@@ -119,7 +119,7 @@ local function createButton(parent)
 		button.close:SetWidth(skin.menu.item.close.width or skin.menu.item.height or 14);
 		button.close:SetHeight(skin.menu.item.close.height or skin.menu.item.height or 14);
 		button.close:ClearAllPoints();
-		local points = skin.menu.item.close.points or {};
+		points = skin.menu.item.close.points or {};
 		for _, point in ipairs(points) do
 			button.close:SetPoint(unpack(point));
 		end
@@ -128,7 +128,7 @@ local function createButton(parent)
 		button.status:ClearAllPoints();
 		button.status:SetWidth(skin.menu.item.status.width or skin.menu.item.height or 14);
 		button.status:SetHeight(skin.menu.item.status.height or skin.menu.item.height or 14);
-		local points = skin.menu.item.status.points or {};
+		points = skin.menu.item.status.points or {};
 		for _, point in ipairs(points) do
 			button.status:SetPoint(unpack(point));
 		end
@@ -476,7 +476,7 @@ local function createMenu()
             end
 			minBottom = _G.math.min(minBottom, maxTop);
 
-			local groupHeight = maxTop - minBottom;
+			groupHeight = maxTop - minBottom;
 			local calculatedHeight = groupHeight -- + (db and not db.modernTheme.menuGroups and verticalPadding or 0);
 
 			local padding = not groupMode and skin and skin.menu.padding or {0, 0, 0, 0};

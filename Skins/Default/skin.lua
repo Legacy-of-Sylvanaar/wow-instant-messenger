@@ -332,7 +332,7 @@ local WIM_ClassicSkin = {
 		minHeight = 10,
 		edgeOffsets = {16, 16, 17, 12}, -- left, right, top bottom (spacing to edge of visible frame)
 		padding = {4, 4, 0, 4}, -- left, right, top, bottom
-		gap = 0, -- spacing between groups
+		gap = 10, -- spacing between groups
 
         title = {
             font = "ChatFontNormal",
