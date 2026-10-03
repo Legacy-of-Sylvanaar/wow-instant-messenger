@@ -2456,12 +2456,12 @@ local function createUserList()
     win:Hide();
     win:SetPoint("CENTER");
     -- set backdrop - Changes for Patch 9.0.1 - Shadowlands, retail and classic
-    win.backdropInfo = {bgFile = "Interface\\AddOns\\"..addonTocName.."\\Modules\\Textures\\Menu_bg",
-        edgeFile = "Interface\\AddOns\\"..addonTocName.."\\Modules\\Textures\\Menu",
-        tile = true, tileSize = 32, edgeSize = 32,
-        insets = { left = 32, right = 32, top = 32, bottom = 32 }};
+    -- win.backdropInfo = {bgFile = "Interface\\AddOns\\"..addonTocName.."\\Modules\\Textures\\Menu_bg",
+    --     edgeFile = "Interface\\AddOns\\"..addonTocName.."\\Modules\\Textures\\Menu",
+    --     tile = true, tileSize = 32, edgeSize = 32,
+    --     insets = { left = 32, right = 32, top = 32, bottom = 32 }};
 
-	win:ApplyBackdrop();
+	-- win:ApplyBackdrop();
 
     win:SetWidth(200);
     win.title = _G.CreateFrame("Frame", win:GetName().."Title", win);
@@ -2523,21 +2523,21 @@ local function createUserList()
 		skin = skin or GetSelectedSkin();
 
 		-- set backdrop - changes for Patch 9.0.1 - Shadowlands, retail and classic
-    	self.backdropInfo = {
-			bgFile = skin.menu.background,
-        	edgeFile = skin.menu.edge,
-        	tile = skin.menu.tile,
-			tileSize = skin.menu.tile_size,
-			edgeSize = skin.menu.edge_size,
-        	insets = {
-				left = skin.menu.insets.left,
-				right = skin.menu.insets.right,
-				top = skin.menu.insets.top,
-				bottom = skin.menu.insets.bottom
-			}
-		};
+    	-- self.backdropInfo = {
+		-- 	bgFile = skin.menu.background,
+        -- 	edgeFile = skin.menu.edge,
+        -- 	tile = skin.menu.tile,
+		-- 	tileSize = skin.menu.tile_size,
+		-- 	edgeSize = skin.menu.edge_size,
+        -- 	insets = {
+		-- 		left = skin.menu.insets.left,
+		-- 		right = skin.menu.insets.right,
+		-- 		top = skin.menu.insets.top,
+		-- 		bottom = skin.menu.insets.bottom
+		-- 	}
+		-- };
 
-		self:ApplyBackdrop();
+		-- self:ApplyBackdrop();
 
 		-- title font + color. SetWidgetFont resolves every form a skin may
 		-- declare (font object name, LibSharedMedia name, or file path); a
