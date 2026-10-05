@@ -1941,6 +1941,36 @@ RegisterModernPage(function(category, ui)
         local cat, layout = ui.Subcategory(folder, L["Interface"],
         L["Backgrounds and customization for WIM interface."]);
 
+		local function skinItems()
+            local skins = GetRegisteredSkins(true);
+            local items = {};
+            for i = 1, #skins do
+                local skin = GetSkinTable(skins[i]);
+				if (skin.meta and skin.meta.hasMenuSkin) then
+					local tip = {};
+					if (skin.version) then table.insert(tip, L["Version"]..": "..skin.version); end
+					if (skin.author) then table.insert(tip, skin.author); end
+					if (skin.website) then table.insert(tip, skin.website); end
+					table.insert(items, { text = skins[i], value = skins[i],
+						tooltip = table.concat(tip, "\n") });
+				end
+            end
+            return items;
+        end
+
+		ui.Header(layout, L["Conversation Menu"], L["The menu displayed when interacting with the minimap icon."]);
+		local _tmp = { unified = not db.modernTheme.menuGroups and true or false };
+        ui.Dropdown(cat, L["Menu Skin"], "WIM Modern", skinItems,
+            db.modernTheme, "menuSkin", nil, function(value) LoadMenuSkin(value); end);
+		ui.Checkbox(cat, L["Unified Menu"],
+            true, _tmp, "unified",
+            L["Unify conversation types into one menu."],
+            function ()
+				db.modernTheme.menuGroups = not _tmp.unified and true or false;
+				LoadMenuSkin(db.modernTheme.menuSkin);
+			end);
+
+
         local function backgroundItems()
             local items = {};
             local list = GetChromeBackgrounds and GetChromeBackgrounds() or {};

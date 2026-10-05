@@ -51,6 +51,7 @@ db_defaults.modernTheme = {
     inputWrapLines = 4,
 
 	-- menu options
+	menuSkin = "WIM Modern",
 	menuGroups = false,
 };
 
@@ -2221,6 +2222,10 @@ function GetSelectedSkin()
     return SelectedSkin or SkinTable["WIM Classic"];
 end
 
+function GetSelectedMenuSkin()
+    return SkinTable[db and db.modernTheme.menuSkin or "WIM Modern"] or SelectedSkin;
+end
+
 -- True while a modern-only skin is selected. The Modern Skin theming
 -- controls are live only then.
 function SkinLocksOptionsStyle()
@@ -2297,6 +2302,10 @@ function LoadSkin(skinName, immutableDB)
     end
 end
 
+function LoadMenuSkin(skinName)
+	CallModuleFunction("OnMenuSkinLoaded", SkinTable[skinName]);
+end
+
 function RegisterFont(objName, title)
     if(objName == nil or objName == "") then
         return;
@@ -2341,6 +2350,9 @@ function RegisterSkin(skinTable)
         return;
     end
 
+	skinTable.meta = skinTable.meta or {};
+	skinTable.meta.hasMenuSkin = type(skinTable.menu) == "table";
+
 	-- normalize all fonts
 	for _, path in pairs(fontPaths) do
 		local tbl = skinTable;
@@ -2380,6 +2392,11 @@ function RegisterSkin(skinTable)
     -- if this is the selected skin, load it now
     if(skinTable.title == resolveSkinName(WIM.db.skin.selected)) then
         LoadSkin(WIM.db.skin.selected);
+    end
+
+	-- if this is the selected skin, load it now
+    if(skinTable.title == resolveSkinName(WIM.db.modernTheme.menuSkin)) then
+        LoadMenuSkin(WIM.db.modernTheme.menuSkin);
     end
 end
 

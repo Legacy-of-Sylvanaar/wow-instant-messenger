@@ -8,15 +8,6 @@ local type = type;
 local unpack = unpack;
 local string = string;
 
--- Defined before the setfenv. C_Texture.GetAtlasInfo looks up
--- Vector2DMixin in the calling function's environment, so namespaced
--- code must not call it directly.
-local function getAtlasInfo(name)
-    if (C_Texture and C_Texture.GetAtlasInfo) then
-        return C_Texture.GetAtlasInfo(name);
-    end
-end
-
 --set namespace
 setfenv(1, WIM);
 
@@ -27,6 +18,8 @@ local buttonCount = 0;
 
 local AUTO_CLOSE_TIMEOUT = 3;
 local AUTO_CLOSE_TIMEOUT_INTERACTED = 1;
+
+local initialSkinLoaded = false;
 
 local lists = {
     whisper = {},
@@ -209,7 +202,7 @@ local function createButton(parent)
             end
         end);
     button.GetMinimumWidth = function(self)
-            return self.text:GetStringWidth() + (GetSelectedSkin().menu.item.text.margin or 0);
+            return self.text:GetStringWidth() + (GetSelectedMenuSkin().menu.item.text.margin or 0);
         end
     return button;
 end
@@ -266,7 +259,7 @@ local function createGroup(title, list, maxButtons, showNone)
         if(#self.list == 0 and not self.showNone) then
             group:SetHeight(0);
         else
-			local skin = GetSelectedSkin();
+			local skin = GetSelectedMenuSkin();
 			local btnCount = group:GetButtonCount()
 			local groupMode = db and db.modernTheme and db.modernTheme.menuGroups;
 			local padding = skin and skin.menu.padding or {0, 0, 0, 0};
@@ -285,7 +278,7 @@ local function createGroup(title, list, maxButtons, showNone)
     end
 
 	group.ApplySkin = function(self, skin)
-		skin = skin or GetSelectedSkin();
+		skin = skin or GetSelectedMenuSkin();
 		local groupMode = db and db.modernTheme and db.modernTheme.menuGroups;
 		local padding = skin and skin.menu.padding or {0, 0, 0, 0};
 		local offsets = skin and skin.menu.edgeOffsets or {0, 0, 0, 0};
@@ -456,7 +449,7 @@ local function createMenu()
     menu.groups[2].wimWantsDivider = true;
 
     menu.Refresh = function(self)
-			local skin = GetSelectedSkin();
+			local skin = GetSelectedMenuSkin();
 			local groupMode = db and db.modernTheme and db.modernTheme.menuGroups;
             local groupHeight = 0;
             local groupWidth = 0;
@@ -499,7 +492,7 @@ local function createMenu()
         end
 
 	menu.ApplySkin = function(self, skin)
-		skin = skin or GetSelectedSkin();
+		skin = skin or GetSelectedMenuSkin();
 		local groupMode = db and db.modernTheme and db.modernTheme.menuGroups;
 		local padding = skin and skin.menu.padding or {0, 0, 0, 0};
 		local offsets = skin and skin.menu.edgeOffsets or {0, 0, 0, 0};
@@ -571,6 +564,7 @@ local function createMenu()
 		end
 
 		self:Refresh();
+		initialSkinLoaded = true;
 	end
 
     menu:SetScript("OnUpdate", function(self)
@@ -584,15 +578,22 @@ local function createMenu()
             end
         end);
     menu:SetScript("OnShow", function(self)
-			self.AUTO_CLOSE_TIMEOUT = AUTO_CLOSE_TIMEOUT;
-            self.mouseStamp = _G.time();
-            -- Labels can change after a window is created. A community
-            -- window is renamed from its clubId:streamId key to the real
-            -- community name one line after OnWindowCreated refreshed this
-            -- menu, so rebuild the labels every time the menu opens.
-            self:Refresh();
-            libs.DropDownMenu.CloseDropDownMenus();
-        end);
+		if (not initialSkinLoaded) then
+			local skin = GetSelectedMenuSkin();
+			if(skin) then
+				self:ApplySkin(skin);
+			end
+		end
+
+		self.AUTO_CLOSE_TIMEOUT = AUTO_CLOSE_TIMEOUT;
+        self.mouseStamp = _G.time();
+        -- Labels can change after a window is created. A community
+        -- window is renamed from its clubId:streamId key to the real
+        -- community name one line after OnWindowCreated refreshed this
+        -- menu, so rebuild the labels every time the menu opens.
+        self:Refresh();
+        libs.DropDownMenu.CloseDropDownMenus();
+    end);
 
     return menu;
 end
@@ -632,7 +633,7 @@ function Menu:OnEnable()
         -- until the login LoadSkin dispatches OnSkinLoaded. If the menu
         -- is created later than that, apply the active skin now;
         -- ApplySkin ends with a Refresh.
-        local skin = GetSelectedSkin();
+        local skin = GetSelectedMenuSkin();
         if(skin) then
             WIM.Menu:ApplySkin(skin);
         else
@@ -641,7 +642,7 @@ function Menu:OnEnable()
     end
 end
 
-function Menu:OnSkinLoaded(skin)
+function Menu:OnMenuSkinLoaded(skin)
 	if (WIM.Menu) then
 		WIM.Menu:ApplySkin(skin);
 	end
