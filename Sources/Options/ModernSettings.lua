@@ -1453,6 +1453,17 @@ local function registerCategory()
     ui.Checkbox(category, L["Sort Menu by Activity"], true,
         db, "menuSortActivity",
         L["WIM's launcher menus list the most recently active conversations first."]);
+    local function recentSettings() return db.minimap.recentWhispers; end
+    local function refreshMenu() if (WIM.Menu) then WIM.Menu:Refresh(); end end
+    local recent = ui.Checkbox(category, L["Show Recent Whispers"], true,
+        recentSettings, "enabled",
+        L["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."],
+        refreshMenu);
+    local recentAll = ui.Checkbox(category, L["Include All Characters"], true,
+        recentSettings, "accountWide",
+        L["Recent whispers come from every character on this account, not just this one."],
+        refreshMenu);
+    ui.DependsOn(recentAll, recent);
 
     ui.Header(layout, L["Report a Bug"]);
     ui.Custom(layout, "WIM3SettingsBugReportTemplate",

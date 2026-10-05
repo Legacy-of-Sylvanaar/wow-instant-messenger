@@ -504,6 +504,24 @@ local function recordWhisper(inbound, ...)
 
         local history = getPlayerHistoryTable(from);
         history.info.gm = lists.gm[from];
+        -- new activity puts this conversation back in the launcher menu's recent whispers.
+        history.info.menuHidden = nil;
+        -- remember the other player's class so the launcher menu can colour this conversation.
+        -- The event's GUID is the other player's in both directions (the sender's on
+        -- CHAT_MSG_WHISPER, the recipient's on CHAT_MSG_WHISPER_INFORM); fall back to
+        -- whatever the window learnt.
+        local classToken;
+        local guid = select(12, ...);
+        if(type(guid) == "string" and string.find(guid, "^Player%-") and _G.GetPlayerInfoByGUID) then
+            local _, englishClass = _G.GetPlayerInfoByGUID(guid);
+            classToken = englishClass;
+        end
+        if((not classToken or classToken == "") and win.class and win.class ~= "" and constants.classes[win.class]) then
+            classToken = string.gsub(constants.classes[win.class].tag, "F$", "");
+        end
+        if(classToken and classToken ~= "") then
+            history.info.class = classToken;
+        end
         local record = cacheIfCensored({
             convo = from,
             type = 1, -- whisper
@@ -557,8 +575,15 @@ local function deleteOldHistory(isChat)
             -- empty, so the character you are logged into always appears in the
             -- History Viewer's character list. New whispers repopulate it, and
             -- an empty slot causes its archive entry to be dropped at logout.
+            -- Also leave a slot that is only empty because its archived history has
+            -- not been rehydrated yet: this runs at login, before the background
+            -- loader's first frame, and the loader skips any character whose slot is
+            -- gone, so that character's history would be missing all session.
+            local archived = _G.WIM3_HistoryArchive and _G.WIM3_HistoryArchive[realm]
+                             and _G.WIM3_HistoryArchive[realm][character];
             if(isEmptyTable(convos)
-                and not (realm == env.realm and character == env.character))
+                and not (realm == env.realm and character == env.character)
+                and not archived)
             then
                 characters[character] = nil;
             end
@@ -613,6 +638,101 @@ function History:OnWindowDestroyed(win)
     win.isHistory = nil;
 end
 
+-- realm names compare without spaces or hyphens, the way they appear in "Name-Realm".
+local function realmKey(realm)
+    return string.lower((string.gsub(realm or "", "[%s%-]", "")));
+end
+
+-- The history keys a whisper partner can be saved under on a character from `realm`:
+-- on the partner's own realm the bare name, elsewhere "Name-Realm". Battle.net handles
+-- are realm independent, and WoW Forever keys history by ruleset, so those are used as is.
+local function convoKeysFor(user, realm)
+    if(isForever or isBNConvoKey(user)) then
+        return user;
+    end
+    local name, userRealm = string.match(user, "^(.-)%-(.+)$");
+    if(not name) then
+        name, userRealm = user, string.gsub(env.realm, "[%s%-]", "");
+    end
+    if(realmKey(userRealm) == realmKey(realm)) then
+        return name, name.."-"..userRealm;
+    end
+    return name.."-"..userRealm;
+end
+
+-- Call fn(convoTbl, realm, character, convoKey) for every saved whisper conversation with
+-- `user` on any of this account's characters. Other characters' history finishes loading
+-- a few seconds after login; anything still queued is loaded first.
+function ForEachWhisperConvoWith(user, fn)
+    if(type(history) ~= "table" or type(user) ~= "string" or user == "") then
+        return;
+    end
+    if(#historyLoadQueue > 0) then
+        EnsureAllHistoryLoaded();
+    end
+    for realm, characters in pairs(history) do
+        if(realm ~= BN_PSEUDO_REALM and type(characters) == "table") then
+            local key1, key2 = convoKeysFor(user, realm);
+            for character, convos in pairs(characters) do
+                if(type(convos) == "table") then
+                    for _, key in ipairs({key1, key2}) do
+                        local tbl = convos[key];
+                        if(type(tbl) == "table" and not (tbl.info and tbl.info.chat)) then
+                            fn(tbl, realm, character, key);
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- Hex colour for a name in the History Viewer's list, following "Colorize names.":
+-- Battle.net friends in the Battle.net blue, characters in the class History saved with
+-- any of your conversations with them. nil when there is nothing to colour by.
+-- "rrggbb" for a {r, g, b} colour table.
+local function toHex(c)
+    return string.format("%02x%02x%02x", math.floor(c.r*255 + .5), math.floor(c.g*255 + .5), math.floor(c.b*255 + .5));
+end
+
+local function historyNameColor(user)
+    if(not db.coloredNames or type(user) ~= "string") then
+        return nil;
+    end
+    if(isBNConvoKey(user)) then
+        local c = _G.FRIENDS_BN_NAME_COLOR;
+        if(type(c) == "table" and c.r) then
+            return toHex(c);
+        end
+        return "82c5ff";
+    end
+    local token;
+    ForEachWhisperConvoWith(user, function(convoTbl)
+        local info = convoTbl.info;
+        if(not token and type(info) == "table" and type(info.class) == "string" and info.class ~= "") then
+            token = info.class;
+        end
+    end);
+    if(not token) then
+        return nil;
+    end
+    local colors = _G.CUSTOM_CLASS_COLORS or _G.RAID_CLASS_COLORS;
+    local c = colors and colors[token];
+    if(type(c) == "table" and c.r) then
+        return toHex(c);
+    end
+    local localized = constants.classes.GetClassByTag(token);
+    local entry = localized and localized ~= "" and constants.classes[localized];
+    return type(entry) == "table" and entry.color or nil;
+end
+
+local function sortByTime(a, b)
+    if(a.record.time ~= b.record.time) then
+        return (a.record.time or 0) < (b.record.time or 0);
+    end
+    return a.seq < b.seq;
+end
+
 function History:OnWindowCreated(win)
     if(db.history.preview) then
 
@@ -624,28 +744,40 @@ function History:OnWindowCreated(win)
 		end
 
 		local history = history[env.realm] and history[env.realm][env.character] and history[env.realm][env.character][user];
-		if(history) then
-			local type = win.type == "whisper" and 1;
+		if(win.type == "whisper") then
+			-- whispers: this person's messages with every one of your characters, oldest first.
+			local merged, seq = {}, 0;
+			ForEachWhisperConvoWith(user, function(convoTbl)
+				for i=1, #convoTbl do
+					seq = seq + 1;
+					merged[seq] = {record = convoTbl[i], seq = seq};
+				end
+			end);
+			table.sort(merged, sortByTime);
+			for i=_G.math.max(1, #merged - db.history.previewCount + 1), #merged do
+				table.insert(tmpTable, merged[i].record);
+			end
+		elseif(history) then
 			for i=#history, 1, -1 do
 				table.insert(tmpTable, 1, history[i]);
 				if(#tmpTable >= db.history.previewCount) then
 					break;
 				end
 			end
-			if(#tmpTable > 0) then
-				win.isHistory = true;
-				win.widgets.history:SetHistory(true);
-				for i=1, #tmpTable do
-					local color = db.displayColors[tmpTable[i].inbound and "historyIn" or "historyOut"];
-					win.nextStamp = tmpTable[i].time;
-					win.nextStampColor = db.displayColors.historyOut;
-					win:AddMessage(applyMessageFormatting(win.widgets.chat_display, "CHAT_MSG_WHISPER", tmpTable[i].msg, tmpTable[i].from,
-									nil, nil, nil, nil, nil, nil, nil, nil, -i, "0x0300000000000000"), color.r, color.g, color.b);
-				end
-				win.widgets.chat_display:AddMessage(" ");
-			end
-			clearTmpTable();
 		end
+		if(#tmpTable > 0) then
+			win.isHistory = true;
+			win.widgets.history:SetHistory(true);
+			for i=1, #tmpTable do
+				local color = db.displayColors[tmpTable[i].inbound and "historyIn" or "historyOut"];
+				win.nextStamp = tmpTable[i].time;
+				win.nextStampColor = db.displayColors.historyOut;
+				win:AddMessage(applyMessageFormatting(win.widgets.chat_display, "CHAT_MSG_WHISPER", tmpTable[i].msg, tmpTable[i].from,
+								nil, nil, nil, nil, nil, nil, nil, nil, -i, "0x0300000000000000"), color.r, color.g, color.b);
+			end
+			win.widgets.chat_display:AddMessage(" ");
+		end
+		clearTmpTable();
     end
 end
 
@@ -2884,10 +3016,11 @@ local function createHistoryViewer()
                         local original, extra, color = user, "";
                         local gmTag
                         user, gmTag = string.match(original, "([^*]+)(*?)$");
-                        -- Plain rows take no embedded color: an escape code
-                        -- would override the skin's row font color (and the
-                        -- selected row's), which drive the text instead.
-                        color = gmTag == "*" and constants.classes[L["Game Master"]].color or nil;
+                        -- Rows with no class to show take no embedded color: an
+                        -- escape code would override the skin's row font color
+                        -- (and the selected row's), which drive the text instead.
+                        -- Known classes win over that, like the chat itself.
+                        color = gmTag == "*" and constants.classes[L["Game Master"]].color or historyNameColor(user);
                         if(string.match(original, "^*")) then
                             extra = " |TInterface\\AddOns\\WIM\\Skins\\Default\\minimap.blp:20:20:0:0|t";
                             color = "fff569";
@@ -3440,7 +3573,8 @@ local function createHistoryViewer()
             win.nav.userList.scroll:Show();
         end);
 
-    win.USER = env.realm.."/"..env.character;
+    -- default to the realm-wide view: conversations from all of this realm's characters.
+    win.USER = env.realm;
     win.USERSUBSET = nil;   -- bucket restriction; see selectValue
     win.USERLABEL = nil;    -- display label matching USER (+ bucket suffix)
     win.USERLIST = {};
@@ -4078,7 +4212,9 @@ function ShowHistoryViewer(user)
         -- the first row and replace the conversation this call was asked
         -- to open. Targeting after the show avoids that.
         HistoryViewer:Show();
-        HistoryViewer.USER = env.realm.."/"..env.character;
+        -- the realm-wide view, so the conversation includes every character on this realm,
+        -- matching the window's own preview.
+        HistoryViewer.USER = env.realm;
         HistoryViewer.USERSUBSET = nil;
         HistoryViewer.USERLABEL = nil;
         HistoryViewer.SELECT = user;

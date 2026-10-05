@@ -774,4 +774,13 @@ WIM.AddLocale("enUS", {
     ["Width"] = true,
     ["Height"] = true,
     ["WIM Filter Editor"] = true,
+    ["Show Recent Whispers"] = true,
+    ["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."] = true,
+    ["Include All Characters"] = true,
+    ["Recent whispers come from every character on this account, not just this one."] = true,
+    ["Right-Click"] = true,
+    ["Shift + Right-Click"] = true,
+    ["Shift + Middle-Click"] = true,
+    ["Tools"] = true,
+    ["Show Unread"] = true,
 });

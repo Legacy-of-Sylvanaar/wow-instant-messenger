@@ -774,4 +774,13 @@ WIM.AddLocale("frFR", {
     ["Menu Skin"] = "Apparence du menu",
     ["Unified Menu"] = "Menu unifié",
     ["Unify conversation types into one menu."] = "Unifier les types de conversation dans un seul menu.",
+    ["Show Recent Whispers"] = "Afficher les chuchotements récents",
+    ["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."] = "Liste dans le menu de lancement vos conversations de chuchotements les plus récentes, issues de l'historique enregistré, pour qu'elles soient toujours là après un rechargement de l'interface ou une reconnexion.",
+    ["Include All Characters"] = "Inclure tous les personnages",
+    ["Recent whispers come from every character on this account, not just this one."] = "Les chuchotements récents proviennent de tous les personnages de ce compte, pas seulement de celui-ci.",
+    ["Right-Click"] = "Clic droit",
+    ["Shift + Right-Click"] = "Maj + Clic droit",
+    ["Shift + Middle-Click"] = "Maj + Clic milieu",
+    ["Tools"] = "Outils",
+    ["Show Unread"] = "Afficher les non-lus",
 });

@@ -773,4 +773,13 @@ WIM.AddLocale("deDE", {
     ["Menu Skin"] = "Menü-Skin",
     ["Unified Menu"] = "Einheitliches Menü",
     ["Unify conversation types into one menu."] = "Konversationstypen in einem Menü vereinen.",
+    ["Show Recent Whispers"] = "Letzte Flüsternachrichten anzeigen",
+    ["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."] = "Listet Eure letzten Flüstergespräche aus dem gespeicherten Verlauf im Startermenü auf, damit sie auch nach einem Neuladen des Interfaces oder erneutem Einloggen noch da sind.",
+    ["Include All Characters"] = "Alle Charaktere einbeziehen",
+    ["Recent whispers come from every character on this account, not just this one."] = "Die letzten Flüsternachrichten stammen von allen Charakteren dieses Accounts, nicht nur von diesem.",
+    ["Right-Click"] = "Rechtsklick",
+    ["Shift + Right-Click"] = "Shift + Rechtsklick",
+    ["Shift + Middle-Click"] = "Shift + Mittelklick",
+    ["Tools"] = "Werkzeuge",
+    ["Show Unread"] = "Ungelesene anzeigen",
 });

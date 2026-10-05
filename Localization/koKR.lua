@@ -773,4 +773,13 @@ WIM.AddLocale("koKR", {
     ["Menu Skin"] = "메뉴 스킨",
     ["Unified Menu"] = "통합 메뉴",
     ["Unify conversation types into one menu."] = "대화 유형을 하나의 메뉴로 통합하세요.",
+    ["Show Recent Whispers"] = "최근 귓속말 표시",
+    ["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."] = "저장된 대화기록에서 가장 최근의 귓속말 대화를 실행기 메뉴에 표시하여, 인터페이스를 다시 불러오거나 다시 접속한 후에도 남아 있게 합니다.",
+    ["Include All Characters"] = "모든 캐릭터 포함",
+    ["Recent whispers come from every character on this account, not just this one."] = "이 캐릭터뿐 아니라 이 계정의 모든 캐릭터에서 최근 귓속말을 가져옵니다.",
+    ["Right-Click"] = "우클릭",
+    ["Shift + Right-Click"] = "Shift + 우클릭",
+    ["Shift + Middle-Click"] = "Shift + 휠 클릭",
+    ["Tools"] = "도구",
+    ["Show Unread"] = "안 읽은 메시지 보기",
 });

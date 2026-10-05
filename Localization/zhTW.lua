@@ -775,4 +775,13 @@ WIM.AddLocale("zhTW", {
     ["Menu Skin"] = "選單外觀",
     ["Unified Menu"] = "統一選單",
     ["Unify conversation types into one menu."] = "將對話類型統一到一個選單中。",
+    ["Show Recent Whispers"] = "顯示最近的密語",
+    ["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."] = "在啟動器選單中列出已儲存聊天記錄裡最近的密語對話，重新載入介面或重新登入後仍會保留。",
+    ["Include All Characters"] = "包含所有角色",
+    ["Recent whispers come from every character on this account, not just this one."] = "最近的密語來自此帳號的所有角色，而不只是目前的角色。",
+    ["Right-Click"] = "右鍵",
+    ["Shift + Right-Click"] = "Shift + 右鍵",
+    ["Shift + Middle-Click"] = "Shift + 中鍵",
+    ["Tools"] = "工具",
+    ["Show Unread"] = "顯示未讀",
 });

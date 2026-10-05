@@ -772,4 +772,13 @@ WIM.AddLocale("ptBR", {
     ["Menu Skin"] = "Tema do menu",
     ["Unified Menu"] = "Menu unificado",
     ["Unify conversation types into one menu."] = "Unifique os tipos de conversa em um menu.",
+    ["Show Recent Whispers"] = "Mostrar sussurros recentes",
+    ["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."] = "Lista no menu de inicialização suas conversas de sussurro mais recentes do histórico salvo, para que continuem lá depois de recarregar a interface ou entrar novamente.",
+    ["Include All Characters"] = "Incluir todos os personagens",
+    ["Recent whispers come from every character on this account, not just this one."] = "Os sussurros recentes vêm de todos os personagens desta conta, não apenas deste.",
+    ["Right-Click"] = "Clique direito",
+    ["Shift + Right-Click"] = "Shift + Clique direito",
+    ["Shift + Middle-Click"] = "Shift + Clique do meio",
+    ["Tools"] = "Ferramentas",
+    ["Show Unread"] = "Mostrar não lidas",
 });

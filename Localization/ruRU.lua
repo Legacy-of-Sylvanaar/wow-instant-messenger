@@ -774,4 +774,13 @@ WIM.AddLocale("ruRU", {
     ["Menu Skin"] = "Оформление меню",
     ["Unified Menu"] = "Единое меню",
     ["Unify conversation types into one menu."] = "Объединить типы бесед в одно меню.",
+    ["Show Recent Whispers"] = "Показывать недавние шёпоты",
+    ["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."] = "Показывает в меню кнопок запуска последние беседы шёпотом из сохранённой истории, чтобы они не пропадали после перезагрузки интерфейса или повторного входа в игру.",
+    ["Include All Characters"] = "Учитывать всех персонажей",
+    ["Recent whispers come from every character on this account, not just this one."] = "Недавние шёпоты берутся со всех персонажей этой учётной записи, а не только с этого.",
+    ["Right-Click"] = "Правый клик",
+    ["Shift + Right-Click"] = "Shift + правый клик",
+    ["Shift + Middle-Click"] = "Shift + средний клик",
+    ["Tools"] = "Инструменты",
+    ["Show Unread"] = "Показать непрочитанные",
 });
