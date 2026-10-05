@@ -691,7 +691,6 @@ WIM.AddLocale("zhCN", {
     ["Shows the row of shortcut buttons on message windows. Turning this off takes effect after the next interface reload."] = "在消息窗口上显示快捷按钮行。关闭后在下次重载界面时生效。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Shows the sender's class, level, and guild on their window. Sends one /who lookup when the window opens. Applies to windows opened after the change."] = "在发送者的窗口上显示其职业、等级和公会。窗口打开时发送一次 /who 查询。适用于更改后打开的窗口。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Situations without custom rules follow these base rules."] = "没有自定义规则的情境遵循这些基础规则。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Skin"] = "皮肤", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin default"] = "皮肤默认", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin, fonts, message look, and colors."] = "皮肤、字体、消息外观和颜色。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sort Menu by Activity"] = "按活跃度排序菜单", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -721,7 +720,6 @@ WIM.AddLocale("zhCN", {
     ["Unlock Minimap Button"] = "解锁小地图按钮", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Use Master Sound Channel"] = "使用主声道", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM Message Window"] = "WIM 消息窗口", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Modern Skin"] = "WIM Modern 皮肤", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM manages this chat type in its own message windows. Turning a type off stops capture now; its window button stays until the next reload."] = "WIM 在自己的消息窗口中管理此聊天类型。关闭某类型会立即停止捕获；其窗口按钮会保留到下次重载。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM's launcher menus list the most recently active conversations first."] = "WIM 的启动器菜单优先列出最近活跃的对话。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM: the options UI is not available on this client."] = "WIM：此客户端不支持选项界面。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -767,5 +765,13 @@ WIM.AddLocale("zhCN", {
     ["Community chat cannot be recorded, so this is always on for community channels."] = "社区聊天无法记录，因此社区频道始终开启此项。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Width"] = "宽度", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Height"] = "高度", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Filter Editor"] = "WIM 过滤器编辑器", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Filter Editor"] = "WIM 过滤器编辑器", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation,
+    ["AaBbYyZz 123"] = "AaBbYyZz 123",
+    ["Message Window"] = "消息窗口",
+    ["Interface"] = "界面",
+    ["Conversation Menu"] = "对话菜单",
+    ["The menu displayed when interacting with the minimap icon."] = "与小地图图标交互时显示的菜单。",
+    ["Menu Skin"] = "菜单外观",
+    ["Unified Menu"] = "统一菜单",
+    ["Unify conversation types into one menu."] = "将对话类型统一到一个菜单中。",
 });

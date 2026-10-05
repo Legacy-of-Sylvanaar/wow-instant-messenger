@@ -691,7 +691,6 @@ local translations = {
     ["Shows the row of shortcut buttons on message windows. Turning this off takes effect after the next interface reload."] = "Muestra la fila de botones de acceso directo en las ventanas de mensajes. Desactivarlo surte efecto tras la próxima recarga de la interfaz.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Shows the sender's class, level, and guild on their window. Sends one /who lookup when the window opens. Applies to windows opened after the change."] = "Muestra la clase, el nivel y la hermandad del remitente en su ventana. Envía una consulta /who al abrir la ventana. Se aplica a las ventanas abiertas tras el cambio.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Situations without custom rules follow these base rules."] = "Las situaciones sin reglas personalizadas siguen estas reglas base.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Skin"] = "Apariencia", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin default"] = "Predeterminado de la apariencia", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin, fonts, message look, and colors."] = "Apariencia, fuentes, aspecto de los mensajes y colores.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sort Menu by Activity"] = "Ordenar el menú por actividad", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -721,7 +720,6 @@ local translations = {
     ["Unlock Minimap Button"] = "Desbloquear el botón del minimapa", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Use Master Sound Channel"] = "Usar el canal de sonido Maestro", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM Message Window"] = "Ventana de mensajes de WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Modern Skin"] = "Apariencia WIM Modern", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM manages this chat type in its own message windows. Turning a type off stops capture now; its window button stays until the next reload."] = "WIM gestiona este tipo de chat en sus propias ventanas de mensajes. Desactivar un tipo detiene la captura ahora; su botón de ventana permanece hasta la próxima recarga.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM's launcher menus list the most recently active conversations first."] = "Los menús de lanzamiento de WIM muestran primero las conversaciones activas más recientes.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM: the options UI is not available on this client."] = "WIM: la interfaz de opciones no está disponible en este cliente.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -767,7 +765,15 @@ local translations = {
     ["Community chat cannot be recorded, so this is always on for community channels."] = "El chat de comunidad no se puede grabar, así que esto siempre está activado para los canales de comunidad.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Width"] = "Anchura", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Height"] = "Altura", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Filter Editor"] = "Editor de filtros de WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Filter Editor"] = "Editor de filtros de WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation,
+    ["AaBbYyZz 123"] = "AaBbYyZz 123",
+    ["Message Window"] = "Ventana de mensaje",
+    ["Interface"] = "Interfaz",
+    ["Conversation Menu"] = "Menú de conversación",
+    ["The menu displayed when interacting with the minimap icon."] = "El menú que se muestra al interactuar con el icono del minimapa.",
+    ["Menu Skin"] = "Apariencia del menú",
+    ["Unified Menu"] = "Menú unificado",
+    ["Unify conversation types into one menu."] = "Unificar los tipos de conversación en un solo menú.",
 };
 
 if WIM.getLocale() == "esES" then

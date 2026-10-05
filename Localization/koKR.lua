@@ -690,7 +690,6 @@ WIM.AddLocale("koKR", {
     ["Shows the row of shortcut buttons on message windows. Turning this off takes effect after the next interface reload."] = "메시지 창에 바로 가기 버튼 줄을 표시합니다. 끄면 다음 인터페이스 다시 불러오기 후 적용됩니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Shows the sender's class, level, and guild on their window. Sends one /who lookup when the window opens. Applies to windows opened after the change."] = "발신자의 직업, 레벨, 길드를 창에 표시합니다. 창이 열릴 때 /who 조회를 한 번 보냅니다. 변경 후 열린 창에 적용됩니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Situations without custom rules follow these base rules."] = "사용자 규칙이 없는 상황은 이 기본 규칙을 따릅니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Skin"] = "스킨", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin default"] = "스킨 기본값", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin, fonts, message look, and colors."] = "스킨, 글꼴, 메시지 모양, 색상.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sort Menu by Activity"] = "메뉴를 활동순으로 정렬", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -720,7 +719,6 @@ WIM.AddLocale("koKR", {
     ["Unlock Minimap Button"] = "미니맵 버튼 잠금 해제", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Use Master Sound Channel"] = "마스터 소리 채널 사용", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM Message Window"] = "WIM 메시지 창", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Modern Skin"] = "WIM Modern 스킨", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM manages this chat type in its own message windows. Turning a type off stops capture now; its window button stays until the next reload."] = "WIM이 이 대화 유형을 자체 메시지 창에서 관리합니다. 유형을 끄면 즉시 가져오기가 중단됩니다. 창 버튼은 다음 다시 불러오기까지 남아 있습니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM's launcher menus list the most recently active conversations first."] = "WIM 실행기 메뉴가 가장 최근에 활동한 대화를 먼저 나열합니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM: the options UI is not available on this client."] = "WIM: 이 클라이언트에서는 옵션 UI를 사용할 수 없습니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -766,5 +764,13 @@ WIM.AddLocale("koKR", {
     ["Community chat cannot be recorded, so this is always on for community channels."] = "커뮤니티 대화는 기록할 수 없으므로 커뮤니티 채널에서는 항상 켜져 있습니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Width"] = "너비", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Height"] = "높이", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Filter Editor"] = "WIM 필터 편집기", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Filter Editor"] = "WIM 필터 편집기", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation,
+    ["AaBbYyZz 123"] = "AaBbYyZz 123",
+    ["Message Window"] = "메시지 창",
+    ["Interface"] = "인터페이스",
+    ["Conversation Menu"] = "대화 메뉴",
+    ["The menu displayed when interacting with the minimap icon."] = "미니맵 아이콘과 상호작용 시 표시되는 메뉴입니다.",
+    ["Menu Skin"] = "메뉴 스킨",
+    ["Unified Menu"] = "통합 메뉴",
+    ["Unify conversation types into one menu."] = "대화 유형을 하나의 메뉴로 통합하세요.",
 });

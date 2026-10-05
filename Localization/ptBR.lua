@@ -689,7 +689,6 @@ WIM.AddLocale("ptBR", {
     ["Shows the row of shortcut buttons on message windows. Turning this off takes effect after the next interface reload."] = "Mostra a fileira de botões de atalho nas janelas de mensagens. Desativar entra em vigor após o próximo recarregamento da interface.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Shows the sender's class, level, and guild on their window. Sends one /who lookup when the window opens. Applies to windows opened after the change."] = "Mostra a classe, o nível e a guilda do remetente na janela dele. Envia uma consulta /who quando a janela abre. Vale para janelas abertas após a mudança.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Situations without custom rules follow these base rules."] = "Situações sem regras personalizadas seguem estas regras base.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Skin"] = "Tema", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin default"] = "Padrão do tema", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin, fonts, message look, and colors."] = "Tema, fontes, aparência das mensagens e cores.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sort Menu by Activity"] = "Ordenar menu por atividade", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -719,7 +718,6 @@ WIM.AddLocale("ptBR", {
     ["Unlock Minimap Button"] = "Destravar botão do minimapa", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Use Master Sound Channel"] = "Usar canal de som Principal", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM Message Window"] = "Janela de mensagens do WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Modern Skin"] = "Tema WIM Modern", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM manages this chat type in its own message windows. Turning a type off stops capture now; its window button stays until the next reload."] = "O WIM gerencia este tipo de bate-papo em suas próprias janelas de mensagens. Desativar um tipo interrompe a captura agora; o botão da janela permanece até o próximo recarregamento.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM's launcher menus list the most recently active conversations first."] = "Os menus de inicialização do WIM listam primeiro as conversas ativas mais recentes.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM: the options UI is not available on this client."] = "WIM: a interface de opções não está disponível neste cliente.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -765,5 +763,13 @@ WIM.AddLocale("ptBR", {
     ["Community chat cannot be recorded, so this is always on for community channels."] = "O bate-papo de comunidade não pode ser gravado, então isto fica sempre ativado para canais de comunidade.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Width"] = "Largura", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Height"] = "Altura", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Filter Editor"] = "Editor de filtros do WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Filter Editor"] = "Editor de filtros do WIM", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation,
+    ["AaBbYyZz 123"] = "AaBbYyZz 123",
+    ["Message Window"] = "Janela de mensagens",
+    ["Interface"] = "Interface",
+    ["Conversation Menu"] = "Menu de conversa",
+    ["The menu displayed when interacting with the minimap icon."] = "O menu exibido ao interagir com o ícone do minimapa.",
+    ["Menu Skin"] = "Tema do menu",
+    ["Unified Menu"] = "Menu unificado",
+    ["Unify conversation types into one menu."] = "Unifique os tipos de conversa em um menu.",
 });

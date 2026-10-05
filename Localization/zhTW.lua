@@ -692,7 +692,6 @@ WIM.AddLocale("zhTW", {
     ["Shows the row of shortcut buttons on message windows. Turning this off takes effect after the next interface reload."] = "在訊息視窗上顯示快捷按鈕列。關閉後在下次重新載入介面時生效。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Shows the sender's class, level, and guild on their window. Sends one /who lookup when the window opens. Applies to windows opened after the change."] = "在傳送者的視窗上顯示其職業、等級與公會。視窗開啟時送出一次 /who 查詢。適用於變更後開啟的視窗。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Situations without custom rules follow these base rules."] = "沒有自訂規則的情境遵循這些基礎規則。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Skin"] = "面板", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin default"] = "面板預設", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Skin, fonts, message look, and colors."] = "面板、字型、訊息外觀與顏色。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sort Menu by Activity"] = "依活躍度排序選單", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -722,7 +721,6 @@ WIM.AddLocale("zhTW", {
     ["Unlock Minimap Button"] = "解鎖小地圖按鈕", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Use Master Sound Channel"] = "使用主聲道", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM Message Window"] = "WIM 訊息視窗", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Modern Skin"] = "WIM Modern 面板", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM manages this chat type in its own message windows. Turning a type off stops capture now; its window button stays until the next reload."] = "WIM 在自己的訊息視窗中管理此聊天類型。關閉某類型會立即停止擷取；其視窗按鈕會保留到下次重新載入。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM's launcher menus list the most recently active conversations first."] = "WIM 的啟動器選單優先列出最近活躍的對話。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["WIM: the options UI is not available on this client."] = "WIM：此用戶端不支援選項介面。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -768,5 +766,13 @@ WIM.AddLocale("zhTW", {
     ["Community chat cannot be recorded, so this is always on for community channels."] = "社群聊天無法記錄，因此社群頻道一律開啟此項。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Width"] = "寬度", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Height"] = "高度", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["WIM Filter Editor"] = "WIM 過濾器編輯器", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["WIM Filter Editor"] = "WIM 過濾器編輯器", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation,
+    ["AaBbYyZz 123"] = "AaBbYyZz 123",
+    ["Message Window"] = "訊息視窗",
+    ["Interface"] = "介面",
+    ["Conversation Menu"] = "對話選單",
+    ["The menu displayed when interacting with the minimap icon."] = "與小地圖圖示互動時顯示的選單。",
+    ["Menu Skin"] = "選單外觀",
+    ["Unified Menu"] = "統一選單",
+    ["Unify conversation types into one menu."] = "將對話類型統一到一個選單中。",
 });
