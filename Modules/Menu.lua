@@ -735,7 +735,7 @@ local function createFooter(parent)
         for i=1, (self.count or 0) do
             local row = self.rows[i];
             width = _G.math.max(width, row.key:GetStringWidth() + row.action:GetStringWidth() + 24);
-        end
+			        end
         return width;
     end
     return footer;
@@ -1100,10 +1100,10 @@ local function createMenu()
 			groupHeight = maxTop - minBottom;
 			local calculatedHeight = groupHeight -- + (db and not db.modernTheme.menuGroups and verticalPadding or 0);
 
-			local padding = not groupMode and skin and skin.menu.padding or {0, 0, 0, 0};
-			local offsets = not groupMode and skin and skin.menu.edgeOffsets or {0, 0, 0, 0};
-			local paddingLeft = not groupMode and padding[1] or 0;
-			local paddingRight = not groupMode and padding[2] or 0;
+			local padding = skin and skin.menu.padding or {0, 0, 0, 0};
+			local offsets = skin and skin.menu.edgeOffsets or {0, 0, 0, 0};
+			local paddingLeft = padding[1] or 0;
+			local paddingRight = padding[2] or 0;
 			local offsetLeft = offsets[1] or 0;
 			local offsetRight = offsets[2] or 0;
 			local paddingTop = not groupMode and padding[3] or 0;
