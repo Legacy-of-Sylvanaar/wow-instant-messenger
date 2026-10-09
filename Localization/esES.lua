@@ -774,6 +774,19 @@ local translations = {
     ["Menu Skin"] = "Apariencia del menú",
     ["Unified Menu"] = "Menú unificado",
     ["Unify conversation types into one menu."] = "Unificar los tipos de conversación en un solo menú.",
+    ["Show Recent Whispers"] = "Mostrar susurros recientes",
+    ["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."] = "Muestra en el menú de lanzamiento tus conversaciones de susurros más recientes del historial guardado, para que sigan ahí tras recargar la interfaz o volver a conectarte.",
+    ["Include All Characters"] = "Incluir todos los personajes",
+    ["Recent whispers come from every character on this account, not just this one."] = "Los susurros recientes provienen de todos los personajes de esta cuenta, no solo de este.",
+    ["Right-Click"] = "Clic derecho",
+    ["Shift + Right-Click"] = "Mayús + Clic derecho",
+    ["Shift + Middle-Click"] = "Mayús + Clic central",
+    ["Tools"] = "Herramientas",
+    ["Show Unread"] = "Mostrar no leídos",
+    ["Open on Hover"] = "Abrir al pasar el ratón",
+    ["Open the conversation menu when you hover over the minimap button."] = "Abrir el menú de conversación cuando pases el ratón sobre el botón del minimapa.",
+    ["Show Hints"] = "Mostrar pistas",
+    ["Displays shortcut hints in the conversation menu."] = "Muestra pistas de atajos en el menú de conversación.",
 };
 
 if WIM.getLocale() == "esES" then

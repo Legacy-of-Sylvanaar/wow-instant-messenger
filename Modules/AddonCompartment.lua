@@ -51,6 +51,11 @@ local data = {
             end
 
 			return true;
+        elseif(menuInputData.buttonName == "MiddleButton") then
+            if(_G.IsShiftKeyDown()) then
+                Menu:Hide();
+                ShowOptions();
+            end
         else
             if(db.minimap.rightClickNew) then
                 if(_G.IsShiftKeyDown()) then
@@ -74,7 +79,7 @@ local data = {
 		tooltip = tooltip or _G.CreateFrame("GameTooltip", "WIMCompartmentTooltip", UIParent, "GameTooltipTemplate")
 		tooltip:SetOwner(self, "ANCHOR_NONE")
 		tooltip:SetPoint(getAnchors(self))
-		tooltip:AddLine("WIM |cff00ff00(v"..version..")|r");
+		tooltip:AddDoubleLine("WIM", GetDisplayVersion(), 1, .82, 0, .5, .5, .5);
 		for i=1, #Notes do
 			tooltip:AddDoubleLine("|cff"..Notes[i].color..Notes[i].tag..":|r", "|cffffffff"..Notes[i].text.."|r");
 		end
