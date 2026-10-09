@@ -783,4 +783,6 @@ WIM.AddLocale("ptBR", {
     ["Show Unread"] = "Mostrar não lidas",
     ["Open on Hover"] = "Abrir ao passar o mouse",
     ["Open the conversation menu when you hover over the minimap button."] = "Abra o menu de conversa quando você passar o mouse sobre o botão do minimapa.",
+    ["Show Hints"] = "Mostrar dicas",
+    ["Displays shortcut hints in the conversation menu."] = "Exibe dicas de atalho no menu de conversa.",
 });

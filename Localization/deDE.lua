@@ -784,4 +784,6 @@ WIM.AddLocale("deDE", {
     ["Show Unread"] = "Ungelesene anzeigen",
     ["Open on Hover"] = "Beim Darüberfahren öffnen",
     ["Open the conversation menu when you hover over the minimap button."] = "Öffnet das Konversationsmenü, wenn Sie mit der Maus über das Minikartensymbol fahren.",
+    ["Show Hints"] = "Hinweise anzeigen",
+    ["Displays shortcut hints in the conversation menu."] = "Zeigt Tastenkürzel-Hinweise im Konversationsmenü an.",
 });

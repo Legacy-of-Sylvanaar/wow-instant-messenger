@@ -785,4 +785,6 @@ WIM.AddLocale("ruRU", {
     ["Show Unread"] = "Показать непрочитанные",
     ["Open on Hover"] = "Открывать при наведении",
     ["Open the conversation menu when you hover over the minimap button."] = "Открывать меню бесед при наведении на кнопку мини-карты.",
+    ["Show Hints"] = "Показывать подсказки",
+    ["Displays shortcut hints in the conversation menu."] = "Показывать подсказки для горячих клавиш в меню бесед.",
 });

@@ -35,6 +35,7 @@ local maxButtons = {
 };
 
 db_defaults.menuSortActivity = true;
+db_defaults.menuShowFooter = true;
 
 -- Recent whispers (db.minimap.recentWhispers): entries built from saved whisper
 -- history for people who have no window open right now. Each entry is
@@ -1040,7 +1041,6 @@ local function createMenu()
     -- Sections after the first show the native divider above their
     -- header while the context style is active.
     menu.groups[2].wimWantsDivider = true;
-    menu.footer = createFooter(menu);
 
     menu.Refresh = function(self)
 			local skin = GetSelectedMenuSkin();
@@ -1056,14 +1056,33 @@ local function createMenu()
                 local settings = db and db.minimap and db.minimap.recentWhispers;
                 self.groups[1].displayList = (settings and settings.enabled) and visibleWindows or nil;
             end
+
+			-- conditionally create/delete footer depending on options
+			if (db and db.menuShowFooter) then
+				if (not self.footer) then
+					self._footer = self._footer or createFooter(self);
+					self.footer = self._footer;
+					self.footer:Show();
+				end
+			else
+				if (self.footer) then
+					self.footer:Hide()
+					self.footer = nil;
+				end
+			end;
+
             -- the footer goes in the last section that is showing: Chat when there are chat
             -- windows, otherwise Whispers (which always shows).
             local footerOwner = (#lists.chat > 0) and self.groups[2] or self.groups[1];
             for i=1, #self.groups do
                 self.groups[i].footer = (self.groups[i] == footerOwner) and self.footer or nil;
             end
-            self.footer.rowHeight = self.groups[1].buttons[1]:GetHeight();
-            self.footer:SetHints(getFooterHints(), skin);
+
+			if (self.footer) then
+				self.footer.rowHeight = self.groups[1].buttons[1]:GetHeight();
+				self.footer:SetHints(getFooterHints(), skin);
+			end;
+
             for i=1, #self.groups do
                 self.groups[i]:Refresh();
                 groupHeight = groupHeight + self.groups[i]:GetHeight();

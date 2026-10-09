@@ -785,6 +785,8 @@ local translations = {
     ["Show Unread"] = "Mostrar no leídos",
     ["Open on Hover"] = "Abrir al pasar el ratón",
     ["Open the conversation menu when you hover over the minimap button."] = "Abrir el menú de conversación cuando pases el ratón sobre el botón del minimapa.",
+    ["Show Hints"] = "Mostrar pistas",
+    ["Displays shortcut hints in the conversation menu."] = "Muestra pistas de atajos en el menú de conversación.",
 };
 
 if WIM.getLocale() == "esES" then

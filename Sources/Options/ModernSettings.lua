@@ -1469,6 +1469,10 @@ local function registerCategory()
         L["Recent whispers come from every character on this account, not just this one."],
         refreshMenu);
     ui.DependsOn(recentAll, recent);
+	ui.Checkbox(category, L["Show Hints"], true,
+        db, "menuShowFooter",
+        L["Displays shortcut hints in the conversation menu."],
+        refreshMenu);
 
     ui.Header(layout, L["Report a Bug"]);
     ui.Custom(layout, "WIM3SettingsBugReportTemplate",

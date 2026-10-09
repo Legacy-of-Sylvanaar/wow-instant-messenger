@@ -785,4 +785,6 @@ WIM.AddLocale("enUS", {
     ["Show Unread"] = true,
     ["Open on Hover"] = true,
     ["Open the conversation menu when you hover over the minimap button."] = true,
+    ["Show Hints"] = true,
+    ["Displays shortcut hints in the conversation menu."] = true,
 });
