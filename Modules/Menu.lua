@@ -763,18 +763,18 @@ local function createGroup(title, list, maxButtons, showNone, showHeader)
 	group.title.text:SetAllPoints();
 	group.title.text._allowCustomFont = true;
 
-	-- add-on name and version above the first section, like a tooltip header.
-	if (showHeader) then
-		group.header = CreateFrame("Frame", group:GetName().."Header", group);
-		group.header.name = group.header:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-		group.header.name:SetPoint("LEFT");
-		group.header.name:SetJustifyH("LEFT");
-		group.header.name:SetText("WIM");
-		group.header.version = group.header:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-		group.header.version:SetPoint("RIGHT");
-		group.header.version:SetJustifyH("RIGHT");
-		group.header.version:SetText(GetDisplayVersion());
-	end
+	-- -- add-on name and version above the first section, like a tooltip header.
+	-- if (showHeader) then
+	-- 	group.header = CreateFrame("Frame", group:GetName().."Header", group);
+	-- 	group.header.name = group.header:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
+	-- 	group.header.name:SetPoint("LEFT");
+	-- 	group.header.name:SetJustifyH("LEFT");
+	-- 	group.header.name:SetText("WIM");
+	-- 	group.header.version = group.header:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
+	-- 	group.header.version:SetPoint("RIGHT");
+	-- 	group.header.version:SetJustifyH("RIGHT");
+	-- 	group.header.version:SetText(GetDisplayVersion());
+	-- end
 
 	-- debugging visuals
 	-- group.bg = group:CreateTexture(nil, "BACKGROUND");
