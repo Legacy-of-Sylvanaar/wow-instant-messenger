@@ -126,8 +126,13 @@ local function showMenu(parent, hover)
     end
     -- hang from the button's lower-left corner, like a tooltip; the menu is clamped
     -- to the screen, so a button near the left or bottom edge still works.
+	local skin = GetSelectedMenuSkin();
+	local offsets = skin.menu and skin.menu.edgeOffsets or {0, 0, 0, 0};
+	local offsetRight = offsets[2] or 0;
+	local offsetTop = offsets[3] or 0;
+
     Menu:ClearAllPoints();
-    Menu:SetPoint("TOPRIGHT", parent, "BOTTOMLEFT");
+    Menu:SetPoint("TOPRIGHT", parent, "BOTTOMLEFT", offsetRight, offsetTop);
     Menu:ShowFor(parent, hover);
 end
 
