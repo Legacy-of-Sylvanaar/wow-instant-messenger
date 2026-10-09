@@ -256,7 +256,11 @@ local function createMinimapIcon()
     end
     icon.OnClick = function(self, button)
         if(button == "LeftButton") then
-            showMenu(self, false);
+			if (Menu:IsShown()) then
+				Menu:Hide();
+			else
+				showMenu(self, false);
+			end
         elseif(button == "MiddleButton") then
             if(_G.IsShiftKeyDown()) then
                 Menu:Hide();
