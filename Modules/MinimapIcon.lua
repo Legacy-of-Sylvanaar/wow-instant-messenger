@@ -108,6 +108,11 @@ end
 ----------------------------------------------
 
 local function toggleMenu(parent)
+	local skin = GetSelectedMenuSkin();
+	local offsets = skin.menu and skin.menu.edgeOffsets or {0, 0, 0, 0};
+	local offsetRight = offsets[2] or 0;
+	local offsetTop = offsets[3] or 0;
+
     Menu:ClearAllPoints();
     if(Menu:IsShown()) then
         Menu:Hide();
@@ -115,7 +120,7 @@ local function toggleMenu(parent)
         -- Grow toward the screen center, whichever quadrant the
         -- button sits in.
         local point, relPoint = GetMenuGrowthAnchor(parent);
-        Menu:SetPoint(point, parent, relPoint);
+        Menu:SetPoint(point, parent, relPoint, offsetRight, offsetTop);
         Menu:Show();
     end
 end
