@@ -22,6 +22,7 @@ db_defaults.minimap = {
         x = 0,
         y = 0
     },
+	openOnHover = false,
     -- Recent whispers: fill the launcher menu's Whispers section with recent
     -- conversations from saved history so they survive a reload or relog.
     -- The Whispers list rules (open windows and saved history together, by when you
@@ -291,7 +292,7 @@ local function createMinimapIcon()
         self.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95);
     end
     icon.OnEnter = function(self)
-        if(not self.dragging) then
+        if(db.minimap.openOnHover and not self.dragging) then
             showMenu(self, true);
         end
     end

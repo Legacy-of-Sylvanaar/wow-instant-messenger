@@ -1432,6 +1432,11 @@ local function registerCategory()
     local minimap = ui.Checkbox(category, L["Minimap Button"],
         true, modules.MinimapIcon, "enabled", nil,
         function(value) EnableModule("MinimapIcon", value); end);
+	local minimapOnHover = ui.Checkbox(category, L["Open on Hover"],
+        false, db.minimap, "openOnHover",
+        L["Open the conversation menu when you hover over the minimap button."],
+        function() modules.MinimapIcon:OnEnable(); end);
+    ui.DependsOn(minimapOnHover, minimap);
     local minimapFree = ui.Checkbox(category, L["Unlock Minimap Button"],
         false, db.minimap, "free",
         L["The button can then be dragged anywhere on the screen."],

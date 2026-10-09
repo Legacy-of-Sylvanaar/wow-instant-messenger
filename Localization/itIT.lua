@@ -781,4 +781,6 @@ WIM.AddLocale("itIT", {
     ["Shift + Middle-Click"] = "Maiusc + Clic centrale",
     ["Tools"] = "Strumenti",
     ["Show Unread"] = "Mostra i non letti",
+    ["Open on Hover"] = "Apri al passaggio del mouse",
+    ["Open the conversation menu when you hover over the minimap button."] = "Apri il menu di conversazione quando passi il mouse sul pulsante della minimappa.",
 });

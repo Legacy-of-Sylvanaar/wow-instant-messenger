@@ -783,4 +783,6 @@ WIM.AddLocale("frFR", {
     ["Shift + Middle-Click"] = "Maj + Clic milieu",
     ["Tools"] = "Outils",
     ["Show Unread"] = "Afficher les non-lus",
+    ["Open on Hover"] = "Ouvrir au survol",
+    ["Open the conversation menu when you hover over the minimap button."] = "Ouvre le menu de conversation lorsque vous survolez le bouton de la mini-carte.",
 });

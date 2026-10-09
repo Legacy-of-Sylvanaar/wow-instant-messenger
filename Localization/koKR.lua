@@ -782,4 +782,6 @@ WIM.AddLocale("koKR", {
     ["Shift + Middle-Click"] = "Shift + 휠 클릭",
     ["Tools"] = "도구",
     ["Show Unread"] = "안 읽은 메시지 보기",
+    ["Open on Hover"] = "마우스 오버 시 열기",
+    ["Open the conversation menu when you hover over the minimap button."] = "미니맵 버튼 위에 마우스를 올리면 대화 메뉴가 열립니다.",
 });

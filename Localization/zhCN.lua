@@ -783,4 +783,6 @@ WIM.AddLocale("zhCN", {
     ["Shift + Middle-Click"] = "Shift + 中键",
     ["Tools"] = "工具",
     ["Show Unread"] = "显示未读",
+    ["Open on Hover"] = "悬停时打开",
+    ["Open the conversation menu when you hover over the minimap button."] = "当你将鼠标悬停在小地图按钮上时，打开对话菜单。",
 });

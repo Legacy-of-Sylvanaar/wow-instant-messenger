@@ -783,6 +783,8 @@ local translations = {
     ["Shift + Middle-Click"] = "Mayús + Clic central",
     ["Tools"] = "Herramientas",
     ["Show Unread"] = "Mostrar no leídos",
+    ["Open on Hover"] = "Abrir al pasar el ratón",
+    ["Open the conversation menu when you hover over the minimap button."] = "Abrir el menú de conversación cuando pases el ratón sobre el botón del minimapa.",
 };
 
 if WIM.getLocale() == "esES" then

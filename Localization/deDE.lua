@@ -782,4 +782,6 @@ WIM.AddLocale("deDE", {
     ["Shift + Middle-Click"] = "Shift + Mittelklick",
     ["Tools"] = "Werkzeuge",
     ["Show Unread"] = "Ungelesene anzeigen",
+    ["Open on Hover"] = "Beim Darüberfahren öffnen",
+    ["Open the conversation menu when you hover over the minimap button."] = "Öffnet das Konversationsmenü, wenn Sie mit der Maus über das Minikartensymbol fahren.",
 });
