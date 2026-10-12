@@ -362,6 +362,9 @@ function SendSplitMessage(PRIORITY, HEADER, theMsg, CHANNEL, EXTRA, to)
 				return splitMessageLinks[index] or link;
 			end);
 
+			-- trim trailing whitespace
+			chunk = chunk:gsub("%s+$", "");
+
 			if(isBN) then
 				(_G.C_BattleNet and _G.C_BattleNet.SendWhisper or _G.BNSendWhisper)(Windows[safeName(to)].bn.id, chunk);
 			else
