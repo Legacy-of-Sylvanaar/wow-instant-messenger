@@ -19,6 +19,15 @@ setfenv(1, WIM);
 addonTocName = "WIM";
 version = "@project-version@";
 beta = false; -- flags current version as beta.
+
+-- The version as shown to players. A copy run straight from the repository still
+-- carries the packager's unreplaced token, which reads as "Dev".
+function GetDisplayVersion()
+    if(string.find(version, "@", 1, true)) then
+        return "Dev";
+    end
+    return version;
+end
 debug = false; -- turn debugging on and off. True whenever debugLevel >= 1.
 debugLevel = 0; -- 0 off, 1 normal, 2 verbose event tracing (Sources/DebugTrace.lua).
 useProtocol2 = true; -- test switch for new W2W Protocol. (Dev use only)

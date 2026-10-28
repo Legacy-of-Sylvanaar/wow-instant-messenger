@@ -7,8 +7,6 @@ local math = math;
 local table = table;
 local pairs = pairs;
 local string = string;
-local GetMouseFocus = WIM.utils.compat.GetMouseTopFocus;
-local IsShiftKeyDown = IsShiftKeyDown;
 
 -- set namespace
 setfenv(1, WIM);
@@ -23,6 +21,19 @@ db_defaults.minimap = {
         point = "CENTER",
         x = 0,
         y = 0
+    },
+	openOnHover = false,
+    -- Recent whispers: fill the launcher menu's Whispers section with recent
+    -- conversations from saved history so they survive a reload or relog.
+    -- The Whispers list rules (open windows and saved history together, by when you
+    -- last chatted, either direction): the most recent `count` people are always listed;
+    -- anyone further down only while you have chatted within `keepMinutes`, or while their
+    -- window has unread messages or is on screen. 30 rows at most.
+    recentWhispers = {
+        enabled = true,      -- false = the menu lists open windows only, with no rules.
+        count = 5,           -- always list this many of the most recent people.
+        keepMinutes = 10,    -- beyond those, keep people you chatted with this recently.
+        accountWide = true,  -- false = this character only, true = every character on the account.
     }
 };
 
@@ -107,22 +118,22 @@ end
 --          Minimap Icon Creation           --
 ----------------------------------------------
 
-local function toggleMenu(parent)
+-- hover = true when opened by mousing over the button (closes like a tooltip);
+-- false for a click, which keeps it open until the cursor has been away a moment.
+local function showMenu(parent, hover)
+    if(Menu:IsShown() and hover) then
+        return; -- already open; a hover must not downgrade a click-pinned menu.
+    end
+    -- hang from the button's lower-left corner, like a tooltip; the menu is clamped
+    -- to the screen, so a button near the left or bottom edge still works.
 	local skin = GetSelectedMenuSkin();
 	local offsets = skin.menu and skin.menu.edgeOffsets or {0, 0, 0, 0};
 	local offsetRight = offsets[2] or 0;
 	local offsetTop = offsets[3] or 0;
 
     Menu:ClearAllPoints();
-    if(Menu:IsShown()) then
-        Menu:Hide();
-    else
-        -- Grow toward the screen center, whichever quadrant the
-        -- button sits in.
-        local point, relPoint = GetMenuGrowthAnchor(parent);
-        Menu:SetPoint(point, parent, relPoint, offsetRight, offsetTop);
-        Menu:Show();
-    end
+    Menu:SetPoint("TOPRIGHT", parent, "BOTTOMLEFT", offsetRight, offsetTop);
+    Menu:ShowFor(parent, hover);
 end
 
 
@@ -163,7 +174,7 @@ local function createMinimapIcon()
 	self:SetWidth(31); self:SetHeight(31);
 	self:SetFrameLevel(8);
         self:SetMovable(true);
-	self:RegisterForClicks('LeftButtonUp', "RightButtonUp");
+	self:RegisterForClicks('LeftButtonUp', "RightButtonUp", "MiddleButtonUp");
 	self:SetHighlightTexture('Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight');
 
 	local overlay = self:CreateTexture(nil, 'OVERLAY');
@@ -251,7 +262,16 @@ local function createMinimapIcon()
     end
     icon.OnClick = function(self, button)
         if(button == "LeftButton") then
-            toggleMenu(self);
+			if (Menu:IsShown()) then
+				Menu:Hide();
+			else
+				showMenu(self, false);
+			end
+        elseif(button == "MiddleButton") then
+            if(_G.IsShiftKeyDown()) then
+                Menu:Hide();
+                ShowOptions();
+            end
         else
             if(db.minimap.rightClickNew) then
                 if(_G.IsShiftKeyDown()) then
@@ -277,13 +297,16 @@ local function createMinimapIcon()
         self.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95);
     end
     icon.OnEnter = function(self)
-
+        if(db.minimap.openOnHover and not self.dragging) then
+            showMenu(self, true);
+        end
     end
     icon.OnLeave = function(self)
 
     end
     icon.OnDragStart = function(self)
         self.dragging = true;
+        if(Menu) then Menu:Hide(); end -- it is anchored to the button and would be dragged along.
 		self:LockHighlight();
 		self.icon:SetTexCoord(0, 1, 0, 1);
         self:SetScript('OnUpdate', self.OnUpdate);
@@ -294,8 +317,6 @@ local function createMinimapIcon()
 		self:SetScript('OnUpdate', nil);
 		self.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95);
 		self:UnlockHighlight();
-        self.registeredForDrag = nil;
-        self:RegisterForDrag();
     end
     icon.OnUpdate = function(self)
         local mx, my = _G.Minimap:GetCenter();
@@ -352,13 +373,8 @@ local function createMinimapIcon()
     end
     icon:Load();
 
-    local helperFrame = _G.CreateFrame("Frame");
-    helperFrame:SetScript("OnUpdate", function(self)
-            if(not icon.dragging and not icon.registeredForDrag and IsShiftKeyDown() and GetMouseFocus() == icon) then
-                icon.registeredForDrag = true;
-                icon:RegisterForDrag('LeftButton');
-            end
-        end);
+    -- left-drag moves the button; a click without moving still opens the menu.
+    icon:RegisterForDrag('LeftButton');
 
 
     dPrint("MinimapIcon Created...");

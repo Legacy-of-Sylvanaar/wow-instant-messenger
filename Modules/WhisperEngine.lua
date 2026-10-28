@@ -656,6 +656,32 @@ local function processMessageEventFilters(win, event, ...)
 end
 WhisperEngine.processMessageEventFilters = processMessageEventFilters; -- make accessible to other modules
 
+-- Fill in a whisper window's missing class and race from the other player's GUID.
+-- Both directions carry it: CHAT_MSG_WHISPER sends the sender's GUID and
+-- CHAT_MSG_WHISPER_INFORM the recipient's, so a conversation you start with
+-- someone outside your group and guild still learns their class.
+local function learnFromGUID(win, guid)
+    if (_G.type(guid) ~= "string" or not string.find(guid, "^Player%-")) then
+        return;
+    end
+    if ((win.class and win.class ~= "") and win.race) then
+        return;
+    end
+    local class, _, race = GetPlayerInfoByGUID(guid);
+    if (not class and not race) then
+        return;
+    end
+    win.WhoCallback({
+        Name = win.theUser,
+        Online = true,
+        Guild = win.guild,
+        Class = class or win.class,
+        Level = win.level,
+        Race = race or win.race,
+        Zone = win.location
+    });
+end
+
 function WhisperEngine:CHAT_MSG_WHISPER(...)
 	-- check if sender is secret, if so, do not process
 	if HasAnySecretValues(...) then
@@ -688,21 +714,10 @@ function WhisperEngine:CHAT_MSG_WHISPER(...)
 
     win.online = true;
     updateMinimapAlerts();
+    win.wimLastChat = _G.time(); -- last message either way, for the launcher menu's idle rule
 
     -- get missing data available from C_PlayerInfo
-    if (arg12 and (not win.race or win.class)) then
-        local class, _, race = GetPlayerInfoByGUID(arg12);
-
-        win.WhoCallback({
-            Name = win.theUser,
-            Online = true,
-            Guild = win.guild,
-            Class = class or win.class,
-            Level = win.level,
-            Race = race or win.race,
-            Zone = win.location
-        });
-    end
+    learnFromGUID(win, arg12);
 
 	-- emulate blizzards flash client icon behavior.
 	if FlashClientIcon then
@@ -744,6 +759,11 @@ function WhisperEngine:CHAT_MSG_WHISPER_INFORM(...)
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
+    win.wimLastChat = _G.time(); -- last message either way, for the launcher menu's idle rule
+
+    -- the recipient's GUID: lets a conversation you started learn their class.
+    learnFromGUID(win, arg12);
+
     CallModuleFunction("PostEvent_WhisperInform", arg1, arg2, select(3, ...));
     addToTableUnique(recentSent, arg1);
 	if(#recentSent > maxRecent) then
@@ -784,6 +804,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER_INFORM(...)
     win.online = true;
     win.msgSent = false;
     updateMinimapAlerts();
+    win.wimLastChat = _G.time(); -- last message either way, for the launcher menu's idle rule
 
 	-- emulate blizzards flash client icon behavior.
 	if FlashClientIcon then
@@ -828,6 +849,7 @@ function WhisperEngine:CHAT_MSG_BN_WHISPER(...)
 
     win.online = true;
     updateMinimapAlerts();
+    win.wimLastChat = _G.time(); -- last message either way, for the launcher menu's idle rule
     CallModuleFunction("PostEvent_Whisper", arg1, arg2, select(3, ...));
 end
 
