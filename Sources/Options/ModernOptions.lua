@@ -1718,7 +1718,7 @@ RegisterModernPage(function(category, ui)
         modern(ui.Dropdown(cat, L["Message Area Background"], "darkmarble",
             backgroundItems, db.modernTheme, "chatPanel", nil, reskin), "message window");
         modern(ui.Checkbox(cat, L["See-Through Frame"],
-            false, db.modernTheme, "chatCutout",
+            db_defaults.modernTheme.chatCutout, db.modernTheme, "chatCutout",
             L["Draws the window frame background only around the message area, so a clear message area background (None or Transparent) shows the game world behind the window."],
             reskin), "message window", "cut-out");
 
