@@ -606,7 +606,7 @@ WIM.AddLocale("enUS", {
     ["Links & Emoticons"] = true,
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = true,
     ["Maximum Lines"] = true,
-    ["Menus & Tooltips"] = true,
+    ["Tooltips"] = true,
     ["Message Area Background"] = true,
     ["Message Format"] = true,
     ["Message Windows"] = true,

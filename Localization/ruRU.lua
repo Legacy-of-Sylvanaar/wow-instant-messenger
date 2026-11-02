@@ -605,7 +605,7 @@ WIM.AddLocale("ruRU", {
     ["Links & Emoticons"] = "Ссылки и смайлики", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Главный переключатель для этого типа каналов; отдельные каналы перехватываются флажком «Перехватывать» ниже.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Максимум строк", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Menus & Tooltips"] = "Меню и подсказки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Tooltips"] = "Подсказки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Фон области сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Формат сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Окна сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation

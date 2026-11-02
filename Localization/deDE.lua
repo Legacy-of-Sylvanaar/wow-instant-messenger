@@ -604,7 +604,7 @@ WIM.AddLocale("deDE", {
     ["Links & Emoticons"] = "Links & Emoticons", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Hauptschalter für diesen Kanaltyp; einzelne Kanäle werden mit der Markierung „Erfassen“ unten erfasst.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Maximale Zeilen", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Menus & Tooltips"] = "Menüs & Tooltips", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Tooltips"] = "Tooltips", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Hintergrund des Nachrichtenbereichs", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Nachrichtenformat", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Nachrichtenfenster", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
