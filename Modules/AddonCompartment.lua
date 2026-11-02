@@ -36,13 +36,8 @@ local data = {
             if(Menu:IsShown()) then
                 Menu:Hide();
 			else
-				local skin = GetSelectedMenuSkin();
-				local offsets = skin.menu and skin.menu.edgeOffsets or {0, 0, 0, 0};
-				local offsetRight = offsets[2] or 0;
-				local offsetTop = offsets[3] or 0;
-
 				local button = utils.compat.GetMouseTopFocus();
-                Menu:SetPoint("TOPRIGHT", button or menu, "TOPLEFT", offsetRight, offsetTop);
+                Menu:AnchorTo(button or menu, "beside");
                 Menu:Show();
 
 				menu:HookScript("OnHide", function()
