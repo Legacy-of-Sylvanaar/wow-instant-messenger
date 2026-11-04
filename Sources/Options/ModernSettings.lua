@@ -31,6 +31,9 @@ setfenv(1, WIM);
 -- WIM's options live entirely inside the game's native Settings panel.
 -- ---------------------------------------------------------------------------
 
+options.categoryMap = options.categoryMap or {};
+local CategoryMap = options.categoryMap;
+
 options.creditsText = {
     "Pazza <Bronzebeard-US>\n\n",
     "MysticalOS\nHumfras\nSylvaanar\n\nStewarta <Emerald Dream - EU>\n\nAvraelore <Moon Guard - US> - Modern skin & options\n\nAstaldo/RoadBlock <Bronzebeard - EU>\nZeke <Coilfang - US>\nMorphieus <Spinebreaker>\nNachonut <Bronzebeard - US>\n\nChiaki <Frostwolf - EU> - deDE\n"..
@@ -1424,6 +1427,7 @@ local function registerCategory()
     local category, layout = Settings.RegisterVerticalLayoutCategory("WIM");
     options.modernCategory = category;
     options.modernCategoryID = category:GetID();
+    CategoryMap["Main"] = category:GetID();
 
     ui.Checkbox(category, L["Enable WIM"], true, db, "enabled", nil,
         function(value) SetEnabled(value); end);

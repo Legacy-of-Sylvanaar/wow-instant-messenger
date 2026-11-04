@@ -15,6 +15,9 @@ local CreateFrame = CreateFrame;
 --set namespace
 setfenv(1, WIM);
 
+options.categoryMap = options.categoryMap or {};
+local CategoryMap = options.categoryMap;
+
 -- ---------------------------------------------------------------------------
 -- Option pages (Options > AddOns > WIM).
 --
@@ -1642,6 +1645,9 @@ RegisterModernPage(function(category, ui)
     do
         local cat, layout = ui.Subcategory(folder, L["Message Window"],
         L["The skin and window chrome."]);
+
+		CategoryMap["Appearance:MessageWindow"] = cat:GetID();
+
         local function skinItems()
             local skins = GetRegisteredSkins(true);
             local items = {};
