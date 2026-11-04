@@ -206,7 +206,7 @@ function WhisperEngine:OnEnable ()
 			preferredIndex = _G.STATICPOPUP_NUMDIALOGS,
 			text = "WIM: "..L["It is recommended for whispers to be set to in-line in order to handle their behavior properly."],
 			button1 = L["Set whispers to In-line"],
-			button2 = _G.LATER,
+			button2 = _G.LATER or _G.CLOSE,
 			OnAccept = function()
 				_G.SetCVar("whisperMode", "inline");
 			end,
