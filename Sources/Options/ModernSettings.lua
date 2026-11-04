@@ -1429,6 +1429,9 @@ local function registerCategory()
     options.modernCategoryID = category:GetID();
     CategoryMap["Main"] = category:GetID();
 
+	-- set tutorial info
+	category:SetCategoryTutorialInfo(L["Version"]..": "..GetDisplayVersion());
+
     ui.Checkbox(category, L["Enable WIM"], true, db, "enabled", nil,
         function(value) SetEnabled(value); end);
 
