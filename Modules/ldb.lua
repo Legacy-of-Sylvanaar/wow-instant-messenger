@@ -22,7 +22,7 @@ local data = {
             if(Menu:IsShown()) then
                 Menu:Hide();
             else
-                Menu:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0);
+                Menu:AnchorTo(frame, "below");
                 Menu:Show();
             end
         elseif(button == "MiddleButton") then

@@ -605,7 +605,7 @@ WIM.AddLocale("frFR", {
     ["Links & Emoticons"] = "Liens et émoticônes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Interrupteur principal de ce type de canal ; chaque canal est capturé avec la case Capturer ci-dessous.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Lignes maximales", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Menus & Tooltips"] = "Menus et infobulles", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Tooltips"] = "Infobulles", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Arrière-plan de la zone de messages", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Format des messages", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Fenêtres de messages", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation

@@ -1451,28 +1451,10 @@ local function registerCategory()
             function(value) EnableModule("AddonCompartment", value); end);
     end
 
-    ui.Header(layout, L["Menus & Tooltips"]);
+    ui.Header(layout, L["Tooltips"]);
     ui.Checkbox(category, L["Show WIM Tooltips"], true,
         db, "showToolTips",
         L["Shows help tooltips on WIM's windows, lists, and the custom rows of these options."]);
-    ui.Checkbox(category, L["Sort Menu by Activity"], true,
-        db, "menuSortActivity",
-        L["WIM's launcher menus list the most recently active conversations first."]);
-    local function recentSettings() return db.minimap.recentWhispers; end
-    local function refreshMenu() if (WIM.Menu) then WIM.Menu:Refresh(); end end
-    local recent = ui.Checkbox(category, L["Show Recent Whispers"], true,
-        recentSettings, "enabled",
-        L["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."],
-        refreshMenu);
-    local recentAll = ui.Checkbox(category, L["Include All Characters"], true,
-        recentSettings, "accountWide",
-        L["Recent whispers come from every character on this account, not just this one."],
-        refreshMenu);
-    ui.DependsOn(recentAll, recent);
-	ui.Checkbox(category, L["Show Hints"], true,
-        db, "menuShowFooter",
-        L["Displays shortcut hints in the conversation menu."],
-        refreshMenu);
 
     ui.Header(layout, L["Report a Bug"]);
     ui.Custom(layout, "WIM3SettingsBugReportTemplate",

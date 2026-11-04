@@ -1213,6 +1213,27 @@ local function createMenu()
                 end
             end
         end);
+    -- Hang the menu from a launcher, growing toward the screen center. placement:
+    -- nil = off the owner's corner (minimap button), "beside" = next to it with the
+    -- tops or bottoms aligned (a dropdown row), "below" = above or below it with
+    -- the sides aligned (a data broker bar). The skin's edgeOffsets are the margin
+    -- around the visible frame, so shift by them to sit the visible edge flush.
+    menu.AnchorTo = function(self, owner, placement)
+        local point, relPoint = GetMenuGrowthAnchor(owner);
+        local vert = point:find("TOP") and "TOP" or "BOTTOM";
+        local horiz = point:find("RIGHT") and "RIGHT" or "LEFT";
+        if(placement == "beside") then
+            relPoint = vert..(horiz == "RIGHT" and "LEFT" or "RIGHT");
+        elseif(placement == "below") then
+            relPoint = (vert == "TOP" and "BOTTOM" or "TOP")..horiz;
+        end
+        local skin = GetSelectedMenuSkin();
+        local offsets = skin and skin.menu and skin.menu.edgeOffsets or {0, 0, 0, 0};
+        local x = (horiz == "RIGHT") and (offsets[2] or 0) or -(offsets[1] or 0);
+        local y = (vert == "TOP") and (offsets[3] or 0) or -(offsets[4] or 0);
+        self:ClearAllPoints();
+        self:SetPoint(point, owner, relPoint, x, y);
+    end
     -- Show the menu at a launcher. hover = true when it was opened by mousing over the
     -- launcher: it then closes like a tooltip once the cursor leaves both. A click
     -- (hover = false) pins it the old way, closing a moment after the cursor leaves.
