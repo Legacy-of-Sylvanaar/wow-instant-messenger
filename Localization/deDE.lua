@@ -786,4 +786,7 @@ WIM.AddLocale("deDE", {
     ["Open the conversation menu when you hover over the minimap button."] = "Öffnet das Konversationsmenü, wenn Sie mit der Maus über das Minikartensymbol fahren.",
     ["Show Hints"] = "Hinweise anzeigen",
     ["Displays shortcut hints in the conversation menu."] = "Zeigt Tastenkürzel-Hinweise im Konversationsmenü an.",
+	["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM verfügt jetzt über einen modernen Skin, der besser zur aktuellen Spieloberfläche passt. Ihr ausgewählter Skin ist ein älterer Stil, der veraltet aussehen oder neuere Funktionen verpassen kann.",
+	["Open Skin Settings"] = "Skin-Einstellungen öffnen",
+	["Keep Current"] = "Beibehalten",
 });

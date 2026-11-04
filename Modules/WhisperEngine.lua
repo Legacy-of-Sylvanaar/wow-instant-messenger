@@ -216,6 +216,7 @@ function WhisperEngine:OnEnable ()
 		};
 		_G.StaticPopup_Show ("WIM_WHISPER_MODE");
 		db.whisperModeChecked = true;
+		_WHISPER_MODE_DIALOG_SHOWN = true;
 	end
 end
 

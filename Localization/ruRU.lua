@@ -787,4 +787,7 @@ WIM.AddLocale("ruRU", {
     ["Open the conversation menu when you hover over the minimap button."] = "Открывать меню бесед при наведении на кнопку мини-карты.",
     ["Show Hints"] = "Показывать подсказки",
     ["Displays shortcut hints in the conversation menu."] = "Показывать подсказки для горячих клавиш в меню бесед.",
+	["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM теперь имеет современную тему, разработанную для лучшего соответствия текущему интерфейсу игры. Выбранная вами тема старого стиля может выглядеть устаревшей или не поддерживать новые функции.",
+	["Open Skin Settings"] = "Открыть настройки темы",
+	["Keep Current"] = "Сохранить текущую тему",
 });

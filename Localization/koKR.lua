@@ -786,4 +786,7 @@ WIM.AddLocale("koKR", {
     ["Open the conversation menu when you hover over the minimap button."] = "미니맵 버튼 위에 마우스를 올리면 대화 메뉴가 열립니다.",
     ["Show Hints"] = "힌트 표시",
     ["Displays shortcut hints in the conversation menu."] = "대화 메뉴에서 단축키 힌트를 표시합니다.",
+    ["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM은 이제 현재 게임 인터페이스를 더 잘 보완하도록 설계된 현대적인 스킨을 제공합니다. 선택한 스킨은 오래된 스타일로 보일 수 있으며 최신 기능을 놓칠 수 있습니다.",
+    ["Open Skin Settings"] = "스킨 설정 열기",
+    ["Keep Current"] = "현재 스킨 유지",
 });

@@ -22,9 +22,8 @@ setfenv(1, WIM);
 local getAtlasInfo = utils.skin.getAtlasInfo
 
 db_defaults.skin = {
-	-- default skin to "WIM Modern" for retail and use "WIM Classic" for classic and classic expansions
-    -- TODO: add trap for WoW Forever -- it also uses the retail UI.
-	selected = _G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE and "WIM Modern" or "WIM Classic",
+	-- default skin to "WIM Modern" for retail and Forever, use "WIM Classic" for classic and classic expansions
+	selected = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE or isForever) and "WIM Modern" or "WIM Classic",
     font = "ChatFontNormal",
     font_outline = "",
     suggest = true,
@@ -2502,4 +2501,50 @@ function GetRegisteredSkins(includeModernSkins)
     end
     table.sort(list);
     return list;
+end
+
+
+-- Create temporary module checking if WIM has been upgraded but an older skin is being used.
+local SkinUpgradeCheck = CreateModule("SkinnerNotifier", true);
+SkinUpgradeCheck.canDisable = false;
+
+local function CheckForOutdatedSkin()
+    local selected = GetSelectedSkin();
+	local defaultSkin = SkinTable[db_defaults.skin.selected];
+
+	local check = selected and selected.schema_version and defaultSkin and defaultSkin.schema_version;
+
+    if(check and selected.schema_version < defaultSkin.schema_version) then
+
+		_G.StaticPopupDialogs["WIM_SKIN_SCHEMA_NOTIFY"] = {
+			preferredIndex = _G.STATICPOPUP_NUMDIALOGS,
+			text = L["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."],
+			button1 = L["Open Skin Settings"],
+			button2 = L["Keep Current"],
+			OnAccept = function()
+				-- Open WIM settings to the Appearance:MessageWindow category.
+				_G.Settings.OpenToCategory(options.categoryMap["Appearance:MessageWindow"]);
+			end,
+			timeout = 0,
+			whileDead = 1,
+			hideOnEscape = 1
+		};
+		_G.StaticPopup_Show ("WIM_SKIN_SCHEMA_NOTIFY");
+    end
+end
+
+function SkinUpgradeCheck:OnInitialized()
+	-- don't do skin check if whisper mode alert is being shown. Try again next session.
+	if _WHISPER_MODE_DIALOG_SHOWN then
+		return;
+	end
+
+	-- only check once
+	if db.skinSchema2Checked then
+		return;
+	end
+
+    CheckForOutdatedSkin();
+
+    db.skinSchema2Checked = true;
 end

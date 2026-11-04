@@ -787,6 +787,9 @@ local translations = {
     ["Open the conversation menu when you hover over the minimap button."] = "Abrir el menú de conversación cuando pases el ratón sobre el botón del minimapa.",
     ["Show Hints"] = "Mostrar pistas",
     ["Displays shortcut hints in the conversation menu."] = "Muestra pistas de atajos en el menú de conversación.",
+    ["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM ahora cuenta con una apariencia moderna diseñada para complementar mejor la interfaz actual del juego. La apariencia que has seleccionado es un estilo más antiguo que puede parecer anticuado o carecer de soporte para funciones más recientes.",
+    ["Open Skin Settings"] = "Abrir configuración de apariencia",
+    ["Keep Current"] = "Mantener actual",
 };
 
 if WIM.getLocale() == "esES" then

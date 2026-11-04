@@ -787,4 +787,7 @@ WIM.AddLocale("zhCN", {
     ["Open the conversation menu when you hover over the minimap button."] = "当你将鼠标悬停在小地图按钮上时，打开对话菜单。",
     ["Show Hints"] = "显示提示",
     ["Displays shortcut hints in the conversation menu."] = "在对话菜单中显示快捷键提示。",
+    ["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM 现在具有现代化的皮肤，旨在更好地补充当前的游戏界面。您选择的皮肤是较旧的样式，可能显得过时或缺少新功能。",
+    ["Open Skin Settings"] = "打开皮肤设置",
+    ["Keep Current"] = "保持当前皮肤",
 });

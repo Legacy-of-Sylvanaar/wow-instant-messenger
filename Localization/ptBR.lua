@@ -785,4 +785,7 @@ WIM.AddLocale("ptBR", {
     ["Open the conversation menu when you hover over the minimap button."] = "Abra o menu de conversa quando você passar o mouse sobre o botão do minimapa.",
     ["Show Hints"] = "Mostrar dicas",
     ["Displays shortcut hints in the conversation menu."] = "Exibe dicas de atalho no menu de conversa.",
+	["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "O WIM agora possui um tema moderno projetado para complementar melhor a interface atual do jogo. O tema selecionado é um estilo mais antigo que pode parecer desatualizado ou não oferecer suporte a recursos mais recentes.",
+	["Open Skin Settings"] = "Abrir configurações do tema",
+	["Keep Current"] = "Manter o atual",
 });
