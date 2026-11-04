@@ -1656,14 +1656,14 @@ RegisterModernPage(function(category, ui)
             end
             return items;
         end
-        ui.Dropdown(cat, L["Window Skin"], "WIM Modern", skinItems,
+        ui.Dropdown(cat, L["Window Skin"], db_defaults.skin.selected, skinItems,
             db.skin, "selected", nil, function(value) LoadSkin(value); end);
-        ui.Slider(cat, L["Window Opacity"], 80, 1, 100, 1,
+        ui.Slider(cat, L["Window Opacity"], db_defaults.windowAlpha, 1, 100, 1,
             db, "windowAlpha",
             L["Fades the window frame, header, and buttons; message and input text stay opaque. Modern skins keep their frame art opaque."], props, pct);
-        ui.Checkbox(cat, L["Fade When Inactive"], true, db, "winFade",
+        ui.Checkbox(cat, L["Fade When Inactive"], db_defaults.winFade, db, "winFade",
             L["Windows fade to half opacity after two seconds without the mouse over them."]);
-        ui.Checkbox(cat, L["Window Animations"], true, db, "winAnimation",
+        ui.Checkbox(cat, L["Window Animations"], db_defaults.winAnimation, db, "winAnimation",
             L["Animates closing windows toward the minimap, and the slide used by combat auto-hide and the show/hide key binding."]);
         ui.Checkbox(cat, L["Shortcut Bar"], true,
             modules.ShortcutBar, "enabled",
@@ -1713,9 +1713,9 @@ RegisterModernPage(function(category, ui)
             return ui.Tags(control, ...);
         end
 
-        modern(ui.Dropdown(cat, L["Frame Background"], "rock",
+        modern(ui.Dropdown(cat, L["Frame Background"], db_defaults.modernTheme.chatFrame,
             backgroundItems, db.modernTheme, "chatFrame", nil, reskin), "message window");
-        modern(ui.Dropdown(cat, L["Message Area Background"], "darkmarble",
+        modern(ui.Dropdown(cat, L["Message Area Background"], db_defaults.modernTheme.chatPanel,
             backgroundItems, db.modernTheme, "chatPanel", nil, reskin), "message window");
         modern(ui.Checkbox(cat, L["See-Through Frame"],
             db_defaults.modernTheme.chatCutout, db.modernTheme, "chatCutout",
@@ -1960,10 +1960,10 @@ RegisterModernPage(function(category, ui)
 
 		ui.Header(layout, L["Conversation Menu"], L["The menu displayed when interacting with the minimap icon."]);
 		local _tmp = { unified = not db.modernTheme.menuGroups and true or false };
-        ui.Dropdown(cat, L["Menu Skin"], "WIM Modern", skinItems,
+        ui.Dropdown(cat, L["Menu Skin"], db_defaults.modernTheme.menuSkin, skinItems,
             db.modernTheme, "menuSkin", nil, function(value) LoadMenuSkin(value); end);
 		ui.Checkbox(cat, L["Unified Menu"],
-            true, _tmp, "unified",
+            not db.modernTheme.menuGroups, _tmp, "unified",
             L["Unify conversation types into one menu."],
             function ()
 				db.modernTheme.menuGroups = not _tmp.unified and true or false;
@@ -2001,24 +2001,24 @@ RegisterModernPage(function(category, ui)
         end;
 
         ui.Header(layout, L["History Viewer"], L["The message history window."]);
-        ui.Dropdown(cat, L["Frame Background"], "rock",
+        ui.Dropdown(cat, L["Frame Background"], db_defaults.modernTheme.frame,
             backgroundItems, db.modernTheme, "frame", nil, reskin);
-        ui.Dropdown(cat, L["Navigation List Background"], "darkmarble",
+        ui.Dropdown(cat, L["Navigation List Background"], db_defaults.modernTheme.panels,
             backgroundItems, db.modernTheme, "panels", nil, reskin);
-        ui.Dropdown(cat, L["Content Background"], "darkmarble",
+        ui.Dropdown(cat, L["Content Background"], db_defaults.modernTheme.content,
             backgroundItems, db.modernTheme, "content", nil, reskin);
         ui.Checkbox(cat, L["See-Through Frame"],
-            false, db.modernTheme, "cutout",
+            db_defaults.modernTheme.cutout, db.modernTheme, "cutout",
             L["Draws the frame background only around the panels, so a clear panel background (None or Transparent) shows the game world behind the viewer."],
             reskin);
 
         ui.Header(layout, L["Filter Editor"], L["The window for adding and editing whisper and chat filters."]);
-        ui.Dropdown(cat, L["Frame Background"], "rock",
+        ui.Dropdown(cat, L["Frame Background"], db_defaults.modernTheme.filterFrame,
             backgroundItems, db.modernTheme, "filterFrame", nil, reapplyFilter);
-        ui.Dropdown(cat, L["Filter Panel Background"], "darkmarble",
+        ui.Dropdown(cat, L["Filter Panel Background"], db_defaults.modernTheme.filterPanel,
             backgroundItems, db.modernTheme, "filterPanel", nil, reapplyFilter);
         ui.Checkbox(cat, L["See-Through Frame"],
-            false, db.modernTheme, "filterCutout",
+            db_defaults.modernTheme.filterCutout, db.modernTheme, "filterCutout",
             L["Draws the frame background only around the filter area, so a clear filter area background (None or Transparent) shows the game world behind the editor."],
             reapplyFilter);
 
