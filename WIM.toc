@@ -1,4 +1,4 @@
-## Interface: 11509, 16001, 20506, 38002, 50504, 120007, 120100
+## Interface: 11509, 16001, 20506, 38002, 50504, 120007, 120105
 ## X-Curse-Project-ID: 7474
 ## X-WoWI-ID: 5342
 ## X-Wago-ID: aNDmqo6o
@@ -14,15 +14,28 @@
 ## eMail: johnlangone@gmail.com
 ## X-Email: johnlangone@gmail.com
 ## X-Category: Chat
+## Category: Chat
+## Category-deDE: Chat
+## Category-esES: Chat
+## Category-esMX: Chat
+## Category-frFR: Discussion
+## Category-itIT: Chat
+## Category-koKR: 대화
+## Category-ptBR: Bate-papo
+## Category-ruRU: Чат
+## Category-zhCN: 聊天
+## Category-zhTW: 對話
 ## DefaultState: Enabled
 ## OptionalDeps: LibStub, CallbackHandler-1.0, LibSharedMedia-3.0, LibChatAnims
 ## X-Embeds: LibStub, CallbackHandler-1.0, LibSharedMedia-3.0, LibChatAnims
-## SavedVariables: WIM3_Data, WIM3_Cache, WIM3_Filters, WIM3_History, WIM3_ChatFilters, WIM3_Alias
+## SavedVariables: WIM3_Data, WIM3_Cache, WIM3_Filters, WIM3_ChatFilters, WIM3_History, WIM3_HistoryArchive, WIM3_HistorySchema
+## SavedVariablesPerCharacter: WIM3_DebugLog, WIM3_Snapshots
 ## IconTexture: Interface\AddOns\WIM\Skins\Default\minimap
 
 Libs\Includes.xml
 Sources\Namespace.lua
 Sources\Locale.lua
+Sources\HistorySerializer.lua
 Localization\Includes.xml
 
 WIM.lua
@@ -31,3 +44,4 @@ Sources\Includes.xml
 Modules\Includes.xml
 
 Skins\Default\skin.lua
+Skins\Modern\skin.lua

@@ -107,7 +107,7 @@ local function formatRawURL(theURL)
         return "";
     else
         theURL = theURL:gsub('%%', '%%%%'); --make sure any %'s are escaped in order to preserve them.
-        return " |cff"..RGBPercentToHex(db.displayColors.webAddress.r, db.displayColors.webAddress.g, db.displayColors.webAddress.b).."|Hwim_url:"..theURL.."|h".."["..theURL.."]".."|h|r";
+        return " |cff"..utils.color.RGBPercentToHex(db.displayColors.webAddress.r, db.displayColors.webAddress.g, db.displayColors.webAddress.b).."|Hwim_url:"..theURL.."|h".."["..theURL.."]".."|h|r";
     end
 end
 
@@ -251,11 +251,11 @@ local function MENU_ARMORY_CLICKED(self)
     local user, realm;
     if(MENU_ARMORY_USER:find("-")) then
         --user, realm = string.split("-", MENU_ARMORY_USER);
-		user, realm = GetNameAndServer(MENU_ARMORY_USER)
+		user, realm = utils.GetNameAndServer(MENU_ARMORY_USER)
     else
         user = MENU_ARMORY_USER;
 		local _
-		_, realm = GetNameAndServer("-"..MENU_ARMORY_REALM)
+		_, realm = utils.GetNameAndServer("-"..MENU_ARMORY_REALM)
     end
     realm = realm or MENU_ARMORY_REALM;
     local link = self.value;

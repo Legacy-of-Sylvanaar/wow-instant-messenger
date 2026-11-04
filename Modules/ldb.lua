@@ -22,8 +22,13 @@ local data = {
             if(Menu:IsShown()) then
                 Menu:Hide();
             else
-                Menu:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0);
+                Menu:AnchorTo(frame, "below");
                 Menu:Show();
+            end
+        elseif(button == "MiddleButton") then
+            if(_G.IsShiftKeyDown()) then
+                Menu:Hide();
+                ShowOptions();
             end
         else
             if(db.minimap.rightClickNew) then
@@ -44,7 +49,7 @@ local data = {
         end
     end,
     OnTooltipShow = function(tooltip)
-	tooltip:AddLine("WIM |cff00ff00(v"..version..")|r");
+	tooltip:AddDoubleLine("WIM", GetDisplayVersion(), 1, .82, 0, .5, .5, .5);
         for i=1, #Notes do
             tooltip:AddDoubleLine("|cff"..Notes[i].color..Notes[i].tag..":|r", "|cffffffff"..Notes[i].text.."|r");
         end

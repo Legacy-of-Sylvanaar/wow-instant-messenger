@@ -1,0 +1,740 @@
+local WIM = WIM;
+local type = type;
+
+
+local utils = {}
+WIM.utils = utils;
+
+
+--------------------------------------
+--     Compatibility Functions      --
+--------------------------------------
+do
+	utils.compat = {}
+
+	function utils.compat.GetMouseTopFocus()
+		-- Interface 11.0+
+		if (GetMouseFoci) then
+			return GetMouseFoci()[1]
+
+		-- Legacy method
+		else
+			return GetMouseFocus()
+		end
+	end
+end
+
+
+--------------------------------------
+--          Table Functions         --
+--------------------------------------
+do
+	utils.table = {}
+
+	-- Simple shallow copy for copying defaults
+	function utils.table.copyTable(src, dest)
+			if type(dest) ~= type(src) and type(src) == "table" then dest = {} end
+			if type(src) == "table" then
+				for k,v in pairs(src) do
+					if type(v) == "table" then
+						-- try to index the key first so that the metatable creates the defaults, if set, and use that table
+						v = utils.table.copyTable(v, dest[k])
+					end
+					dest[k] = v
+				end
+			end
+			return dest or src
+	end
+
+	function utils.table.inheritTable(src, dest, ...)
+			if(type(src) == "table") then
+					if(type(dest) ~= "table") then dest = {}; end
+					for k, v in pairs(src) do
+							local ignoredKey = false;
+							for i=1, select("#", ...) do
+									if(tostring(k) == tostring(select(i, ...))) then
+											ignoredKey = true;
+											break;
+									end
+							end
+							if(not ignoredKey) then
+									if(type(v) == "table") then
+											dest[k] = utils.table.inheritTable(v, dest[k], ...);
+									else
+											if(dest[k] == nil) then
+													dest[k] = v
+											end
+									end
+							end
+					end
+					return dest;
+			else
+					if(dest == nil) then
+							return src;
+					else
+							return dest;
+					end
+			end
+	end
+
+	-- a simple function to add an item to a table checking for duplicates.
+	-- this is ok, since the table is never too large to slow things down.
+	function utils.table.addToTableUnique(tbl, item, prioritize)
+		for i=1,table.getn(tbl) do
+			if(tbl[i] == item) then
+				return false;
+			end
+		end
+		if(prioritize) then
+			table.insert(tbl, 1, item);
+		else
+			table.insert(tbl, item);
+		end
+		return true;
+	end
+
+	-- remove item from table. Return true if removed, false otherwise.
+	function utils.table.removeFromTable(tbl, item)
+		for i=1,table.getn(tbl) do
+			if(tbl[i] == item) then
+				table.remove(tbl, i);
+				return true;
+			end
+		end
+		return false;
+	end
+
+	function utils.table.isInTable(tbl, val)
+			for i=1, #tbl do
+					if(tbl[i] == val) then
+							return true;
+					end
+			end
+			return false;
+	end
+
+	function utils.table.packTable (...)
+		local tbl = { ... };
+		tbl.n = select('#', ...);
+		return tbl;
+	end
+
+	function utils.table.unpackTable (tbl)
+		return unpack(tbl, tbl.n);
+	end
+
+	function utils.table.spread (...)
+		local result = {};
+		for i=1, select("#", ...) do
+			local tbl = select(i, ...);
+			if(type(tbl) == "table") then
+				for k, v in pairs(tbl) do
+					result[k] = v;
+				end
+			end
+		end
+		return result;
+	end
+end
+
+----------------------------------------------
+--              Text Formatting             --
+----------------------------------------------
+do
+	function utils.FormatUserName(user)
+		if(user ~= nil and not string.find(user, "^|K")) then
+			if (not string.find(user, "-")) then
+				user = string.gsub(user, "[A-Z]", string.lower);
+				user = string.gsub(user, " [a-z]", string.upper); -- accomodate second name (BN)
+			end
+			user = string.gsub(user, "^[a-z]", string.upper);
+			user = string.gsub(user, "-[a-z]", string.upper); -- accomodate for cross server...
+		end
+		return user;
+	end
+
+	function utils.GetNameAndServer(user)
+		local name, realm = string.split("-", user)
+		if realm then
+			realm = string.gsub(realm, "^[A-Z]", string.lower)
+			realm = string.gsub(realm, "[A-Z]", " %1")
+			realm = string.gsub(realm, "' ", "'")
+			realm = string.gsub(realm, "^[a-z]", string.upper)
+		else
+			name = user
+		end
+
+		return name, realm
+	end
+
+	function utils.GetReadableName(user)
+		local name, realm = utils.GetNameAndServer(user)
+		return name..(realm and " - "..realm or "")
+	end
+end
+
+----------------------------------------------
+--              Gradient Tools              --
+----------------------------------------------
+-- the following bits of code is a result of boredom
+-- and determination to get it done. The gradient pattern
+-- which I was aiming for could not be manipulated in RGB,
+-- however by converting RGB to HSV, the pattern now becomes
+-- linear and as such, can now be given any color and
+-- have the same gradient effect applied.
+do
+	utils.color = {};
+
+	function utils.color.RGBPercentToHex(r, g, b)
+			return string.format ("%.2x%.2x%.2x",r*255,g*255,b*255);
+	end
+
+	function utils.color.RGBHexToPercent(rgbStr)
+			local R, G, B = string.sub(rgbStr, 1, 2), string.sub(rgbStr, 3, 4), string.sub(rgbStr, 5, 6);
+			return tonumber(R, 16)/255, tonumber(G, 16)/255, tonumber(B, 16)/255;
+	end
+
+	function utils.color.RGBHextoHSVPerc(rgbStr)
+		local R, G, B = utils.color.RGBHexToPercent(rgbStr);
+		local i, x, v, f;
+		x = math.min(R, G);
+		x = math.min(x, B);
+		v = math.max(R, G);
+		v = math.max(v, B);
+		if(v == x) then
+			return nil, 0, v;
+		else
+			if(R == x) then
+				f = G - B;
+			elseif(G == x) then
+				f = B - R;
+			else
+				f = R - G;
+			end
+			if(R == x) then
+				i = 3;
+			elseif(G == x) then
+				i = 5;
+			else
+				i = 1;
+			end
+			return ((i - f /(v - x))/6), (v - x)/v, v;
+		end
+	end
+
+	function utils.color.HSVPerctoRGBPerc(H, S, V)
+		local m, n, f, i;
+		if(H == nil) then
+			return V, V, V;
+		else
+			H = H * 6;
+			if (H == 0) then
+				H=.01;
+			end
+			i = math.floor(H);
+			f = H - i;
+			if((i % 2) == 0) then
+				f = 1 - f; -- if i is even
+			end
+			m = V * (1 - S);
+			n = V * (1 - S * f);
+			if(i == 6 or i == 0) then
+				return V, n, m;
+			elseif(i == 1) then
+				return n, V, m;
+			elseif(i == 2) then
+				return m, V, n;
+			elseif(i == 3) then
+				return m, n, V;
+			elseif(i == 4) then
+				return n, m, V;
+			elseif(i == 5) then
+				return V, m, n;
+			else
+				return 0, 0, 0;
+			end
+		end
+	end
+
+	-- pass rgb as signle arg hex, or triple arg rgb percent.
+	-- entering ! before a hex, will return a solid color.
+	function utils.color.getGradientFromColor_Legacy(...)
+		local h, s, v, s1, v1, s2, v2;
+		if(select("#", ...) == 0) then
+			return 0, 0, 0, 0, 0, 0;
+		elseif(select("#", ...) == 1) then
+			if(string.sub(select(1, ...),1, 1) == "!") then
+				local rgbStr = string.sub(select(1, ...), 2, 7);
+				local R, G, B = string.sub(rgbStr, 1, 2), string.sub(rgbStr, 3, 4), string.sub(rgbStr, 5, 6);
+				return tonumber(R, 16)/255, tonumber(G, 16)/255, tonumber(B, 16)/255, tonumber(R, 16)/255, tonumber(G, 16)/255, tonumber(B, 16)/255;
+			else
+				h, s, v = utils.color.RGBHextoHSVPerc(select(1, ...));
+			end
+		else
+			h, s, v = utils.color.RGBHextoHSVPerc(string.format ("%.2x%.2x%.2x",select(1, ...), select(2, ...), select(3, ...)));
+		end
+
+		s1 = math.min(1, s+.29/2);
+		v1 = math.max(0, v-.57/2);
+		s2 = math.max(0, s-.29/2);
+		v2 = math.min(1, s+.57/2);
+
+		local r1, g1, b1 = utils.color.HSVPerctoRGBPerc(h, s1, v1);
+		local r2, g2, b2 = utils.color.HSVPerctoRGBPerc(h, s2, v2);
+
+		return r1, g1, b1, r2, g2, b2;
+	end
+
+	function utils.color.getGradientFromColor(...)
+		local r1, g1, b1, r2, g2, b2 = utils.color.getGradientFromColor_Legacy(...)
+
+		return { r = r1, g = g1, b = b1, a = 1 }, { r = r2, g = g2, b = b2, a = 1 }
+	end
+end
+
+--------------------------------------
+--         String Functions         --
+--------------------------------------
+do
+	function utils.paddString(str, paddingChar, minLength, paddRight)
+		str = tostring(str or "");
+		paddingChar = tostring(paddingChar or " ");
+		minLength = tonumber(minLength or 0);
+		while(string.len(str) < minLength) do
+			if(paddRight) then
+				str = str..paddingChar;
+			else
+				str = paddingChar..str;
+			end
+		end
+		return str;
+	end
+
+	function utils.gSplit(splitBy, str)
+		local index = 0
+		return function()
+			index = index + 1;
+			return select(index, string.split(splitBy, str));
+		end
+	end
+
+	function utils.SplitToTable(str, inSplitPattern, outResults )
+	  if not outResults then
+		return;
+	  end
+	  local theStart = 1
+	  local theSplitStart, theSplitEnd = string.find( str, inSplitPattern, theStart )
+	  while theSplitStart do
+		table.insert( outResults, string.sub( str, theStart, theSplitStart-1 ) )
+		theStart = theSplitEnd + 1
+		theSplitStart, theSplitEnd = string.find( str, inSplitPattern, theStart )
+	  end
+	  table.insert( outResults, string.sub( str, theStart ) )
+	  --if(#outResults > 0) then
+	  --  table.remove(outResults, 1);
+	  --end
+	end
+end
+
+
+--------------------------------------
+--         Macro Functions          --
+--------------------------------------
+do
+	function utils.SendToFocused (msg, typeFilter) -- typeFilter: whiser | chat | null
+		local focus = (WIM.EditBoxInFocus or WIM._EditBoxInFocus)
+		local win = focus and focus:GetParent()
+
+		if (focus and (not typeFilter or typeFilter == win.type)) then
+			focus:SetText(msg)
+			focus:GetScript("OnEnterPressed")(focus)
+			focus:SetFocus()
+		end
+	end
+end
+
+--------------------------------------
+--        Skinning Functions        --
+--------------------------------------
+do
+	utils.skin = {};
+	local skin = utils.skin;
+
+	-- helper to check if atlas exists
+	skin.getAtlasInfo = function (name)
+		if (type(name) ~= "string") then
+			return nil;
+		end
+
+		setfenv(1, _G); -- required by getAtlasInfo
+		return C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(name) or nil;
+	end;
+
+	-- Atlas Fallbacks
+	do
+		local fallbackAtlasDefinitions = {};
+
+		-- allow a skin to register a fallback if atlas does not exist.
+		skin.registerAtlasFallback = function(name, fallback)
+			-- required
+			if (not name or type(name) ~= "string" or not fallback or type(fallback) ~= "table") then
+				return;
+			end
+
+			if type(fallback) == "string" then
+				fallback = { path = fallback };
+			elseif type(fallback) == "table" then
+				-- path is required
+				if not fallback.path then
+					return;
+				end
+
+				if (not fallback.texture_coord) then
+					fallback.texture_coord = {
+						fallback.leftTexCoord or 0,
+						fallback.rightTexCoord or 1,
+						fallback.topTexCoord or 0,
+						fallback.bottomTexCoord or 1
+					};
+				end
+
+				-- add texture coordinates if missing
+				-- if not fallback.texture_coord then
+				-- 	fallback.texture_coord = {0, 1, 0, 1};
+				-- end
+			end
+
+			fallbackAtlasDefinitions[name:lower()] = fallback;
+		end
+
+		skin.getAtlasFallbackInfo = function(name)
+			return fallbackAtlasDefinitions[name:lower()];
+		end
+	end
+
+
+	-- funType can be "Normal", "Pressed", "Highlight", etc.
+	-- frame is the UI element to which the texture will be applied.
+	-- texture can be an atlas reference or a backup atlas definition a path (string) or a table containing texture information.
+	--	example: { path="Interface\\Buttons\\UI-Panel-Button-Up", texture_coord={0,1,0,1} }
+	-- Additional arguments (...) for example: "SetHighlight*" takes a second AlphaMode argument.
+	local function applyTexture(funType, frame, texture, ...)
+		-- requirements
+		if not frame or not texture then return; end
+		if type(texture) ~= "string" and type(texture) ~= "table" then return; end
+
+		-- if string then it is an atlas, check if it exists, if it doesn't,
+		-- check fallback atlas definitions and use as table.
+		local isAtlas = false;
+		if type(texture) == "string" then
+			local atlasInfo = skin.getAtlasInfo(texture);
+			if atlasInfo then
+				isAtlas = true;
+			else
+				local fallbackInfo = skin.getAtlasFallbackInfo(texture);
+				if fallbackInfo then
+					texture = fallbackInfo;
+					texture._atlas = true;
+				else
+					texture = { path = texture, --[[texture_coord = {0, 1, 0, 1}]] };
+				end
+			end
+		end
+
+		-- at this point, isAtlas indicates the type of the texture
+		-- if it's a table, it is assumed to be a path with additional info parameters.
+
+		local setFun = frame["Set" .. (funType or "") .. (isAtlas and "Atlas" or "Texture")];
+		local getFun = frame["Get" .. (funType or "") .. (isAtlas and "Atlas" or "Texture")];
+
+		-- trap to make sure the function we're trying to call actually exists
+		if not setFun then return; end
+
+		-- apply the texture using the appropriate function based on its type
+		if isAtlas then
+			setFun(frame, texture, ...);
+			return getFun and getFun(frame) or nil;
+		else
+			setFun(frame, texture.path, ...);
+			if (getFun) then
+				local tex= getFun(frame);
+				local target = funType and funType ~= "" and tex or frame;
+				if tex then
+					if (texture.texture_coord) then
+						target:SetTexCoord(unpack(texture.texture_coord));
+					end
+
+					if texture.size then
+						target:SetWidth(texture.size[1]);
+						target:SetHeight(texture.size[2]);
+					else
+						if texture.width then target:SetWidth(texture.width); end
+						if texture.height then target:SetHeight(texture.height); end
+					end
+
+					if (texture._atlas and target.SetTextureSliceMargins) then
+						if (type(texture.sliceData) == "table") then
+							utils.debug.dump(texture)
+							target:SetTextureSliceMargins(
+								texture.sliceData.marginLeft or 0,
+								texture.sliceData.marginTop or 0,
+								texture.sliceData.marginRight or 0,
+								texture.sliceData.marginBottom or 0
+							)
+							target:SetTextureSliceMode(texture.sliceData.sliceMode or 0);
+						else
+							target:ClearTextureSlice();
+						end
+					end
+
+					target:SetHorizTile(texture.tilesHorizontally or false)
+					target:SetVertTile(texture.tilesVertically or false)
+
+					return tex
+				end
+			end
+			return nil
+		end
+	end
+
+	function skin.applyTexture(...) return applyTexture(nil, ...); end
+	function skin.applyNormalTexture(...) return applyTexture("Normal", ...); end
+	function skin.applyPushedTexture(...) return applyTexture("Pushed", ...); end
+	function skin.applyDisabledTexture(...) return applyTexture("Disabled", ...); end
+	function skin.applyHighlightTexture(...) return applyTexture("Highlight", ...); end
+
+	skin.nineSlice = {}
+	-- a SetTexCoord wrapper that stacks transformations on top of the original coordinates
+	local nsSetTexCoord = function(self, left, right, top, bottom)
+		local w = right - left;
+		local h = bottom - top;
+
+		local tLeft, tRight, tTop, tBottom = unpack(self._transform or {0, 1, 0, 1});
+
+		self:_SetTexCoord(
+			left + (tLeft * w),
+			left + (tRight * w),
+			top + (tTop * h),
+			top + (tBottom * h)
+		);
+	end
+
+	-- a custom version of SetupPieceVisual used to draw using texture path instead of an atlas.
+	skin.nineSlice.SetupPieceVisualsUsingPath = function (container, piece, setupInfo, pieceLayout, textureKit, userLayout)
+		-- SetupTextureCoordinates
+		local left, right, top, bottom = 0, 1, 0, 1;
+
+		local pieceMirrored = pieceLayout.mirrorLayout;
+		if pieceMirrored == nil then
+			pieceMirrored = userLayout and userLayout.mirrorLayout;
+		end
+
+		if pieceMirrored then
+			if setupInfo.mirrorVertical then
+				top, bottom = bottom, top;
+			end
+
+			if setupInfo.mirrorHorizontal then
+				left, right = right, left;
+			end
+		end
+
+		-- hook SetTexCoord to preserve the original coordinates before any modifications
+		piece._SetTexCoord = piece.SetTexCoord;
+		piece.SetTexCoord = nsSetTexCoord;
+		piece._transform = {left, right, top, bottom};
+
+		skin.applyTexture(piece, pieceLayout.atlas or pieceLayout.texture, true);
+
+		piece:SetHorizTile(setupInfo and setupInfo.tileHorizontal or false);
+		piece:SetVertTile(setupInfo and setupInfo.tileVertical or false);
+
+		-- cleanup hooks
+		piece.SetTexCoord = piece._SetTexCoord;
+		piece._transform = nil
+	end
+
+	function skin.isAtlas2x(atlas)
+		local info = C_Texture.GetAtlasInfo(atlas);
+		return info and info.rawSize and info.width <= info.rawSize.x / 2 and info.height <= info.rawSize.y / 2;
+	end
+end
+
+--------------------------------------
+--      Debugging Functions         --
+--------------------------------------
+-- Debug output is also captured to disk, because the messages that
+-- matter most for diagnosing login-time behavior (module OnEnable,
+-- PLAYER_ENTERING_WORLD, the first chat message) all fire before a slash
+-- command could be typed. WIM.debug is restored from WIM3_DebugLog.level
+-- in VARIABLES_LOADED, so capture is already running by then.
+--
+-- The buffer lives in a per-character SavedVariable on purpose: it is
+-- written to WTF/Account/<acct>/<realm>/<char>/SavedVariables/WIM.lua
+-- and so can never add to the account-wide WIM.lua, which has a hard Lua
+-- 5.1 constant-table limit (see the issue #251 note in WIM.lua). Both
+-- caps below keep it bounded; 2000 lines is a few tens of KB.
+-- Debug levels:
+--   0  off
+--   1  normal: the dPrint messages WIM has always emitted, chat + log
+--   2  verbose: adds raw chat event tracing, log only
+--      (Sources/DebugTrace.lua)
+do
+	utils.debug = {
+		DEBUG_LOG_MAX = 6000,   -- ring buffer length; level 2 fills this quickly
+		DEBUG_LINE_MAX = 500,   -- per-line truncation
+	}
+
+	local debug = utils.debug;
+
+	-- Millisecond timestamps.
+	--
+	-- date() wraps strftime, which has no sub-second field, so it can only ever give
+	-- whole seconds. The client's high-resolution clocks (GetTimePreciseSec, and
+	-- GetTime as a fallback) do have the precision but count from client start
+	-- rather than the epoch, so neither source alone produces a wall-clock stamp
+	-- with milliseconds.
+	--
+	-- Aligning them once fixes that: poll until time() ticks over to a new
+	-- second, and record the high-resolution reading at that instant. From
+	-- then on
+	--   epoch = alignEpoch + (clock() - alignClock)
+	-- is a wall clock with the resolution of the high-resolution source.
+	-- Sampling at the tick keeps it accurate; taking both readings at an
+	-- arbitrary moment would build in a constant error of up to a full
+	-- second, the ambiguity this exists to remove.
+	--
+	-- GetTimePreciseSec is preferred where present because GetTime is frame-locked
+	-- and would collapse everything dispatched in one frame to an identical stamp.
+	local hiResClock = GetTimePreciseSec or GetTime;
+	local alignEpoch, alignClock;
+
+	do
+		local startEpoch = time();
+		local aligner = CreateFrame("Frame");
+		aligner:SetScript("OnUpdate", function(self)
+			local now = time();
+			if (now ~= startEpoch) then
+				alignEpoch, alignClock = now, hiResClock();
+				self:SetScript("OnUpdate", nil);   -- one-shot; costs a frame or two
+			end
+		end);
+	end
+
+	function debug.LogStamp()
+		if (not alignEpoch) then
+			-- Alignment has not completed yet (the first frame or two after load).
+			-- Print no fraction rather than a misleading one.
+			return date("%m/%d %H:%M:%S")..".---";
+		end
+
+		local now = alignEpoch + (hiResClock() - alignClock);
+		local whole = math.floor(now);
+		local ms = math.floor((now - whole) * 1000 + 0.5);
+		if (ms > 999) then ms = 999; end
+		return date("%m/%d %H:%M:%S", whole).."."..string.format("%03d", ms);
+	end
+
+	-- Shared by dPrint and tPrint. Appends one timestamped line to the on-disk ring
+	-- buffer, bounded at both ends so a long trace session cannot grow without limit.
+	function debug.LogLine(line)
+		local log = WIM3_DebugLog;
+		if (type(log) ~= "table" or type(log.lines) ~= "table") then
+			return;
+		end
+
+		if (#line > debug.DEBUG_LINE_MAX) then
+			line = string.sub(line, 1, debug.DEBUG_LINE_MAX).."...[truncated]";
+		end
+		log.lines[#log.lines + 1] = debug.LogStamp().."  "..line;
+
+		-- Drop the oldest half in one pass when full, rather than shifting the whole
+		-- table on every append.
+		if (#log.lines > debug.DEBUG_LOG_MAX) then
+			local keep = {};
+			for i = math.floor(debug.DEBUG_LOG_MAX / 2) + 1, #log.lines do
+				keep[#keep + 1] = log.lines[i];
+			end
+			log.lines = keep;
+		end
+	end
+
+	function debug.dPrint(t)
+		if not WIM.debug then
+			return;
+		end
+		local line = tostring(t);
+		DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[WIM Debug]:|r "..line);
+		debug.LogLine(line);
+	end
+	WIM.dPrint = debug.dPrint; -- Expose debug.dPrint through the WIM namespace for convenience.
+
+	-- Trace output. Log only, never the chat frame: level 2 is far too
+	-- noisy to read live, and the on-disk log is the useful artifact.
+	function debug.tPrint(t)
+		if ((WIM.debugLevel or 0) < 2) then
+			return;
+		end
+		debug.LogLine(tostring(t));
+	end
+
+	function debug.SetDebugLevel(level)
+		level = tonumber(level) or 0;
+		if (level < 0) then level = 0; end
+		if (level > 2) then level = 2; end
+
+		WIM.debugLevel = level;
+		WIM.debug = level >= 1;
+
+		if (type(WIM3_DebugLog) == "table") then
+			WIM3_DebugLog.level = level;
+		end
+
+		-- Guarded because ToolBox loads before DebugTrace.
+		if (level >= 2) then
+			if (WIM.StartEventTrace) then WIM.StartEventTrace(); end
+		elseif (WIM.StopEventTrace) then
+			WIM.StopEventTrace();
+		end
+
+		-- Every capture (re)start writes a header line, so any excerpt a user
+		-- pastes into a bug report carries the version context with it.
+		if (level >= 1) then
+			debug.LogSessionHeader(level);
+		end
+
+		return level;
+	end
+
+	-- One-line context header for the on-disk log: addon version, client build,
+	-- locale and character. GetRealmName() can legitimately be nil this early in
+	-- VARIABLES_LOADED; the per-character SavedVariables path identifies the
+	-- character regardless, so "?" placeholders are acceptable there.
+	function debug.LogSessionHeader(level)
+		local gameVersion, build, _, interface = GetBuildInfo();
+		debug.LogLine(("=== WIM %s | level %d | WoW %s (build %s, interface %s) | %s | %s-%s ==="):format(
+			tostring(WIM.version), level or WIM.debugLevel or 0,
+			tostring(gameVersion), tostring(build), tostring(interface),
+			tostring(GetLocale()),
+			tostring(UnitName and UnitName("player") or "?"),
+			tostring(GetRealmName and GetRealmName() or "?")));
+	end
+
+
+	function utils.dumpGlobals()
+		local tmp = {};
+		for var, _ in pairs(_G) do
+			table.insert(tmp, var);
+		end
+		table.sort(tmp);
+		return tmp;
+	end
+
+	function utils.debug.dump(...)
+		if (select('#', ...) > 1) then
+			_G.DevTools_Dump({...})
+		else
+			_G.DevTools_Dump(...);
+		end
+	end
+end

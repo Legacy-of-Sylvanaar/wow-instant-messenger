@@ -16,7 +16,7 @@ db_defaults.expose = {
     border = false,
     borderSize = 20,
     direction = 1,
-    protect = 1,
+    protect = true,
 };
 
 local Expose = WIM.CreateModule("Expose", true);
@@ -25,14 +25,27 @@ local inCombat = false;
 
 local isWaiting = false;
 
+local function menuText()
+    return (db.expose.combat and L["Disable"] or L["Enable"]).." Expose";
+end
+
+-- The minimap menu item names the action it will take; the options
+-- page calls this after flipping the setting.
+function Expose:UpdateMenuText()
+    local item = GetContextMenu("ENABLE_DISABLE_EXPOSE");
+    if(item) then
+        item.text = menuText();
+    end
+end
+
 function Expose:VARIABLES_LOADED()
     -- add menu option inside of Minimap's menu.
     local minimapMenu = GetContextMenu("MENU_MINIMAP");
     local info = {};
-    info.text = (db.expose.combat and L["Disable"] or L["Enable"]).." Expose";
+    info.text = menuText();
     info.func = function()
         db.expose.combat = not db.expose.combat;
-        GetContextMenu("ENABLE_DISABLE_EXPOSE").text = db.expose.combat and L["Disable"].." Expose" or L["Enable"].." Expose";
+        Expose:UpdateMenuText();
     end
     info.notCheckable = true;
     minimapMenu:AddSubItem(AddContextMenu("ENABLE_DISABLE_EXPOSE", info));

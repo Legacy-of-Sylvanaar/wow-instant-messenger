@@ -3,6 +3,7 @@ local WIM = WIM;
 local _G = _G;
 local pairs = pairs;
 local GetTime = GetTime;
+local InCombatLockdown = InCombatLockdown;
 
 
 --set namespace
@@ -97,7 +98,7 @@ end
 ------------------------------------------
 
 function ClickControl:OnWorldFrameClick(button)
-    if(EditBoxInFocus) then
+    if(EditBoxInFocus and not InCombatLockdown()) then
         local editBox = EditBoxInFocus;
         editBox:Hide();
         editBox:Show();

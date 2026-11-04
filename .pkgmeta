@@ -13,3 +13,7 @@ enable-nolib-creation: no
 
 tools-used:
     - idlua
+
+ignore:
+    - test_serializer.lua
+    - "*.psd"

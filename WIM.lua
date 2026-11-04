@@ -9,6 +9,7 @@ local unpack = unpack;
 local pairs = pairs;
 local string = string;
 local next = next;
+local tostring = tostring;
 local Ambiguate = Ambiguate;
 
 -- set name space
@@ -18,10 +19,21 @@ setfenv(1, WIM);
 addonTocName = "WIM";
 version = "@project-version@";
 beta = false; -- flags current version as beta.
-debug = false; -- turn debugging on and off.
+
+-- The version as shown to players. A copy run straight from the repository still
+-- carries the packager's unreplaced token, which reads as "Dev".
+function GetDisplayVersion()
+    if(string.find(version, "@", 1, true)) then
+        return "Dev";
+    end
+    return version;
+end
+debug = false; -- turn debugging on and off. True whenever debugLevel >= 1.
+debugLevel = 0; -- 0 off, 1 normal, 2 verbose event tracing (Sources/DebugTrace.lua).
 useProtocol2 = true; -- test switch for new W2W Protocol. (Dev use only)
 local buildNumber = select(4, _G.GetBuildInfo());
 isModernApi = buildNumber >= 90001; -- Still needed for non synced invite API and for classID checks
+isForever = buildNumber >= 16000 and buildNumber < 20000
 
 constants = {}; -- constants such as class colors will be stored here. (includes female class names).
 modules = {}; -- module table. consists of all registerd WIM modules/plugins/skins. (treated the same).
@@ -36,7 +48,7 @@ db_defaults = {
     enabled = true,
     showToolTips = true,
     modules = {},
-    alertedPrivateServer = false,
+    messageFormat = "Default",
 };
 
 -- WIM.env is an evironmental reference for the current instance of WIM.
@@ -50,6 +62,19 @@ lists = {};
 -- list of all the events registered from attached modules.
 local Events = {};
 
+-- import libraries. Checked before any event registration: the Libs
+-- folder is not in the repository (the packager pulls it in through
+-- .pkgmeta), so a plain source checkout used to die here with nothing
+-- but "attempt to call a nil value" errors to explain it.
+local SML = _G.LibStub and _G.LibStub:GetLibrary("LibSharedMedia-3.0", true);
+local DropDownMenu = _G.LibStub and _G.LibStub:GetLibrary("LibDropDownMenu", true);
+if(not SML or not DropDownMenu) then
+    _G.DEFAULT_CHAT_FRAME:AddMessage("|cffff2020WIM could not load:|r the packaged libraries are missing. Install a packaged release; a plain source checkout does not include the Libs folder.");
+    do return end;
+end
+libs.SML = SML;
+libs.DropDownMenu = DropDownMenu;
+
 -- create a frame to moderate events and frame updates.
     local workerFrame = CreateFrame("Frame", "WIM_workerFrame");
     workerFrame:SetScript("OnEvent", function(self, event, ...) WIM:CoreEventHandler(event, ...); end);
@@ -58,13 +83,9 @@ local Events = {};
     workerFrame:RegisterEvent("VARIABLES_LOADED");
     workerFrame:RegisterEvent("ADDON_LOADED");
 
--- import libraries.
-libs.SML = _G.LibStub:GetLibrary("LibSharedMedia-3.0");
-libs.DropDownMenu = _G.LibStub:GetLibrary("LibDropDownMenu");
-
 -- called when WIM is first loaded into memory but after variables are loaded.
 local function initialize()
-    --load cached information from the WIM_Cache saved variable.
+    --load cached information from the WIM3_Cache saved variable.
 	env.cache[env.realm] = env.cache[env.realm] or {};
     env.cache[env.realm][env.character] = env.cache[env.realm][env.character] or {};
 	lists.friends = env.cache[env.realm][env.character].friendList;
@@ -124,14 +145,75 @@ local function initialize()
     -- notify all modules of current state.
     CallModuleFunction("OnStateChange", WIM.curState);
     RegisterSlashCommand("enable", function() SetEnabled(not db.enabled) end, L["Toggle WIM 'On' and 'Off'."]);
-    RegisterSlashCommand("debug", function() debug = not debug; end, L["Toggle Debugging Mode 'On' and 'Off'."]);
+    RegisterSlashCommand("debug", function(args)
+            -- "/wim debug" keeps its long-standing toggle behaviour;
+            -- "/wim debug <0|1|2>" sets a level explicitly. The level is
+            -- persisted, so capture survives the logout/login cycle that the
+            -- interesting messages happen during.
+            local level = _G.tonumber(args);
+            if(not level) then
+                level = (debugLevel or 0) > 0 and 0 or 1;
+            end
+            level = utils.debug.SetDebugLevel(level);
+
+            local desc = (level == 0 and "OFF")
+                      or (level == 1 and "ON (level 1, normal)")
+                      or "ON (level 2, verbose event tracing)";
+            _G.DEFAULT_CHAT_FRAME:AddMessage("WIM debug "..desc
+                ..(level > 0 and " - captured to SavedVariablesPerCharacter (WIM3_DebugLog), written on logout or /reload." or "."));
+        end, L["Set debugging level: /wim debug [0||1||2]. 2 adds verbose chat event tracing."]);
+    RegisterSlashCommand("focusstreams", function()
+            -- Diagnostic A/B switch. With this off WIM leaves community stream
+            -- focusing entirely to the client, which lets the client's own
+            -- focusing be compared against WIM's (see
+            -- Channel:FocusCommunityStreams in Modules/ChatEngine.lua).
+            local c = db and db.chat and db.chat.community;
+            if(not c) then
+                _G.DEFAULT_CHAT_FRAME:AddMessage(L["WIM: community chat settings unavailable."]);
+                return;
+            end
+            c.autoFocusStreams = (c.autoFocusStreams == false);
+            _G.DEFAULT_CHAT_FRAME:AddMessage(c.autoFocusStreams
+                and L["WIM community stream auto-focus ON. Takes effect at next login."]
+                or L["WIM community stream auto-focus OFF - the client may refuse sends to community channels. Takes effect at next login."]);
+        end, L["Toggle whether WIM focuses community streams at login."]);
+    RegisterSlashCommand("channelrepair", function()
+            -- Opt-in. This is the only thing in WIM that mutates the user's chat
+            -- window channel configuration, which is saved and survives logout,
+            -- so it is never enabled without an explicit request.
+            local c = db and db.chat and db.chat.community;
+            if(not c) then
+                _G.DEFAULT_CHAT_FRAME:AddMessage(L["WIM: community chat settings unavailable."]);
+                return;
+            end
+            c.repairChannelReAdd = (c.repairChannelReAdd ~= true);
+            if(c.repairChannelReAdd) then
+                _G.DEFAULT_CHAT_FRAME:AddMessage(L["WIM channel re-add repair ON (experimental). On logins where the community stream is focused late, WIM removes and re-adds community channels to ChatFrame1 about 8s after login. If a re-add fails the channel must be restored from the chat settings UI."]);
+                -- Run one now. The flag is read when the timer fires rather than
+                -- when it is scheduled, so enabling mid-session could already
+                -- trigger a run -- better to make that explicit than surprising,
+                -- and it lets the call signature be probed on demand.
+                if(TryCommunityChannelReAdd) then
+                    _G.DEFAULT_CHAT_FRAME:AddMessage(L["WIM: attempting a repair now (see /wim debug output)."]);
+                    TryCommunityChannelReAdd();
+                end
+            else
+                _G.DEFAULT_CHAT_FRAME:AddMessage(L["WIM channel re-add repair OFF. No further attempts this session."]);
+            end
+        end, L["Toggle the experimental community channel re-add repair (mutates chat window channels)."]);
+    RegisterSlashCommand("debugclear", function()
+            if(_G.WIM3_DebugLog) then
+                _G.WIM3_DebugLog.lines = {};
+            end
+            _G.DEFAULT_CHAT_FRAME:AddMessage("WIM debug log cleared.");
+        end, L["Clear the captured debug log."]);
     FRIENDLIST_UPDATE(); -- pretend event has been fired in order to get cache loaded.
 
 	if (GetSelectedSkin().title ~= db.skin.selected) then
 		LoadSkin(GetSelectedSkin().title, true);
 	end
 
-    CallModuleFunction("OnInitialized");
+    CallModuleFunctionAll("OnInitialized");
     WindowParent:Show();
     dPrint("WIM initialized...");
 end
@@ -282,21 +364,16 @@ end
 
 -- defer an event to be called on a next cycle. This is used to defer events that may cause taint if called during combat or during certain protected function calls.
 local deferredEvents = {};
-ChatLineHasSecrets = {};
+local MAX_DEFERRED_EVENTS = 500;
+local droppedDeferredEvents = 0;
 
 local function sanitizeDeferredEventArgs (...)
-	local args = {...};
-	for i = 1, 29 do
+	local args = {n = select("#", ...), ...};
+	for i = 1, args.n do
 		if IsSecretValue(args[i]) then
 			args[i] = "";
-
-			if args[11] then
-				ChatLineHasSecrets[args[11]] = true; -- mark which chatLines have secrets.
-			end
-		else
-			if type(args[i]) == "nil" then
-				args[i] = "";
-			end
+			args.secret = args.secret or {};
+			args.secret[i] = true;
 		end
 	end
 
@@ -304,6 +381,21 @@ local function sanitizeDeferredEventArgs (...)
 end
 
 local function enqueueDeferredEvent(module, event, ...)
+	local lineID = select(11, ...);
+	if not IsSecretValue(lineID) and type(lineID) == "number" and lineID > 0 then
+		for i = 1, #deferredEvents do
+			local pending = deferredEvents[i];
+			if pending.module == module and pending.event == event and pending.args[11] == lineID then
+				return;
+			end
+		end
+	end
+
+	if #deferredEvents >= MAX_DEFERRED_EVENTS then
+		table.remove(deferredEvents, 1);
+		droppedDeferredEvents = droppedDeferredEvents + 1;
+	end
+
 	-- queue the event
 	dPrint("  +-- Deferring Event: "..event);
 	table.insert(deferredEvents, {module = module, event = event, args = sanitizeDeferredEventArgs(...), time = _G.time()});
@@ -316,21 +408,58 @@ local function dequeueDeferredEvent ()
 
 	local event = table.remove(deferredEvents, 1);
 	if event then
+		local args = event.args;
+		local secret = args.secret;
 		if string.match(event.event, "^CHAT_MSG") then
-			local lineID = event.args[11];
-			event.args[1] = _G.C_ChatInfo.GetChatLineText(lineID) or "";
-			event.args[2] = _G.C_ChatInfo.GetChatLineSenderName(lineID) or "";
-			event.args[12] = _G.C_ChatInfo.GetChatLineSenderGUID(lineID) or "";
+			if secret then
+				if secret[9] and string.match(event.event, "^CHAT_MSG_CHANNEL") then
+					dPrint("  +-- Dropping deferred "..event.event..": channel name not recoverable.");
+					droppedDeferredEvents = droppedDeferredEvents + 1;
+					return true;
+				end
 
-			-- if Bnet, add BnetAccountId
-			if event.event == "CHAT_MSG_BN_WHISPER_INFORM" then
-				event.args[13] = GetBNGetFriendInfo(0) or 0;
-			elseif event.event == "CHAT_MSG_BN_WHISPER" or event.event == "CHAT_MSG_BN_INLINE_TOAST_ALERT" then
-				local bnInfo = GetBNGetGameAccountInfoByKName(event.args[2]);
-				event.args[13] = (bnInfo and bnInfo[1]) or 0;
+				if not (_G.C_ChatInfo and _G.C_ChatInfo.GetChatLineText) then
+					droppedDeferredEvents = droppedDeferredEvents + 1;
+					return true;
+				end
+
+				local lineID = args[11];
+				if secret[1] then
+					local ok, text = _G.pcall(_G.C_ChatInfo.GetChatLineText, lineID);
+					if not ok or type(text) ~= "string" or text == "" or IsSecretValue(text) then
+						dPrint("  +-- Dropping deferred "..event.event..": line "..tostring(lineID).." not recoverable.");
+						droppedDeferredEvents = droppedDeferredEvents + 1;
+						return true;
+					end
+					args[1] = text;
+				end
+				if secret[2] then
+					local ok, sender = _G.pcall(_G.C_ChatInfo.GetChatLineSenderName, lineID);
+					if not ok or type(sender) ~= "string" or sender == "" or IsSecretValue(sender) then
+						dPrint("  +-- Dropping deferred "..event.event..": sender of line "..tostring(lineID).." not recoverable.");
+						droppedDeferredEvents = droppedDeferredEvents + 1;
+						return true;
+					end
+					args[2] = sender;
+				end
+				if secret[12] then
+					local ok, guid = _G.pcall(_G.C_ChatInfo.GetChatLineSenderGUID, lineID);
+					args[12] = (ok and type(guid) == "string" and not IsSecretValue(guid)) and guid or "";
+				end
 			end
 
-			event.args[29] = event.time; -- add original event time as arg29 for modules to use if they want.
+			-- if Bnet, add BnetAccountId
+			if event.event == "CHAT_MSG_BN_WHISPER" or event.event == "CHAT_MSG_BN_WHISPER_INFORM" or event.event == "CHAT_MSG_BN_INLINE_TOAST_ALERT" then
+				if type(args[13]) ~= "number" or args[13] <= 0 then
+					local bnInfo = GetBNGetGameAccountInfoByKName(args[2]);
+					args[13] = (bnInfo and bnInfo[1]) or 0;
+				end
+			end
+
+			args[29] = event.time; -- add original event time as arg29 for modules to use if they want.
+			if (args.n or 0) < 29 then
+				args.n = 29;
+			end
 		end
 
 		if event.module.enabled then
@@ -338,7 +467,7 @@ local function dequeueDeferredEvent ()
 			local handler = event.module[event.event];
 			if type(handler) == "function" then
 				dPrint("  +-- "..event.module.title..":"..event.event);
-				handler(event.module, unpack(event.args));
+				handler(event.module, unpack(args, 1, args.n or 29));
 			end
 		end
 
@@ -359,14 +488,34 @@ deferredEventQueueProcessor:SetScript("OnUpdate", function(self)
 		return;
 	end
 
+	if droppedDeferredEvents > 0 then
+		_G.DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0WIM|r: "..string.format(L["%d chat message(s) could not be recovered after the chat lockdown."], droppedDeferredEvents));
+		droppedDeferredEvents = 0;
+	end
+
 	self:Hide();
 end);
 
-local deferredEventTime = _G.C_Timer.NewTicker(1, function ()
+local deferredEventTime = _G.hasanysecretvalues and _G.C_Timer.NewTicker(1, function ()
 	if #deferredEvents > 0 then
 		deferredEventQueueProcessor:Show();
 	end
-end);
+end) or nil;
+
+local chatRestrictionType = _G.Enum and _G.Enum.AddOnRestrictionType and _G.Enum.AddOnRestrictionType.Chat;
+if chatRestrictionType then
+	local restrictionWatcher = CreateFrame("Frame");
+	restrictionWatcher:RegisterEvent("ADDON_RESTRICTION_STATE_CHANGED");
+	restrictionWatcher:SetScript("OnEvent", function(self, event, restrictionType, state)
+		if HasAnySecretValues(restrictionType, state) then
+			return;
+		end
+		local inactive = (_G.Enum.AddOnRestrictionState and _G.Enum.AddOnRestrictionState.Inactive) or 0;
+		if restrictionType == chatRestrictionType and state == inactive and #deferredEvents > 0 then
+			deferredEventQueueProcessor:Show();
+		end
+	end);
+end
 
 
 
@@ -438,17 +587,19 @@ function EnableModule(moduleName, enabled)
     end
 end
 
-function CallModuleFunction(funName, ...)
-    -- notify all enabled modules.
+
+local function callModuleFunction(funName, force, ...)
     dPrint("Calling Module Function: "..funName);
     for module, tData in pairs(WIM.modules) do
         local fun = tData[funName];
-        if(type(fun) == "function" and tData.enabled) then
+        if(type(fun) == "function" and (force or tData.enabled)) then
                 dPrint(" +--"..module);
                 fun(tData, ...);
         end
     end
 end
+function CallModuleFunction(funName, ...) callModuleFunction(funName, false, ...); end
+function CallModuleFunctionAll(funName, ...) callModuleFunction(funName, true, ...); end
 --------------------------------------
 --          Event Handlers          --
 --------------------------------------
@@ -482,6 +633,15 @@ function WIM:CoreEventHandler(event, ...)
 end
 
 function WIM:VARIABLES_LOADED()
+    -- Debug capture. Restored before anything else so that the login-time
+    -- dPrint calls -- module OnEnable, PLAYER_ENTERING_WORLD, the first chat
+    -- message -- are recorded on a session where debugging was left on, instead
+    -- of being lost before a slash command could be typed. See WIM.dPrint in
+    -- Sources/ToolBox.lua for why this is per-character.
+    _G.WIM3_DebugLog = _G.WIM3_DebugLog or {};
+    _G.WIM3_DebugLog.lines = _G.WIM3_DebugLog.lines or {};
+    utils.debug.SetDebugLevel(_G.WIM3_DebugLog.level or 0);
+
     _G.WIM3_Data = _G.WIM3_Data or {};
     db = _G.WIM3_Data;
     _G.WIM3_Cache = _G.WIM3_Cache or {};
@@ -494,19 +654,14 @@ function WIM:VARIABLES_LOADED()
     filters = _G.WIM3_Filters;
     chatFilters = _G.WIM3_ChatFilters;
 
-    _G.WIM3_History = _G.WIM3_History or {};
-    history = _G.WIM3_History;
-
-    -- load some environment data.
-    env.realm = _G.GetRealmName();
-    env.character = _G.UnitName("player");
+	CallModuleFunctionAll("OnBeforeInitialized");
 
     -- inherrit any new default options which wheren't shown in previous releases.
-    inherritTable(db_defaults, db);
+    utils.table.inheritTable(db_defaults, db);
+    MigrateOptions();
     lists.gm = {};
 
-    -- load previous state into memory
-    curState = db.lastState;
+    curState = "other";
 
     SetEnabled(db.enabled);
     initialize();
@@ -700,6 +855,24 @@ function HasAnySecretValues(...)
 	end
 end
 
+local _canaccessvalue = _G.canaccessvalue;
+function CanAccessValue(value)
+	if _canaccessvalue then
+		return _canaccessvalue(value);
+	else
+		return true;
+	end
+end
+
+local _scrubsecretvalues = _G.scrubsecretvalues;
+function ScrubSecretValues(...)
+	if _scrubsecretvalues then
+		return _scrubsecretvalues(...);
+	else
+		return ...;
+	end
+end
+
 local _inchatmessaginglockdown = _G.C_ChatInfo and _G.C_ChatInfo.InChatMessagingLockdown;
 function InChatMessagingLockdown()
 	if _inchatmessaginglockdown then
@@ -707,6 +880,38 @@ function InChatMessagingLockdown()
 	else
 		return false;
 	end
+end
+
+function GetPopRuleSet(winType, state)
+    local rules = db and db.pop_rules and db.pop_rules[winType];
+    if (not rules) then
+        return db and db.pop_rules and db.pop_rules.whisper
+            and db.pop_rules.whisper.other;
+    end
+    state = state or curState;
+    local set = rules[state];
+    if (not set or (state ~= "other" and not set.custom)) then
+        set = rules.other;
+    end
+    return set;
+end
+
+function WindowWillShow(winType, win, neverPop)
+    if (win and win.everShown) then
+        return true;
+    end
+    local rules = GetPopRuleSet(winType);
+    return (rules and rules.onReceive and not neverPop) and true or false;
+end
+
+local lastLockdownNotice = 0;
+function LockdownNotice()
+	local now = _G.GetTime();
+	if now - lastLockdownNotice < 10 then
+		return;
+	end
+	lastLockdownNotice = now;
+	_G.DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0WIM|r: "..L["Blizzard is restricting chat right now. Your message was not sent."]);
 end
 
 
@@ -734,10 +939,10 @@ end
 );
 ]]
 
-function NextTick(func)
+function NextTick(func, waitMs)
 	if(type(func) == "function") then
 		if _G.C_Timer and _G.C_Timer.After then
-			_G.C_Timer.After(0, func);
+			_G.C_Timer.After((waitMs or 0) / 1000, func);
 		else
 			func();
 		end

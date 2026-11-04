@@ -4,7 +4,7 @@ local WIM = WIM;
 local _G = _G;
 local CreateFrame = CreateFrame;
 local IsShiftKeyDown = IsShiftKeyDown;
-local GetMouseFocus = WIM.GetMouseTopFocus;
+local GetMouseFocus = WIM.utils.compat.GetMouseTopFocus;
 local table = table;
 local pairs = pairs;
 local math = math;
@@ -27,10 +27,10 @@ local tabGroups = {};
 
 -- a simple function to add an item to a table checking for duplicates.
 -- this is ok, since the table is never too large to slow things down.
-local addToTableUnique = addToTableUnique;
+local addToTableUnique = utils.table.addToTableUnique;
 
 -- remove item from table. Return true if removed, false otherwise.
-local removeFromTable = removeFromTable;
+local removeFromTable = utils.table.removeFromTable;
 
 -- sorting functions
 local function sortTabs(a, b)
@@ -65,6 +65,9 @@ local function applySkinToTab(tab, skinTable)
     if(hlt) then
         hlt:ClearAllPoints();
         hlt:SetAllPoints();
+    end
+    if(skinTable.text) then
+        SetWidgetFont(tab.text, skinTable.text);
     end
 end
 
@@ -225,7 +228,11 @@ local function createTabGroup()
         end);
         tab.dragFrame:SetScript("OnLeave", function(self)
             self:SetScript("OnUpdate", nil);
-            self:Hide();
+			NextTick(function ()
+				if not self:GetScript("OnUpdate") then
+					self:Hide();
+				end
+			end, 100);
         end);
         tab.dragFrame:SetScript("OnShow", function(self)
             self.marker:Show();
@@ -235,6 +242,7 @@ local function createTabGroup()
             self.dragging = true;
             self:StartMoving();
             local win = self.parentTab.childObj;
+			NextTick(function () win:Raise(); end)
             win.isMoving = true;
             self.draggedObject = win;
             self.parentWindow = win;
@@ -246,6 +254,10 @@ local function createTabGroup()
             win:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0);
         end);
         tab.dragFrame:SetScript("OnDragStop", function(self)
+			if not self.dragging then
+				return;
+			end
+
             self:StopMovingOrSizing();
             self.dragging = nil;
 
@@ -400,12 +412,12 @@ local function createTabGroup()
                 end
             end
             if(index) then -- just incase.
-                    -- we need to adjust the offset to make sure the selected tab is shown.
-                    if((self.curOffset + count) < index) then
-                        self.curOffset = index - count;
-                    elseif(index - 1 < self.curOffset) then
-                        self.curOffset = index - 1;
-                    end
+				-- we need to adjust the offset to make sure the selected tab is shown.
+				if((self.curOffset + count) < index) then
+					self.curOffset = index - count;
+				elseif(index - 1 < self.curOffset) then
+					self.curOffset = index - 1;
+				end
             end
         end
 
@@ -420,11 +432,11 @@ local function createTabGroup()
 		self.nextButton:Show();
 		self.prevButton:Show();
 
-                self.prevButton.parentWindow = self:GetParent();
-                self.nextButton.parentWindow = self:GetParent();
+		self.prevButton.parentWindow = self:GetParent();
+		self.nextButton.parentWindow = self:GetParent();
 
 		if(self.curOffset <= 0) then
-                        self.curOffset = 0;
+			self.curOffset = 0;
 			self.prevButton:Disable();
 		else
 			self.prevButton:Enable();

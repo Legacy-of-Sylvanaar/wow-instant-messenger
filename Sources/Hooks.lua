@@ -13,19 +13,6 @@ function WIM.getVisibleChatFrameEditBox()
     -- end
 end
 
--- linking hooks - MIGHT cause tainting issues, but I don't see any other way to do this without adding support for every addon individually.
-if ChatFrameUtil and ChatFrameUtil.GetActiveWindow then
-	ChatFrameUtil.GetActiveWindow_orig = ChatFrameUtil.GetActiveWindow
-	ChatFrameUtil.GetActiveWindow = function()
-		return WIM.EditBoxInFocus or ChatFrameUtil.GetActiveWindow_orig();
-	end
-else
-	local ChatEdit_GetActiveWindow_orig = ChatEdit_GetActiveWindow;
-	function ChatEdit_GetActiveWindow()
-		return WIM.EditBoxInFocus or ChatEdit_GetActiveWindow_orig();
-	end
-end
-
 -------------------------------------------------------------------------------------------
 
 -- -- Dri: workaround for WoW build15050 whisper bug when x-realm server name contains a space.
@@ -44,19 +31,24 @@ end
 -- end
 
 
--- local lastLinkInserted;
--- hooksecurefunc(
--- 	_G.ChatFrameUtil and _G.ChatFrameUtil.InsertLink and _G.ChatFrameUtil or _G,
--- 	_G.ChatFrameUtil and _G.ChatFrameUtil.InsertLink and "InsertLink" or "ChatEdit_InsertLink",
--- 	function(text)
--- 		if not WIM.EditBoxInFocus or not text then return end
+local lastLinkInserted;
+hooksecurefunc(
+	_G.ChatFrameUtil and _G.ChatFrameUtil.InsertLink and _G.ChatFrameUtil or _G,
+	_G.ChatFrameUtil and _G.ChatFrameUtil.InsertLink and "InsertLink" or "ChatEdit_InsertLink",
+	function(text)
+		if not WIM.EditBoxInFocus or not text then return end
+		if WIM.IsSecretValue(text) then return end
 
--- 		-- avoid double links.
--- 		if lastLinkInserted == text then return end
--- 		lastLinkInserted = text;
+		-- a native edit box already accepted the link.
+		local getActive = _G.ChatFrameUtil and _G.ChatFrameUtil.GetActiveWindow or _G.ChatEdit_GetActiveWindow;
+		if getActive and getActive() then return end
 
--- 		_G.C_Timer.After(0.1, function() lastLinkInserted = nil end);
+		-- avoid double links.
+		if lastLinkInserted == text then return end
+		lastLinkInserted = text;
 
--- 		WIM.EditBoxInFocus:Insert(text);
--- 	end
--- );
+		_G.C_Timer.After(0.1, function() lastLinkInserted = nil end);
+
+		WIM.EditBoxInFocus:Insert(text);
+	end
+);

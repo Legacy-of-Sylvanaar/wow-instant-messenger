@@ -13,11 +13,14 @@ local function formatDetails(window, guild, level, race, class)
     return "|cffffffff"..table.concat(details, ' ').."|r";
 end
 
+-- Standard gold UI label color, for the panel title and section headers.
+local goldR, goldG, goldB = GameFontNormal:GetTextColor();
 
 --Default window skin
 local WIM_ClassicSkin = {
-    title = "WIM Classic",
+	title = "WIM Classic",
     version = "1.0.0",
+	schema_version = 1,
     author = "Pazza <Bronzebeard>",
     website = "http://www.wimaddon.com",
     message_window = {
@@ -258,6 +261,7 @@ local WIM_ClassicSkin = {
                         guild = "Interface\\Icons\\INV_Shirt_GuildTabard_01",
                         friend = "Interface\\Icons\\ACHIEVEMENT_REPUTATION_01",
                         ignore = "Interface\\Icons\\Spell_Holy_Silence",
+                        rpprofile = "Interface\\Icons\\INV_Misc_Book_09",
                     }
                 }
             }
@@ -276,7 +280,7 @@ local WIM_ClassicSkin = {
                 NormalTexture = "Interface\\MoneyFrame\\Arrow-Left-Up",
                 PushedTexture = "Interface\\MoneyFrame\\Arrow-Left-Down",
                 DisabledTexture = "Interface\\MoneyFrame\\Arrow-Left-Disabled",
-                HighlightTexture = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Default\\TabArrowLeft",
+                HighlightTexture = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Default\\tab_left_arrow",
                 HighlightAlphaMode = "ADD",
                 height = 20,
                 width = 20,
@@ -285,7 +289,7 @@ local WIM_ClassicSkin = {
                 NormalTexture = "Interface\\MoneyFrame\\Arrow-Right-Up",
                 PushedTexture = "Interface\\MoneyFrame\\Arrow-Right-Down",
                 DisabledTexture = "Interface\\MoneyFrame\\Arrow-Right-Disabled",
-                HighlightTexture = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Default\\TabArrowRight",
+                HighlightTexture = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Default\\tab_right_arrow",
                 HighlightAlphaMode = "ADD",
                 height = 20,
                 width = 20,
@@ -296,31 +300,177 @@ local WIM_ClassicSkin = {
             {"BOTTOMLEFT", "window", "TOPLEFT", 38, -4},
             {"BOTTOMRIGHT", "window", "TOPRIGHT", -20, -4}
         },
+        -- Tab labels track the font object exactly (size and flags
+        -- included), matching the FontString template they are created
+        -- from; skins may override any of the font properties here.
         text = {
             font = "ChatFontNormal",
-            font_color = {1, 1, 1},
-            font_height = 12,
-            font_flags = ""
         },
         vertical = false,
     },
+	-- The menus use the game's own context-menu panel: the chamfered
+    -- frame that current right-click menus draw. `style` routes WIM's
+    -- context menus through the Menu API. `background_atlas` gives the
+    -- whispers/chats menu the same art. The toast pair below is the
+    -- fallback for clients without either.
 	menu = {
-		edge = "Interface\\AddOns\\"..WIM.addonTocName.."\\Modules\\Textures\\Menu",
-		edge_size = 32,
-		background = "Interface\\AddOns\\"..WIM.addonTocName.."\\Modules\\Textures\\Menu_bg",
-		tile = true,
-		tile_size = 32,
-		insets = { left = 32, right = 32, top = 32, bottom = 32 },
-		title = {
-			font = "ChatFontNormal",
+		-- `texture` or `backdropInfo` must be set, but not both.
+		-- `backdropInfo` will  be used if both are provided..
+		texture = "common-dropdown-bg",
+		textureAlpha = 0.93, -- To set backdrop alpha use `backdropInfo.bgColor` and `backdropInfo.edgeColor`.
+		backdropInfo = {
+			bgFile = "Interface\\AddOns\\"..WIM.addonTocName.."\\Modules\\Textures\\Menu_bg",
+        	edgeFile = "Interface\\AddOns\\"..WIM.addonTocName.."\\Modules\\Textures\\Menu",
+        	tile = true,
+			tileSize = 32,
+			edgeSize = 32,
+        	insets = { left = 32, right = 32, top = 32, bottom = 32 },
+			-- bgColor = {1, 1, 1, 1},
+			-- edgeColor = {1, 1, 1, 1},
+		},
+
+		minHeight = 10,
+		edgeOffsets = {16, 16, 17, 12}, -- left, right, top bottom (spacing to edge of visible frame)
+		padding = {4, 4, 0, 4}, -- left, right, top, bottom
+		gap = 10, -- spacing between groups
+
+        title = {
+            font = "ChatFontNormal",
 			font_color = {1, 1, 1},
 			font_height = 11,
-			font_flags = ""
+			font_flags = "",
+			height = 14,
+			align = "RIGHT",
+			justify = "MIDDLE",
+        },
+		item = {
+			height = 20,
+			marginTop = 2,
+			marginBottom = 2,
+			text = {
+				font = "FriendsFont_Normal",
+				font_height = 12,
+				font_flags = "",
+				font_color = {1, 1, 1},
+				align = "LEFT",
+				justify = "MIDDLE",
+				margin = 50,
+				points = {
+					{"LEFT", 0, 0}, -- avoid LEFT and RIGHT points to allow for dynamic sizing.
+				}
+			},
+			highlight = {
+				texture = "Options_List_Active",
+				color = {1, 1, 1, 1},
+				blendMode = "ADD",
+				points = {
+					{"TOPLEFT", 0, 0},
+					{"BOTTOMRIGHT", -20, 0}
+				}
+			},
+			close = {
+				width = 16,
+				height = 16,
+				points = {
+					{"RIGHT", 0, 0}
+				}
+			},
+			status = {
+				width = 14,
+				height = 14,
+				points = {
+					{"RIGHT", -20, 0},
+				}
+			}
 		},
-		button = {
-			font = "FriendsFont_Normal",
-			font_height = 12,
-			font_flags = ""
+	},
+	history_viewer = {
+		-- The full standard-panel construction: metal nine-slice frame,
+        -- rock background, recessed inset wells, as used by frames like
+        -- Guild & Communities. The backdrop below is only the fallback
+        -- for clients without the nine-slice layouts.
+        frame_style = "panel",
+        backdrop = {
+            bgFile = "Interface\\FriendsFrame\\UI-Toast-Background",
+            edgeFile = "Interface\\FriendsFrame\\UI-Toast-Border",
+            tile = false, tileSize = 0, edgeSize = 12,
+            insets = { left = 5, right = 5, top = 5, bottom = 5 },
+        },
+		title = {
+			-- Native panels title their band in the standard 12px gold.
+            -- The height must be set here, or the classic skin's 16
+            -- inherits through.
+            font = "GameFontNormal",
+            font_height = 12,
+			font_flags = "",
+            font_color = {goldR, goldG, goldB},
+            -- The text's CENTER pins to the band's center (the band
+            -- spans the window's top 20.5px), moved 1.5px down. The
+            -- string rectangle includes descender space, so
+            -- rect-centered text sits high; this centers the capital
+            -- height instead (measured against a screenshot's pixel
+            -- rows).
+            points = {
+                {"CENTER", "window", "TOP", 0, -11.5}
+            }
+		},
+		-- Native widget styles: the standard red corner X (the
+        -- RedButton atlas family current panels use), the Settings
+        -- panel's minimal scrollbars, and the stock search box. Bare
+        -- names are atlases.
+        close = {
+            NormalTexture = "RedButton-Exit",
+            PushedTexture = "RedButton-exit-pressed",
+            HighlightTexture = "RedButton-Highlight",
+            HighlightAlphaMode = "ADD",
+            -- The Settings panel renders this same button at 24x24 on
+            -- its frame corner at TOPRIGHT (1, 0), filling the title
+            -- band.
+            width = 24, height = 24,
+            points = {
+                {"TOPRIGHT", "window", "TOPRIGHT", 1, 0}
+            }
+        },
+		scrollbar_style = "minimal",
+        search_style = "native",
+        dropdown_style = "modern",
+        -- The loading indicator as the game's standard casting bar.
+        loader_style = "native",
+        -- The Settings panel's arrangement: view tabs at the top left,
+        -- the search box at the top right of the band under the title
+        -- bar, panes flush at top and bottom, resize grip in the frame
+        -- corner.
+        layout = "flush",
+        -- View tabs in the Settings panel's own tab plates.
+        tab_style = "native",
+		-- Filters header and search label.
+		header = {
+			font = "GameFontHighlightMedium",
+            font_color = {1, 1, 1},
+            atlas = "Options_CategoryHeader_1"
+		},
+		-- Thin separator lines between the panes.
+		divider_color = {0, 0, 0, 0},
+		-- Wider bands: filters header strip, search bar, view tabs.
+        strip_color = {0, 0, 0, .35},
+		-- Conversation and date list rows.
+		row = {
+			font = "ChatFontNormal",
+			font_color = {goldR, goldG, goldB},
+            highlight = {
+                atlas = "Options_List_Hover"
+            },
+            selected = {
+                atlas = "Options_List_Active",
+                font_color = {1, 1, 1}
+            }
+		},
+		-- Message display area, text export box and search input.
+		content = {
+			font = "ChatFontNormal"
+		},
+		tab = {
+			font = "ChatFontSmall"
 		}
 	},
     emoticons = {

@@ -23,7 +23,7 @@ if (not isModernApi and not isForever) then
 	end
 
 	function DDM.Create_DropDownMenuList (name, parent, options)
-		return CreateFrame("Frame", name, parent, "UIDropDownListTemplate ");
+		return CreateFrame("Frame", name, parent, "UIDropDownListTemplate");
 	end
 
 	function DDM.Create_DropDownMenu (name, parent, options)
