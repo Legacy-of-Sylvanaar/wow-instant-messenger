@@ -473,7 +473,10 @@ RegisterShortcut("invite", L["Invite to Party"], {
 RegisterShortcut("guild", L["Invite to Guild"], {
 	OnClick = function(self)
 		local win = self.parentWindow;
-		_G.GuildInvite(win.theUser);
+
+		if _G.InCombatLockdown() then return end -- safeguard
+
+		(_G.C_GuildInfo and _G.C_GuildInfo.Invite or _G.GuildInvite)(win.theUser)
 	end
 });
 RegisterShortcut("friend", L["Add Friend"], {
