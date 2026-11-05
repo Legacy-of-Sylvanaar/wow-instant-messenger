@@ -102,6 +102,8 @@ NineSliceUtil.AddLayout(
 		getNineSliceLayout()
 );
 
+local foreverX = WIM.isForever and 3 or 0
+
 local WIM_ModernSkin = {
 	title = "WIM Modern",
     version = "1.0.0",
@@ -195,8 +197,8 @@ local WIM_ModernSkin = {
 			chat_display = {
                 points = {
 					{"TOP", "char_info", "BOTTOM", 0, -8},
-                    {"LEFT", "window", "LEFT", 24, 0},
-                    {"BOTTOMRIGHT", "window", "BOTTOMRIGHT", -38, 39}
+                    {"LEFT", "window", "LEFT", 24 + foreverX, 0},
+                    {"BOTTOMRIGHT", "window", "BOTTOMRIGHT", -38 - foreverX, 39}
                 }
             },
 			history = {
@@ -209,8 +211,8 @@ local WIM_ModernSkin = {
             shortcuts = {
                 stack = "DOWN",
 				points = {
-                    {"TOPLEFT", "chat_display", "TOPRIGHT", 28, 4},
-                    {"BOTTOMRIGHT", "chat_display", "BOTTOMRIGHT", 28 + 22, 0}
+                    {"TOPLEFT", "chat_display", "TOPRIGHT", 28 - (foreverX * 0.5), 4},
+                    {"BOTTOMRIGHT", "chat_display", "BOTTOMRIGHT", 28 + 22 - (foreverX * 0.5), 0}
                 },
             },
 			close = {
@@ -226,10 +228,10 @@ local WIM_ModernSkin = {
                     HighlightTexture = useRedButton2x and "RedButton-Highlight2x" or "RedButton-Highlight",
                     HighlightAlphaMode = "ADD"
                 },
-				width = 23,
-                height = 23 * (38/36),
+				width = (23 + foreverX),
+                height = (23 + foreverX) * (38/36),
                 points = {
-                    {"TOPRIGHT", "window", "TOPRIGHT", 1, 0}
+                    {"TOPRIGHT", "window", "TOPRIGHT", 1, 0 + foreverX}
                 }
 			}
         }
