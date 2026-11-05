@@ -265,17 +265,16 @@ local WindowSoupBowl = WIM:GetWindowSoupBowl();
 local function normalizeFont(font)
 	if (type(font) == "table" and font.GetFont) then
 		local fontPath, fontHeight, fontFlags = font:GetFont();
-		return fontPath;
+		return normalizeFont(fontPath);
 
 	elseif (type(font) == "string") then
 
 		if (type(_G[font]) == "table") then
 			return normalizeFont(_G[font]);
 		end
-		-- The string is not the name of a global font object. Keep it
-		-- unchanged so SetWidgetFont's other branches can resolve
-		-- LibSharedMedia names and font file paths.
-		return font;
+		-- Use Friz's Cyrillic variant when flattening a font family to a file.
+		-- Keep other file paths and LibSharedMedia names unchanged.
+		return font:lower() == "fonts\\frizqt__.ttf" and "Fonts\\FRIZQT___CYR.TTF" or font;
 	end
 
 	return font
