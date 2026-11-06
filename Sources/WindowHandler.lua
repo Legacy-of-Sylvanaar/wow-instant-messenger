@@ -2537,9 +2537,13 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnShow", function(sel
 	end);
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEscapePressed", function(self)
+	local text = self:GetText()
 		self:SetText("");
+
+	if (text == "") then
 		self:Hide();
 		self:Show();
+	end
 	end);
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnUpdate", function(self)
