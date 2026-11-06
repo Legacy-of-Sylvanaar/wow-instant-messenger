@@ -206,6 +206,15 @@ local function createWidget_Chat()
     return button;
 end
 
+function GetChannelSettingsKeyByChannelNumber(channelNumber)
+	for i=1, 20 do
+		local name, header, collapsed, cNumber, count, active, category, voiceEnabled, voiceActive = _G.GetChannelDisplayInfo(i);
+		if(cNumber == channelNumber) then
+			return name;
+		end
+	end
+end
+
 function GetChannelSettingsKey(name)
     if (type(name) ~= "string") then
         return name;
@@ -2045,7 +2054,7 @@ function Channel.ChatMessageEventFilter (frame, event, ...)
 
 	if (not frame._isWIM and not ignore and not block) then
 		local isWorld = arg7 and arg7 > 0;
-		local channelName = GetChannelSettingsKey(arg9);
+		local channelName = GetChannelSettingsKeyByChannelNumber(arg8) or GetChannelSettingsKey(arg9);
 		local neverSuppress = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].neverSuppress;
 
 		--check options. do we want the specified channels.
@@ -2219,7 +2228,7 @@ function Channel:CHAT_MSG_CHANNEL(...)
     -- arg9 Channel Name
 
     local isWorld = arg7 and arg7 > 0;
-    local channelName = GetChannelSettingsKey(arg9);
+    local channelName = GetChannelSettingsKeyByChannelNumber(arg8) or GetChannelSettingsKey(arg9);
 
     --check options. do we want the specified channels.
     if(isWorld and not db.chat.world.enabled) then
@@ -2308,7 +2317,7 @@ function ChatAlerts:PostEvent_ChatMessage(event, ...)
     event = event:gsub("CHAT_MSG_", "");
     if(event == "CHANNEL") then
         local isWorld = arg7 and arg7 > 0;
-        local channelName = GetChannelSettingsKey(arg9);
+        local channelName = GetChannelSettingsKeyByChannelNumber(arg8) or GetChannelSettingsKey(arg9);
         local win = getChatWindow(channelName, "channel");
         local showAlert = db.chat[isWorld and "world" or "custom"].channelSettings[channelName] and db.chat[isWorld and "world" or "custom"].channelSettings[channelName].showAlerts;
         if(showAlert and win and not win:IsVisible() and win.unreadCount) then
