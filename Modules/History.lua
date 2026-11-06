@@ -3985,7 +3985,7 @@ local function createDisplayUpdate()
                         ViewTypes[HistoryViewer.TAB].func(self.frame, self.tmpTable);
                         self.i = self.i + 1;
                         HistoryViewer.progressBar.bar.bg:SetWidth(
-                            HistoryViewer.progressBar.bar:GetWidth() * self.i / #self.curList);
+                            HistoryViewer.progressBar.bar:GetWidth() * (self.i - 1) / #self.curList);
                         return;
                     else
                         -- Skip this record and check the next one. The
@@ -4001,7 +4001,7 @@ local function createDisplayUpdate()
                     ViewTypes[HistoryViewer.TAB].func(self.frame, self.tmpTable);
                     self.i = self.i + 1;
                     HistoryViewer.progressBar.bar.bg:SetWidth(
-                        HistoryViewer.progressBar.bar:GetWidth() * self.i / #self.curList);
+                        HistoryViewer.progressBar.bar:GetWidth() * (self.i - 1) / #self.curList);
                     return;
                 end
             end
