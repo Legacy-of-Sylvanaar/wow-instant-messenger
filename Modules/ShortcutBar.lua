@@ -423,9 +423,19 @@ RegisterShortcut("location", L["Player Location"], {
 						showAlert = true,
 						OnShow = function(self)
 							local name = self:GetName();
+							local _self = self;
 							local editBox = self.EditBox or self.editBox
 								or (name and _G[name.."EditBox"]);
 							if (editBox) then
+								editBox:SetScript("OnKeyDown", function(self, key)
+									if key == "C" and _G.IsControlKeyDown() then
+										_G.C_Timer.After(0, function()
+											self:SetScript("OnKeyDown", nil);
+											_self:Hide();
+										end);
+									end
+								end)
+
 								editBox:SetText(theUser);
 								editBox:HighlightText();
 								editBox:SetFocus();
