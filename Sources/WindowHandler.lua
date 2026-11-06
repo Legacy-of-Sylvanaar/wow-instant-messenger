@@ -2538,13 +2538,13 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnShow", function(sel
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEscapePressed", function(self)
 	local text = self:GetText()
-		self:SetText("");
+	self:SetText("");
 
 	if (text == "") then
 		self:Hide();
 		self:Show();
 	end
-	end);
+end);
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnUpdate", function(self)
 		if(self.setText == 1) then
@@ -2591,6 +2591,14 @@ RegisterWidgetTrigger("msg_box", "whisper,w2w", "OnTabPressed", function(self)
                 		end
                 end
 	end);
+
+RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnKeyDown", function(self, key)
+	if key == "/" and self:GetText() == "" then
+		local open = _G.ChatFrameUtil and _G.ChatFrameUtil.OpenChat or _G.ChatEdit_OpenChat;
+		open("/");
+		_G.C_Timer.After(0, function() self:SetText(""); end);
+	end
+end);
 
 
 -- handle formatting options.
