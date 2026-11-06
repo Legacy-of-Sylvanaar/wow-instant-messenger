@@ -202,19 +202,16 @@ function WhisperEngine:OnEnable ()
 
 	-- check if whisperMode is set to inline, if not, display a warning in the options.
 	if _G.GetCVar and _G.GetCVar("whisperMode") ~= "inline" and db.whisperModeChecked ~= true then
-		_G.StaticPopupDialogs["WIM_WHISPER_MODE"] = {
-			preferredIndex = _G.STATICPOPUP_NUMDIALOGS,
-			text = "WIM: "..L["It is recommended for whispers to be set to in-line in order to handle their behavior properly."],
-			button1 = L["Set whispers to In-line"],
-			button2 = _G.LATER or _G.CLOSE,
-			OnAccept = function()
+
+		dialog.confirm(
+			"WIM: " .. L["It is recommended for whispers to be set to in-line in order to handle their behavior properly."],
+			function()
 				_G.SetCVar("whisperMode", "inline");
 			end,
-			timeout = 0,
-			whileDead = 1,
-			hideOnEscape = 1
-		};
-		_G.StaticPopup_Show ("WIM_WHISPER_MODE");
+			L["Set whispers to In-line"],
+			_G.LATER or _G.CLOSE
+		);
+
 		db.whisperModeChecked = true;
 		_WHISPER_MODE_DIALOG_SHOWN = true;
 	end

@@ -41,6 +41,7 @@ Localization\Includes.xml
 WIM.lua
 
 Sources\Includes.xml
+Sources\Templates.xml
 Modules\Includes.xml
 
 Skins\Default\skin.lua

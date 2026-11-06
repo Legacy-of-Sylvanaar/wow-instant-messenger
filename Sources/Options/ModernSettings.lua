@@ -1209,10 +1209,9 @@ local function ensureBugReportHolder()
                 text = L["Press Ctrl+C to copy the link, then open it in your browser."],
                 button1 = _G.CLOSE,
                 hasEditBox = 1,
-                -- 260 is the classic GameDialog's edit box cap; a wider
-                -- request makes that client widen the dialog from its
-                -- stale pooled width and the box overflows the frame.
-                editBoxWidth = 260,
+                hasWideEditBox = 1,
+                editBoxWidth = 350,
+				showAlert = true,
                 OnShow = function(self)
                     local name = self:GetName();
                     local editBox = self.EditBox or self.editBox
@@ -1222,6 +1221,9 @@ local function ensureBugReportHolder()
                         editBox:HighlightText();
                         editBox:SetFocus();
                     end
+
+					local alertIcon = _G.getglobal(self:GetName().."AlertIcon") or self.AlertIcon;
+                	alertIcon:Hide();  -- HACK : we hide the false AlertIcon
                 end,
                 EditBoxOnTextChanged = function(self)
                     if (self:GetText() ~= BUG_REPORT_URL) then
@@ -1235,7 +1237,7 @@ local function ensureBugReportHolder()
                 whileDead = 1,
                 hideOnEscape = 1,
             };
-            _G.StaticPopup_Show("WIM_BUGREPORT_URL");
+            WIM.dialog.create("WIM_BUGREPORT_URL");
         end);
         link:SetScript("OnEnter", function(self)
             _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT");

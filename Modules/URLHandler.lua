@@ -234,7 +234,8 @@ local function displayURL(link)
         whileDead = 1,
         hideOnEscape = 1
     };
-    _G.StaticPopup_Show ("WIM_SHOW_URL", theLink);
+
+	WIM.dialog.create("WIM_SHOW_URL", theLink)
 end
 
 WIM.RegisterItemRefHandler("wim_url", displayURL);

@@ -2514,21 +2514,14 @@ local function CheckForOutdatedSkin()
 	local check = selected and selected.schema_version and defaultSkin and defaultSkin.schema_version;
 
     if(check and selected.schema_version < defaultSkin.schema_version) then
-
-		_G.StaticPopupDialogs["WIM_SKIN_SCHEMA_NOTIFY"] = {
-			preferredIndex = _G.STATICPOPUP_NUMDIALOGS,
-			text = L["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."],
-			button1 = L["Open Skin Settings"],
-			button2 = L["Keep Current"],
-			OnAccept = function()
-				-- Open WIM settings to the Appearance:MessageWindow category.
+		dialog.confirm(
+			L["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."],
+			function()
 				_G.Settings.OpenToCategory(options.categoryMap["Appearance:MessageWindow"]);
 			end,
-			timeout = 0,
-			whileDead = 1,
-			hideOnEscape = 1
-		};
-		_G.StaticPopup_Show ("WIM_SKIN_SCHEMA_NOTIFY");
+			L["Open Skin Settings"],
+			L["Keep Current"]
+		)
     end
 end
 
