@@ -790,6 +790,8 @@ local translations = {
     ["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM ahora cuenta con una apariencia moderna diseñada para complementar mejor la interfaz actual del juego. La apariencia que has seleccionado es un estilo más antiguo que puede parecer anticuado o carecer de soporte para funciones más recientes.",
     ["Open Skin Settings"] = "Abrir configuración de apariencia",
     ["Keep Current"] = "Mantener actual",
+    ["Press Ctrl+C to copy the player's name."] = "Presiona Ctrl+C para copiar el nombre del jugador.",
+    ["Shift + Click to copy name..."] = "Mayús + Clic para copiar el nombre...",
 };
 
 if WIM.getLocale() == "esES" then

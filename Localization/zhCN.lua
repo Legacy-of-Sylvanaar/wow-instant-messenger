@@ -790,4 +790,6 @@ WIM.AddLocale("zhCN", {
     ["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM 现在具有现代化的皮肤，旨在更好地补充当前的游戏界面。您选择的皮肤是较旧的样式，可能显得过时或缺少新功能。",
     ["Open Skin Settings"] = "打开皮肤设置",
     ["Keep Current"] = "保持当前皮肤",
+    ["Press Ctrl+C to copy the player's name."] = "按 Ctrl+C 复制玩家名字。",
+    ["Shift + Click to copy name..."] = "Shift + 点击复制名字...",
 });

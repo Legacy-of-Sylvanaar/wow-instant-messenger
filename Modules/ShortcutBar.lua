@@ -406,6 +406,51 @@ RegisterShortcut("location", L["Player Location"], {
 			libs.DropDownMenu.CloseDropDownMenus();
 			if(button == "LeftButton") then
 				local currentSelf = self;
+
+				if _G.IsShiftKeyDown() then
+					local theUser = self.parentWindow.theUser;
+
+					if theUser:match("|") then
+						return;
+					end
+
+					_G.StaticPopupDialogs["WIM_COPY_DIALOG"] = {
+						text = L["Press Ctrl+C to copy the player's name."],
+						button1 = _G.CLOSE,
+						hasEditBox = 1,
+						hasWideEditBox = 1,
+						editBoxWidth = 350,
+						showAlert = true,
+						OnShow = function(self)
+							local name = self:GetName();
+							local editBox = self.EditBox or self.editBox
+								or (name and _G[name.."EditBox"]);
+							if (editBox) then
+								editBox:SetText(theUser);
+								editBox:HighlightText();
+								editBox:SetFocus();
+							end
+
+							local alertIcon = _G.getglobal(self:GetName().."AlertIcon") or self.AlertIcon;
+							alertIcon:Hide();  -- HACK : we hide the false AlertIcon
+						end,
+						EditBoxOnTextChanged = function(self)
+							if (self:GetText() ~= theUser) then
+								self:SetText(theUser);
+								self:HighlightText();
+							end
+						end,
+						EditBoxOnEscapePressed = function(self) self:GetParent():Hide(); end,
+						EditBoxOnEnterPressed = function(self) self:GetParent():Hide(); end,
+						timeout = 0,
+						whileDead = 1,
+						hideOnEscape = 1,
+					};
+					WIM.dialog.create("WIM_COPY_DIALOG");
+
+					return;
+				end
+
 				self.parentWindow:SendWho(function()
 					-- #271: the file-scope `buttons` is the TYPE-KEYED registry,
 				-- not a button list -- indexing it with a number returned
@@ -438,6 +483,9 @@ RegisterShortcut("location", L["Player Location"], {
 				end
 				_G.GameTooltip:AddDoubleLine(L["Location"]..":", "|cffffffff"..location.."|r");
 				_G.GameTooltip:AddLine("|cff69ccf0"..L["Click to update..."].."|r");
+				if not self.parentWindow.theUser:match("|") then
+					_G.GameTooltip:AddLine("|cff69ccf0"..L["Shift + Click to copy name..."].."|r");
+				end
 				_G.GameTooltip:AddLine("|cff69ccf0"..L["Right-Click for profile links..."].."|r");
 				_G.GameTooltip:Show(txt);
 			else

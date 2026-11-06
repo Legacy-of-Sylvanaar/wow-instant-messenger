@@ -20,10 +20,6 @@ db_defaults.displayColors.webAddress = {
 local URL = CreateModule("URLHandler", true);
 
 armoryLinks = {
-	{
-		title = L["Copy Name"],
-		url = "{user}",
-    },
     {
 		title = "Wowhead",
 		url = "http://www.wowhead.com/profile={eu/us}.{realm-}.{user}",
