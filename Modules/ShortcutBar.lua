@@ -470,15 +470,16 @@ RegisterShortcut("invite", L["Invite to Party"], {
 			end
 		end
 	});
-RegisterShortcut("guild", L["Invite to Guild"], {
-	OnClick = function(self)
-		local win = self.parentWindow;
+-- Blizzard locked down C_GuildInfo.Invite. It is no longer possible to be called other than from Blizzard's UI.
+-- RegisterShortcut("guild", L["Invite to Guild"], {
+-- 	OnClick = function(self)
+-- 		local win = self.parentWindow;
 
-		if _G.InCombatLockdown() then return end -- safeguard
+-- 		if _G.InCombatLockdown() then return end -- safeguard
 
-		(_G.C_GuildInfo and _G.C_GuildInfo.Invite or _G.GuildInvite)(win.theUser)
-	end
-});
+-- 		(_G.C_GuildInfo and _G.C_GuildInfo.Invite or _G.GuildInvite)(win.theUser)
+-- 	end
+-- });
 RegisterShortcut("friend", L["Add Friend"], {
 	OnClick = function(self)
 		_G.C_FriendList.AddFriend(self.parentWindow.theUser);
