@@ -1469,48 +1469,51 @@ local function instantiateWindow(obj)
 	if(forceResult == true) then
 		-- go by forceResult and ignore rules
 		if(self.tabStrip) then
-                                -- if(not EditBoxInFocus) then
-                                                ShowContainer();
-                                                self.tabStrip:JumpToTab(self);
-                                                if(not InCombatLockdown() and not getVisibleChatFrameEditBox() and (rules.autofocus or forceFocus)) then
-                                                        self.widgets.msg_box:SetFocus();
-                                                end
-                                -- end
-		else
-                                ShowContainer();
-				self:ResetAnimation();
-				self:Show();
-                                if(not InCombatLockdown() and ((not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) or forceFocus)) then
-                                        self.widgets.msg_box:SetFocus();
-                                end
-				local count = 0;
-				for i=1, #WindowSoupBowl.windows do
-					count = WindowSoupBowl.windows[i].obj:IsShown() and count + 1 or count;
+			-- if(not EditBoxInFocus) then
+				ShowContainer();
+				self.tabStrip:JumpToTab(self);
+				if(not InCombatLockdown() and not getVisibleChatFrameEditBox() and (rules.autofocus or forceFocus)) then
+					self.widgets.msg_box:SetFocus();
 				end
---[[				if(count > 1) then
-					DisplayTutorial(L["Creating Tab Groups"], L["You can group two or many windows together by <Shift-Clicking> a window and dragging it on top of another."]);
-				else
-					DisplayTutorial(L["Resizing Windows"], L["You can resize a window by holding <Shift> and dragging the bottom right corner of the window."]);
-				end-- ]]
+			-- end
+		else
+			ShowContainer();
+			self:ResetAnimation();
+			self:Show();
+			if(not InCombatLockdown() and ((not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) or forceFocus)) then
+				self.widgets.msg_box:SetFocus();
+			end
+			local count = 0;
+			for i=1, #WindowSoupBowl.windows do
+				count = WindowSoupBowl.windows[i].obj:IsShown() and count + 1 or count;
+			end
+			--[[if(count > 1) then
+				DisplayTutorial(L["Creating Tab Groups"], L["You can group two or many windows together by <Shift-Clicking> a window and dragging it on top of another."]);
+			else
+				DisplayTutorial(L["Resizing Windows"], L["You can resize a window by holding <Shift> and dragging the bottom right corner of the window."]);
+			end-- ]]
 		end
 	else
 		-- execute pop rules.
 		if((rules.onSend and msgDirection == "out") or (rules.onReceive and msgDirection == "in")) then
 			if(self.tabStrip) then
 				self:ResetAnimation();
-                                local infocus = EditBoxInFocus and EditBoxInFocus:GetParent().tabStrip;
-                                if(infocus ~= self.tabStrip) then
-                                                self.tabStrip:JumpToTab(self);
-                                                setWindowAsFadedIn(self);
-                                end
+
+				local infocus = EditBoxInFocus and EditBoxInFocus:GetParent().tabStrip;
+
+				if(infocus ~= self.tabStrip) then
+					self.tabStrip:JumpToTab(self);
+					setWindowAsFadedIn(self);
+				end
 			else
 				self:ResetAnimation();
 				self:Show();
-                                setWindowAsFadedIn(self);
+				setWindowAsFadedIn(self);
 			end
-                        if(not InCombatLockdown() and self:IsVisible() and not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) then
-                                self.widgets.msg_box:SetFocus();
-                        end
+
+			if(not InCombatLockdown() and self:IsVisible() and not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) then
+				self.widgets.msg_box:SetFocus();
+			end
 		end
 	end
 

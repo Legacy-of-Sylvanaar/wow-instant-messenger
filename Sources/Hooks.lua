@@ -6,11 +6,8 @@ Module specific hooks are found within it's own files.
 
 
 function WIM.getVisibleChatFrameEditBox()
-    -- for eb in pairs(Hooked_ChatFrameEditBoxes) do
-    --     if _G[eb]:wimIsVisible() then
-    --         return _G[eb];
-    --     end
-    -- end
+	local getActive = ChatFrameUtil and ChatFrameUtil.GetActiveWindow or ChatEdit_GetActiveWindow;
+	return getActive and getActive();
 end
 
 -------------------------------------------------------------------------------------------
