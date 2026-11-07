@@ -195,43 +195,8 @@ local function displayURL(link)
     if (string.len(link) > 4) and (string.sub(link,1,8) == "wim_url:") then
 			theLink = string.sub(link,9, string.len(link));
     end
-    -- The following code was written by Sylvannar.
-    _G.StaticPopupDialogs["WIM_SHOW_URL"] = {
-    	preferredIndex = STATICPOPUP_NUMDIALOGS,
-        text = "URL : %s",
-        button2 = _G.ACCEPT,
-        hasEditBox = 1,
-        hasWideEditBox = 1,
-		editBoxWidth = 350,
-        showAlert = 1, -- HACK : it"s the only way I found to make de StaticPopup have sufficient width to show WideEditBox :(
-        OnShow = function(self)
-                self = self or _G.this; -- tbc hack
-                local editBox = _G.getglobal(self:GetName().."WideEditBox") or _G.getglobal(self:GetName().."EditBox");
-                editBox:SetText(theLink); --removed "format" becasue it cause errors on some character names it seems!
-                editBox:SetFocus();
-                editBox:HighlightText(0);
 
-                local button = _G.getglobal(self:GetName().."Button2");
-                button:ClearAllPoints();
-                button:SetWidth(100);
-                button:SetPoint("CENTER", editBox, "CENTER", 0, -30);
-
-				local alertIcon = _G.getglobal(self:GetName().."AlertIcon") or self.AlertIcon;
-                alertIcon:Hide();  -- HACK : we hide the false AlertIcon
-            end,
-        OnHide = function() end,
-        OnAccept = function() end,
-        OnCancel = function() end,
-        EditBoxOnEscapePressed = function(self)
-                self = self or _G.this; -- tbc hack
-                self:GetParent():Hide();
-            end,
-        timeout = 0,
-        whileDead = 1,
-        hideOnEscape = 1
-    };
-
-	WIM.dialog.create("WIM_SHOW_URL", theLink)
+	WIM.dialog.copy(theLink, L["Press Ctrl+C to copy the link, then open it in your browser."]);
 end
 
 WIM.RegisterItemRefHandler("wim_url", displayURL);
