@@ -1460,10 +1460,15 @@ local function registerCategory()
             function(value) EnableModule("AddonCompartment", value); end);
     end
 
-    ui.Header(layout, L["Tooltips"]);
-    ui.Checkbox(category, L["Show WIM Tooltips"], true,
+    ui.Header(layout, L["Miscellaneous"]);
+    ui.Checkbox(category, L["Show WIM Tooltips"], db_defaults.showToolTips,
         db, "showToolTips",
         L["Shows help tooltips on WIM's windows, lists, and the custom rows of these options."]);
+	ui.Checkbox(category, L["Streaming Mode"], db_defaults.streamMode,
+        db, "streamMode",
+        L["Protect the privacy of players you chat with by hiding their full name and BattleTag."],
+		WIM.RefreshBNetWindows
+	);
 
     ui.Header(layout, L["Report a Bug"]);
     ui.Custom(layout, "WIM3SettingsBugReportTemplate",

@@ -605,7 +605,6 @@ local translations = {
     ["Links & Emoticons"] = "Enlaces y emoticonos", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Interruptor principal de este tipo de canal; los canales individuales se capturan con la casilla Capturar de abajo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Líneas máximas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Tooltips"] = "Descripciones emergentes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Fondo del área de mensajes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Formato de mensajes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Ventanas de mensajes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -792,6 +791,9 @@ local translations = {
     ["Keep Current"] = "Mantener actual",
     ["Press Ctrl+C to copy the player's name."] = "Presiona Ctrl+C para copiar el nombre del jugador.",
     ["Shift + Click to copy name..."] = "Mayús + Clic para copiar el nombre...",
+    ["Miscellaneous"] = "Varios",
+    ["Streaming Mode"] = "Modo de transmisión",
+    ["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Protege la privacidad de los jugadores con los que chateas ocultando su nombre completo y BattleTag.",
 };
 
 if WIM.getLocale() == "esES" then

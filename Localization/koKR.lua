@@ -604,7 +604,6 @@ WIM.AddLocale("koKR", {
     ["Links & Emoticons"] = "링크 및 이모티콘", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "이 채널 유형의 주 스위치입니다. 개별 채널은 아래의 가져오기 표시로 가져옵니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "최대 줄 수", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Tooltips"] = "툴팁", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "메시지 영역 배경", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "메시지 형식", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "메시지 창", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -791,4 +790,7 @@ WIM.AddLocale("koKR", {
     ["Keep Current"] = "현재 스킨 유지",
     ["Press Ctrl+C to copy the player's name."] = "플레이어 이름을 복사하려면 Ctrl+C를 누르세요.",
     ["Shift + Click to copy name..."] = "Shift + 클릭하여 이름 복사...",
+    ["Miscellaneous"] = "기타",
+    ["Streaming Mode"] = "스트리밍 모드",
+    ["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "대화하는 플레이어의 전체 이름과 배틀태그를 숨겨 개인 정보를 보호합니다.",
 });

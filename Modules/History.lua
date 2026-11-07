@@ -738,9 +738,11 @@ function History:OnWindowCreated(win)
 
 		local user = win.theUser;
 		local bnId = win.isBN and win.bn.id;
+		local name = win.theUser;
 		if (bnId) then
 			local _, _, btag, _, toonName = GetBNGetFriendInfoByID(bnId);
 			user = btag or toonName or user
+			name = db.streamMode and (string.split("#", user)) or user
 		end
 
 		local history = history[env.realm] and history[env.realm][env.character] and history[env.realm][env.character][user];
@@ -769,10 +771,11 @@ function History:OnWindowCreated(win)
 			win.isHistory = true;
 			win.widgets.history:SetHistory(true);
 			for i=1, #tmpTable do
-				local color = db.displayColors[tmpTable[i].inbound and "historyIn" or "historyOut"];
+				local inbound = tmpTable[i].inbound;
+				local color = db.displayColors[inbound and "historyIn" or "historyOut"];
 				win.nextStamp = tmpTable[i].time;
 				win.nextStampColor = db.displayColors.historyOut;
-				win:AddMessage(applyMessageFormatting(win.widgets.chat_display, "CHAT_MSG_WHISPER", tmpTable[i].msg, tmpTable[i].from,
+				win:AddMessage(applyMessageFormatting(win.widgets.chat_display, "CHAT_MSG_WHISPER", tmpTable[i].msg, inbound and name or tmpTable[i].from,
 								nil, nil, nil, nil, nil, nil, nil, nil, -i, "0x0300000000000000"), color.r, color.g, color.b);
 			end
 			win.widgets.chat_display:AddMessage(" ");

@@ -605,7 +605,6 @@ WIM.AddLocale("ruRU", {
     ["Links & Emoticons"] = "Ссылки и смайлики", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Главный переключатель для этого типа каналов; отдельные каналы перехватываются флажком «Перехватывать» ниже.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Максимум строк", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Tooltips"] = "Подсказки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Фон области сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Формат сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Окна сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -792,4 +791,7 @@ WIM.AddLocale("ruRU", {
 	["Keep Current"] = "Сохранить текущую тему",
 	["Press Ctrl+C to copy the player's name."] = "Нажмите Ctrl+C, чтобы скопировать имя игрока.",
 	["Shift + Click to copy name..."] = "Shift + клик, чтобы скопировать имя...",
+	["Miscellaneous"] = "Разное",
+	["Streaming Mode"] = "Режим трансляции",
+	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Защищает конфиденциальность игроков, с которыми вы общаетесь, скрывая их полное имя и BattleTag.",
 });

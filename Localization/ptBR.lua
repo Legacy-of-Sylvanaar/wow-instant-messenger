@@ -603,7 +603,6 @@ WIM.AddLocale("ptBR", {
     ["Links & Emoticons"] = "Links e emoticons", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Chave geral deste tipo de canal; os canais individuais são capturados com a opção Capturar abaixo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Máximo de linhas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Tooltips"] = "Dicas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Fundo da área de mensagens", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Formato das mensagens", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Janelas de mensagens", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -790,4 +789,7 @@ WIM.AddLocale("ptBR", {
 	["Keep Current"] = "Manter o atual",
 	["Press Ctrl+C to copy the player's name."] = "Pressione Ctrl+C para copiar o nome do jogador.",
 	["Shift + Click to copy name..."] = "Shift + Clique para copiar o nome...",
+	["Miscellaneous"] = "Diversos",
+	["Streaming Mode"] = "Modo de transmissão",
+	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Proteja a privacidade dos jogadores com os quais você conversa ocultando seu nome completo e BattleTag.",
 });

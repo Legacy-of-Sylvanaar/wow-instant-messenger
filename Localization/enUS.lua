@@ -606,7 +606,6 @@ WIM.AddLocale("enUS", {
     ["Links & Emoticons"] = true,
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = true,
     ["Maximum Lines"] = true,
-    ["Tooltips"] = true,
     ["Message Area Background"] = true,
     ["Message Format"] = true,
     ["Message Windows"] = true,
@@ -792,4 +791,7 @@ WIM.AddLocale("enUS", {
 	["Keep Current"] = true,
 	["Press Ctrl+C to copy the player's name."] = true,
 	["Shift + Click to copy name..."] = true,
+	["Miscellaneous"] = true,
+	["Streaming Mode"] = true,
+	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = true,
 });

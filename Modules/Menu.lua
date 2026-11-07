@@ -967,12 +967,14 @@ local function createGroup(title, list, maxButtons, showNone, showHeader)
                 if(i <= #list) then
                     button.win = list[i];
                     button.recent = nil;
-                    button.text:SetText((button.win.isBN and bnIcon or "")..button.win.theUser);
+					local name = db.streamMode and button.win.isBN and utils.GetPrivateBNetName(button.win.theUser) or button.win.theUser;
+                    button.text:SetText((button.win.isBN and bnIcon or "")..name);
                 else
                     -- recent-whisper entry: same dot and close button as a live row.
                     button.win = nil;
                     button.recent = extra[i - #list];
-                    button.text:SetText((button.recent.isBN and bnIcon or "")..button.recent.theUser);
+					local name = db.streamMode and button.recent.isBN and utils.GetPrivateBNetName(button.recent.theUser) or button.recent.theUser;
+                    button.text:SetText((button.recent.isBN and bnIcon or "")..name);
                 end
                 button.close:Show();
                 button.status:Show();
