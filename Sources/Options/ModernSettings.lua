@@ -1204,40 +1204,7 @@ local function ensureBugReportHolder()
         link:SetPoint("BOTTOM", 0, inset - 4);
         link:SetText(L["Show GitHub Link"]);
         link:SetScript("OnClick", function()
-            _G.StaticPopupDialogs["WIM_BUGREPORT_URL"] = {
-                preferredIndex = _G.STATICPOPUP_NUMDIALOGS,
-                text = L["Press Ctrl+C to copy the link, then open it in your browser."],
-                button1 = _G.CLOSE,
-                hasEditBox = 1,
-                hasWideEditBox = 1,
-                editBoxWidth = 350,
-				showAlert = true,
-                OnShow = function(self)
-                    local name = self:GetName();
-                    local editBox = self.EditBox or self.editBox
-                        or (name and _G[name.."EditBox"]);
-                    if (editBox) then
-                        editBox:SetText(BUG_REPORT_URL);
-                        editBox:HighlightText();
-                        editBox:SetFocus();
-                    end
-
-					local alertIcon = _G.getglobal(self:GetName().."AlertIcon") or self.AlertIcon;
-                	alertIcon:Hide();  -- HACK : we hide the false AlertIcon
-                end,
-                EditBoxOnTextChanged = function(self)
-                    if (self:GetText() ~= BUG_REPORT_URL) then
-                        self:SetText(BUG_REPORT_URL);
-                        self:HighlightText();
-                    end
-                end,
-                EditBoxOnEscapePressed = function(self) self:GetParent():Hide(); end,
-                EditBoxOnEnterPressed = function(self) self:GetParent():Hide(); end,
-                timeout = 0,
-                whileDead = 1,
-                hideOnEscape = 1,
-            };
-            WIM.dialog.create("WIM_BUGREPORT_URL");
+			WIM.dialog.copy(BUG_REPORT_URL, L["Press Ctrl+C to copy the link, then open it in your browser."]);
         end);
         link:SetScript("OnEnter", function(self)
             _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT");

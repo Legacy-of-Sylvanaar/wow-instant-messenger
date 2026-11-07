@@ -789,6 +789,7 @@ WIM.AddLocale("frFR", {
 	["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM dispose désormais d'un skin moderne conçu pour mieux compléter l'interface actuelle du jeu. Votre skin sélectionné est un style plus ancien qui peut sembler daté ou manquer de certaines fonctionnalités récentes.",
 	["Open Skin Settings"] = "Ouvrir les paramètres du skin",
 	["Keep Current"] = "Conserver le skin actuel",
+	["Press Ctrl+C to copy to clipboard."] = "Appuyez sur Ctrl+C pour copier dans le presse-papiers.",
 	["Press Ctrl+C to copy the player's name."] = "Appuyez sur Ctrl+C pour copier le nom du joueur.",
 	["Shift + Click to copy name..."] = "Maj + Clic pour copier le nom...",
 	["Miscellaneous"] = "Divers",

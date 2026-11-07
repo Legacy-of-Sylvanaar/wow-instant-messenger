@@ -414,49 +414,7 @@ RegisterShortcut("location", L["Player Location"], {
 						return;
 					end
 
-					_G.StaticPopupDialogs["WIM_COPY_DIALOG"] = {
-						text = L["Press Ctrl+C to copy the player's name."],
-						button1 = _G.CLOSE,
-						hasEditBox = 1,
-						hasWideEditBox = 1,
-						editBoxWidth = 350,
-						showAlert = true,
-						OnShow = function(self)
-							local name = self:GetName();
-							local _self = self;
-							local editBox = self.EditBox or self.editBox
-								or (name and _G[name.."EditBox"]);
-							if (editBox) then
-								editBox:SetScript("OnKeyDown", function(self, key)
-									if key == "C" and _G.IsControlKeyDown() then
-										_G.C_Timer.After(0, function()
-											self:SetScript("OnKeyDown", nil);
-											_self:Hide();
-										end);
-									end
-								end)
-
-								editBox:SetText(theUser);
-								editBox:HighlightText();
-								editBox:SetFocus();
-							end
-
-							local alertIcon = _G.getglobal(self:GetName().."AlertIcon") or self.AlertIcon;
-							alertIcon:Hide();  -- HACK : we hide the false AlertIcon
-						end,
-						EditBoxOnTextChanged = function(self)
-							if (self:GetText() ~= theUser) then
-								self:SetText(theUser);
-								self:HighlightText();
-							end
-						end,
-						EditBoxOnEscapePressed = function(self) self:GetParent():Hide(); end,
-						EditBoxOnEnterPressed = function(self) self:GetParent():Hide(); end,
-						timeout = 0,
-						whileDead = 1,
-						hideOnEscape = 1,
-					};
-					WIM.dialog.create("WIM_COPY_DIALOG");
+					WIM.dialog.copy(theUser, L["Press Ctrl+C to copy the player's name."]);
 
 					return;
 				end
