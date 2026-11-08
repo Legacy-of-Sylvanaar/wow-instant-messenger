@@ -401,101 +401,110 @@ end
 
 -- Register default buttons.
 RegisterShortcut("location", L["Player Location"], {
-		type = "whisper",
-		OnClick = function(self, button)
-			libs.DropDownMenu.CloseDropDownMenus();
-			if(button == "LeftButton") then
-				local currentSelf = self;
+	type = "whisper",
+	OnClick = function(self, button)
+		libs.DropDownMenu.CloseDropDownMenus();
+		if (button == "LeftButton") then
+			local currentSelf = self;
 
-				if _G.IsShiftKeyDown() then
-					local theUser = self.parentWindow.theUser;
+			if _G.IsShiftKeyDown() then
+				local theUser = self.parentWindow.theUser;
 
-					if theUser:match("|") then
-						return;
-					end
-
-					WIM.dialog.copy(theUser, L["Press Ctrl+C to copy the player's name."]);
-
+				if theUser:match("|") then
 					return;
 				end
 
-				self.parentWindow:SendWho(function()
-					-- #271: the file-scope `buttons` is the TYPE-KEYED registry,
+				WIM.dialog.copy(theUser, L["Press Ctrl+C to copy the player's name."]);
+
+				return;
+			end
+
+			self.parentWindow:SendWho(function()
+				-- #271: the file-scope `buttons` is the TYPE-KEYED registry,
 				-- not a button list -- indexing it with a number returned
 				-- nil and the callback errored. Look up the window type's
 				-- list like every other handler does.
-				getButtonTable(currentSelf.parentWindow.type or "whisper")[currentSelf.index].scripts.OnEnter(currentSelf);
-					end, true)
-			else
-				WIM.MENU_ARMORY_USER = self.parentWindow.theUser;
-				WIM.MENU_ARMORY_REALM = env.realm;
-				if(self.parentWindow.isBN) then
-					WIM.MENU_ARMORY_USER = self.parentWindow.bn.toonName;
-					WIM.MENU_ARMORY_REALM = self.parentWindow.bn.realmName;
-				end
-				PopContextMenu("MENU_ARMORY", self:GetName());
+				getButtonTable(currentSelf.parentWindow.type or "whisper")[currentSelf.index].scripts.OnEnter(
+				currentSelf);
+			end, true)
+		else
+			WIM.MENU_ARMORY_USER = self.parentWindow.theUser;
+			WIM.MENU_ARMORY_REALM = env.realm;
+			if (self.parentWindow.isBN) then
+				WIM.MENU_ARMORY_USER = self.parentWindow.bn.toonName;
+				WIM.MENU_ARMORY_REALM = self.parentWindow.bn.realmName;
 			end
-		end,
-		OnEnter = function(self)
-			local location = self.parentWindow.location ~= "" and self.parentWindow.location or L["Unknown"];
-			local guild = self.parentWindow.guild ~= "" and self.parentWindow.guild or L["Unknown"];
-			local tbl = self.parentWindow.w2w;
-			if(not tbl or not tbl.services) then
-				_G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-				_G.GameTooltip:AddLine("|cff"..self.parentWindow.classColor..self.parentWindow.theUser.."|r");
-				if(self.parentWindow.isBN) then
-					local bn = self.parentWindow.bn;
-					if bn.toonName and bn.toonName ~= "" then _G.GameTooltip:AddDoubleLine(L["Character"]..":", "|cffffffff"..bn.toonName.."|r"); end
-					if bn.client and bn.client ~= "" then _G.GameTooltip:AddDoubleLine(L["Game"]..":", "|cffffffff"..bn.client.."|r"); end
-					if bn.realmName and bn.realmName ~= "" then _G.GameTooltip:AddDoubleLine(L["Realm"]..":", "|cffffffff"..bn.realmName.."|r"); end
+			PopContextMenu("MENU_ARMORY", self:GetName());
+		end
+	end,
+	OnEnter = function(self)
+		local location = self.parentWindow.location ~= "" and self.parentWindow.location or L["Unknown"];
+		local guild = self.parentWindow.guild ~= "" and self.parentWindow.guild or L["Unknown"];
+		local tbl = self.parentWindow.w2w;
+		if (not tbl or not tbl.services) then
+			_G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			_G.GameTooltip:AddLine("|cff" .. self.parentWindow.classColor .. self.parentWindow.theUser .. "|r");
+			if (self.parentWindow.isBN) then
+				local bn = self.parentWindow.bn;
+				if bn.toonName and bn.toonName ~= "" then _G.GameTooltip:AddDoubleLine(L["Character"] .. ":",
+						"|cffffffff" .. bn.toonName .. "|r"); end
+				if bn.client and bn.client ~= "" then _G.GameTooltip:AddDoubleLine(L["Game"] .. ":",
+						"|cffffffff" .. bn.client .. "|r"); end
+				if bn.realmName and bn.realmName ~= "" then _G.GameTooltip:AddDoubleLine(L["Realm"] .. ":",
+						"|cffffffff" .. bn.realmName .. "|r"); end
+			end
+			_G.GameTooltip:AddDoubleLine(L["Location"] .. ":", "|cffffffff" .. location .. "|r");
+			_G.GameTooltip:AddLine("|cff69ccf0" .. L["Click to update..."] .. "|r");
+			if not self.parentWindow.theUser:match("|") then
+				_G.GameTooltip:AddLine("|cff69ccf0" .. L["Shift + Click to copy name..."] .. "|r");
+			end
+			_G.GameTooltip:AddLine("|cff69ccf0" .. L["Right-Click for profile links..."] .. "|r");
+			_G.GameTooltip:Show(txt);
+		else
+			--w2w tooltip
+			ShowW2WTip(self.parentWindow, self, "ANCHOR_RIGHT");
+		end
+	end
+});
+
+RegisterShortcut("invite", L["Invite to Party"], {
+	OnClick = function(self)
+		local win = self.parentWindow;
+		if win.isBN then
+			if _G.C_BattleNet then
+				--Tested working on Retail
+				local accountInfo = _G.C_BattleNet.GetAccountInfoByID(win.bn.id)
+				local gameAccountID = accountInfo.gameAccountInfo.gameAccountID
+				if gameAccountID then
+					_G.BNInviteFriend(gameAccountID)
 				end
-				_G.GameTooltip:AddDoubleLine(L["Location"]..":", "|cffffffff"..location.."|r");
-				_G.GameTooltip:AddLine("|cff69ccf0"..L["Click to update..."].."|r");
-				if not self.parentWindow.theUser:match("|") then
-					_G.GameTooltip:AddLine("|cff69ccf0"..L["Shift + Click to copy name..."].."|r");
-				end
-				_G.GameTooltip:AddLine("|cff69ccf0"..L["Right-Click for profile links..."].."|r");
-				_G.GameTooltip:Show(txt);
 			else
-				--w2w tooltip
-				ShowW2WTip(self.parentWindow, self, "ANCHOR_RIGHT");
+				--No idea if this actually works on classic, or if BNInviteFriend shouldb e used instead with gameID
+				_G.FriendsFrame_BattlenetInvite(nil, win.bn.id)
+			end
+		else
+			if _G.C_PartyInfo and _G.C_PartyInfo.InviteUnit then
+				_G.C_PartyInfo.InviteUnit(win.theUser)
+			else
+				_G.InviteUnit(win.theUser)
 			end
 		end
-	});
-RegisterShortcut("invite", L["Invite to Party"], {
+	end
+});
+
+-- Forever Only (For now...): Blizzard locked down C_GuildInfo.Invite. It is no longer possible to be called other than from Blizzard's UI.
+if not isForever then
+	RegisterShortcut("guild", L["Invite to Guild"], {
 		OnClick = function(self)
 			local win = self.parentWindow;
-			if win.isBN then
-				if _G.C_BattleNet then
-					--Tested working on Retail
-					local accountInfo = _G.C_BattleNet.GetAccountInfoByID(win.bn.id)
-					local gameAccountID = accountInfo.gameAccountInfo.gameAccountID
-					if gameAccountID then
-						_G.BNInviteFriend(gameAccountID)
-					end
-				else
-					--No idea if this actually works on classic, or if BNInviteFriend shouldb e used instead with gameID
-					_G.FriendsFrame_BattlenetInvite(nil, win.bn.id)
-				end
-			else
-				if _G.C_PartyInfo and _G.C_PartyInfo.InviteUnit then
-					_G.C_PartyInfo.InviteUnit(win.theUser)
-				else
-					_G.InviteUnit(win.theUser)
-				end
-			end
+
+			if _G.InCombatLockdown() then return end -- safeguard
+
+			(_G.C_GuildInfo and _G.C_GuildInfo.Invite or _G.GuildInvite)(win.theUser)
 		end
 	});
--- Blizzard locked down C_GuildInfo.Invite. It is no longer possible to be called other than from Blizzard's UI.
--- RegisterShortcut("guild", L["Invite to Guild"], {
--- 	OnClick = function(self)
--- 		local win = self.parentWindow;
+end
 
--- 		if _G.InCombatLockdown() then return end -- safeguard
-
--- 		(_G.C_GuildInfo and _G.C_GuildInfo.Invite or _G.GuildInvite)(win.theUser)
--- 	end
--- });
 RegisterShortcut("friend", L["Add Friend"], {
 	OnClick = function(self)
 		_G.C_FriendList.AddFriend(self.parentWindow.theUser);
@@ -504,6 +513,7 @@ RegisterShortcut("friend", L["Add Friend"], {
 		ShortcutBar:FRIENDLIST_UPDATE();
 	end
 });
+
 RegisterShortcut("ignore", L["Ignore Player"], {
 	OnClick = function(self)
 		local win = self.parentWindow;
