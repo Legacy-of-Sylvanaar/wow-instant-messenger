@@ -997,12 +997,27 @@ local function editBoxUpdateHeader(self, internalCall)
 
 end
 
+-- When a default chat edit box holds a secret tell target (Battle.net whispers in
+-- 12.x), moving focus away from it from addon code runs Blizzard's
+-- Deactivate -> ResetChatType -> UpdateHeader in WIM-tainted execution. The header
+-- FontString then has secret geometry and UpdateHeader errors with "attempt to
+-- perform arithmetic on a secret number value" on its header width check.
+-- In that case leave the reply to the default edit box instead of stealing focus.
+local function editBoxHasSecretTarget (editBox)
+	return editBox and editBox.GetTellTarget and HasAnySecretValues(editBox:GetTellTarget()) or false;
+end
+
+local function defaultEditBoxHasSecretTarget ()
+	local active = ChatFrameUtil and ChatFrameUtil.GetActiveWindow and ChatFrameUtil.GetActiveWindow();
+	return editBoxHasSecretTarget(active) or editBoxHasSecretTarget(_G.LAST_ACTIVE_CHAT_EDIT_BOX);
+end
+
 -- ReplyTell and ReplyTell2 hooking
 local function replyTellHook (reTell, msg)
 	if (not InChatMessagingLockdown() and not InCombatLockdown() and db and db.enabled) then
 		local _tellTarget, _chatType = unpack(reTell and lastToldTarget or lastTellTarget or {});
 
-		if (HasAnySecretValues(_tellTarget, _chatType)) then
+		if (HasAnySecretValues(_tellTarget, _chatType) or defaultEditBoxHasSecretTarget()) then
 			return;
 		end
 
@@ -1021,6 +1036,10 @@ end
 local function sendBNetTell (tokenizedName)
 	-- used to close the editbox that is open.
 	if not InChatMessagingLockdown() and not InCombatLockdown() and db and db.enabled then
+
+		if (defaultEditBoxHasSecretTarget()) then
+			return;
+		end
 
 		if (db.pop_rules.whisper.intercept) then
 			local bNetID = _G.BNet_GetBNetIDAccount(tokenizedName);
