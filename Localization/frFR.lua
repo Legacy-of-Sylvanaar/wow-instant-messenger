@@ -795,4 +795,6 @@ WIM.AddLocale("frFR", {
 	["Miscellaneous"] = "Divers",
 	["Streaming Mode"] = "Mode streaming",
 	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Protégez la vie privée des joueurs avec lesquels vous discutez en masquant leur nom complet et leur BattleTag.",
+	["Because WIM integrates itself with Edit Mode, protected errors may occur. It is recommended to reload your UI before continuing."] = "WIM étant intégré au mode Édition, des erreurs protégées peuvent survenir. Il est recommandé de recharger votre interface avant de continuer.",
+	["Reload UI"] = "Recharger l'interface",
 });

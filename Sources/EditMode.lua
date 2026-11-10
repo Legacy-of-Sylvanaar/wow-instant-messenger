@@ -961,7 +961,32 @@ function ShowEditMode()
     _G.ShowUIPanel(_G.EditModeManagerFrame);
 end
 
+
+-- Suggest player to reload ui.
+local settingsHooked = false;
+local reloadSuggestionShown = false;
+
+local function informReloadSuggested()
+	if (reloadSuggestionShown) then
+		return;
+	end
+
+	reloadSuggestionShown = true;
+
+	_G.C_Timer.After(0, function()
+		utils.dialog.confirm(
+			L["Because WIM integrates itself with Edit Mode, protected errors may occur. It is recommended to reload your UI before continuing."],
+			function()
+				_G.ReloadUI();
+			end,
+			L["Reload UI"],
+			_G.CLOSE
+		);
+	end);
+end
+
 local function onEditModeHide()
+	reloadSuggestionShown = false;
     inEditMode = false;
     for i = 1, #entries do
         local entry = entries[i];
@@ -982,7 +1007,13 @@ local function onEditModeHide()
         if (not _G.InCombatLockdown() and _G.Settings and _G.Settings.OpenToCategory
             and options.modernCategoryID) then
             _G.Settings.OpenToCategory(options.modernCategoryID);
-        end
+			if (not settingsHooked) then
+				_G.SettingsPanel:HookScript("OnHide", informReloadSuggested);
+				settingsHooked = true;
+			end
+		end
+	else
+		informReloadSuggested();
     end
 end
 
