@@ -2421,17 +2421,17 @@ function SetWidgetFont(obj, widgetSkinTable)
             -- actually changes the rendered family.
             obj:SetFontObject(_G[_font]);
             local font, height, flags = _G[_font]:GetFont();
-            obj:SetFont(font, widgetSkinTable.font_height or height, obj._font_flags or widgetSkinTable.font_flags or flags);
+            obj:SetFont(normalizeFont(font), widgetSkinTable.font_height or height, obj._font_flags or widgetSkinTable.font_flags or flags);
         elseif(libs.SML.MediaTable.font[_font]) then
 			-- _G.DevTools_Dump({obj.widgetName ,_font, widgetSkinTable.font_height, obj._font_flags or widgetSkinTable.font_flags or ""});
-            obj:SetFont(libs.SML.MediaTable.font[_font], widgetSkinTable.font_height or 12, obj._font_flags or widgetSkinTable.font_flags or "");
+            obj:SetFont(normalizeFont(libs.SML.MediaTable.font[_font]), widgetSkinTable.font_height or 12, obj._font_flags or widgetSkinTable.font_flags or "");
 		elseif (type(_font) == "string" and _font:match("\\")) then
 			-- font is a path to a font file
-			obj:SetFont(_font, widgetSkinTable.font_height or 12, obj._font_flags or widgetSkinTable.font_flags or "");
+			obj:SetFont(normalizeFont(_font), widgetSkinTable.font_height or 12, obj._font_flags or widgetSkinTable.font_flags or "");
 		else
             -- can't find font, load a default font.
             local font, height, flags = _G["ChatFontNormal"]:GetFont();
-            obj:SetFont(font, widgetSkinTable.font_height or 12, obj._font_flags or widgetSkinTable.font_flags or "");
+            obj:SetFont(normalizeFont(font), widgetSkinTable.font_height or 12, obj._font_flags or widgetSkinTable.font_flags or "");
         end
     end
     -- next, lets add the extra properties to it.
