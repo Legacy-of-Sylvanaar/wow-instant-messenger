@@ -2937,7 +2937,7 @@ local function createHistoryViewer()
                             whileDead = 1,
                             hideOnEscape = 1
                         };
-                        WIM.dialog.create("WIM_DELETE_HISTORY_DATE");
+                        WIM.utils.dialog.create("WIM_DELETE_HISTORY_DATE");
                     end);
 
                 table.insert(win.nav.filters.scroll.buttons, button);
@@ -3198,7 +3198,7 @@ local function createHistoryViewer()
                             whileDead = 1,
                             hideOnEscape = 1
                         };
-                        WIM.dialog.create("WIM_DELETE_HISTORY");
+                        WIM.utils.dialog.create("WIM_DELETE_HISTORY");
                     end);
 
                 table.insert(win.nav.userList.scroll.buttons, button);

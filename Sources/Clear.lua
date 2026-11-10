@@ -81,7 +81,7 @@ function WIM.ShowClearHistoryPopup()
         whileDead = 1,
         hideOnEscape = 1
     };
-    WIM.dialog.create("WIM_CLEAR_HISTORY");
+    WIM.utils.dialog.create("WIM_CLEAR_HISTORY");
 end
 
 local function clearFun(sub)
@@ -103,7 +103,7 @@ local function clearFun(sub)
             whileDead = 1,
             hideOnEscape = 1
         };
-        WIM.dialog.create("WIM_CLEAR_FILTERS");
+        WIM.utils.dialog.create("WIM_CLEAR_FILTERS");
     else
         DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0"..L["Usage"]..":|r  ".."/wim clear {"..string.lower(table.concat(CommandListRaw, " | ")).."}");
     end

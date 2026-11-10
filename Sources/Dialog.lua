@@ -15,7 +15,8 @@ local UIParent = UIParent;
 -- set WIM Namespace
 setfenv(1, WIM);
 
-dialog = {};
+local dialog = {};
+utils.dialog = dialog;
 
 local pool = {};
 

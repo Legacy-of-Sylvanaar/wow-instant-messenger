@@ -92,5 +92,5 @@ RegisterSlashCommand("reset", function()
                     whileDead = 1,
                     hideOnEscape = 1
                 };
-                 WIM.dialog.create("WIM_RESET_DEFAULTS");
+                 WIM.utils.dialog.create("WIM_RESET_DEFAULTS");
             end, L["Reset all options to default."]);

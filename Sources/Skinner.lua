@@ -2514,7 +2514,7 @@ local function CheckForOutdatedSkin()
 	local check = selected and selected.schema_version and defaultSkin and defaultSkin.schema_version;
 
     if(check and selected.schema_version < defaultSkin.schema_version) then
-		dialog.confirm(
+		utils.dialog.confirm(
 			L["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."],
 			function()
 				_G.Settings.OpenToCategory(options.categoryMap["Appearance:MessageWindow"]);

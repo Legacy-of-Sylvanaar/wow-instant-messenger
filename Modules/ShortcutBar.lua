@@ -414,7 +414,7 @@ RegisterShortcut("location", L["Player Location"], {
 					return;
 				end
 
-				WIM.dialog.copy(theUser, L["Press Ctrl+C to copy the player's name."]);
+				WIM.utils.dialog.copy(theUser, L["Press Ctrl+C to copy the player's name."]);
 
 				return;
 			end
@@ -517,7 +517,7 @@ RegisterShortcut("friend", L["Add Friend"], {
 RegisterShortcut("ignore", L["Ignore Player"], {
 	OnClick = function(self)
 		local win = self.parentWindow;
-		dialog.confirm(
+		utils.dialog.confirm(
 			"WIM: " .. _G.format(L["Are you sure you want to\nignore %s?"], (win.isBN and win.toonName or win.theUser)),
 			function()
 				addIgnore(win.isBN and win.toonName or win.theUser);

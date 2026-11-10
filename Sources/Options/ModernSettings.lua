@@ -1204,7 +1204,7 @@ local function ensureBugReportHolder()
         link:SetPoint("BOTTOM", 0, inset - 4);
         link:SetText(L["Show GitHub Link"]);
         link:SetScript("OnClick", function()
-			WIM.dialog.copy(BUG_REPORT_URL, L["Press Ctrl+C to copy the link, then open it in your browser."]);
+			WIM.utils.dialog.copy(BUG_REPORT_URL, L["Press Ctrl+C to copy the link, then open it in your browser."]);
         end);
         link:SetScript("OnEnter", function(self)
             _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT");

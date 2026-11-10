@@ -196,7 +196,7 @@ local function displayURL(link)
 			theLink = string.sub(link,9, string.len(link));
     end
 
-	WIM.dialog.copy(theLink, L["Press Ctrl+C to copy the link, then open it in your browser."]);
+	WIM.utils.dialog.copy(theLink, L["Press Ctrl+C to copy the link, then open it in your browser."]);
 end
 
 WIM.RegisterItemRefHandler("wim_url", displayURL);

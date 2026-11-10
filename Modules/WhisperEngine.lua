@@ -188,7 +188,7 @@ function WhisperEngine:OnEnable ()
 	-- check if whisperMode is set to inline, if not, display a warning in the options.
 	if _G.GetCVar and _G.GetCVar("whisperMode") ~= "inline" and db.whisperModeChecked ~= true then
 
-		dialog.confirm(
+		utils.dialog.confirm(
 			"WIM: " .. L["It is recommended for whispers to be set to in-line in order to handle their behavior properly."],
 			function()
 				_G.SetCVar("whisperMode", "inline");
