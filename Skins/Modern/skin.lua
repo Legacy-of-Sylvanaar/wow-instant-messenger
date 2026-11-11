@@ -103,6 +103,7 @@ NineSliceUtil.AddLayout(
 );
 
 local foreverX = WIM.isForever and 3 or 0
+local foreverY = WIM.isForever and 3 or 0
 
 local WIM_ModernSkin = {
 	title = "WIM Modern",
@@ -246,8 +247,8 @@ local WIM_ModernSkin = {
             }
         },
 		points = {
-            {"BOTTOMLEFT", "window", "TOPLEFT", 50, -2},
-            {"BOTTOMRIGHT", "window", "TOPRIGHT", -20, -2}
+            {"BOTTOMLEFT", "window", "TOPLEFT", 44, -1 + foreverY},
+            {"BOTTOMRIGHT", "window", "TOPRIGHT", -12, -1 + foreverY}
         },
     },
 	menu = {
@@ -320,6 +321,12 @@ WIM.RegisterSkin({
                 },
 			}
 		}
+	},
+	tab_strip = {
+		points = {
+            {"BOTTOMLEFT", "window", "TOPLEFT", 16, -1 + foreverY},
+            {"BOTTOMRIGHT", "window", "TOPRIGHT", -12, -1 + foreverY}
+        },
 	}
 })
 
