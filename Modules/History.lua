@@ -4771,6 +4771,34 @@ function SerializeDirtyHistory()
     historyDirty = {};
 end
 
+-- WoW Forever ruleset from the game rules, named as AceDB-3.0 names them.
+-- Returns nil when the client cannot answer, so nothing is keyed or moved on a guess.
+local function activeRuleset()
+    local rules = _G.C_GameRules;
+    local ids = _G.Enum and _G.Enum.GameRule;
+    if (type(rules) ~= "table" or type(rules.IsGameRuleActive) ~= "function" or type(ids) ~= "table"
+        or ids.HardcoreRuleset == nil or ids.RPRuleset == nil or ids.PvPRuleset == nil) then
+        return nil;
+    end
+    local hardcore = rules.IsGameRuleActive(ids.HardcoreRuleset);
+    local rp = rules.IsGameRuleActive(ids.RPRuleset);
+    local pvp = rules.IsGameRuleActive(ids.PvPRuleset);
+    if (type(hardcore) ~= "boolean" or type(rp) ~= "boolean" or type(pvp) ~= "boolean") then
+        return nil;
+    end
+    local name = "PvE";
+    if (hardcore) then
+        name = "Hardcore";
+    elseif (rp and pvp) then
+        name = "RP-PvP";
+    elseif (rp) then
+        name = "RP";
+    elseif (pvp) then
+        name = "PvP";
+    end
+    return name, hardcore, rp, pvp;
+end
+
 -- Before WIM processes saved variables and initializes, clean up history
 function History:OnBeforeInitialized()
 	-- Bug fix (issue #251):
@@ -4813,20 +4841,12 @@ function History:OnBeforeInitialized()
 
     -- load some environment data EARLIER than before; the history assembly
     -- below needs env.realm and env.character.
-    env.realm = _G.GetRealmName();
-
-	-- Determine the realm based on active game rules playing on Forever since there aren't any realms.
-	if isForever then
-		if _G.C_GameRules.IsGameRuleActive(_G.Enum.GameRule.HardcoreRuleset) then
-			env.realm = "Hardcore"
-		elseif _G.C_GameRules.IsGameRuleActive(_G.Enum.GameRule.RPRuleset) then
-			env.realm = "RP"
-		elseif _G.C_GameRules.IsGameRuleActive(_G.Enum.GameRule.PvPRuleset) then
-			env.realm = "PvP"
-		else
-			env.realm = "PvE"
-		end
-	end
+    local nativeRealm = _G.GetRealmName();
+    local ruleset, ruleHardcore, ruleRP, rulePvP;
+    if (isForever) then
+        ruleset, ruleHardcore, ruleRP, rulePvP = activeRuleset();
+    end
+    env.realm = ruleset or nativeRealm;
 
     env.character = _G.UnitName("player");
 
@@ -4837,6 +4857,26 @@ function History:OnBeforeInitialized()
     -- WIM3_HistorySchema is deliberately NOT defaulted; absent means 0.
     _G.WIM3_History = _G.WIM3_History or {};
     _G.WIM3_HistoryArchive = _G.WIM3_HistoryArchive or {};
+
+    if (isForever) then
+        dPrint("History: realm '"..tostring(nativeRealm).."', ruleset "..tostring(ruleset)
+            .." (hardcore "..tostring(ruleHardcore)..", rp "..tostring(ruleRP)..", pvp "..tostring(rulePvP)..").");
+    end
+    -- Earlier versions keyed Forever history by GetRealmName() and filed RP-PvP under RP.
+    -- Bring the logged-in character's history into its ruleset bucket. Only this character:
+    -- the ruleset belongs to the character, and a realm name is never parsed.
+    if (ruleset) then
+        local archive = _G.WIM3_HistoryArchive;
+        local sources = { nativeRealm };
+        if (ruleset == "RP-PvP" and not (type(archive[ruleset]) == "table" and archive[ruleset][env.character])) then
+            sources[2] = "RP";
+        end
+        for i = 1, #sources do
+            if (AdoptHistoryCharacter(archive, sources[i], ruleset, env.character)) then
+                dPrint("History: "..env.character.." moved from '"..sources[i].."' to '"..ruleset.."'.");
+            end
+        end
+    end
 
     -- Snapshot the on-disk schema BEFORE we convert anything, so the rest of
     -- this function can tell what state the data arrived in.
