@@ -337,6 +337,13 @@ WIM.AddLocale("ptBR", {
 	["Results are hidden by the active filter. Click to open the Filters menu."] = "Os resultados estão ocultos pelo filtro ativo. Clique para abrir o menu de filtros.",
 	["Click to change how history is filtered."] = "Clique para alterar como o histórico é filtrado.",
 	["Click to open the Filters menu."] = "Clique para abrir o menu de filtros.",
+	["Unknown name"] = "Nome desconhecido",
+	["This conversation was saved without the other player's name."] = "Esta conversa foi salva sem o nome do outro jogador.",
+	["Enter the name this conversation belongs to."] = "Digite o nome ao qual esta conversa pertence.",
+	["Enter the name of a player."] = "Digite o nome de um jogador.",
+	["This conversation of %s was saved without the other player's name."] = "Esta conversa de %s foi salva sem o nome do outro jogador.",
+	["Enter the name of the player it was with. If you already have a conversation with that player, the messages are added to it."] = "Digite o nome do jogador com quem ela aconteceu. Se você já tem uma conversa com esse jogador, as mensagens são adicionadas a ela.",
+	["A saved conversation had lost the other player's name. It is listed as \"Unknown name\" in the History Viewer, where you can give it a name."] = "Uma conversa salva tinha perdido o nome do outro jogador. Ela aparece como \"Nome desconhecido\" no Visualizador do histórico, onde você pode dar um nome a ela.",
 	["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Clicar no botão %s da janela de mensagens mostrará o histórico desse usuário no Visualizador de histórico do WIM.",
 
 	-- Message input & formatting --

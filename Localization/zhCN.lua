@@ -339,6 +339,13 @@ WIM.AddLocale("zhCN", {
 	["Results are hidden by the active filter. Click to open the Filters menu."] = "结果已被当前过滤器隐藏。点击打开过滤器菜单。",
 	["Click to change how history is filtered."] = "点击更改历史记录的过滤方式。",
 	["Click to open the Filters menu."] = "点击打开过滤器菜单。",
+	["Unknown name"] = "未知名称",
+	["This conversation was saved without the other player's name."] = "此对话保存时缺少对方玩家的名字。",
+	["Enter the name this conversation belongs to."] = "输入此对话所属的名字。",
+	["Enter the name of a player."] = "请输入一名玩家的名字。",
+	["This conversation of %s was saved without the other player's name."] = "%s 的此对话保存时缺少对方玩家的名字。",
+	["Enter the name of the player it was with. If you already have a conversation with that player, the messages are added to it."] = "输入与之对话的玩家名字。如果你已有与该玩家的对话，这些消息会合并进去。",
+	["A saved conversation had lost the other player's name. It is listed as \"Unknown name\" in the History Viewer, where you can give it a name."] = "有一段已保存的对话丢失了对方玩家的名字。它在聊天记录浏览器中显示为\"未知名称\"，你可以在那里为它指定名字。",
 	["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "点击消息窗口上的 %s 按钮，将在 WIM 的历史记录查看器中显示该用户的历史记录。",
 
 	-- Message input & formatting --

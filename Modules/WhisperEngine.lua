@@ -242,7 +242,34 @@ local function findWhisperWindowByBNetID(bnID)
 	return nil;
 end
 
+-- A Battle.net window open for a friend who has a character whisper target
+-- becomes that character's window.
+local function adoptTitleFriendWindow(bnID, target)
+	local bnWin = findWhisperWindowByBNetID(bnID);
+	local key = safeName(target);
+	if(not bnWin or (Windows[key] and Windows[key] ~= bnWin)) then
+		return;
+	end
+	Windows[safeName(bnWin.theUser)] = nil;
+	Windows[key] = bnWin;
+	bnWin:Rename(target);
+	bnWin.isBN = nil;
+	for k in pairs(bnWin.bn) do
+		bnWin.bn[k] = nil;
+	end
+	bnWin:UpdateIcon();
+end
+
 local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
+	if isBN then
+		-- the default chat whispers such a friend by character; do the same.
+		local titleTarget = GetBNTitleFriendTarget(bnID);
+		if titleTarget then
+			adoptTitleFriendWindow(bnID, titleTarget);
+			user, isBN, bnID = titleTarget, nil, nil;
+		end
+	end
+
 	if isBN then
 		local _;
 		local bnWin = findWhisperWindowByBNetID(bnID);

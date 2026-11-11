@@ -234,7 +234,7 @@ local function forEachWhisperConvo(realm, character, convos, fn)
     for convo, tbl in pairs(convos) do
         local last = type(tbl) == "table" and tbl[#tbl];
         if(type(last) == "table" and last.type == 1 and not (tbl.info and tbl.info.chat)
-            and type(convo) == "string" and convo ~= "") then
+            and IsNamedHistoryConvo(convo)) then
             local target = convo;
             if(qualify and not isBNName(convo) and not string.find(convo, "-", 1, true)) then
                 target = convo..realmSuffix;
@@ -337,7 +337,7 @@ end
 local function bnHistoryNames(win)
     if(win.isBN and win.bn and win.bn.id) then
         local _, _, btag, _, toonName = GetBNGetFriendInfoByID(win.bn.id);
-        return btag, (toonName ~= "" and toonName or nil);
+        return (btag ~= "" and btag or nil), (toonName ~= "" and toonName or nil);
     end
 end
 

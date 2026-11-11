@@ -275,3 +275,77 @@ function SummarizeHistoryTable(tbl)
     end
     return convos, records;
 end
+
+
+-- A conversation whose other player could not be named is kept under this key
+-- and listed as "Unknown name". A conversation key is never empty.
+UNNAMED_HISTORY_CONVO = "?";
+
+function IsNamedHistoryConvo(key)
+    return type(key) == "string" and key ~= "" and key ~= UNNAMED_HISTORY_CONVO;
+end
+
+local function recordTime(record)
+    return type(record) == "table" and tonumber(record.time) or 0;
+end
+
+local function byTimeThenOrder(a, b)
+    local ta, tb = recordTime(a.record), recordTime(b.record);
+    if (ta ~= tb) then
+        return ta < tb;
+    end
+    return a.order < b.order;
+end
+
+-- Move a conversation to another key in one character's table, merging by time
+-- when the target exists. Its records and inbound senders take the new key.
+function MoveHistoryConvo(convos, oldKey, newKey)
+    if (type(convos) ~= "table" or oldKey == nil or oldKey == newKey
+        or type(newKey) ~= "string" or newKey == "") then
+        return false, 0;
+    end
+    local src = convos[oldKey];
+    if (type(src) ~= "table") then
+        return false, 0;
+    end
+    local count = #src;
+    for i = 1, count do
+        local record = src[i];
+        if (type(record) == "table") then
+            if (record.convo == "" or record.convo == oldKey) then
+                record.convo = newKey;
+            end
+            if (record.inbound and (record.from == nil or record.from == "" or record.from == oldKey)) then
+                record.from = newKey;
+            end
+        end
+    end
+    convos[oldKey] = nil;
+    local dst = convos[newKey];
+    if (type(dst) ~= "table") then
+        convos[newKey] = src;
+        return true, count;
+    end
+    local merged = {};
+    for i = 1, #dst do
+        merged[#merged + 1] = { record = dst[i], order = #merged + 1 };
+    end
+    for i = 1, count do
+        merged[#merged + 1] = { record = src[i], order = #merged + 1 };
+    end
+    table.sort(merged, byTimeThenOrder);
+    for i = 1, #merged do
+        dst[i] = merged[i].record;
+    end
+    if (type(src.info) == "table") then
+        if (type(dst.info) ~= "table") then
+            dst.info = {};
+        end
+        for k, v in pairs(src.info) do
+            if (k ~= "menuHidden" and dst.info[k] == nil) then
+                dst.info[k] = v;
+            end
+        end
+    end
+    return true, count;
+end

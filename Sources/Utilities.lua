@@ -180,6 +180,8 @@ do
 		if not id then return user end
 
 		local _, _, accountId, _, toonName = WIM.GetBNGetFriendInfoByID(id)
+		if toonName == "" then toonName = nil end
+		if accountId == "" then accountId = nil end
 
 		return (shortName and toonName and (string.split(" ", toonName)) or toonName) or (accountId and string.split("#", accountId)) or '???';
 	end

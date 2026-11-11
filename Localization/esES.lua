@@ -339,6 +339,13 @@ local translations = {
 	["Results are hidden by the active filter. Click to open the Filters menu."] = "Los resultados están ocultos por el filtro activo. Haz clic para abrir el menú de filtros.",
 	["Click to change how history is filtered."] = "Haz clic para cambiar cómo se filtra el historial.",
 	["Click to open the Filters menu."] = "Haz clic para abrir el menú de filtros.",
+	["Unknown name"] = "Nombre desconocido",
+	["This conversation was saved without the other player's name."] = "Esta conversación se guardó sin el nombre del otro jugador.",
+	["Enter the name this conversation belongs to."] = "Introduce el nombre al que pertenece esta conversación.",
+	["Enter the name of a player."] = "Introduce el nombre de un jugador.",
+	["This conversation of %s was saved without the other player's name."] = "Esta conversación de %s se guardó sin el nombre del otro jugador.",
+	["Enter the name of the player it was with. If you already have a conversation with that player, the messages are added to it."] = "Introduce el nombre del jugador con el que la mantuviste. Si ya tienes una conversación con ese jugador, los mensajes se añaden a ella.",
+	["A saved conversation had lost the other player's name. It is listed as \"Unknown name\" in the History Viewer, where you can give it a name."] = "Una conversación guardada había perdido el nombre del otro jugador. Aparece como \"Nombre desconocido\" en el Visor de historial, donde puedes darle un nombre.",
 	["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Al hacer clic en el botón %s de la ventana de mensajes se mostrará el historial de ese usuario en el visor de historial de WIM.",
 
 	-- Message input & formatting --

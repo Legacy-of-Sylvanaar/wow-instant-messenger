@@ -393,6 +393,9 @@ end
 
 
 local function getPlayerHistoryTable(convoName)
+    if(type(convoName) ~= "string" or convoName == "") then
+        convoName = UNNAMED_HISTORY_CONVO;
+    end
     if(history[env.realm] and history[env.realm][env.character] and history[env.realm][env.character][convoName]) then
         return history[env.realm][env.character][convoName];
     else
@@ -484,6 +487,23 @@ local function safeName(user)
 	return string.lower(user or "")
 end
 
+local function plainName(value)
+    if(IsSecretValue(value) or type(value) ~= "string" or value == "" or string.find(value, "|K", 1, true)) then
+        return nil;
+    end
+    return value;
+end
+
+-- History key for a Battle.net account. A WoW Forever character friend has no
+-- BattleTag (the field is "", not nil), so fall back to a character name.
+local function bnHistoryKey(bnId, eventName)
+    local _, _, btag, _, toonName = GetBNGetFriendInfoByID(bnId);
+    if(not IsSecretValue(btag) and type(btag) == "string" and btag ~= "") then
+        return btag;
+    end
+    return plainName(eventName) or plainName(toonName) or GetBNTitleFriendTarget(bnId) or UNNAMED_HISTORY_CONVO;
+end
+
 --BNet_GetValidatedCharacterName
 local function recordWhisper(inbound, ...)
     local msg, from = ...;
@@ -491,16 +511,13 @@ local function recordWhisper(inbound, ...)
 	   	return
 	end
     local db = db.history.whispers;
-    local win = windows.active.whisper[safeName(from)] or windows.active.chat[from] or windows.active.w2w[safeName(from)];
-    if (win and (lists.gm[from] or db.all or (db.friends and (lists.friends[from] or win.isBN)) or (db.guild and lists.guild[from]))) then
+    local pid = _G.BNet_GetBNetIDAccount(from);
+    local convo = pid and bnHistoryKey(pid, from) or from;
+    local win = windows.active.whisper[safeName(from)] or windows.active.chat[from] or windows.active.w2w[safeName(from)]
+        or (pid and windows.active.whisper[safeName(convo)]);
+    if (win and (lists.gm[from] or db.all or (db.friends and (lists.friends[from] or win.isBN or pid)) or (db.guild and lists.guild[from]))) then
         win.widgets.history:SetHistory(true);
-        --If realid/btag whisper, we save them under btag to avoid caching issues
-        --(ie NAME is encoded and changes every session, we can't use that to save whispers, plus if user dumps cache, they all return unknown)
-        local pid = _G.BNet_GetBNetIDAccount(from)
-        if pid then
-        	local _, _, btag, _, toonName = GetBNGetFriendInfoByID(pid)
-			from = btag or toonName or from
-		end
+        from = convo;
 
         local history = getPlayerHistoryTable(from);
         history.info.gm = lists.gm[from];
@@ -664,7 +681,7 @@ end
 -- `user` on any of this account's characters. Other characters' history finishes loading
 -- a few seconds after login; anything still queued is loaded first.
 function ForEachWhisperConvoWith(user, fn)
-    if(type(history) ~= "table" or type(user) ~= "string" or user == "") then
+    if(type(history) ~= "table" or not IsNamedHistoryConvo(user)) then
         return;
     end
     if(#historyLoadQueue > 0) then
@@ -740,9 +757,10 @@ function History:OnWindowCreated(win)
 		local bnId = win.isBN and win.bn.id;
 		local name = win.theUser;
 		if (bnId) then
-			local _, _, btag, _, toonName = GetBNGetFriendInfoByID(bnId);
-			user = btag or toonName or user
-			name = db.streamMode and (string.split("#", user)) or user
+			user = bnHistoryKey(bnId, user);
+			if (user ~= UNNAMED_HISTORY_CONVO) then
+				name = db.streamMode and (string.split("#", user)) or user
+			end
 		end
 
 		local history = history[env.realm] and history[env.realm][env.character] and history[env.realm][env.character][user];
@@ -3009,6 +3027,8 @@ local function createHistoryViewer()
                         -- (see OnClick) rather than selecting a conversation.
                         -- Real rows restore the delete X below, since scroll
                         -- rows are recycled.
+                        self.rename:Hide();
+                        self.text:SetPoint("BOTTOMRIGHT", -18, 0);
                         if (user == FILTERED_USER_MARKER) then
                             self.user = nil;
                             self.text:SetText("     |cff808080"..L["-- Results Filtered --"].."|r");
@@ -3016,6 +3036,16 @@ local function createHistoryViewer()
                             return;
                         end
                         self.delete:Show();
+                        if (user == UNNAMED_HISTORY_CONVO) then
+                            self.user = user;
+                            self.rename:Show();
+                            self.text:SetPoint("BOTTOMRIGHT", -36, 0);
+                            self.text:SetText("     |cff808080"..L["Unknown name"].."|r");
+                            if(user == win.SELECT) then
+                                self:Click();
+                            end
+                            return;
+                        end
                         local original, extra, color = user, "";
                         local gmTag
                         user, gmTag = string.match(original, "([^*]+)(*?)$");
@@ -3029,8 +3059,10 @@ local function createHistoryViewer()
                             color = "fff569";
                         end
                         if not user then
-                        	_G.print("Your WIM history is damaged beyond repair and must be erased before it can be used again do to having conversation with a realid friend that has no battletag. This bug has been fixed in WIM but your history cannot be repaired")
-                       		return
+                            self.user = nil;
+                            self.text:SetText("");
+                            self.delete:Hide();
+                            return;
                         end
                         self.user = user;
                         local suffix = extra..(gmTag == "*" and " |TInterface\\ChatFrame\\UI-ChatIcon-Blizz.blp:0:2:0:0|t" or "");
@@ -3058,6 +3090,9 @@ local function createHistoryViewer()
                         if (not self.user and self:IsShown() and db.showToolTips == true) then
                             _G.GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
                             _G.GameTooltip:SetText(L["Results are hidden by the active filter. Click to open the Filters menu."]);
+                        elseif (self.user == UNNAMED_HISTORY_CONVO and db.showToolTips == true) then
+                            _G.GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+                            _G.GameTooltip:SetText(L["This conversation was saved without the other player's name."]);
                         end
                     end);
                 button:SetScript("OnLeave", function(self)
@@ -3077,7 +3112,12 @@ local function createHistoryViewer()
                         -- (win.USER = "@BN@") -- in the section-wide view the
                         -- clicked ROW carries the BattleTag instead.
                         local _isBN = (_bnRealm == BN_PSEUDO_REALM);
-                        local _bnKey = (_bnHandle ~= "" and _bnHandle) or self:GetParent().user;
+                        local _rowUser = self:GetParent().user;
+                        if (not _rowUser) then
+                            return;
+                        end
+                        local _rowLabel = (_rowUser == UNNAMED_HISTORY_CONVO) and L["Unknown name"] or _rowUser;
+                        local _bnKey = (_bnHandle ~= "" and _bnHandle) or _rowUser;
                         local _popupText;
                         if (_isBN) then
                             -- Extra-explicit warning, because the
@@ -3093,7 +3133,7 @@ local function createHistoryViewer()
                             -- when one is active, so the prompt names the
                             -- actual scope being deleted from.
                             _popupText = _G.format(L["Are you sure you want to delete all history saved for %s on %s?"],
-                                "|cff69ccf0"..self:GetParent().user.."|r",
+                                "|cff69ccf0".._rowLabel.."|r",
                                 "|cff69ccf0"..(win.USERLABEL or win.USER).."|r"
                                 );
                         end
@@ -3154,8 +3194,8 @@ local function createHistoryViewer()
                                         history[emptiedRealms[i]] = nil;
                                     end
                                 elseif(realm and character and history[realm] and history[realm][character]) then
-                                    history[realm][character][self:GetParent().user] = nil;
-                                    MarkHistoryDirty(realm, character, self:GetParent().user);
+                                    history[realm][character][_rowUser] = nil;
+                                    MarkHistoryDirty(realm, character, _rowUser);
                                     -- Preserve the active character's
                                     -- splice slot even when fully emptied; see
                                     -- the matching note in deleteOldHistory().
@@ -3173,8 +3213,8 @@ local function createHistoryViewer()
                                     -- shows: the bucket's characters.
                                     for char, convos in pairs(history[realm]) do
                                         if (not win.USERSUBSET or win.USERSUBSET[char]) then
-                                            convos[self:GetParent().user] = nil;
-                                            MarkHistoryDirty(realm, char, self:GetParent().user);
+                                            convos[_rowUser] = nil;
+                                            MarkHistoryDirty(realm, char, _rowUser);
                                             if(isEmptyTable(convos)
                                                 and not (realm == env.realm and char == env.character))
                                             then
@@ -3199,6 +3239,26 @@ local function createHistoryViewer()
                             hideOnEscape = 1
                         };
                         WIM.utils.dialog.create("WIM_DELETE_HISTORY");
+                    end);
+
+                button.rename = CreateFrame("Button", nil, button);
+                button.rename:SetNormalTexture("Interface\\Buttons\\UI-GuildButton-PublicNote-Up");
+                button.rename:SetHighlightTexture("Interface\\Buttons\\UI-GuildButton-PublicNote-Up", "ADD");
+                button.rename:SetWidth(14);
+                button.rename:SetHeight(14);
+                button.rename:SetPoint("RIGHT", button.delete, "LEFT", -2, 0);
+                button.rename:Hide();
+                button.rename:SetScript("OnClick", function(self)
+                        win.NameUnnamedConvo();
+                    end);
+                button.rename:SetScript("OnEnter", function(self)
+                        if (db.showToolTips == true) then
+                            _G.GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+                            _G.GameTooltip:SetText(L["Enter the name this conversation belongs to."]);
+                        end
+                    end);
+                button.rename:SetScript("OnLeave", function(self)
+                        _G.GameTooltip:Hide();
                     end);
 
                 table.insert(win.nav.userList.scroll.buttons, button);
@@ -3827,6 +3887,150 @@ local function createHistoryViewer()
     end
 
 
+    local function unnamedConvoHolders()
+        local realm, character = string.match(win.USER, "^([^/]+)/?(.*)$");
+        local holders = {};
+        if (realm and realm ~= BN_PSEUDO_REALM and type(history[realm]) == "table") then
+            for char, convos in pairs(history[realm]) do
+                local inScope = (character ~= "" and char == character)
+                    or (character == "" and (not win.USERSUBSET or win.USERSUBSET[char]));
+                if (inScope and type(convos) == "table" and type(convos[UNNAMED_HISTORY_CONVO]) == "table") then
+                    table.insert(holders, char);
+                end
+            end
+        end
+        table.sort(holders, compareNames);
+        return realm, holders;
+    end
+
+    local function convoKeyForTypedName(realm, character, typed)
+        local name = string.trim(typed or "");
+        if (name == "" or string.find(name, "[*/|]")) then
+            return nil;
+        end
+        if (isForever and not isBNConvoKey(name) and string.find(name, "^[^%s%-]+%-[^%s%-]+$")) then
+            name = string.gsub(name, "%-", " ");
+        elseif (not isForever and not isBNConvoKey(name)) then
+            local bare, typedRealm = string.match(name, "^(.-)%-(.+)$");
+            if (bare and bare ~= "" and realmKey(typedRealm) == realmKey(realm)) then
+                name = bare;
+            end
+        end
+        local lowered = string.lower(name);
+        local characters = history[realm] or {};
+        local function existingKey(convos)
+            if (type(convos) ~= "table") then
+                return nil;
+            end
+            for convo, tbl in pairs(convos) do
+                if (IsNamedHistoryConvo(convo) and string.lower(convo) == lowered
+                    and type(tbl) == "table" and not (tbl.info and tbl.info.chat)) then
+                    return convo;
+                end
+            end
+        end
+        local key = existingKey(characters[character]);
+        if (not key) then
+            for _, convos in pairs(characters) do
+                key = existingKey(convos);
+                if (key) then
+                    break;
+                end
+            end
+        end
+        if (not key) then
+            key = isBNConvoKey(name) and name or utils.FormatUserName(name);
+        end
+        return IsNamedHistoryConvo(key) and key or nil;
+    end
+
+    local function nameUnnamedConvo(realm, character, typed)
+        local convos = history[realm] and history[realm][character];
+        local key = type(convos) == "table" and convoKeyForTypedName(realm, character, typed);
+        if (not key or type(convos[UNNAMED_HISTORY_CONVO]) ~= "table") then
+            return false;
+        end
+        local existing = convos[key];
+        if (type(existing) == "table" and existing.info and existing.info.chat) then
+            return false;
+        end
+        MoveHistoryConvo(convos, UNNAMED_HISTORY_CONVO, key);
+        MarkHistoryDirty(realm, character, UNNAMED_HISTORY_CONVO);
+        MarkHistoryDirty(realm, character, key);
+        win.SELECT = key;
+        win.UpdateUserList();
+        win:SelectConvo(key);
+        win.nav.userList.scroll.update();
+        return true;
+    end
+
+    local function dialogEditBox(dialog)
+        if (dialog.GetEditBox) then
+            return dialog:GetEditBox();
+        end
+        return dialog.EditBox or dialog.editBox or _G[dialog:GetName().."EditBox"];
+    end
+
+    -- Ask who the unnamed conversation was with and move its messages there.
+    win.NameUnnamedConvo = function()
+        local realm, holders = unnamedConvoHolders();
+        local character = holders[1];
+        if (not character) then
+            return;
+        end
+        if (#holders > 1) then
+            win.SELECT = UNNAMED_HISTORY_CONVO;
+            selectValue(realm.."/"..character);
+        end
+        local function accept(dialog)
+            local editBox = dialogEditBox(dialog);
+            if (nameUnnamedConvo(realm, character, editBox and editBox:GetText() or "")) then
+                return true;
+            end
+            if (_G.UIErrorsFrame) then
+                _G.UIErrorsFrame:AddMessage(L["Enter the name of a player."], 1, 0.1, 0.1);
+            end
+            return false;
+        end
+        _G.StaticPopupDialogs["WIM_NAME_HISTORY_CONVO"] = {
+            text = _G.format(L["This conversation of %s was saved without the other player's name."], "|cff69ccf0"..character.."|r")
+                .."\n\n"..L["Enter the name of the player it was with. If you already have a conversation with that player, the messages are added to it."],
+            button1 = _G.ACCEPT,
+            button2 = _G.CANCEL,
+            hasEditBox = 1,
+            maxLetters = 64,
+            OnShow = function(self)
+                local editBox = dialogEditBox(self);
+                if (editBox) then
+                    editBox:SetText("");
+                    editBox:SetFocus();
+                end
+            end,
+            OnHide = function(self)
+                local editBox = dialogEditBox(self);
+                if (editBox) then
+                    editBox:SetText("");
+                end
+            end,
+            OnAccept = function(self)
+                return not accept(self);
+            end,
+            EditBoxOnEnterPressed = function(self)
+                local dialog = self:GetParent();
+                if (accept(dialog)) then
+                    dialog:Hide();
+                end
+            end,
+            EditBoxOnEscapePressed = function(self)
+                self:GetParent():Hide();
+            end,
+            timeout = 0,
+            whileDead = 1,
+            hideOnEscape = 1
+        };
+        WIM.utils.dialog.create("WIM_NAME_HISTORY_CONVO");
+    end
+
     win.progressBar = CreateFrame("Frame", nil, win.content);
     win.progressBar:SetFrameStrata("TOOLTIP");
     win.progressBar:SetWidth(300); win.progressBar:SetHeight(65);
@@ -4388,6 +4592,31 @@ end
 -- EnsureHistoryCharacterLoaded so the staged background loader can do a few
 -- conversations per frame instead of a whole character at once -- a heavy
 -- character can take seconds to rebuild, which would be a visible freeze.
+local unnamedHistoryNoticed = false;
+local function noticeUnnamedHistory()
+    if (unnamedHistoryNoticed) then
+        return;
+    end
+    unnamedHistoryNoticed = true;
+    _G.DEFAULT_CHAT_FRAME:AddMessage("|cff69ccf0[WIM]|r "
+        ..L["A saved conversation had lost the other player's name. It is listed as \"Unknown name\" in the History Viewer, where you can give it a name."]);
+end
+
+-- Older versions could save a conversation under "". Load it as the unnamed
+-- conversation; the dirty marks drop the "" entry from the archive at logout.
+local function adoptUnnamedHistory(realm, character, convos)
+    local entry = _G.WIM3_HistoryArchive[realm] and _G.WIM3_HistoryArchive[realm][character];
+    local archived = entry and type(entry.convos) == "table" and entry.convos[UNNAMED_HISTORY_CONVO];
+    if (archived and convos[UNNAMED_HISTORY_CONVO] == nil) then
+        RehydrateHistoryConvo(realm, character, UNNAMED_HISTORY_CONVO, archived);
+    end
+    if (MoveHistoryConvo(convos, "", UNNAMED_HISTORY_CONVO)) then
+        MarkHistoryDirty(realm, character, "");
+        MarkHistoryDirty(realm, character, UNNAMED_HISTORY_CONVO);
+        noticeUnnamedHistory();
+    end
+end
+
 function RehydrateHistoryConvo(realm, character, convo, blob)
     local target = history[realm] and history[realm][character];
     if (not target or target[convo] ~= nil) then
@@ -4420,6 +4649,9 @@ function RehydrateHistoryConvo(realm, character, convo, blob)
         return false;
     end
     target[convo] = tbl;
+    if (convo == "") then
+        adoptUnnamedHistory(realm, character, target);
+    end
     return true;
 end
 
@@ -4691,6 +4923,9 @@ function History:OnBeforeInitialized()
                     local archEntry = _G.WIM3_HistoryArchive[realm]
                                       and _G.WIM3_HistoryArchive[realm][character];
                     local archConvos = archEntry and archEntry.convos;
+                    if (MoveHistoryConvo(convos, "", UNNAMED_HISTORY_CONVO)) then
+                        noticeUnnamedHistory();
+                    end
                     for convo, convoTbl in pairs(convos) do
                         if (type(convoTbl) == "table") then
                             if (archConvos and archConvos[convo] ~= nil) then

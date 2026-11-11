@@ -347,6 +347,13 @@ WIM.AddLocale("enUS", {
     ["Results are hidden by the active filter. Click to open the Filters menu."] = true,
     ["Click to change how history is filtered."] = true,
     ["Click to open the Filters menu."] = true,
+    ["Unknown name"] = true,
+    ["This conversation was saved without the other player's name."] = true,
+    ["Enter the name this conversation belongs to."] = true,
+    ["Enter the name of a player."] = true,
+    ["This conversation of %s was saved without the other player's name."] = true,
+    ["Enter the name of the player it was with. If you already have a conversation with that player, the messages are added to it."] = true,
+    ["A saved conversation had lost the other player's name. It is listed as \"Unknown name\" in the History Viewer, where you can give it a name."] = true,
     ["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = true,
 
     -- Message input & formatting --
