@@ -157,6 +157,7 @@ db_defaults.winCascade = {
 		direction = 8
 	};
 db_defaults.winFade = true;
+db_defaults.winFadeAmount = 50;
 db_defaults.winAnimation = true;
 db_defaults.wordwrap_indent = false;
 db_defaults.coloredNames = true;
@@ -196,8 +197,9 @@ local WindowSoupBowl = {
 }
 
 local FadeProps = {
-	min = .5,
-	max = 1,
+	-- min & max are deprecated since we have a defined value set now.
+	-- min = .5,
+	-- max = 1,
 	interval = .25,
 	delay = 2
 };
@@ -647,7 +649,7 @@ end
 
 local function animateFade(obj, directionIn, force)
         local fadeAnimator = obj.animators.fade
-        local to = directionIn and FadeProps.max or FadeProps.min
+        local to = directionIn and 1 or (db.winFadeAmount / 100)
         local from = obj:GetAlpha()
 
         if force then

@@ -904,6 +904,45 @@ function ui.SoundRow(category, name, tooltip, dbTree, flagKey, flagDefault, soun
     return { setting = flagSetting, soundSetting = soundSetting, init = init };
 end
 
+-- A slider row, consisting of a checkbox to enable/disable and a slider to adjust a value.
+function ui.SliderRow(category, name, tooltip, dbTree, enableKey, default, sliderName, sliderTooltip, sliderDbTree, sliderKey, sliderDefault, min, max, onChange)
+	local useSlider, sliderValue;
+	useSlider = Settings.RegisterProxySetting(category, nextVariable(),
+        Settings.VarType.Boolean, name, default and true or false,
+        function() return resolveTree(dbTree)[enableKey] and true or false; end,
+        function(value)
+            value = value and true or false;
+            resolveTree(dbTree)[enableKey] = value;
+            options.DebugSetting("modern", enableKey, value);
+			if (onChange) then onChange(value); end
+        end);
+    table.insert(allSettings, useSlider);
+
+    sliderValue = Settings.RegisterProxySetting(category, nextVariable(),
+        Settings.VarType.Number, sliderName, sliderDefault,
+        function() return resolveTree(sliderDbTree)[sliderKey]; end,
+        function(value)
+            resolveTree(sliderDbTree)[sliderKey] = value;
+            options.DebugSetting("modern", sliderKey, value);
+            if (onChange) then onChange(value); end
+        end);
+    table.insert(allSettings, sliderValue);
+
+	local minValue, maxValue, step = min or 0, max or 100, 1;
+	local options = Settings.CreateSliderOptions(minValue, maxValue, step);
+	options:SetLabelFormatter(_G.MinimalSliderWithSteppersMixin.Label.Right, FormatPercentageRounded)
+
+	local initializer = _G.CreateSettingsCheckboxSliderInitializer(
+		useSlider, name, tooltip,
+		sliderValue, options, sliderName, sliderTooltip);
+	local layout = layoutForCategory(category);
+	if (layout) then
+		layout:AddInitializer(initializer);
+	end;
+
+    return { useSlider = useSlider, sliderValue = sliderValue, init = initializer };
+end
+
 -- A multiselect dropdown, the way the game's own options render
 -- bitfield settings: a standard dropdown whose menu rows are checkboxes
 -- and whose button text lists the selection. items is an ordered array

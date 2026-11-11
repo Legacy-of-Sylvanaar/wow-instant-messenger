@@ -1667,8 +1667,12 @@ RegisterModernPage(function(category, ui)
         ui.Slider(cat, L["Window Opacity"], db_defaults.windowAlpha, 1, 100, 1,
             db, "windowAlpha",
             L["Fades the window frame, header, and buttons; message and input text stay opaque. Modern skins keep their frame art opaque."], props, pct);
-        ui.Checkbox(cat, L["Fade When Inactive"], db_defaults.winFade, db, "winFade",
-            L["Windows fade to half opacity after two seconds without the mouse over them."]);
+		ui.SliderRow(cat, L["Fade When Inactive"], L["Windows fade after two seconds without the mouse over them."],
+			db, "winFade", db_defaults.winFade,
+			L["Amount to Fade"], L["Amount of fade when inactive"],
+			db, "winFadeAmount", db_defaults.winFadeAmount, 0, 100,
+			props
+		);
         ui.Checkbox(cat, L["Window Animations"], db_defaults.winAnimation, db, "winAnimation",
             L["Animates closing windows toward the minimap, and the slide used by combat auto-hide and the show/hide key binding."]);
         ui.Checkbox(cat, L["Shortcut Bar"], true,
