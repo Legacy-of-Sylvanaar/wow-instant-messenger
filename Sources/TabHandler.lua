@@ -505,7 +505,7 @@ local function createTabGroup()
             end
             if( not win.popNoShow ) then
                 self:SetSelectedName(win);
-                win:Show();
+				win:Show();
                 if(inFocus) then
                     win.widgets.msg_box:SetFocus()
                 end

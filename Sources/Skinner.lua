@@ -497,6 +497,13 @@ local function buildWindowChrome(obj)
     local chrome = CreateFrame("Frame", nil, obj);
     chrome:SetAllPoints();
     chrome:SetFrameLevel(obj:GetFrameLevel());
+	chrome.hitbox = CreateFrame("Frame", nil, chrome);
+	chrome.hitbox.parentWindow = obj
+	chrome.hitbox:EnableMouseMotion(true);
+
+	-- chrome.hitbox.debug = chrome.hitbox:CreateTexture(nil, "BACKGROUND");
+	-- chrome.hitbox.debug:SetAllPoints();
+	-- chrome.hitbox.debug:SetColorTexture(1, 0, 0, 0.5); -- semi-transparent red for debugging
 
     -- Apply the layout first. The portrait variant's left pieces sit
     -- 13px outside the frame, 5px further than the plain layout's, which
@@ -1985,6 +1992,11 @@ function ApplyModernThemeToWindow(obj)
 	if (chrome) then
 		local apply = _G.NineSliceUtil and _G.NineSliceUtil.ApplyLayoutByName;
 		local success = (apply and (pcall(apply, chrome, skin.message_window.chrome.layout)))
+		if (success) then
+			chrome.hitbox:ClearAllPoints();
+			chrome.hitbox:SetPoint("TOPLEFT", chrome.TopLeftCorner);
+			chrome.hitbox:SetPoint("BOTTOMRIGHT", chrome.BottomRightCorner);
+		end
 	end
 
     -- One debug-log line per apply/teardown transition; steady-state
