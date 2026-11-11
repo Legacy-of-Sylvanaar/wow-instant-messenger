@@ -1362,7 +1362,7 @@ local function instantiateWindow(obj)
 						self.widgets.from:SetText(utils.GetPrivateBNetName(self.theUser));
 
 					-- show toon name if different
-					elseif (toonName and toonName ~= "") then
+					elseif (toonName and toonName ~= "" and toonName ~= self.theUser) then
                         self.widgets.from:SetText(utils.GetReadableName(self.theUser).." ("..toonName..")");
                     end
 					self:UpdateIcon();
