@@ -111,6 +111,8 @@ local function applySkin(tabStrip)
     tabStrip.nextButton:ClearAllPoints();
     tabStrip.nextButton:SetPoint("LEFT", tabStrip, "RIGHT", 0, 0);
     tabStrip.nextButton:SetWidth(skinTable.textures.next.width); tabStrip.nextButton:SetHeight(skinTable.textures.next.height);
+
+	tabStrip:UpdateTabs(true);
 end
 
 -- modify and manage tab offsets. pass 1 or -1. will always increment/decriment by 1.
