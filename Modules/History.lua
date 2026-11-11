@@ -3576,8 +3576,8 @@ local function createHistoryViewer()
             win.nav.userList.scroll:Show();
         end);
 
-    -- default to the realm-wide view: conversations from all of this realm's characters.
-    win.USER = env.realm;
+    -- the first view of a session is the character you are logged in as.
+    win.USER = env.realm.."/"..env.character;
     win.USERSUBSET = nil;   -- bucket restriction; see selectValue
     win.USERLABEL = nil;    -- display label matching USER (+ bucket suffix)
     win.USERLIST = {};
