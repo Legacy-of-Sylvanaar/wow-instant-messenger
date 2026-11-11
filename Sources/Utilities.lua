@@ -488,7 +488,6 @@ do
 
 					if (texture._atlas and target.SetTextureSliceMargins) then
 						if (type(texture.sliceData) == "table") then
-							utils.debug.dump(texture)
 							target:SetTextureSliceMargins(
 								texture.sliceData.marginLeft or 0,
 								texture.sliceData.marginTop or 0,
