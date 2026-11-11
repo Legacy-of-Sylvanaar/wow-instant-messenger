@@ -498,6 +498,7 @@ local function buildWindowChrome(obj)
     chrome:SetAllPoints();
     chrome:SetFrameLevel(obj:GetFrameLevel());
 	chrome.hitbox = CreateFrame("Frame", nil, chrome);
+	chrome.hitbox:SetFrameStrata("BACKGROUND");
 	chrome.hitbox.parentWindow = obj
 	chrome.hitbox:EnableMouseMotion(true);
 

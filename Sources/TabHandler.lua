@@ -4,10 +4,9 @@ local WIM = WIM;
 local _G = _G;
 local CreateFrame = CreateFrame;
 local IsShiftKeyDown = IsShiftKeyDown;
-local GetMouseFocus = WIM.utils.compat.GetMouseTopFocus;
 local table = table;
-local pairs = pairs;
 local math = math;
+local unpack = unpack;
 
 -- set namespace
 setfenv(1, WIM);
@@ -17,7 +16,6 @@ db_defaults.tabs = {
 };
 
 local tabsPerStrip = 10;
-local minimumWidth = 75;
 
 local tabGroups = {};
 
@@ -58,40 +56,63 @@ local function getIndexFromTable(tbl, item)
 end
 
 local function applySkinToTab(tab, skinTable)
-    tab:SetHighlightTexture(skinTable.textures.tab.HighlightTexture, skinTable.textures.tab.HighlightAlphaMode);
-    tab:SetTexture(skinTable.textures.tab.NormalTexture);
-    tab:SetSelectedTexture(skinTable.textures.tab.PushedTexture);
+	local highlightTexture, highlightAlpha, normalTexture, pushedTexture, text =
+		skinTable.textures.tab.HighlightTexture, skinTable.textures.tab.HighlightAlphaMode,
+		skinTable.textures.tab.NormalTexture, skinTable.textures.tab.PushedTexture,
+		skinTable.text;
+
+	tab:SetHighlightTexture(highlightTexture, highlightAlpha);
+    tab:SetTexture(normalTexture);
+    tab:SetSelectedTexture(pushedTexture);
+
     local hlt = tab:GetHighlightTexture();
-    if(hlt) then
+
+	if(hlt) then
         hlt:ClearAllPoints();
         hlt:SetAllPoints();
     end
-    if(skinTable.text) then
-        SetWidgetFont(tab.text, skinTable.text);
+
+	-- font
+	if(text) then
+		-- padding
+		local paddingLeft, paddingRight, paddingTop, paddingBottom = unpack(text.padding or {0, 0, 0, 0});
+		tab.text:ClearAllPoints();
+		tab.text:SetPoint("TOPLEFT", tab, "TOPLEFT", paddingLeft, -paddingTop);
+		tab.text:SetPoint("BOTTOMRIGHT", tab, "BOTTOMRIGHT", -paddingRight, paddingBottom);
+
+		-- font
+        SetWidgetFont(tab.text, text);
+
+		-- font height
+		local path, _, flags = tab.text:GetFont();
+		tab.text:SetFont(path, text.font_height or 12, flags);
     end
 end
 
 -- update tabStip with propper skin layout.
 local function applySkin(tabStrip)
     local skinTable = GetSelectedSkin().tab_strip;
-    for i=1,table.getn(tabStrip.tabs) do
+
+	local gap, scrollMargin, vertical = skinTable.gap or 0, skinTable.scrollMargin or 0, skinTable.vertical;
+
+    for i=1, #tabStrip.tabs do
         local tab = tabStrip.tabs[i];
         tab:ClearAllPoints();
-        if(skinTable.vertical) then
+        if(vertical) then
             if(i == 1) then
                 tab:SetPoint("TOPLEFT", tabStrip, "TOPLEFT");
                 tab:SetPoint("TOPRIGHT", tabStrip, "TOPRIGHT");
             else
-                tab:SetPoint("TOPLEFT", tabStrip.tabs[i-1], "BOTTOMLEFT");
-                tab:SetPoint("TOPRIGHT", tabStrip.tabs[i-1], "BOTTOMRIGHT");
+                tab:SetPoint("TOPLEFT", tabStrip.tabs[i-1], "BOTTOMLEFT", 0, gap);
+                tab:SetPoint("TOPRIGHT", tabStrip.tabs[i-1], "BOTTOMRIGHT", 0, gap);
             end
         else
             if(i == 1) then
                 tab:SetPoint("TOPLEFT", tabStrip, "TOPLEFT");
                 tab:SetPoint("BOTTOMLEFT", tabStrip, "BOTTOMLEFT");
             else
-                tab:SetPoint("TOPLEFT", tabStrip.tabs[i-1], "TOPRIGHT");
-                tab:SetPoint("BOTTOMLEFT", tabStrip.tabs[i-1], "BOTTOMRIGHT");
+                tab:SetPoint("TOPLEFT", tabStrip.tabs[i-1], "TOPRIGHT", gap, 0);
+                tab:SetPoint("BOTTOMLEFT", tabStrip.tabs[i-1], "BOTTOMRIGHT", gap, 0);
             end
         end
         applySkinToTab(tab, skinTable);
@@ -106,11 +127,19 @@ local function applySkin(tabStrip)
     tabStrip.prevButton:SetDisabledTexture(skinTable.textures.prev.DisabledTexture);
 
     tabStrip.prevButton:ClearAllPoints();
-    tabStrip.prevButton:SetPoint("RIGHT", tabStrip, "LEFT", 0, 0);
-    tabStrip.prevButton:SetWidth(skinTable.textures.prev.width); tabStrip.prevButton:SetHeight(skinTable.textures.prev.height);
     tabStrip.nextButton:ClearAllPoints();
-    tabStrip.nextButton:SetPoint("LEFT", tabStrip, "RIGHT", 0, 0);
-    tabStrip.nextButton:SetWidth(skinTable.textures.next.width); tabStrip.nextButton:SetHeight(skinTable.textures.next.height);
+
+	if (vertical) then
+		tabStrip.prevButton:SetPoint("BOTTOM", tabStrip, "TOP", 0, scrollMargin);
+		tabStrip.prevButton:SetWidth(skinTable.textures.prev.width); tabStrip.prevButton:SetHeight(skinTable.textures.prev.height);
+		tabStrip.nextButton:SetPoint("TOP", tabStrip, "BOTTOM", 0, -scrollMargin);
+		tabStrip.nextButton:SetWidth(skinTable.textures.next.width); tabStrip.nextButton:SetHeight(skinTable.textures.next.height);
+	else
+		tabStrip.prevButton:SetPoint("RIGHT", tabStrip, "LEFT", -scrollMargin, 0);
+		tabStrip.prevButton:SetWidth(skinTable.textures.prev.width); tabStrip.prevButton:SetHeight(skinTable.textures.prev.height);
+		tabStrip.nextButton:SetPoint("LEFT", tabStrip, "RIGHT", scrollMargin, 0);
+		tabStrip.nextButton:SetWidth(skinTable.textures.next.width); tabStrip.nextButton:SetHeight(skinTable.textures.next.height);
+	end
 
 	tabStrip:UpdateTabs(true);
 end
@@ -149,12 +178,19 @@ end
 -- create a tabStrip object and register it to table TabGroups.
 -- returns the tabStrip just created.
 local function createTabGroup()
-    local stripName = "WIM_TabStrip"..(table.getn(tabGroups) + 1);
+    local stripName = "WIM_TabStrip"..(#tabGroups + 1);
     local tabStrip = CreateFrame("Frame", stripName, WindowParent);
     tabStrip:SetFrameStrata("DIALOG");
     tabStrip:SetToplevel(true);
-    --tabStrip:SetWidth(384);
-    --tabStrip:SetHeight(32);
+	tabStrip:EnableMouseMotion(true);
+
+	-- tabStrip.debug = tabStrip:CreateTexture(nil, "BACKGROUND");
+	-- tabStrip.debug:SetAllPoints();
+	-- tabStrip.debug:SetColorTexture(1, 0, 0, 0.3);
+
+	tabStrip:SetScript("OnMouseWheel", function(self, direction)
+        setTabOffset(self, -direction);
+    end);
 
     -- properties, tags, trackers
     tabStrip.attached = {};
@@ -176,6 +212,7 @@ local function createTabGroup()
         tab.text = tab:CreateFontString(tab:GetName().."Text", "OVERLAY", "ChatFontNormal")
         tab.text:ClearAllPoints();
         tab.text:SetAllPoints();
+		tab.text:SetMaxLines(1);
         tab.tabIndex = i;
         tab.tabStrip = tabStrip;
         tab.left = tab:CreateTexture(stripName.."_Tab"..i.."Backdrop_L", "BORDER");
@@ -394,14 +431,25 @@ local function createTabGroup()
             return;
         end
 
-        -- re-order tabs & sizing
-        local curSize;
+        local levelOffset, curSize, minimumWidth, gap = skinTable.levelOffset or 0, 0, skinTable.minimumSize, skinTable.gap;
+
+		-- set level offset
+		if (self.parentWindow) then
+			if (self.parentWindow.winChrome) then
+				self:SetFrameLevel(self.parentWindow.winChrome:GetFrameLevel() + levelOffset);
+			else
+				self:SetFrameLevel(self.parentWindow:GetFrameLevel() + levelOffset);
+			end
+		end
+
+
+		-- re-order tabs & sizing
         if(skinTable.vertical) then
             curSize = self:GetHeight();
         else
             curSize = self:GetWidth();
         end
-        local count = math.floor(curSize / minimumWidth);
+        local count = math.floor(curSize / (minimumWidth + (gap * .5)));
         self.visibleCount = count;
 
         if(not ignoreOffset) then
@@ -426,30 +474,32 @@ local function createTabGroup()
         if((self.curOffset + count) > #self.attached) then
             self.curOffset = math.max(#self.attached - count , 0);
         end
+
         if(count >= #self.attached) then
-		count = #self.attached;
-		self.nextButton:Hide();
-		self.prevButton:Hide();
-	else
-		self.nextButton:Show();
-		self.prevButton:Show();
-
-		self.prevButton.parentWindow = self:GetParent();
-		self.nextButton.parentWindow = self:GetParent();
-
-		if(self.curOffset <= 0) then
-			self.curOffset = 0;
-			self.prevButton:Disable();
+			count = #self.attached;
+			self.nextButton:Hide();
+			self.prevButton:Hide();
 		else
-			self.prevButton:Enable();
+			self.nextButton:Show();
+			self.prevButton:Show();
+
+			self.prevButton.parentWindow = self:GetParent();
+			self.nextButton.parentWindow = self:GetParent();
+
+			if(self.curOffset <= 0) then
+				self.curOffset = 0;
+				self.prevButton:Disable();
+			else
+				self.prevButton:Enable();
+			end
+			if(self.curOffset >= #self.attached - count) then
+							self.curOffset = #self.attached - count;
+				self.nextButton:Disable();
+			else
+				self.nextButton:Enable();
+			end
 		end
-		if(self.curOffset >= #self.attached - count) then
-                        self.curOffset = #self.attached - count;
-			self.nextButton:Disable();
-		else
-			self.nextButton:Enable();
-		end
-	end
+
         for i=1,tabsPerStrip do
             local tab = self.tabs[i];
             if(i <= count) then
@@ -469,9 +519,10 @@ local function createTabGroup()
                 tab.childObj = nil;
                 tab:SetText("");
             end
+
             --include logic here to show selected tab or not.
-            tab:SetWidth(curSize/count);
-            tab:SetHeight(curSize/count);
+            tab:SetWidth((curSize - (gap * (count - 1))) / count);
+            tab:SetHeight((curSize - (gap * (count - 1))) / count);
         end
     end
 
@@ -487,6 +538,7 @@ local function createTabGroup()
     tabStrip.JumpToTab = function(self, win)
         local lastWin = "NONE";
         if(win) then
+			self.parentWindow = win;
             local oldWin = self.selected.obj;
             local oldCustomSize = win.customSize;
             local inFocus = EditBoxInFocus and EditBoxInFocus:GetParent().tabStrip == self and true or false;
@@ -571,7 +623,8 @@ local function createTabGroup()
             table.insert(self.attached, win);
             win.tabStrip = self;
             self:SetSelectedName(self.selected.obj or win);
-            self:UpdateTabs();
+			self:UpdateTabs();
+			win:Raise();
             dPrint(win:GetName().." is attached to "..self:GetName());
         end
     end
@@ -614,11 +667,11 @@ end
 -- using the following logic, get an unsed tab group, if none
 -- are available, create a new one and return.
 local function getAvailableTabGroup()
-    if(table.getn(tabGroups) == 0) then
+    if(#tabGroups == 0) then
         return createTabGroup();
     else
-        for i=1, table.getn(tabGroups) do
-            if(table.getn(tabGroups[i].attached) == 0) then
+        for i=1, #tabGroups do
+            if(#tabGroups[i].attached == 0) then
                 return tabGroups[i];
             end
         end
@@ -672,14 +725,14 @@ end);
 
 -- update All Tabs (used for options mainly)
 function UpdateAllTabs()
-    for i=1, table.getn(tabGroups) do
+    for i=1, #tabGroups do
         tabGroups[i]:UpdateTabs();
     end
 end
 
 -- update skin to all tabStrips.
 function ApplySkinToTabs()
-    for i=1, table.getn(tabGroups) do
+    for i=1, #tabGroups do
         applySkin(tabGroups[i]);
     end
 end

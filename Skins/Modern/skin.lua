@@ -248,8 +248,14 @@ local WIM_ModernSkin = {
         },
 		points = {
             {"BOTTOMLEFT", "window", "TOPLEFT", 44, -1 + foreverY},
-            {"BOTTOMRIGHT", "window", "TOPRIGHT", -12, -1 + foreverY}
+            {"BOTTOMRIGHT", "window", "TOPRIGHT", -18, -1 + foreverY}
         },
+		gap = 2, -- spacing between tabs
+		scrollMargin = 2,
+
+		text = {
+			padding = {4, 4, 0, 0}, -- left, right, top, bottom
+		},
     },
 	menu = {
 		-- `texture` or `backdropInfo` must be set, but not both.
