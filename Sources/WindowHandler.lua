@@ -684,7 +684,7 @@ local function animateFade(obj, directionIn, force)
 end
 
 local function setWindowAsFadedIn(obj)
-	if(WIM.db.winFade and not obj.tabStrip == nil) then
+	if(WIM.db.winFade and obj.tabStrip == nil) then
                 if not obj.fadedIn then
                         obj:fadeIn()
                         obj.delayFadeElapsed = 0;
