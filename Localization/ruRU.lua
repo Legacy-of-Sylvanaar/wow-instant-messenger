@@ -802,7 +802,5 @@ WIM.AddLocale("ruRU", {
 	["Miscellaneous"] = "Разное",
 	["Streaming Mode"] = "Режим трансляции",
 	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Защищает конфиденциальность игроков, с которыми вы общаетесь, скрывая их полное имя и BattleTag.",
-	["Because WIM integrates itself with Edit Mode, protected errors may occur. It is recommended to reload your UI before continuing."] = "Так как WIM интегрируется с режимом редактирования, могут возникать ошибки защищённых функций. Рекомендуется перезагрузить интерфейс, прежде чем продолжить.",
-	["Reload UI"] = "Перезагрузить интерфейс",
 	["Choose %s in the game menu."] = "Выберите «%s» в игровом меню.",
 });

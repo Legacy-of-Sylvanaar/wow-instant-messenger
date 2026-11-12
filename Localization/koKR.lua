@@ -801,7 +801,5 @@ WIM.AddLocale("koKR", {
     ["Miscellaneous"] = "기타",
     ["Streaming Mode"] = "스트리밍 모드",
     ["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "대화하는 플레이어의 전체 이름과 배틀태그를 숨겨 개인 정보를 보호합니다.",
-    ["Because WIM integrates itself with Edit Mode, protected errors may occur. It is recommended to reload your UI before continuing."] = "WIM이 편집 모드와 통합되어 있기 때문에 보호된 오류가 발생할 수 있습니다. 계속하기 전에 UI를 다시 불러오는 것을 권장합니다.",
-    ["Reload UI"] = "UI 다시 불러오기",
     ["Choose %s in the game menu."] = "게임 메뉴에서 %s 항목을 선택하세요.",
 });

@@ -802,8 +802,6 @@ local translations = {
     ["Miscellaneous"] = "Varios",
     ["Streaming Mode"] = "Modo de transmisión",
     ["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Protege la privacidad de los jugadores con los que chateas ocultando su nombre completo y BattleTag.",
-    ["Because WIM integrates itself with Edit Mode, protected errors may occur. It is recommended to reload your UI before continuing."] = "Como WIM se integra con el Modo de edición, pueden producirse errores protegidos. Se recomienda recargar la interfaz antes de continuar.",
-    ["Reload UI"] = "Recargar interfaz",
     ["Choose %s in the game menu."] = "Elige %s en el menú del juego.",
 };
 
