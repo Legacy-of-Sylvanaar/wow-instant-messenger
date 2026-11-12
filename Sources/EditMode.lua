@@ -915,16 +915,57 @@ end
 -- Mode closes, the way the placement window used to return to it.
 local reopenSettings = false;
 
-function ShowEditMode()
+-- ShowUIPanel hands a frame to secure code only when it is a managed UI
+-- panel. Where the manager is not one (Classic Era), it would be shown from
+-- addon code and Edit Mode would be entered tainted.
+local function managerIsUIPanel()
+    local manager = _G.EditModeManagerFrame;
+    if (manager:GetAttribute("UIPanelLayout-defined")) then
+        return manager:GetAttribute("UIPanelLayout-area") ~= nil;
+    end
+    local windows = _G.UIPanelWindows;
+    local info = type(windows) == "table" and windows[manager:GetName() or ""];
+    return type(info) == "table" and info.area ~= nil;
+end
+
+-- Every entry point of the game asks the manager this first.
+function CanShowEditMode()
     if (_G.InCombatLockdown()) then
+        return false;
+    end
+    local manager = _G.EditModeManagerFrame;
+    if (manager.CanEnterEditMode) then
+        local ok, allowed = pcall(manager.CanEnterEditMode, manager);
+        if (ok and not allowed) then
+            return false;
+        end
+    end
+    return true;
+end
+
+function ShowEditMode()
+    if (not CanShowEditMode()) then
         return;
     end
     local panel = _G.SettingsPanel;
-    reopenSettings = (panel and panel:IsShown()) and true or false;
-    if (reopenSettings) then
+    local fromSettings = (panel and panel:IsShown()) and true or false;
+    if (fromSettings) then
         _G.HideUIPanel(panel);
     end
-    _G.ShowUIPanel(_G.EditModeManagerFrame);
+    if (managerIsUIPanel()) then
+        reopenSettings = fromSettings;
+        _G.ShowUIPanel(_G.EditModeManagerFrame);
+        return;
+    end
+    -- The game menu's own Edit Mode button is secure.
+    reopenSettings = false;
+    if (_G.GameMenuFrame) then
+        _G.ShowUIPanel(_G.GameMenuFrame);
+    end
+    if (_G.UIErrorsFrame) then
+        _G.UIErrorsFrame:AddMessage(_G.string.format(L["Choose %s in the game menu."],
+            _G.HUD_EDIT_MODE_MENU or L["Edit Mode"]), 1, .82, 0);
+    end
 end
 
 

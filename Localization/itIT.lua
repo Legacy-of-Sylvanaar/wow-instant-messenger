@@ -802,4 +802,5 @@ WIM.AddLocale("itIT", {
 	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Proteggi la privacy dei giocatori con cui chat nascondendo il loro nome completo e BattleTag.",
 	["Because WIM integrates itself with Edit Mode, protected errors may occur. It is recommended to reload your UI before continuing."] = "Poiché WIM si integra con la Modalità modifica, possono verificarsi errori protetti. Si consiglia di ricaricare l'interfaccia prima di continuare.",
 	["Reload UI"] = "Ricarica interfaccia",
+	["Choose %s in the game menu."] = "Scegli %s nel menu di gioco.",
 });

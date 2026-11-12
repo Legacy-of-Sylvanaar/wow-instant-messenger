@@ -805,4 +805,5 @@ WIM.AddLocale("zhTW", {
 	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "透過隱藏玩家的全名和戰網暱稱來保護你聊天對象的隱私。",
 	["Because WIM integrates itself with Edit Mode, protected errors may occur. It is recommended to reload your UI before continuing."] = "由於 WIM 與編輯模式整合，可能會出現受保護的錯誤。建議在繼續之前重新載入介面。",
 	["Reload UI"] = "重新載入介面",
+	["Choose %s in the game menu."] = "請在遊戲選單中選擇「%s」。",
 });
