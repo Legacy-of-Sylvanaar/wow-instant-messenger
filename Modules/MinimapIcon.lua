@@ -7,6 +7,7 @@ local math = math;
 local table = table;
 local pairs = pairs;
 local string = string;
+local unpack = unpack;
 
 -- set namespace
 setfenv(1, WIM);
@@ -34,7 +35,7 @@ db_defaults.minimap = {
         count = 5,           -- always list this many of the most recent people.
         keepMinutes = 10,    -- beyond those, keep people you chatted with this recently.
         accountWide = true,  -- false = this character only, true = every character on the account.
-    }
+    },
 };
 
 Notifications = {};	-- list of current notifications
@@ -62,6 +63,13 @@ local minimapShapes = {
     ["TRICORNER-TOPRIGHT"] = {true, false, true, true},
     ["TRICORNER-BOTTOMLEFT"] = {true, true, false, true},
     ["TRICORNER-BOTTOMRIGHT"] = {true, true, true, false},
+}
+
+local buildTypeTint = {
+	release = nil, -- release is the unmodified texture.
+	beta = {111, 247, 255, 1},
+	alpha = {255, 162, 94, 1},
+	dev = nil,
 }
 
 local function getNotificationTable(tag)
@@ -175,6 +183,14 @@ local function createMinimapIcon()
 	overlay:SetWidth(53); overlay:SetHeight(53);
 	overlay:SetTexture('Interface\\Minimap\\MiniMap-TrackingBorder');
 	overlay:SetPoint('TOPLEFT');
+
+	-- apply tint depending on build type.
+	local tint = buildTypeTint[BUILD_TYPE or '?'];
+
+	if(tint) then
+		local r, g, b, a = unpack(tint);
+	    overlay:SetVertexColor(r / 255, g / 255, b / 255, a);
+	end
 
 	local bg = self:CreateTexture(nil, 'BACKGROUND');
 	bg:SetWidth(20); bg:SetHeight(20);
@@ -294,9 +310,37 @@ local function createMinimapIcon()
         if(db.minimap.openOnHover and not self.dragging) then
             showMenu(self, true);
         end
+
+		if (BUILD_TYPE ~= "release") then
+			local buildInfo = GetCurrentBuildInfo();
+
+			local version, identifier;
+			if(buildInfo.alpha) then
+				version = "WIM Alpha";
+				identifier = buildInfo.alpha;
+			else
+				version = "WIM v"..buildInfo.version;
+				identifier = buildInfo.beta and "Beta "..buildInfo.beta or "";
+			end
+
+			_G.GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+			-- _G.GameTooltip:AddLine(version);
+
+			if(buildInfo.alpha) then
+				_G.GameTooltip:AddDoubleLine(version, identifier, 1, 1, 1, .5, .5, .5);
+				_G.GameTooltip:AddLine("This is an early development build. Expect bugs, missing features, and instability.", nil, nil, nil, true);
+			elseif(buildInfo.beta) then
+				_G.GameTooltip:AddDoubleLine(version, identifier, 1, 1, 1, .5, .5, .5);
+				_G.GameTooltip:AddLine("This is a beta version. You may encounter bugs or unfinished features.", nil, nil, nil, true);
+				_G.GameTooltip:AddLine(" ");
+				_G.GameTooltip:AddDoubleLine("Leave Feedback", "Ctrl + Click", 1, 1, 1, 0.25, 0.65, 1);
+			end
+
+			_G.GameTooltip:Show();
+		end
     end
     icon.OnLeave = function(self)
-
+		_G.GameTooltip:Hide();
     end
     icon.OnDragStart = function(self)
         self.dragging = true;
