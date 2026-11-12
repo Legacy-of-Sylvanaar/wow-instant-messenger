@@ -2617,8 +2617,11 @@ RegisterWidgetTrigger("msg_box", "whisper,w2w", "OnTabPressed", function(self)
                 end
 	end);
 
+-- must be handled on key down in order to allow protected functions to be called (predicated by user interaction, such as typing).
+-- might have to add options for keyboard type selection for users not using a standard QWERTY keyboard.
+-- for example, on a German keyboard, the "/" character requires Shift + 7, so the key detection logic would need to account for that.
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnKeyDown", function(self, key)
-	if key == "/" and self:GetText() == "" then
+	if (key == "/" and not _G.IsShiftKeyDown() and self:GetText()) == "" then
 		local open = _G.ChatFrameUtil and _G.ChatFrameUtil.OpenChat or _G.ChatEdit_OpenChat;
 		open("/");
 		_G.C_Timer.After(0, function() self:SetText(""); end);
