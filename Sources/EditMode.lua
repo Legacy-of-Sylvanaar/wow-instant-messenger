@@ -762,19 +762,24 @@ local function buildPlacedEntry(spec)
     return entry;
 end
 
--- ------------------------------------------------- manager panel section
+-- ----------------------------------------------- panel beside the manager
 
--- WIM's rows in the manager's frame list: one checkbox per WIM frame,
--- controlling whether that frame takes part in the editor. The advanced
--- view seats them under their own "WIM" heading, built from the same
--- pieces as the Frames/Combat/Misc groups; the basic view appends them.
--- The manager's LayoutSettings re-parents and arranges every button in
--- its settingsCheckButtons table on each basic/advanced flip and only
--- knows the three stock groups, so a post-hook moves ours into the WIM
--- group afterwards.
+-- One checkbox per WIM frame, controlling whether that frame takes part in
+-- the editor. They sit in a frame of WIM's own, docked to the manager.
+-- Nothing is written to the manager and nothing is parented inside it:
+-- Blizzard walks its settingsCheckButtons table with pairs, so an addon's
+-- entry there taints the game's own Edit Mode code (TargetUnit() blocked,
+-- unit frame errors blaming WIM).
+local managerPanel;
 local managerButtons;
-local managerSection;
 local managerBroken = false;
+
+local PANEL_INSET = 20;
+local PANEL_PADDING = 10;
+local PANEL_GAP = 2;
+local PANEL_COLUMNS = 2;
+local PANEL_COLUMN_WIDTH = 225;
+local PANEL_ROW_HEIGHT = 32;
 
 local function applyGhostVisibility()
     for i = 1, #entries do
@@ -787,86 +792,55 @@ local function applyGhostVisibility()
     end
 end
 
-local function makeManagerSection(accountSettings)
-    local container = accountSettings.SettingsContainer;
-    local advanced = container and container.ScrollChild
-        and container.ScrollChild.AdvancedOptionsContainer;
-    if (not advanced or not advanced.MiscContainer) then
-        return nil;
-    end
-    local lastIndex = 0;
-    local children = { advanced:GetChildren() };
-    for i = 1, #children do
-        if ((children[i].layoutIndex or 0) > lastIndex) then
-            lastIndex = children[i].layoutIndex;
-        end
-    end
-    local ok, group = pcall(CreateFrame, "Frame", nil, advanced,
-        "EditModeManagerSettingsOptionsContainerTemplate");
-    if (not ok or not group) then
-        return nil;
-    end
-    local title = CreateFrame("Frame", nil, advanced);
-    title:SetSize(225, 32);
-    title.layoutIndex = lastIndex + 1;
-    title.Title = title:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge");
-    title.Title:SetPoint("LEFT", 5, 0);
-    title.Title:SetText("WIM");
-    group.layoutIndex = lastIndex + 2;
-    return group;
-end
-
-local function seatManagerButtons()
-    if (not managerSection or not managerButtons) then
-        return;
-    end
+-- Under the manager, or above it when there is no room below.
+local function dockManagerPanel(panel)
     local manager = _G.EditModeManagerFrame;
-    if (not manager.AreAdvancedOptionsEnabled or not manager:AreAdvancedOptionsEnabled()) then
+    local top, bottom = manager:GetTop(), manager:GetBottom();
+    if (not top or not bottom or (panel.wimTop == top and panel.wimBottom == bottom)) then
         return;
     end
-    for _, cb in pairs(managerButtons) do
-        if (cb:IsShown()) then
-            cb:SetParent(managerSection);
-        end
+    panel.wimTop, panel.wimBottom = top, bottom;
+    local scale = manager:GetScale();
+    if (not scale or scale <= 0) then
+        scale = 1;
     end
-    manager:Layout();
+    panel:SetScale(scale);
+    local height = panel:GetHeight() + PANEL_GAP;
+    local screenTop = _G.UIParent:GetTop();
+    panel:ClearAllPoints();
+    if (bottom - height < 0 and screenTop and top + height <= screenTop / scale) then
+        panel:SetPoint("BOTTOM", manager, "TOP", 0, PANEL_GAP);
+    else
+        panel:SetPoint("TOP", manager, "BOTTOM", 0, -PANEL_GAP);
+    end
 end
 
-local function ensureManagerButtons()
+local function ensureManagerPanel()
     if (managerButtons or managerBroken) then
         return managerButtons;
     end
-    local accountSettings = _G.EditModeManagerFrame.AccountSettings;
-    local buttons = accountSettings and accountSettings.settingsCheckButtons;
-    local categories = _G.EditModeManagerOptionsCategory;
-    if (not buttons or not categories or not categories.Misc
-        or not accountSettings.LayoutSettings) then
-        managerBroken = true;
-        return;
+    if (#entries == 0) then
+        return nil;
     end
-    local maxAdvanced, maxBasic = 0, 0;
-    for _, button in pairs(buttons) do
-        if (button.category == categories.Misc
-            and (button.advancedLayoutIndex or 0) > maxAdvanced) then
-            maxAdvanced = button.advancedLayoutIndex;
-        end
-        if (button.isBasicOption and (button.basicLayoutIndex or 0) > maxBasic) then
-            maxBasic = button.basicLayoutIndex;
-        end
-    end
+    local panel = CreateFrame("Frame", nil, _G.UIParent);
+    panel:SetFrameStrata("DIALOG");
+    panel:SetFrameLevel(100);
+    panel:EnableMouse(true);
+    panel:Hide();
+    CreateFrame("Frame", nil, panel, "DialogBorderTranslucentTemplate");
     local made = {};
     for i = 1, #entries do
         local entry = entries[i];
-        local ok, cb = pcall(CreateFrame, "Frame", nil, accountSettings.SettingsContainer,
+        local ok, cb = pcall(CreateFrame, "Frame", nil, panel,
             "EditModeManagerSettingCheckButtonTemplate");
         if (not ok or not cb or not cb.SetCallback or not cb.SetControlChecked) then
             managerBroken = true;
-            return;
+            return nil;
         end
-        cb.category = categories.Misc;
-        cb.advancedLayoutIndex = maxAdvanced + i;
-        cb.isBasicOption = true;
-        cb.basicLayoutIndex = maxBasic + i;
+        cb:ClearAllPoints();
+        cb:SetPoint("TOPLEFT", panel, "TOPLEFT",
+            PANEL_INSET + ((i - 1) % PANEL_COLUMNS) * PANEL_COLUMN_WIDTH,
+            -(PANEL_PADDING + math.floor((i - 1) / PANEL_COLUMNS) * PANEL_ROW_HEIGHT));
         if (cb.SetLabelText) then
             cb:SetLabelText(entry.name);
         elseif (cb.Label) then
@@ -882,27 +856,14 @@ local function ensureManagerButtons()
         end);
         made[entry.key] = cb;
     end
-    for key, cb in pairs(made) do
-        buttons["WIM_" .. key] = cb;
-    end
+    local width = _G.EditModeManagerFrame:GetWidth() or 0;
+    panel:SetSize(
+        math.max(width, 2 * PANEL_INSET + PANEL_COLUMNS * PANEL_COLUMN_WIDTH),
+        2 * PANEL_PADDING + math.ceil(#entries / PANEL_COLUMNS) * PANEL_ROW_HEIGHT);
+    panel:SetPoint("TOP", _G.EditModeManagerFrame, "BOTTOM", 0, -PANEL_GAP);
+    panel:SetScript("OnUpdate", dockManagerPanel);
+    managerPanel = panel;
     managerButtons = made;
-    managerSection = makeManagerSection(accountSettings);
-    -- Older clients draw the manager's scroll frame with the legacy
-    -- scrollbar art, and WIM's rows are what push that list into
-    -- scrolling there; give it the slim bar the option lists use.
-    if (managerSection and HasPortraitPanelArt and not HasPortraitPanelArt()
-        and AttachMinimalScrollBar) then
-        local container = accountSettings.SettingsContainer;
-        local gutter = CreateFrame("Frame", nil, container);
-        gutter:SetWidth(22);
-        gutter:SetPoint("TOPRIGHT", container, "TOPRIGHT", -2, -4);
-        gutter:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", -2, 4);
-        AttachMinimalScrollBar(container, gutter);
-    end
-    if (managerSection and _G.hooksecurefunc) then
-        _G.hooksecurefunc(accountSettings, "LayoutSettings", seatManagerButtons);
-    end
-    pcall(accountSettings.LayoutSettings, accountSettings);
     return managerButtons;
 end
 
@@ -931,7 +892,7 @@ end
 local function onEditModeShow()
     inEditMode = true;
     buildEntries();
-    local buttons = ensureManagerButtons();
+    local buttons = ensureManagerPanel();
     for i = 1, #entries do
         local entry = entries[i];
         local shown = db.editModeFrames[entry.key] and true or false;
@@ -942,6 +903,11 @@ local function onEditModeShow()
         entry.sel.isSelected = false;
         entry.ghost:SetShown(shown);
         entry.sel:ShowHighlighted();
+    end
+    if (managerPanel) then
+        managerPanel.wimTop = nil;
+        dockManagerPanel(managerPanel);
+        managerPanel:Show();
     end
 end
 
@@ -998,6 +964,9 @@ local function onEditModeHide()
     selectedEntry = nil;
     if (dialog) then
         dialog:Hide();
+    end
+    if (managerPanel) then
+        managerPanel:Hide();
     end
     local manager = _G.EditModeManagerFrame;
     -- A locked hide (combat, vehicles) keeps Edit Mode active and comes
