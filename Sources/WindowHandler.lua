@@ -2547,13 +2547,18 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", func
                 return;
 			end
 		end
-		-- keep focus or not
-		if(self:GetParent():GetRuleSet().keepfocus) then
-			self:SetFocus();
-		else
-			self:Hide();
-			self:Show();
-		end
+		-- keep focus or not, once the other OnEnterPressed handlers have
+		-- run: the chat and whisper engines send from theirs, and a box
+		-- hidden first has lost its focus, so the client blocks the
+		-- message (WoW Forever: ADDON_ACTION_BLOCKED UNKNOWN()).
+		_G.C_Timer.After(0, function()
+			if(self:GetParent():GetRuleSet().keepfocus) then
+				self:SetFocus();
+			else
+				self:Hide();
+				self:Show();
+			end
+		end);
 
 	end);
 
