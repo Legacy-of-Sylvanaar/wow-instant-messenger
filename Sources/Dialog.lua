@@ -34,8 +34,11 @@ do
 		end
 
 		GameDialogMixin.OnShow(self);
-		_G.C_Timer.After(0, function()
-			AddEscapeWindow(self);
+
+		_G.C_Timer.After(0, function ()
+			if (self.dialogInfo and self.dialogInfo.hideOnEscape) then
+				AddEscapeWindow(self);
+			end
 		end);
 	end
 
@@ -92,7 +95,7 @@ function dialog.create(which, text_arg1, text_arg2, data, insertedFrame, customO
 		dialog = createDialog();
 	end
 
-	dialogInfo =  StaticPopupDialogs[which];
+	local dialogInfo =  StaticPopupDialogs[which];
 
 	-- Set the miscellaneous variables for the dialog
 	dialog.which = which;
@@ -149,7 +152,7 @@ do
 			if (editBox) then
 				editBox:SetScript("OnKeyDown", function(self, key)
 					if key == "C" and _G.IsControlKeyDown() then
-						_G.C_Timer.After(0, function()
+						_G.C_Timer.After(0, function ()
 							_self:Hide();
 						end);
 					end

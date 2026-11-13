@@ -15,7 +15,7 @@ local hash = "@project-abbreviated-hash@";
 
 -- test build types
 -- hash = "3.19.6" -- release
-hash = "3.19.5-beta" -- beta #.#.#-beta(-#|#)?
+-- hash = "3.19.5-beta" -- beta #.#.#-beta(-#|#)?
 -- hash = "3.19.5-1-abcdefgh" -- alpha #.#.#-#-<commit>
 
 -- returns type, version, identifier(beta:# or alpha:commit)
