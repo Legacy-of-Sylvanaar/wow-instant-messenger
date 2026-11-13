@@ -1,4 +1,5 @@
 --imports
+local _G = _G;
 local WIM = WIM;
 local string = string;
 local tonumber = tonumber;
@@ -68,6 +69,47 @@ local previousBuildInfo = {
 }
 
 
+local function showAlphaReminder ()
+	_G.StaticPopupDialogs["WIM_ALPHA_BUILD_REMINDER"] = {
+		text = "|cffff8800WIM Alpha Build|r\n\n"
+			.. "You are running an |cffffd200alpha|r build of WIM (%s).\n\n"
+			.. "If the issue you were testing has been fixed, consider switching back to the "
+			.. "|cff00ff00Release|r or |cff00ccffBeta|r channel for a more stable experience.",
+		button1 = "Snooze until next release",
+		button2 = "Remind me later",
+		button3 = "Never remind me",
+		showAlert = true,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,   -- Esc -> OnCancel (safe dismiss)
+		preferredIndex = 3,    -- avoid taint with Blizzard popups
+
+		OnAccept = function()  -- snooze
+			-- db.buildInfo.snoozeAlphaReminder = WIM.GetCurrentBuildInfo().version;
+			utils.debug.dump('Snoozing alpha reminder')
+		end,
+		OnCancel = function()  -- dismiss; shows again next load
+			utils.debug.dump('Dismissing alpha reminder')
+		end,
+		OnAlt = function()     -- never
+			-- db.buildInfo.disableAlphaReminder = true;
+			utils.debug.dump('Disabling alpha reminder')
+		end,
+	};
+
+	-- C_Timer.After(5, function() -- let the UI settle after login
+		utils.dialog.create("WIM_ALPHA_BUILD_REMINDER", BUILD_ID);
+    -- end);
+end
+
+local function ShouldShowAlphaReminder()
+    local info = db.buildInfo;
+    if BUILD_TYPE ~= "alpha" or info.disableAlphaReminder then return false; end
+    return info.snoozeAlphaReminder ~= WIM.GetCurrentBuildInfo().version;
+end
+
+
+
 -- not sure if we want to compare version numbers or just or just keep track if an alpha was loaded at some earlier point prior to a release.
 function BuildInfo:OnInitialized()
 	local prevId = db.buildInfo.id;
@@ -92,6 +134,9 @@ function BuildInfo:OnInitialized()
 
 	-- perform logic determining whether or not to show dialog using utils.dialog.(create|confirm).
 	-- I need to look at the default template and see if it has a check box for disabling reminders.
+	if isNewBuild and ShouldShowAlphaReminder() or true then
+		showAlphaReminder();
+	end
 
 end
 
