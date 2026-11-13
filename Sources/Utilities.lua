@@ -135,6 +135,23 @@ do
 		end
 		return result;
 	end
+
+	function utils.table.merge (...)
+		local result = {};
+		for i=1, select("#", ...) do
+			local tbl = select(i, ...);
+			if(type(tbl) == "table") then
+				for k, v in pairs(tbl) do
+					if (type(k) == "number") then
+						table.insert(result, v);
+					else
+						result[k] = v;
+					end
+				end
+			end
+		end
+		return result;
+	end
 end
 
 ----------------------------------------------
