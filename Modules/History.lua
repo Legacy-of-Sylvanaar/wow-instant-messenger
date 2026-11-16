@@ -3066,7 +3066,11 @@ local function createHistoryViewer()
                         if(string.match(original, "^*")) then
                             extra = " |TInterface\\AddOns\\WIM\\Skins\\Default\\minimap.blp:20:20:0:0|t";
                             color = "fff569";
-                        end
+						elseif (isBNConvoKey(user)) then
+							local path = "Interface\\FriendsFrame\\Battlenet-Battleneticon";
+							local _, fontSize = self.text:GetFont();
+							extra  = " |T"..path..":"..fontSize..":"..fontSize.."|t";
+						end
                         if not user then
                             self.user = nil;
                             self.text:SetText("");
