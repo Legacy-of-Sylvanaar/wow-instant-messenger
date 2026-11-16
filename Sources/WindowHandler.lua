@@ -246,6 +246,7 @@ local FormattingCalls = {}; -- functions which are passed events to be formatted
 
 local StringModifiers = {}; -- registered functions which will be used to format the message part of the string.
 
+local editBoxSlug = { Deactivate = function () end };
 
 -- Window's Parent (Container for all Windows)
 WindowParent = _G.CreateFrame("Frame", "WIM_UIParent", _G.UIParent);
@@ -520,6 +521,18 @@ helperFrame.ResetState = function(self)
     end
 helperFrame:SetPoint("TOPLEFT", WindowParent, "TOPLEFT", 0, 0);
 helperFrame:SetScript("OnUpdate", function(self)
+		-- shift click handling
+		do
+			if (EditBoxInFocus ~= nil) then
+				if(IsShiftKeyDown() and _G.ACTIVE_CHAT_EDIT_BOX ~= EditBoxInFocus) then
+					_G.ACTIVE_CHAT_EDIT_BOX = EditBoxInFocus;
+				elseif not IsShiftKeyDown() and _G.ACTIVE_CHAT_EDIT_BOX ~= nil then
+					_G.ACTIVE_CHAT_EDIT_BOX = editBoxSlug;
+					_G.ChatFrameUtil.DeactivateChat(_G.ACTIVE_CHAT_EDIT_BOX)
+				end
+			end
+		end
+
         if(IsShiftKeyDown()) then
 			local obj = GetMouseFocus();
 			if(obj and (obj.isWimWindow or obj.parentWindow)) then
@@ -2740,12 +2753,10 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnUpdate", function(s
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusGained", function(self)
                                 EditBoxInFocus = self;
-								_G.ACTIVE_CHAT_EDIT_BOX = self;
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnEditFocusLost", function(self)
 								_EditBoxInFocus = EditBoxInFocus -- temporary reference
                                 EditBoxInFocus = nil;
-								_G.ACTIVE_CHAT_EDIT_BOX = nil;
                 end);
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnMouseUp", function(self, button)
                                 libs.DropDownMenu.CloseDropDownMenus();
