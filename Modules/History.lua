@@ -793,8 +793,17 @@ function History:OnWindowCreated(win)
 				local color = db.displayColors[inbound and "historyIn" or "historyOut"];
 				win.nextStamp = tmpTable[i].time;
 				win.nextStampColor = db.displayColors.historyOut;
-				win:AddMessage(applyMessageFormatting(win.widgets.chat_display, "CHAT_MSG_WHISPER", tmpTable[i].msg, inbound and name or tmpTable[i].from,
-								nil, nil, nil, nil, nil, nil, nil, nil, -i, "0x0300000000000000"), color.r, color.g, color.b);
+				win:AddMessage(
+					applyMessageFormatting(
+						win.widgets.chat_display,
+						bnId and "CHAT_MSG_BN_WHISPER" or "CHAT_MSG_WHISPER",
+						tmpTable[i].msg,
+						inbound and name or tmpTable[i].from,
+						nil, nil, nil, nil, nil, nil, nil, nil,
+						-i, "0x0300000000000000"
+					),
+					color.r, color.g, color.b
+				);
 			end
 			win.widgets.chat_display:AddMessage(" ");
 		end
@@ -4291,8 +4300,9 @@ table.insert(ViewTypes, {
         frame = "chatFrame",
         func = function(frame, msg)
             local color;
+			local bn = isBNConvoKey(msg.convo)
             if(msg.type == 1) then
-                color = db.displayColors[msg.inbound and "wispIn" or "wispOut"];
+                color = db.displayColors[msg.inbound and (bn and "BNwispIn" or "wispIn") or (bn and "BNwispOut" or "wispOut")];
                 nextColor.r, nextColor.g, nextColor.b = color.r, color.g, color.b;
             elseif(msg.type == 2) then
                 if(msg.event == CHANNEL) then
@@ -4308,8 +4318,25 @@ table.insert(ViewTypes, {
                 -- must be 0 (the "no chat line" convention) because the
                 -- unit popup's chat-line validation errors on anything
                 -- outside the valid range when a player link is clicked.
-                frame:AddMessage(applyStringModifiers(applyMessageFormatting(frame, "CHAT_MSG_"..(msg.event or "WHISPER"), msg.msg, msg.from,
-                        nil, nil, nil, nil, 0, msg.channelName and ChannelCache[msg.channelName], msg.channelName, nil, 0, "0x0300000000000000"), frame), color.r, color.g, color.b);
+                frame:AddMessage(
+					applyStringModifiers(
+						applyMessageFormatting(
+							frame,
+							"CHAT_MSG_"..(msg.event or (bn and "BN_WHISPER" or "WHISPER")),
+							msg.msg,
+							msg.from,
+							nil, nil, nil, nil,
+							0,
+							msg.channelName and ChannelCache[msg.channelName],
+							msg.channelName,
+							nil,
+							0,
+							"0x0300000000000000"
+						),
+						frame
+					),
+					color.r, color.g, color.b
+				);
         end
     });
 table.insert(ViewTypes, {
@@ -4332,9 +4359,10 @@ table.insert(ViewTypes, {
 	        text = L["BBCode"],
 	        frame = "textFrame",
 	        func = function(frame, msg)
-                    local color;
+				local color;
+				local bn = isBNConvoKey(msg.convo)
 	            if(msg.type == 1) then
-                        color = db.displayColors[msg.inbound and "wispIn" or "wispOut"];
+                        color = db.displayColors[msg.inbound and (bn and "BNwispIn" or "wispIn") or (bn and "BNwispOut" or "wispOut")];
                         nextColor.r, nextColor.g, nextColor.b = color.r, color.g, color.b;
                     elseif(msg.type == 2) then
                         if(msg.event == CHANNEL) then
@@ -4367,9 +4395,10 @@ table.insert(ViewTypes, {
 	        text = "HTML",
 	        frame = "textFrame",
 	        func = function(frame, msg)
-                    local color;
+				local color;
+				local bn = isBNConvoKey(msg.convo)
 	            if(msg.type == 1) then
-                        color = db.displayColors[msg.inbound and "wispIn" or "wispOut"];
+                        color = db.displayColors[msg.inbound and (bn and "BNwispIn" or "wispIn") or (bn and "BNwispOut" or "wispOut")];
                         nextColor.r, nextColor.g, nextColor.b = color.r, color.g, color.b;
                     elseif(msg.type == 2) then
                         if(msg.event == CHANNEL) then

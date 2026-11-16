@@ -2834,7 +2834,7 @@ RegisterMessageFormatting(L["Default"], function(smf, event, ...)
 	elseif (event == "CHAT_MSG_BN_WHISPER") then
 		local win = smf.parentWindow;
 		local color;
-		if (win.bn.client == _G.BNET_CLIENT_WOW and constants.classes[win.bn.class] and constants.classes[win.bn.class].color) then
+		if (win and win.bn.client == _G.BNET_CLIENT_WOW and constants.classes[win.bn.class] and constants.classes[win.bn.class].color) then
 			color = constants.classes[win.bn.class].color
 			color = string.len(color) == 6 and color or nil;
 		end
