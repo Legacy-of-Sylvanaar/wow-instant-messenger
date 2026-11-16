@@ -3545,6 +3545,9 @@ local function createHistoryViewer()
             end
         end);
 
+	win.content.chatFrame:SetScript("OnHyperlinkEnter", ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkEnter);
+	win.content.chatFrame:SetScript("OnHyperlinkLeave", ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkLeave);
+
     win.content.chatFrame.up = CreateFrame("Button", nil, win.content.chatFrame);
     win.content.chatFrame.up:SetWidth(28); win.content.chatFrame.up:SetHeight(28);
     win.content.chatFrame.up:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIcon-ScrollUp-Up");
