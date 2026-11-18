@@ -256,6 +256,48 @@ function GetBNGetFriendInfoByID(id)
 	end
 end
 
+-- Character whisper target of a Battle.net friend, where the client has one (WoW Forever).
+function GetBNTitleFriendTarget(id)
+	if type(id) == "table" then id = id[1] end
+	if IsSecretValue(id) or type(id) ~= "number" then
+		return
+	end
+	local getTarget = _G.C_BattleNet and _G.C_BattleNet.GetDefaultTitleWhisperTarget;
+	if not getTarget then
+		return
+	end
+	local ok, target = _G.pcall(getTarget, id);
+	if not ok or IsSecretValue(target) or type(target) ~= "string" or target == "" or string.find(target, "|K", 1, true) then
+		return
+	end
+	return target;
+end
+
+-- True for a friend whose account name already is a character name:
+-- no BattleTag shared and no custom name set.
+function IsBNCharacterNamedFriend(id)
+	if type(id) == "table" then id = id[1] end
+	if IsSecretValue(id) or type(id) ~= "number" then
+		return false
+	end
+	local titleLevel = _G.Enum and _G.Enum.BattleNetFriendLevel and _G.Enum.BattleNetFriendLevel.Title;
+	if not titleLevel or not _G.C_BattleNet or not _G.C_BattleNet.GetAccountInfoByID then
+		return false
+	end
+	local accountInfo = _G.C_BattleNet.GetAccountInfoByID(id);
+	if type(accountInfo) ~= "table" or IsSecretValue(accountInfo.friendLevel) or accountInfo.friendLevel ~= titleLevel then
+		return false
+	end
+	local getCustomName = _G.C_BattleNet.GetCustomTitleFriendName;
+	if getCustomName then
+		local ok, customName = _G.pcall(getCustomName, id);
+		if ok and not IsSecretValue(customName) and type(customName) == "string" and customName ~= "" then
+			return false
+		end
+	end
+	return true
+end
+
 function GetBNGetGameAccountInfoByKName(kName)
 	for i=1, _G.BNGetNumFriends() do
 		local info = {GetBNGetFriendInfo(i)};
@@ -711,6 +753,10 @@ function WIM:BN_FRIEND_LIST_SIZE_CHANGED()
 			if(windows.active.whisper[safeName(name)]) then
 			    windows.active.whisper[safeName(name)]:SendWho();
 			end
+	    end
+	    local titleTarget = GetBNTitleFriendTarget(id);
+	    if(titleTarget and not env.cache[env.realm][env.character].friendList[titleTarget]) then
+		env.cache[env.realm][env.character].friendList[titleTarget] = 2;
 	    end
 	end
     lists.friends = env.cache[env.realm][env.character].friendList;

@@ -337,6 +337,13 @@ WIM.AddLocale("ptBR", {
 	["Results are hidden by the active filter. Click to open the Filters menu."] = "Os resultados estão ocultos pelo filtro ativo. Clique para abrir o menu de filtros.",
 	["Click to change how history is filtered."] = "Clique para alterar como o histórico é filtrado.",
 	["Click to open the Filters menu."] = "Clique para abrir o menu de filtros.",
+	["Unknown name"] = "Nome desconhecido",
+	["This conversation was saved without the other player's name."] = "Esta conversa foi salva sem o nome do outro jogador.",
+	["Enter the name this conversation belongs to."] = "Digite o nome ao qual esta conversa pertence.",
+	["Enter the name of a player."] = "Digite o nome de um jogador.",
+	["This conversation of %s was saved without the other player's name."] = "Esta conversa de %s foi salva sem o nome do outro jogador.",
+	["Enter the name of the player it was with. If you already have a conversation with that player, the messages are added to it."] = "Digite o nome do jogador com quem ela aconteceu. Se você já tem uma conversa com esse jogador, as mensagens são adicionadas a ela.",
+	["A saved conversation had lost the other player's name. It is listed as \"Unknown name\" in the History Viewer, where you can give it a name."] = "Uma conversa salva tinha perdido o nome do outro jogador. Ela aparece como \"Nome desconhecido\" no Visualizador do histórico, onde você pode dar um nome a ela.",
 	["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Clicar no botão %s da janela de mensagens mostrará o histórico desse usuário no Visualizador de histórico do WIM.",
 
 	-- Message input & formatting --
@@ -602,7 +609,6 @@ WIM.AddLocale("ptBR", {
     ["Links & Emoticons"] = "Links e emoticons", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Chave geral deste tipo de canal; os canais individuais são capturados com a opção Capturar abaixo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Máximo de linhas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Tooltips"] = "Dicas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Fundo da área de mensagens", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Formato das mensagens", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Janelas de mensagens", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -782,4 +788,14 @@ WIM.AddLocale("ptBR", {
     ["Show Unread"] = "Mostrar não lidas",
     ["Show Hints"] = "Mostrar dicas",
     ["Displays shortcut hints in the conversation menu."] = "Exibe dicas de atalho no menu de conversa.",
+	["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "O WIM agora possui um tema moderno projetado para complementar melhor a interface atual do jogo. O tema selecionado é um estilo mais antigo que pode parecer desatualizado ou não oferecer suporte a recursos mais recentes.",
+	["Open Skin Settings"] = "Abrir configurações do tema",
+	["Keep Current"] = "Manter o atual",
+	["Press Ctrl+C to copy to clipboard."] = "Pressione Ctrl+C para copiar para a área de transferência.",
+	["Press Ctrl+C to copy the player's name."] = "Pressione Ctrl+C para copiar o nome do jogador.",
+	["Shift + Click to copy name..."] = "Shift + Clique para copiar o nome...",
+	["Miscellaneous"] = "Diversos",
+	["Streaming Mode"] = "Modo de transmissão",
+	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Proteja a privacidade dos jogadores com os quais você conversa ocultando seu nome completo e BattleTag.",
+	["Choose %s in the game menu."] = "Escolha %s no menu do jogo.",
 });

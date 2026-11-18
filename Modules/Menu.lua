@@ -234,7 +234,7 @@ local function forEachWhisperConvo(realm, character, convos, fn)
     for convo, tbl in pairs(convos) do
         local last = type(tbl) == "table" and tbl[#tbl];
         if(type(last) == "table" and last.type == 1 and not (tbl.info and tbl.info.chat)
-            and type(convo) == "string" and convo ~= "") then
+            and IsNamedHistoryConvo(convo)) then
             local target = convo;
             if(qualify and not isBNName(convo) and not string.find(convo, "-", 1, true)) then
                 target = convo..realmSuffix;
@@ -337,7 +337,7 @@ end
 local function bnHistoryNames(win)
     if(win.isBN and win.bn and win.bn.id) then
         local _, _, btag, _, toonName = GetBNGetFriendInfoByID(win.bn.id);
-        return btag, (toonName ~= "" and toonName or nil);
+        return (btag ~= "" and btag or nil), (toonName ~= "" and toonName or nil);
     end
 end
 
@@ -1255,12 +1255,14 @@ local function createGroup(title, list, maxButtons, showNone, showHeader)
                 if(i <= #list) then
                     button.win = list[i];
                     button.recent = nil;
-                    button.text:SetText((button.win.isBN and bnIcon or "")..button.win.theUser);
+					local name = db.streamMode and button.win.isBN and utils.GetPrivateBNetName(button.win.theUser) or button.win.theUser;
+                    button.text:SetText((button.win.isBN and bnIcon or "")..name);
                 else
                     -- recent-whisper entry: same dot and close button as a live row.
                     button.win = nil;
                     button.recent = extra[i - #list];
-                    button.text:SetText((button.recent.isBN and bnIcon or "")..button.recent.theUser);
+					local name = db.streamMode and button.recent.isBN and utils.GetPrivateBNetName(button.recent.theUser) or button.recent.theUser;
+                    button.text:SetText((button.recent.isBN and bnIcon or "")..name);
                 end
                 button.close:Show();
                 button.status:Show();

@@ -339,6 +339,13 @@ local translations = {
 	["Results are hidden by the active filter. Click to open the Filters menu."] = "Los resultados están ocultos por el filtro activo. Haz clic para abrir el menú de filtros.",
 	["Click to change how history is filtered."] = "Haz clic para cambiar cómo se filtra el historial.",
 	["Click to open the Filters menu."] = "Haz clic para abrir el menú de filtros.",
+	["Unknown name"] = "Nombre desconocido",
+	["This conversation was saved without the other player's name."] = "Esta conversación se guardó sin el nombre del otro jugador.",
+	["Enter the name this conversation belongs to."] = "Introduce el nombre al que pertenece esta conversación.",
+	["Enter the name of a player."] = "Introduce el nombre de un jugador.",
+	["This conversation of %s was saved without the other player's name."] = "Esta conversación de %s se guardó sin el nombre del otro jugador.",
+	["Enter the name of the player it was with. If you already have a conversation with that player, the messages are added to it."] = "Introduce el nombre del jugador con el que la mantuviste. Si ya tienes una conversación con ese jugador, los mensajes se añaden a ella.",
+	["A saved conversation had lost the other player's name. It is listed as \"Unknown name\" in the History Viewer, where you can give it a name."] = "Una conversación guardada había perdido el nombre del otro jugador. Aparece como \"Nombre desconocido\" en el Visor de historial, donde puedes darle un nombre.",
 	["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Al hacer clic en el botón %s de la ventana de mensajes se mostrará el historial de ese usuario en el visor de historial de WIM.",
 
 	-- Message input & formatting --
@@ -604,7 +611,6 @@ local translations = {
     ["Links & Emoticons"] = "Enlaces y emoticonos", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Interruptor principal de este tipo de canal; los canales individuales se capturan con la casilla Capturar de abajo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Líneas máximas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Tooltips"] = "Descripciones emergentes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Fondo del área de mensajes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Formato de mensajes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Ventanas de mensajes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -784,6 +790,16 @@ local translations = {
     ["Show Unread"] = "Mostrar no leídos",
     ["Show Hints"] = "Mostrar pistas",
     ["Displays shortcut hints in the conversation menu."] = "Muestra pistas de atajos en el menú de conversación.",
+    ["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM ahora cuenta con una apariencia moderna diseñada para complementar mejor la interfaz actual del juego. La apariencia que has seleccionado es un estilo más antiguo que puede parecer anticuado o carecer de soporte para funciones más recientes.",
+    ["Open Skin Settings"] = "Abrir configuración de apariencia",
+    ["Keep Current"] = "Mantener actual",
+    ["Press Ctrl+C to copy to clipboard."] = "Presiona Ctrl+C para copiar al portapapeles.",
+    ["Press Ctrl+C to copy the player's name."] = "Presiona Ctrl+C para copiar el nombre del jugador.",
+    ["Shift + Click to copy name..."] = "Mayús + Clic para copiar el nombre...",
+    ["Miscellaneous"] = "Varios",
+    ["Streaming Mode"] = "Modo de transmisión",
+    ["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Protege la privacidad de los jugadores con los que chateas ocultando su nombre completo y BattleTag.",
+    ["Choose %s in the game menu."] = "Elige %s en el menú del juego.",
 };
 
 if WIM.getLocale() == "esES" then

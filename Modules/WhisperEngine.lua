@@ -176,21 +176,6 @@ function WhisperEngine:OnEnableWIM()
 	_G.pcall(WhisperEngine.RegisterEvent, WhisperEngine, "PLAYER_REPORT_SUBMITTED");
 end
 
-function WhisperEngine:PLAYER_REPORT_SUBMITTED(guid)
-	if HasAnySecretValues(guid) or _G.type(guid) ~= "string" then
-		return;
-	end
-	local ok, _, _, _, _, _, name, realm = _G.pcall(_G.GetPlayerInfoByGUID, guid);
-	if not ok or _G.type(name) ~= "string" or name == "" then
-		return;
-	end
-	local fullName = (_G.type(realm) == "string" and realm ~= "") and (name.."-"..realm) or name;
-	local win = Windows[safeName(fullName)] or Windows[safeName(name)];
-	if win and win.widgets and win.widgets.chat_display and win.widgets.chat_display.Clear then
-		win.widgets.chat_display:Clear();
-	end
-end
-
 function WhisperEngine:OnEnable ()
 	for i = 1, #CHAT_EVENTS do
 		if ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter then
@@ -202,20 +187,18 @@ function WhisperEngine:OnEnable ()
 
 	-- check if whisperMode is set to inline, if not, display a warning in the options.
 	if _G.GetCVar and _G.GetCVar("whisperMode") ~= "inline" and db.whisperModeChecked ~= true then
-		_G.StaticPopupDialogs["WIM_WHISPER_MODE"] = {
-			preferredIndex = _G.STATICPOPUP_NUMDIALOGS,
-			text = "WIM: "..L["It is recommended for whispers to be set to in-line in order to handle their behavior properly."],
-			button1 = L["Set whispers to In-line"],
-			button2 = _G.LATER,
-			OnAccept = function()
+
+		utils.dialog.confirm(
+			"WIM: " .. L["It is recommended for whispers to be set to in-line in order to handle their behavior properly."],
+			function()
 				_G.SetCVar("whisperMode", "inline");
 			end,
-			timeout = 0,
-			whileDead = 1,
-			hideOnEscape = 1
-		};
-		_G.StaticPopup_Show ("WIM_WHISPER_MODE");
+			L["Set whispers to In-line"],
+			_G.LATER or _G.CLOSE
+		);
+
 		db.whisperModeChecked = true;
+		_WHISPER_MODE_DIALOG_SHOWN = true;
 	end
 end
 
@@ -259,7 +242,34 @@ local function findWhisperWindowByBNetID(bnID)
 	return nil;
 end
 
+-- A Battle.net window open for a friend who has a character whisper target
+-- becomes that character's window.
+local function adoptTitleFriendWindow(bnID, target)
+	local bnWin = findWhisperWindowByBNetID(bnID);
+	local key = safeName(target);
+	if(not bnWin or (Windows[key] and Windows[key] ~= bnWin)) then
+		return;
+	end
+	Windows[safeName(bnWin.theUser)] = nil;
+	Windows[key] = bnWin;
+	bnWin:Rename(target);
+	bnWin.isBN = nil;
+	for k in pairs(bnWin.bn) do
+		bnWin.bn[k] = nil;
+	end
+	bnWin:UpdateIcon();
+end
+
 local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
+	if isBN then
+		-- the default chat whispers such a friend by character; do the same.
+		local titleTarget = GetBNTitleFriendTarget(bnID);
+		if titleTarget then
+			adoptTitleFriendWindow(bnID, titleTarget);
+			user, isBN, bnID = titleTarget, nil, nil;
+		end
+	end
+
 	if isBN then
 		local _;
 		local bnWin = findWhisperWindowByBNetID(bnID);
@@ -926,6 +936,21 @@ function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(...)
 	end
 end
 
+function WhisperEngine:PLAYER_REPORT_SUBMITTED(guid)
+	if HasAnySecretValues(guid) or _G.type(guid) ~= "string" then
+		return;
+	end
+	local ok, _, _, _, _, _, name, realm = _G.pcall(_G.GetPlayerInfoByGUID, guid);
+	if not ok or _G.type(name) ~= "string" or name == "" then
+		return;
+	end
+	local fullName = (_G.type(realm) == "string" and realm ~= "") and (name.."-"..realm) or name;
+	local win = Windows[safeName(fullName)] or Windows[safeName(name)];
+	if win and win.widgets and win.widgets.chat_display and win.widgets.chat_display.Clear then
+		win.widgets.chat_display:Clear();
+	end
+end
+
 --------------------------------------
 --          Whisper Related Hooks   --
 --------------------------------------
@@ -999,12 +1024,27 @@ local function editBoxUpdateHeader(self, internalCall)
 
 end
 
+-- When a default chat edit box holds a secret tell target (Battle.net whispers in
+-- 12.x), moving focus away from it from addon code runs Blizzard's
+-- Deactivate -> ResetChatType -> UpdateHeader in WIM-tainted execution. The header
+-- FontString then has secret geometry and UpdateHeader errors with "attempt to
+-- perform arithmetic on a secret number value" on its header width check.
+-- In that case leave the reply to the default edit box instead of stealing focus.
+local function editBoxHasSecretTarget (editBox)
+	return editBox and editBox.GetTellTarget and HasAnySecretValues(editBox:GetTellTarget()) or false;
+end
+
+local function defaultEditBoxHasSecretTarget ()
+	local active = ChatFrameUtil and ChatFrameUtil.GetActiveWindow and ChatFrameUtil.GetActiveWindow();
+	return editBoxHasSecretTarget(active) or editBoxHasSecretTarget(_G.LAST_ACTIVE_CHAT_EDIT_BOX);
+end
+
 -- ReplyTell and ReplyTell2 hooking
 local function replyTellHook (reTell, msg)
 	if (not InChatMessagingLockdown() and not InCombatLockdown() and db and db.enabled) then
 		local _tellTarget, _chatType = unpack(reTell and lastToldTarget or lastTellTarget or {});
 
-		if (HasAnySecretValues(_tellTarget, _chatType)) then
+		if (HasAnySecretValues(_tellTarget, _chatType) or defaultEditBoxHasSecretTarget()) then
 			return;
 		end
 
@@ -1023,6 +1063,10 @@ end
 local function sendBNetTell (tokenizedName)
 	-- used to close the editbox that is open.
 	if not InChatMessagingLockdown() and not InCombatLockdown() and db and db.enabled then
+
+		if (defaultEditBoxHasSecretTarget()) then
+			return;
+		end
 
 		if (db.pop_rules.whisper.intercept) then
 			local bNetID = _G.BNet_GetBNetIDAccount(tokenizedName);

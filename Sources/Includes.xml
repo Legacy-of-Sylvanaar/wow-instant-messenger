@@ -12,11 +12,13 @@
     <Script file="Skinner.lua" />
     <script file="TabHandler.lua" />
     <Script file="Hooks.lua" />
-    <Script file="Stewmat.lua" />
-    <Script file="Compression.lua" />
+	<!-- The following are left commented out posterity, currently is not being used. -->
+    <!-- <Script file="Stewmat.lua" /> -->
+    <!-- <Script file="Compression.lua" /> -->
+    <!-- <Script file="OpCodes.lua" /> -->
     <Script file="Clear.lua" />
-    <Script file="OpCodes.lua" />
     <Script file="EditMode.lua" />
+	<Script file="Dialog.lua" />
 
     <Script file="Options\Options.lua" />
     <Script file="Options\ModernSettings.lua" />

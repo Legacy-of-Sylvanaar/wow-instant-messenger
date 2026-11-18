@@ -268,6 +268,7 @@ local WIM_ClassicSkin = {
         },
     },
     tab_strip = {
+		levelOffset = -0,
         textures = {
             tab = {
                 NormalTexture = "Interface\\AddOns\\"..WIM.addonTocName.."\\Skins\\Default\\tab_normal",
@@ -300,11 +301,17 @@ local WIM_ClassicSkin = {
             {"BOTTOMLEFT", "window", "TOPLEFT", 38, -4},
             {"BOTTOMRIGHT", "window", "TOPRIGHT", -20, -4}
         },
+		gap = 0, -- spacing between tabs
+		minimumSize = 75, -- minimum height/width of a tab (depending on orientation)
+		scrollMargin = 0, -- spacing between scroll indicator and tabs.
+
         -- Tab labels track the font object exactly (size and flags
         -- included), matching the FontString template they are created
         -- from; skins may override any of the font properties here.
         text = {
             font = "ChatFontNormal",
+			font_height = 12,
+			padding = {6, 6, 2, 0}, -- left, right, top, bottom
         },
         vertical = false,
     },

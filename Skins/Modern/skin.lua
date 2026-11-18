@@ -102,6 +102,9 @@ NineSliceUtil.AddLayout(
 		getNineSliceLayout()
 );
 
+local foreverX = WIM.isForever and 3 or 0
+local foreverY = WIM.isForever and 3 or 0
+
 local WIM_ModernSkin = {
 	title = "WIM Modern",
     version = "1.0.0",
@@ -195,8 +198,8 @@ local WIM_ModernSkin = {
 			chat_display = {
                 points = {
 					{"TOP", "char_info", "BOTTOM", 0, -8},
-                    {"LEFT", "window", "LEFT", 24, 0},
-                    {"BOTTOMRIGHT", "window", "BOTTOMRIGHT", -38, 39}
+                    {"LEFT", "window", "LEFT", 24 + foreverX, 0},
+                    {"BOTTOMRIGHT", "window", "BOTTOMRIGHT", -38 - foreverX, 39}
                 }
             },
 			history = {
@@ -209,8 +212,8 @@ local WIM_ModernSkin = {
             shortcuts = {
                 stack = "DOWN",
 				points = {
-                    {"TOPLEFT", "chat_display", "TOPRIGHT", 28, 4},
-                    {"BOTTOMRIGHT", "chat_display", "BOTTOMRIGHT", 28 + 22, 0}
+                    {"TOPLEFT", "chat_display", "TOPRIGHT", 28 - (foreverX * 0.5), 4},
+                    {"BOTTOMRIGHT", "chat_display", "BOTTOMRIGHT", 28 + 22 - (foreverX * 0.5), 0}
                 },
             },
 			close = {
@@ -226,10 +229,10 @@ local WIM_ModernSkin = {
                     HighlightTexture = useRedButton2x and "RedButton-Highlight2x" or "RedButton-Highlight",
                     HighlightAlphaMode = "ADD"
                 },
-				width = 23,
-                height = 23 * (38/36),
+				width = (23 + foreverX),
+                height = (23 + foreverX) * (38/36),
                 points = {
-                    {"TOPRIGHT", "window", "TOPRIGHT", 1, 0}
+                    {"TOPRIGHT", "window", "TOPRIGHT", 1, 0 + foreverX}
                 }
 			}
         }
@@ -244,9 +247,15 @@ local WIM_ModernSkin = {
             }
         },
 		points = {
-            {"BOTTOMLEFT", "window", "TOPLEFT", 50, -2},
-            {"BOTTOMRIGHT", "window", "TOPRIGHT", -20, -2}
+            {"BOTTOMLEFT", "window", "TOPLEFT", 44, -1 + foreverY},
+            {"BOTTOMRIGHT", "window", "TOPRIGHT", -18, -1 + foreverY}
         },
+		gap = 2, -- spacing between tabs
+		scrollMargin = 2,
+
+		text = {
+			padding = {4, 4, 0, 0}, -- left, right, top, bottom
+		},
     },
 	menu = {
 		-- `texture` or `backdropInfo` must be set, but not both.
@@ -324,6 +333,12 @@ WIM.RegisterSkin({
                 },
 			}
 		}
+	},
+	tab_strip = {
+		points = {
+            {"BOTTOMLEFT", "window", "TOPLEFT", 16, -1 + foreverY},
+            {"BOTTOMRIGHT", "window", "TOPRIGHT", -12, -1 + foreverY}
+        },
 	}
 })
 

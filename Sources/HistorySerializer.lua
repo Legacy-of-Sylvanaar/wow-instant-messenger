@@ -275,3 +275,142 @@ function SummarizeHistoryTable(tbl)
     end
     return convos, records;
 end
+
+
+-- A conversation whose other player could not be named is kept under this key
+-- and listed as "Unknown name". A conversation key is never empty.
+UNNAMED_HISTORY_CONVO = "?";
+
+function IsNamedHistoryConvo(key)
+    return type(key) == "string" and key ~= "" and key ~= UNNAMED_HISTORY_CONVO;
+end
+
+local function recordTime(record)
+    return type(record) == "table" and tonumber(record.time) or 0;
+end
+
+local function byTimeThenOrder(a, b)
+    local ta, tb = recordTime(a.record), recordTime(b.record);
+    if (ta ~= tb) then
+        return ta < tb;
+    end
+    return a.order < b.order;
+end
+
+-- Add src's records to dst in time order; dst's come first on a tie.
+function MergeHistoryConvo(dst, src)
+    if (type(dst) ~= "table" or type(src) ~= "table" or dst == src) then
+        return false;
+    end
+    local merged = {};
+    for i = 1, #dst do
+        merged[#merged + 1] = { record = dst[i], order = #merged + 1 };
+    end
+    for i = 1, #src do
+        merged[#merged + 1] = { record = src[i], order = #merged + 1 };
+    end
+    table.sort(merged, byTimeThenOrder);
+    for i = 1, #merged do
+        dst[i] = merged[i].record;
+    end
+    if (type(src.info) == "table") then
+        if (type(dst.info) ~= "table") then
+            dst.info = {};
+        end
+        for k, v in pairs(src.info) do
+            if (k ~= "menuHidden" and dst.info[k] == nil) then
+                dst.info[k] = v;
+            end
+        end
+    end
+    return true;
+end
+
+-- Move a conversation to another key in one character's table, merging by time
+-- when the target exists. Its records and inbound senders take the new key.
+function MoveHistoryConvo(convos, oldKey, newKey)
+    if (type(convos) ~= "table" or oldKey == nil or oldKey == newKey
+        or type(newKey) ~= "string" or newKey == "") then
+        return false, 0;
+    end
+    local src = convos[oldKey];
+    if (type(src) ~= "table") then
+        return false, 0;
+    end
+    local count = #src;
+    for i = 1, count do
+        local record = src[i];
+        if (type(record) == "table") then
+            if (record.convo == "" or record.convo == oldKey) then
+                record.convo = newKey;
+            end
+            if (record.inbound and (record.from == nil or record.from == "" or record.from == oldKey)) then
+                record.from = newKey;
+            end
+        end
+    end
+    convos[oldKey] = nil;
+    if (type(convos[newKey]) ~= "table") then
+        convos[newKey] = src;
+    else
+        MergeHistoryConvo(convos[newKey], src);
+    end
+    return true, count;
+end
+
+-- Move one character's archived history from one realm bucket to another.
+-- A conversation held in both is merged by time; one that cannot be decoded stays put.
+function AdoptHistoryCharacter(archive, oldRealm, newRealm, character)
+    if (type(archive) ~= "table" or type(oldRealm) ~= "string" or type(newRealm) ~= "string"
+        or oldRealm == newRealm or type(archive[oldRealm]) ~= "table") then
+        return false;
+    end
+    local src = archive[oldRealm][character];
+    if (type(src) ~= "table" or type(src.convos) ~= "table" or next(src.convos) == nil) then
+        return false;
+    end
+    local dst = type(archive[newRealm]) == "table" and archive[newRealm][character] or nil;
+    local moved = false;
+    if (type(dst) ~= "table" or type(dst.convos) ~= "table") then
+        if (type(archive[newRealm]) ~= "table") then
+            archive[newRealm] = {};
+        end
+        archive[newRealm][character] = src;
+        archive[oldRealm][character] = nil;
+        moved = true;
+    else
+        for convo, blob in pairs(src.convos) do
+            local existing = dst.convos[convo];
+            if (existing == nil) then
+                dst.convos[convo] = blob;
+                src.convos[convo] = nil;
+                moved = true;
+            else
+                local mine = DeserializeHistoryBlob(existing);
+                local theirs = DeserializeHistoryBlob(blob);
+                if (mine and theirs) then
+                    MergeHistoryConvo(mine, theirs);
+                    dst.convos[convo] = SerializeHistoryTable(mine);
+                    src.convos[convo] = nil;
+                    moved = true;
+                end
+            end
+        end
+        local convoCount = 0;
+        for _ in pairs(dst.convos) do
+            convoCount = convoCount + 1;
+        end
+        dst.convoCount = convoCount;
+        if (next(src.convos) == nil) then
+            dst.records = (tonumber(dst.records) or 0) + (tonumber(src.records) or 0);
+            if ((tonumber(src.updated) or 0) > (tonumber(dst.updated) or 0)) then
+                dst.updated = src.updated;
+            end
+            archive[oldRealm][character] = nil;
+        end
+    end
+    if (next(archive[oldRealm]) == nil) then
+        archive[oldRealm] = nil;
+    end
+    return moved;
+end

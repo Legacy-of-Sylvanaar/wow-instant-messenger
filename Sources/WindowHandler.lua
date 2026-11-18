@@ -43,30 +43,33 @@ setfenv(1, WIM);
 
 -- load message window related default settings.
 db_defaults.displayColors = {
-		sysMsg = {
-				r=1,
-				g=0.6627450980392157,
-				b=0
-			},
-		errorMsg = {
-				r=1,
-				g=0,
-				b=0
-			},
-                useSkin = true,
-                useNative = {
-                        enabled = true,
-                        whisper = true,
-                        bnet = true,
-                        say = true,
-                        guild = true,
-                        officer = true,
-                        party = true,
-                        raid = true,
-                        instance = true,
-                        channel = true,
-                },
-	};
+	sysMsg = {
+		r=1,
+		g=0.6627450980392157,
+		b=0
+	},
+	errorMsg = {
+		r=1,
+		g=0,
+		b=0
+	},
+	useSkin = true,
+	useNative = {
+		enabled = true,
+		whisper = true,
+		bnet = true,
+		say = true,
+		guild = true,
+		officer = true,
+		party = true,
+		raid = true,
+		instance = true,
+		channel = true,
+	},
+};
+
+-- streamer mode setting
+db_defaults.streamMode = false;
 
 -- The input field takes the color of the chat type it sends as, like
 -- the game's own chat box. A Modern skin option, inert under other
@@ -154,6 +157,7 @@ db_defaults.winCascade = {
 		direction = 8
 	};
 db_defaults.winFade = true;
+db_defaults.winFadeAmount = 50;
 db_defaults.winAnimation = true;
 db_defaults.wordwrap_indent = false;
 db_defaults.coloredNames = true;
@@ -193,8 +197,9 @@ local WindowSoupBowl = {
 }
 
 local FadeProps = {
-	min = .5,
-	max = 1,
+	-- min & max are deprecated since we have a defined value set now.
+	-- min = .5,
+	-- max = 1,
 	interval = .25,
 	delay = 2
 };
@@ -241,6 +246,7 @@ local FormattingCalls = {}; -- functions which are passed events to be formatted
 
 local StringModifiers = {}; -- registered functions which will be used to format the message part of the string.
 
+local editBoxSlug = { Deactivate = function () end };
 
 -- Window's Parent (Container for all Windows)
 WindowParent = _G.CreateFrame("Frame", "WIM_UIParent", _G.UIParent);
@@ -515,6 +521,18 @@ helperFrame.ResetState = function(self)
     end
 helperFrame:SetPoint("TOPLEFT", WindowParent, "TOPLEFT", 0, 0);
 helperFrame:SetScript("OnUpdate", function(self)
+		-- shift click handling
+		do
+			if (EditBoxInFocus ~= nil) then
+				if(IsShiftKeyDown() and _G.ACTIVE_CHAT_EDIT_BOX ~= EditBoxInFocus) then
+					_G.ACTIVE_CHAT_EDIT_BOX = EditBoxInFocus;
+				elseif not IsShiftKeyDown() and _G.ACTIVE_CHAT_EDIT_BOX ~= nil then
+					_G.ACTIVE_CHAT_EDIT_BOX = editBoxSlug;
+					_G.ChatFrameUtil.DeactivateChat(_G.ACTIVE_CHAT_EDIT_BOX)
+				end
+			end
+		end
+
         if(IsShiftKeyDown()) then
 			local obj = GetMouseFocus();
 			if(obj and (obj.isWimWindow or obj.parentWindow)) then
@@ -644,7 +662,7 @@ end
 
 local function animateFade(obj, directionIn, force)
         local fadeAnimator = obj.animators.fade
-        local to = directionIn and FadeProps.max or FadeProps.min
+        local to = directionIn and 1 or (db.winFadeAmount / 100)
         local from = obj:GetAlpha()
 
         if force then
@@ -679,7 +697,7 @@ local function animateFade(obj, directionIn, force)
 end
 
 local function setWindowAsFadedIn(obj)
-	if(WIM.db.winFade) then
+	if(WIM.db.winFade and obj.tabStrip == nil) then
                 if not obj.fadedIn then
                         obj:fadeIn()
                         obj.delayFadeElapsed = 0;
@@ -861,74 +879,80 @@ end
 
 
 local function MessageWindow_Frame_OnUpdate(self, elapsed)
-        if(self.isMoving and self.moveLastX) then
-                applyMovement(self);
-        end
+	if (self.isMoving and self.moveLastX) then
+		applyMovement(self);
+	end
+
 	-- window is visible, there aren't any messages waiting...
-        updateTracker(self);
+	updateTracker(self);
+
 	self.msgWaiting = false;
 	self.unreadCount = 0;
-        -- animation segment
-	if(self.animation and self.animation.mode) then
-                local animate = self.animation;
-                if(animate.mode == "HIDE") then
-                                animate.elapsed = animate.elapsed + elapsed;
-                                if(animate.elapsed > animate.time) then
-                                                self:Hide_Normal();
-                                else
-                                                local prct = animate.elapsed/animate.time;
-                                                local scale = (db.winSize.scale/100)*(1-prct);
-                                                scale = scale > animate.scaleLimit and scale or animate.scaleLimit;
-                                		self:SetScale(scale);
-                                		if(animate.to and animate.to.GetEffectiveScale) then
-                                                                local to = animate.to;
-                                                                local es, ts = self:GetEffectiveScale(), to:GetEffectiveScale();
-                                                                es, ts = es > 0 and es or .01, ts > 0 and ts or .01;
-                                                                local x1, y1, x2, y2 = animate.initLeft*es, animate.initTop*es, to:GetLeft()*ts, to:GetTop()*ts;
-                                                		local rise, run = ((y2-y1)>=0) and (y2-y1) or 0, ((x2-x1)>=0) and (x2-x1) or 0;
-                                                		self:ClearAllPoints();
-                                                		self:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", (x1+run*prct)/es, (y1+rise*prct)/es);
-                                                end
-                                	end
-                                end
+
+	-- animation segment
+	if (self.animation and self.animation.mode) then
+		local animate = self.animation;
+
+		if (animate.mode == "HIDE") then
+			animate.elapsed = animate.elapsed + elapsed;
+			if (animate.elapsed > animate.time) then
+				self:Hide_Normal();
+			else
+				local prct = animate.elapsed / animate.time;
+				local scale = (db.winSize.scale / 100) * (1 - prct);
+				scale = scale > animate.scaleLimit and scale or animate.scaleLimit;
+				self:SetScale(scale);
+				if (animate.to and animate.to.GetEffectiveScale) then
+					local to = animate.to;
+					local es, ts = self:GetEffectiveScale(), to:GetEffectiveScale();
+					es, ts = es > 0 and es or .01, ts > 0 and ts or .01;
+					local x1, y1, x2, y2 = animate.initLeft * es, animate.initTop * es, to:GetLeft() * ts, to:GetTop() *
+					ts;
+					local rise, run = ((y2 - y1) >= 0) and (y2 - y1) or 0, ((x2 - x1) >= 0) and (x2 - x1) or 0;
+					self:ClearAllPoints();
+					self:SetPoint("TOPLEFT", WindowParent, "BOTTOMLEFT", (x1 + run * prct) / es, (y1 + rise * prct) / es);
+				end
+			end
+		end
 	else
-                -- fading segment
-                if(db.winFade and self ~= DemoWindow) then
-                	self.fadeElapsed = (self.fadeElapsed or 0) + elapsed;
-                	while(self.fadeElapsed > .1) do
-                		local window = GetMouseFocus();
-                                if(window) then
-                			if(((window == self or window.parentWindow == self  or self.isOnHyperLink or
-                					self == helperFrame.attachedTo or
-                					(EditBoxInFocus and EditBoxInFocus.parentWindow == self)) or
-                					(window.tabStrip and window.tabStrip.selected.obj == self)) and
-                					(not self.fadedIn or self.delayFade)) then
-                                                                self:fadeIn()
-                				self.fadedIn = true;
-                				self.delayFade = false;
-                				self.delayFadeElapsed = 0;
-                			elseif(window ~= self and window.parentWindow ~= self and not self.isOnHyperLink and
-                					(not (window.tabStrip and window.tabStrip.selected.obj == self)) and
-                					helperFrame.attachedTo ~= self and
-                					(not EditBoxInFocus or EditBoxInFocus.parentWindow ~= self) and self.fadedIn) then
-                                                if(self.delayFade) then
-                					self.delayFadeElapsed = (self.delayFadeElapsed or 0) + elapsed;
-                					while(self.delayFadeElapsed > FadeProps.delay) do
-                						self.delayFade = false;
-                						self.delayFadeElapsed = 0;
-                					end
-                				else
-                					self.fadedIn = false;
-                					self.delayFadeElapsed = 0;
-                                                        self:fadeOut()
-                				end
-                			end
-                		end
-                		self.fadeElapsed = 0;
-                	end
-                elseif(not self.fadedIn) then
-                        setWindowAsFadedIn(self);
-                end
+		-- fading segment
+		if (db.winFade and self ~= DemoWindow) then
+			self.fadeElapsed = (self.fadeElapsed or 0) + elapsed;
+
+			while (self.fadeElapsed > .1) do
+				local window = GetMouseFocus();
+				if (window) then
+					if (((window == self or window.parentWindow == self or self.isOnHyperLink or
+									self == helperFrame.attachedTo or
+									(EditBoxInFocus and EditBoxInFocus.parentWindow == self)) or
+								(window.tabStrip and window.tabStrip.selected.obj == self)) and
+							(not self.fadedIn or self.delayFade)) then
+						self:fadeIn()
+						self.fadedIn = true;
+						self.delayFade = false;
+						self.delayFadeElapsed = 0;
+					elseif (window ~= self and window.parentWindow ~= self and not self.isOnHyperLink and
+							(not (window.tabStrip and window.tabStrip.selected.obj == self)) and
+							helperFrame.attachedTo ~= self and
+							(not EditBoxInFocus or EditBoxInFocus.parentWindow ~= self) and self.fadedIn) then
+						if (self.delayFade) then
+							self.delayFadeElapsed = (self.delayFadeElapsed or 0) + elapsed;
+							while (self.delayFadeElapsed > FadeProps.delay) do
+								self.delayFade = false;
+								self.delayFadeElapsed = 0;
+							end
+						else
+							self.fadedIn = false;
+							self.delayFadeElapsed = 0;
+							self:fadeOut()
+						end
+					end
+				end
+				self.fadeElapsed = 0;
+			end
+		elseif (not self.fadedIn) then
+			setWindowAsFadedIn(self);
+		end
 	end
 end
 
@@ -1345,8 +1369,13 @@ local function instantiateWindow(obj)
 					self.bn.broadcastTime = broadcastTime;
 					self.bn.hasFocus = hasFocus;
 					self.bn.id = id;
-					-- self.widgets.from:SetText(self.theUser.." - "..toonName);
-					if (toonName and toonName ~= "") then
+
+					-- streamer mode: hide personal info
+					if (db.streamMode) then
+						self.widgets.from:SetText(utils.GetPrivateBNetName(self.theUser));
+
+					-- show toon name if different
+					elseif (toonName and toonName ~= "" and toonName ~= self.theUser and not IsBNCharacterNamedFriend(id)) then
                         self.widgets.from:SetText(utils.GetReadableName(self.theUser).." ("..toonName..")");
                     end
 					self:UpdateIcon();
@@ -1469,48 +1498,51 @@ local function instantiateWindow(obj)
 	if(forceResult == true) then
 		-- go by forceResult and ignore rules
 		if(self.tabStrip) then
-                                -- if(not EditBoxInFocus) then
-                                                ShowContainer();
-                                                self.tabStrip:JumpToTab(self);
-                                                if(not InCombatLockdown() and not getVisibleChatFrameEditBox() and (rules.autofocus or forceFocus)) then
-                                                        self.widgets.msg_box:SetFocus();
-                                                end
-                                -- end
-		else
-                                ShowContainer();
-				self:ResetAnimation();
-				self:Show();
-                                if(not InCombatLockdown() and ((not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) or forceFocus)) then
-                                        self.widgets.msg_box:SetFocus();
-                                end
-				local count = 0;
-				for i=1, #WindowSoupBowl.windows do
-					count = WindowSoupBowl.windows[i].obj:IsShown() and count + 1 or count;
+			-- if(not EditBoxInFocus) then
+				ShowContainer();
+				self.tabStrip:JumpToTab(self);
+				if(not InCombatLockdown() and not getVisibleChatFrameEditBox() and (rules.autofocus or forceFocus)) then
+					self.widgets.msg_box:SetFocus();
 				end
---[[				if(count > 1) then
-					DisplayTutorial(L["Creating Tab Groups"], L["You can group two or many windows together by <Shift-Clicking> a window and dragging it on top of another."]);
-				else
-					DisplayTutorial(L["Resizing Windows"], L["You can resize a window by holding <Shift> and dragging the bottom right corner of the window."]);
-				end-- ]]
+			-- end
+		else
+			ShowContainer();
+			self:ResetAnimation();
+			self:Show();
+			if(not InCombatLockdown() and ((not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) or forceFocus)) then
+				self.widgets.msg_box:SetFocus();
+			end
+			local count = 0;
+			for i=1, #WindowSoupBowl.windows do
+				count = WindowSoupBowl.windows[i].obj:IsShown() and count + 1 or count;
+			end
+			--[[if(count > 1) then
+				DisplayTutorial(L["Creating Tab Groups"], L["You can group two or many windows together by <Shift-Clicking> a window and dragging it on top of another."]);
+			else
+				DisplayTutorial(L["Resizing Windows"], L["You can resize a window by holding <Shift> and dragging the bottom right corner of the window."]);
+			end-- ]]
 		end
 	else
 		-- execute pop rules.
 		if((rules.onSend and msgDirection == "out") or (rules.onReceive and msgDirection == "in")) then
 			if(self.tabStrip) then
 				self:ResetAnimation();
-                                local infocus = EditBoxInFocus and EditBoxInFocus:GetParent().tabStrip;
-                                if(infocus ~= self.tabStrip) then
-                                                self.tabStrip:JumpToTab(self);
-                                                setWindowAsFadedIn(self);
-                                end
+
+				local infocus = EditBoxInFocus and EditBoxInFocus:GetParent().tabStrip;
+
+				if(infocus ~= self.tabStrip) then
+					self.tabStrip:JumpToTab(self);
+					setWindowAsFadedIn(self);
+				end
 			else
 				self:ResetAnimation();
 				self:Show();
-                                setWindowAsFadedIn(self);
+				setWindowAsFadedIn(self);
 			end
-                        if(not InCombatLockdown() and self:IsVisible() and not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) then
-                                self.widgets.msg_box:SetFocus();
-                        end
+
+			if(not InCombatLockdown() and self:IsVisible() and not getVisibleChatFrameEditBox() and not EditBoxInFocus and rules.autofocus) then
+				self.widgets.msg_box:SetFocus();
+			end
 		end
 	end
 
@@ -2216,6 +2248,15 @@ function ToggleContainer(animate)
                 end
 end
 
+function RefreshBNetWindows()
+    for i=1, #WindowSoupBowl.windows do
+        local win = WindowSoupBowl.windows[i].obj;
+        if(win.isBN) then
+            win:SendWho();
+        end
+    end
+end
+
 
 ----------------------------------
 -- Set default widget triggers	--
@@ -2471,6 +2512,160 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkLeave", fu
                         end
 		end)
 
+--------------------------------------------------------------------------------
+-- Shift-click on a name while the default chat box is open.
+--
+-- Blizzard's chat frames put the name in the box from their own (secure) link
+-- handler. The handler above is WIM's code, so the name it puts there through
+-- SetItemRef goes in tainted, and a protected slash command sent with it
+-- (/ginvite, /invite...) is refused: 12.x clients raise ADDON_ACTION_FORBIDDEN
+-- against WIM. A frame built from Blizzard's InlineHyperlinkFrameTemplate keeps
+-- Blizzard's own link handler, which runs untainted with the link the client
+-- hands it. So while the chat-link modifier is held over a player link and the
+-- default chat box is open, an invisible copy of the hovered line on such a
+-- frame lies over it, faintly highlighted: the click lands on Blizzard's
+-- handler and the name goes in as from Blizzard's own chat frames.
+--------------------------------------------------------------------------------
+do
+	local linkProxy;            -- nil: not built yet, false: could not be built
+	local hoveredLine = {};     -- display, region and text of the hovered line
+
+	local function clearHoveredLine()
+		hoveredLine.display, hoveredLine.region, hoveredLine.text = nil, nil, nil;
+	end
+
+	local function linkProxyWanted()
+		local display, region = hoveredLine.display, hoveredLine.region;
+		if(not display or not region or not display:IsVisible() or not region:IsVisible()) then
+			return false;
+		end
+		-- the line under the copy must still be the one copied
+		local text = region:GetText();
+		return not IsSecretValue(text) and text == hoveredLine.text;
+	end
+
+	local function hideLinkProxy()
+		if(linkProxy) then
+			linkProxy:Hide();
+		end
+	end
+
+	local function getLinkProxy()
+		if(linkProxy ~= nil) then
+			return linkProxy or nil;
+		end
+		linkProxy = false;
+		if(type(_G.InlineHyperlinkFrame_OnClick) ~= "function") then
+			return nil;
+		end
+		local ok, frame = _G.pcall(CreateFrame, "Frame", nil, _G.UIParent, "InlineHyperlinkFrameTemplate");
+		if(not ok or not frame) then
+			return nil;
+		end
+		frame:Hide();
+		frame:EnableMouse(true);
+		frame:SetAlpha(0); -- comment out to debug and see region.
+		-- The template's hover handler shows the link on GameTooltip, which has
+		-- nothing to show for a player link. Its click handler never reads this.
+		local noop = function() end;
+		frame.tooltipFrame = {SetOwner = noop, ClearAllPoints = noop, SetPoint = noop, SetHyperlink = noop, Hide = noop};
+		local highlight = frame:CreateTexture(nil, "BACKGROUND");
+		highlight:SetAllPoints(frame);
+		highlight:SetColorTexture(1, 1, 1, 0.08);
+		frame.line = frame:CreateFontString(nil, "ARTWORK");
+		frame.line:SetAllPoints(frame);
+		frame.line:SetAlpha(0.01);
+		frame:SetScript("OnHide", function ()
+			clearHoveredLine();
+		end);
+		frame:SetScript("OnHyperlinkLeave", function(self)
+			self:Hide();
+		end);
+		linkProxy = frame;
+		return frame;
+	end
+
+	-- Lays the same text, in the same font and width, over the hovered line, so
+	-- each link of the copy sits on the link it copies.
+	local function copyLine(frame, display, region, text)
+
+		-- if link is history and has a negative chatLine, reset it to 0.
+		text = text:gsub("|H(B?N?player):([^:]+):(-%d+)|h", "|H%1:%2:0|h");
+
+		local line = frame.line;
+		line.parentWindow = display.parentWindow;
+		line:SetTextColor(region:GetTextColor());
+		line:SetFontObject(region:GetFontObject() or _G.ChatFontNormal);
+		local font, size, flags = region:GetFont();
+		if(font) then
+			line:SetFont(font, size, flags or "");
+		end
+		line:SetJustifyH(region:GetJustifyH());
+		line:SetJustifyV(region:GetJustifyV());
+		line:SetSpacing(region:GetSpacing());
+		line:SetWordWrap(region:CanWordWrap());
+		line:SetNonSpaceWrap(region:CanNonSpaceWrap());
+		line:SetIndentedWordWrap(region:GetIndentedWordWrap());
+		line:SetTextScale(region:GetTextScale());
+		line:SetText(text);
+		-- parented to the display for the same scale as the line
+		frame.parentWindow = display.parentWindow;
+		frame:SetParent(display);
+		frame:SetFrameStrata(display:GetFrameStrata());
+		frame:SetFrameLevel(display:GetFrameLevel() + 50);
+		frame:ClearAllPoints();
+		frame:SetAllPoints(region);
+	end
+
+	local function showLinkProxy()
+		if(not linkProxyWanted()) then
+			hideLinkProxy();
+			return;
+		end
+		local frame = getLinkProxy();
+		if(not frame) then
+			return;
+		end
+		if(_G.pcall(copyLine, frame, hoveredLine.display, hoveredLine.region, hoveredLine.text)) then
+			frame:Show();
+		else
+			frame:Hide();
+		end
+	end
+
+	function ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkEnter(self, link, _, region)
+		if(not IsSecretValue(link) and type(link) == "string" and (string.match(link, "^player:") or string.match(link, "^BNplayer:"))
+			and type(region) == "table" and region.GetText) then
+			local lineText = region:GetText();
+			if(not IsSecretValue(lineText) and type(lineText) == "string") then
+				hoveredLine.display, hoveredLine.region, hoveredLine.text = self, region, lineText;
+				showLinkProxy();
+				return;
+			end
+		end
+		clearHoveredLine();
+		hideLinkProxy();
+	end
+
+	function ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkLeave()
+		-- the copy appearing under the mouse makes the display leave the link
+		if(linkProxy and linkProxy:IsShown() and linkProxy:IsMouseOver()) then
+			return;
+		end
+		clearHoveredLine();
+		hideLinkProxy();
+	end
+
+	RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkEnter", ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkEnter);
+
+	RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkLeave", ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkLeave);
+
+	-- pressing or releasing the modifier over a link shows or hides the copy
+	local linkProxyWatcher = CreateFrame("Frame");
+	linkProxyWatcher:RegisterEvent("MODIFIER_STATE_CHANGED");
+	linkProxyWatcher:SetScript("OnEvent", showLinkProxy);
+end
+
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", function(self)
 		if(strsub(self:GetText(), 1, 1) == "/") then
 			-- Chat-type commands (/s, /e, /y ...) route through the
@@ -2519,13 +2714,18 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", func
                 return;
 			end
 		end
-		-- keep focus or not
-		if(self:GetParent():GetRuleSet().keepfocus) then
-			self:SetFocus();
-		else
-			self:Hide();
-			self:Show();
-		end
+		-- keep focus or not, once the other OnEnterPressed handlers have
+		-- run: the chat and whisper engines send from theirs, and a box
+		-- hidden first has lost its focus, so the client blocks the
+		-- message (WoW Forever: ADDON_ACTION_BLOCKED UNKNOWN()).
+		_G.C_Timer.After(0, function()
+			if(self:GetParent():GetRuleSet().keepfocus) then
+				self:SetFocus();
+			else
+				self:Hide();
+				self:Show();
+			end
+		end);
 
 	end);
 
@@ -2534,10 +2734,14 @@ RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnShow", function(sel
 	end);
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEscapePressed", function(self)
-		self:SetText("");
+	local text = self:GetText()
+	self:SetText("");
+
+	if (text == "") then
 		self:Hide();
 		self:Show();
-	end);
+	end
+end);
 
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnUpdate", function(self)
 		if(self.setText == 1) then
@@ -2585,6 +2789,17 @@ RegisterWidgetTrigger("msg_box", "whisper,w2w", "OnTabPressed", function(self)
                 end
 	end);
 
+-- must be handled on key down in order to allow protected functions to be called (predicated by user interaction, such as typing).
+-- might have to add options for keyboard type selection for users not using a standard QWERTY keyboard.
+-- for example, on a German keyboard, the "/" character requires Shift + 7, so the key detection logic would need to account for that.
+RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnKeyDown", function(self, key)
+	if (key == "/" and not _G.IsShiftKeyDown() and self:GetText()) == "" then
+		local open = _G.ChatFrameUtil and _G.ChatFrameUtil.OpenChat or _G.ChatEdit_OpenChat;
+		open("/");
+		_G.C_Timer.After(0, function() self:SetText(""); end);
+	end
+end);
+
 
 -- handle formatting options.
 local function applyBracket(index)
@@ -2597,59 +2812,98 @@ local function applyBracket(index)
 end
 
 RegisterMessageFormatting(L["Default"], function(smf, event, ...)
-		local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = ...;
-                arg11 = arg11 or 0;
-                local doColoredNames = constants.classes.GetColoredNameByChatEvent;
-		if(event == "CHAT_MSG_WHISPER") then
-			return applyBracket().."|Hplayer:"..arg2..":"..arg11.."|h"..(db.coloredNames and doColoredNames(event, ...) or arg2).."|h"..applyBracket(2)..": "..arg1;
-		elseif(event == "CHAT_MSG_WHISPER_INFORM") then
-                        arg11 = arg11 or 0;
-			return applyBracket().."|Hplayer:".._G.UnitName("player")..":"..arg11.."|h"..(db.coloredNames and constants.classes.GetMyColoredName() or _G.UnitName("player")).."|h"..applyBracket(2)..": "..arg1;
-                elseif(event == "CHAT_MSG_BN_WHISPER") then
-                        local win = smf.parentWindow;
-                        local color;
-                        if(win.bn.client == _G.BNET_CLIENT_WOW and constants.classes[win.bn.class] and constants.classes[win.bn.class].color) then
-                                color = constants.classes[win.bn.class].color
-                                color = string.len(color) == 6 and color or nil;
-                        end
-			return applyBracket().."|HBNplayer:"..arg2..":"..arg11.."|h"..(db.coloredNames and color and "|cff"..color..arg2.."|r" or arg2).."|h"..applyBracket(2)..": "..arg1;
-		elseif(event == "CHAT_MSG_BN_WHISPER_INFORM") then
-                        arg11 = arg11 or 0;
-			return applyBracket().."|Hplayer:".._G.UnitName("player")..":"..arg11.."|h"..(db.coloredNames and constants.classes.GetMyColoredName() or _G.UnitName("player")).."|h"..applyBracket(2)..": "..arg1;
-                elseif(event == "CHAT_MSG_AFK") then
-                        return _G.format(L["%s is Away From Keyboard: %s"], applyBracket().."|Hplayer:"..arg2..":"..arg11.."|h"..arg2.."|h"..applyBracket(2), arg1);
-                elseif(event == "CHAT_MSG_DND") then
-                        return _G.format(L["%s does not wish to be disturbed: %s"], applyBracket().."|Hplayer:"..arg2..":"..arg11.."|h"..arg2.."|h"..applyBracket(2), arg1);
-                elseif(event == "CHAT_MSG_GUILD" or event == "CHAT_MSG_OFFICER" or event == "CHAT_MSG_PARTY" or
-                                event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" or event == "CHAT_MSG_SAY" or event == "CHAT_MSG_PARTY_LEADER" or
-                                event == "CHAT_MSG_CHANNEL" or event == "CHAT_MSG_INSTANCE_CHAT" or event == "CHAT_MSG_INSTANCE_CHAT_LEADER") then
-                        return applyBracket().."|Hplayer:"..arg2..":"..arg11.."|h"..(db.coloredNames and doColoredNames(event, ...) or arg2).."|h"..applyBracket(2)..": "..arg1;
-				elseif(event == "CHAT_MSG_EMOTE") then
-					return "|Hplayer:"..arg2..":"..arg11.."|h"..(db.coloredNames and doColoredNames(event, ...) or arg2).."|h".." "..arg1;
-				elseif(event == "CHAT_MSG_TEXT_EMOTE") then
-					local user = "|Hplayer:"..arg2..":"..arg11.."|h"..(db.coloredNames and doColoredNames(event, ...) or arg2).."|h"
-					return arg1;
-				elseif(event == "CHAT_MSG_RAID_WARNING") then
-                        return _G.RAID_WARNING.." "..applyBracket().."|Hplayer:"..arg2..":"..arg11.."|h"..(db.coloredNames and doColoredNames(event, ...) or arg2).."|h"..applyBracket(2)..": "..arg1;
-                elseif(event == "CHAT_MSG_CHANNEL_JOIN") then
-                        return string.format(_G.CHAT_CHANNEL_JOIN_GET, arg2);
-                elseif(event == "CHAT_MSG_CHANNEL_LEAVE") then
-                        return string.format(_G.CHAT_CHANNEL_LEAVE_GET, arg2);
-                elseif(event == "CHAT_MSG_CHANNEL_NOTICE_USER") then
-                        if(_G.strlen(arg5) > 0) then
-				-- TWO users in this notice (E.G. x kicked y)
-				return _G.format(_G["CHAT_"..arg1.."_NOTICE"], arg8, arg4, arg2, arg5);
-			elseif ( arg1 == "INVITE" ) then
-				return _G.format(_G["CHAT_"..arg1.."_NOTICE"], arg4, arg2);
-			else
-				return _G.format(_G["CHAT_"..arg1.."_NOTICE"], arg8, arg4, arg2);
-			end
-		elseif(event == "CHAT_MSG_CHANNEL_NOTICE") then
-                        return _G.format(_G["CHAT_"..arg1.."_NOTICE"], arg8, arg4);
-                else
-			return "Unknown event received...";
+	local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12 = ...;
+	arg11 = arg11 or 0;
+	local doColoredNames = constants.classes.GetColoredNameByChatEvent;
+	if (event == "CHAT_MSG_WHISPER") then
+		return applyBracket() ..
+		"|Hplayer:" ..
+		arg2 ..
+		":" .. arg11 .. "|h" ..
+		(db.coloredNames and doColoredNames(event, ...) or arg2) .. "|h" .. applyBracket(2) .. ": " .. arg1;
+	elseif (event == "CHAT_MSG_WHISPER_INFORM") then
+		arg11 = arg11 or 0;
+		return applyBracket() ..
+		"|Hplayer:" ..
+		_G.UnitName("player") ..
+		":" ..
+		arg11 ..
+		"|h" ..
+		(db.coloredNames and constants.classes.GetMyColoredName() or _G.UnitName("player")) ..
+		"|h" .. applyBracket(2) .. ": " .. arg1;
+	elseif (event == "CHAT_MSG_BN_WHISPER") then
+		local win = smf.parentWindow;
+		local color;
+		if (win.bn.client == _G.BNET_CLIENT_WOW and constants.classes[win.bn.class] and constants.classes[win.bn.class].color) then
+			color = constants.classes[win.bn.class].color
+			color = string.len(color) == 6 and color or nil;
 		end
-	end);
+		local name = db.streamMode and utils.GetPrivateBNetName(arg2, true) or arg2;
+		return applyBracket() ..
+		"|HBNplayer:" ..
+		arg2 ..
+		":" ..
+		arg11 ..
+		"|h" .. (db.coloredNames and color and "|cff" .. color .. name .. "|r" or arg2) ..
+		"|h" .. applyBracket(2) .. ": " .. arg1;
+	elseif (event == "CHAT_MSG_BN_WHISPER_INFORM") then
+		arg11 = arg11 or 0;
+		return applyBracket() ..
+		"|HBNplayer:" ..
+		_G.UnitName("player") ..
+		":" ..
+		arg11 ..
+		"|h" ..
+		(db.coloredNames and constants.classes.GetMyColoredName() or _G.UnitName("player")) ..
+		"|h" .. applyBracket(2) .. ": " .. arg1;
+	elseif (event == "CHAT_MSG_AFK") then
+		return _G.format(L["%s is Away From Keyboard: %s"],
+			applyBracket() .. "|Hplayer:" .. arg2 .. ":" .. arg11 .. "|h" .. arg2 .. "|h" .. applyBracket(2), arg1);
+	elseif (event == "CHAT_MSG_DND") then
+		return _G.format(L["%s does not wish to be disturbed: %s"],
+			applyBracket() .. "|Hplayer:" .. arg2 .. ":" .. arg11 .. "|h" .. arg2 .. "|h" .. applyBracket(2), arg1);
+	elseif (event == "CHAT_MSG_GUILD" or event == "CHAT_MSG_OFFICER" or event == "CHAT_MSG_PARTY" or
+			event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" or event == "CHAT_MSG_SAY" or event == "CHAT_MSG_PARTY_LEADER" or
+			event == "CHAT_MSG_CHANNEL" or event == "CHAT_MSG_INSTANCE_CHAT" or event == "CHAT_MSG_INSTANCE_CHAT_LEADER") then
+		return applyBracket() ..
+		"|Hplayer:" ..
+		arg2 ..
+		":" .. arg11 .. "|h" ..
+		(db.coloredNames and doColoredNames(event, ...) or arg2) .. "|h" .. applyBracket(2) .. ": " .. arg1;
+	elseif (event == "CHAT_MSG_EMOTE") then
+		return "|Hplayer:" ..
+		arg2 .. ":" .. arg11 .. "|h" .. (db.coloredNames and doColoredNames(event, ...) or arg2) .. "|h" .. " " .. arg1;
+	elseif (event == "CHAT_MSG_TEXT_EMOTE") then
+		local user = "|Hplayer:" ..
+		arg2 .. ":" .. arg11 .. "|h" .. (db.coloredNames and doColoredNames(event, ...) or arg2) .. "|h"
+		return arg1;
+	elseif (event == "CHAT_MSG_RAID_WARNING") then
+		return _G.RAID_WARNING ..
+		" " ..
+		applyBracket() ..
+		"|Hplayer:" ..
+		arg2 ..
+		":" .. arg11 .. "|h" ..
+		(db.coloredNames and doColoredNames(event, ...) or arg2) .. "|h" .. applyBracket(2) .. ": " .. arg1;
+	elseif (event == "CHAT_MSG_CHANNEL_JOIN") then
+		return string.format(_G.CHAT_CHANNEL_JOIN_GET, arg2);
+	elseif (event == "CHAT_MSG_CHANNEL_LEAVE") then
+		return string.format(_G.CHAT_CHANNEL_LEAVE_GET, arg2);
+	elseif (event == "CHAT_MSG_CHANNEL_NOTICE_USER") then
+		if (_G.strlen(arg5) > 0) then
+			-- TWO users in this notice (E.G. x kicked y)
+			return _G.format(_G["CHAT_" .. arg1 .. "_NOTICE"], arg8, arg4, arg2, arg5);
+		elseif (arg1 == "INVITE") then
+			return _G.format(_G["CHAT_" .. arg1 .. "_NOTICE"], arg4, arg2);
+		else
+			return _G.format(_G["CHAT_" .. arg1 .. "_NOTICE"], arg8, arg4, arg2);
+		end
+	elseif (event == "CHAT_MSG_CHANNEL_NOTICE") then
+		return _G.format(_G["CHAT_" .. arg1 .. "_NOTICE"], arg8, arg4);
+	else
+		return "Unknown event received...";
+	end
+end);
 
 
 

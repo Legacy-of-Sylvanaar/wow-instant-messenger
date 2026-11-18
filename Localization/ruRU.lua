@@ -339,6 +339,13 @@ WIM.AddLocale("ruRU", {
 	["Results are hidden by the active filter. Click to open the Filters menu."] = "Результаты скрыты активным фильтром. Нажмите, чтобы открыть меню фильтров.",
 	["Click to change how history is filtered."] = "Нажмите, чтобы изменить фильтрацию истории.",
 	["Click to open the Filters menu."] = "Нажмите, чтобы открыть меню фильтров.",
+	["Unknown name"] = "Неизвестное имя",
+	["This conversation was saved without the other player's name."] = "Этот разговор был сохранён без имени другого игрока.",
+	["Enter the name this conversation belongs to."] = "Введите имя, которому принадлежит этот разговор.",
+	["Enter the name of a player."] = "Введите имя игрока.",
+	["This conversation of %s was saved without the other player's name."] = "Этот разговор персонажа %s был сохранён без имени другого игрока.",
+	["Enter the name of the player it was with. If you already have a conversation with that player, the messages are added to it."] = "Введите имя игрока, с которым он вёлся. Если у вас уже есть разговор с этим игроком, сообщения будут добавлены к нему.",
+	["A saved conversation had lost the other player's name. It is listed as \"Unknown name\" in the History Viewer, where you can give it a name."] = "В одном сохранённом разговоре было потеряно имя другого игрока. Он показан как \"Неизвестное имя\" в окне «Просмотр истории», где ему можно дать имя.",
 	["Clicking the %s button on the message window will show that user's history in WIM's History Viewer."] = "Нажатие кнопки %s в окне сообщения покажет историю этого игрока в окне просмотра истории WIM.",
 
 	-- Message input & formatting --
@@ -604,7 +611,6 @@ WIM.AddLocale("ruRU", {
     ["Links & Emoticons"] = "Ссылки и смайлики", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Главный переключатель для этого типа каналов; отдельные каналы перехватываются флажком «Перехватывать» ниже.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Максимум строк", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Tooltips"] = "Подсказки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Фон области сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Формат сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Окна сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -784,4 +790,14 @@ WIM.AddLocale("ruRU", {
     ["Show Unread"] = "Показать непрочитанные",
     ["Show Hints"] = "Показывать подсказки",
     ["Displays shortcut hints in the conversation menu."] = "Показывать подсказки для горячих клавиш в меню бесед.",
+	["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM теперь имеет современную тему, разработанную для лучшего соответствия текущему интерфейсу игры. Выбранная вами тема старого стиля может выглядеть устаревшей или не поддерживать новые функции.",
+	["Open Skin Settings"] = "Открыть настройки темы",
+	["Keep Current"] = "Сохранить текущую тему",
+	["Press Ctrl+C to copy to clipboard."] = "Нажмите Ctrl+C, чтобы скопировать в буфер обмена.",
+	["Press Ctrl+C to copy the player's name."] = "Нажмите Ctrl+C, чтобы скопировать имя игрока.",
+	["Shift + Click to copy name..."] = "Shift + клик, чтобы скопировать имя...",
+	["Miscellaneous"] = "Разное",
+	["Streaming Mode"] = "Режим трансляции",
+	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Защищает конфиденциальность игроков, с которыми вы общаетесь, скрывая их полное имя и BattleTag.",
+	["Choose %s in the game menu."] = "Выберите «%s» в игровом меню.",
 });

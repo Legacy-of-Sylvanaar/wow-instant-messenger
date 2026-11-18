@@ -171,6 +171,20 @@ do
 		local name, realm = utils.GetNameAndServer(user)
 		return name..(realm and " - "..realm or "")
 	end
+
+	function utils.GetPrivateBNetName(user, shortName)
+		local isId = type(user) == "number";
+		local id = isId and user or (user and _G.BNet_GetBNetIDAccount(user) or nil);
+
+		-- if we don't have an id, just return user
+		if not id then return user end
+
+		local _, _, accountId, _, toonName = WIM.GetBNGetFriendInfoByID(id)
+		if toonName == "" then toonName = nil end
+		if accountId == "" then accountId = nil end
+
+		return (shortName and toonName and (string.split(" ", toonName)) or toonName) or (accountId and string.split("#", accountId)) or '???';
+	end
 end
 
 ----------------------------------------------
@@ -474,7 +488,6 @@ do
 
 					if (texture._atlas and target.SetTextureSliceMargins) then
 						if (type(texture.sliceData) == "table") then
-							utils.debug.dump(texture)
 							target:SetTextureSliceMargins(
 								texture.sliceData.marginLeft or 0,
 								texture.sliceData.marginTop or 0,
