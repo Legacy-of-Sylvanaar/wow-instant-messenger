@@ -263,7 +263,7 @@ end
 local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
 	if isBN then
 		-- the default chat whispers such a friend by character; do the same.
-		local titleTarget = GetBNTitleFriendTarget(bnID);
+		local titleTarget = utils.bnet.GetBNTitleFriendTarget(bnID);
 		if titleTarget then
 			adoptTitleFriendWindow(bnID, titleTarget);
 			user, isBN, bnID = titleTarget, nil, nil;
@@ -275,7 +275,7 @@ local function getWhisperWindowByUser(user, isBN, bnID, fromEvent)
 		local bnWin = findWhisperWindowByBNetID(bnID);
 		local _user = user;
 
-		_, user = GetBNGetFriendInfoByID(bnID) -- fix window handler when using the chat hyperlink
+		_, user = utils.bnet.GetBNGetFriendInfoByID(bnID) -- fix window handler when using the chat hyperlink
 
 		user = user and user ~= "" and user or _user;
 
@@ -926,7 +926,7 @@ function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(...)
 	local online = process == "FRIEND_ONLINE"
 	local offline = process == "FRIEND_OFFLINE"
 
-	local _, accName = GetBNGetFriendInfoByID(bnSenderID)
+	local _, accName = utils.bnet.GetBNGetFriendInfoByID(bnSenderID)
 	local win = Windows[safeName(accName)]
 	if win then
 		local msg = accName.." "..(online and _G.BN_TOAST_ONLINE or offline and _G.BN_TOAST_OFFLINE or "")

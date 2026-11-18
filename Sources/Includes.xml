@@ -2,8 +2,10 @@
 
     <Script file="Migrate.lua" />
     <Script file="SlashHandler.lua" />
-    <Script file="Utilities.lua" />
-    <Script file="DebugTrace.lua" />
+
+	<Include file="Utilities/Includes.xml" />
+
+	<Script file="DebugTrace.lua" />
     <Script file="ContextMenu.lua" />
     <Script file="Constants.lua" />
     <Script file="StateHandler.lua" />

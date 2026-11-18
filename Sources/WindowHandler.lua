@@ -1348,8 +1348,8 @@ local function instantiateWindow(obj)
                 -- get information of BN user from friends data.
                 local id = self.theUser and _G.BNet_GetBNetIDAccount(self.theUser) or nil;
                 if(id) then
-					local _, _, _, _, _, bnetIDGameAccount = GetBNGetFriendInfoByID(id)
-					local hasFocus, toonName, client, realmName, realmID, faction, race, class, guild, zoneName, level, gameText, broadcastText, broadcastTime = GetBNGetGameAccountInfo(bnetIDGameAccount or 0);
+					local _, _, _, _, _, bnetIDGameAccount = utils.bnet.GetBNGetFriendInfoByID(id)
+					local hasFocus, toonName, client, realmName, realmID, faction, race, class, guild, zoneName, level, gameText, broadcastText, broadcastTime = utils.bnet.GetBNGetGameAccountInfo(bnetIDGameAccount or 0);
 					self.class = class or "";
 					self.level = level or "";
 					self.race = race or "";
@@ -1375,7 +1375,7 @@ local function instantiateWindow(obj)
 						self.widgets.from:SetText(utils.GetPrivateBNetName(self.theUser));
 
 					-- show toon name if different
-					elseif (toonName and toonName ~= "" and toonName ~= self.theUser and not IsBNCharacterNamedFriend(id)) then
+					elseif (toonName and toonName ~= "" and toonName ~= self.theUser and not utils.bnet.IsBNCharacterNamedFriend(id)) then
                         self.widgets.from:SetText(utils.GetReadableName(self.theUser).." ("..toonName..")");
                     end
 					self:UpdateIcon();

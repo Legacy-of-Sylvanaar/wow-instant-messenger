@@ -497,11 +497,11 @@ end
 -- History key for a Battle.net account. A WoW Forever character friend has no
 -- BattleTag (the field is "", not nil), so fall back to a character name.
 local function bnHistoryKey(bnId, eventName)
-    local _, _, btag, _, toonName = GetBNGetFriendInfoByID(bnId);
+    local _, _, btag, _, toonName = utils.bnet.GetBNGetFriendInfoByID(bnId);
     if(not IsSecretValue(btag) and type(btag) == "string" and btag ~= "") then
         return btag;
     end
-    return plainName(eventName) or plainName(toonName) or GetBNTitleFriendTarget(bnId) or UNNAMED_HISTORY_CONVO;
+    return plainName(eventName) or plainName(toonName) or utils.bnet.GetBNTitleFriendTarget(bnId) or UNNAMED_HISTORY_CONVO;
 end
 
 --BNet_GetValidatedCharacterName
