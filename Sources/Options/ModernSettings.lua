@@ -1432,47 +1432,21 @@ local function registerCategory()
     local minimap = ui.Checkbox(category, L["Minimap Button"],
         true, modules.MinimapIcon, "enabled", nil,
         function(value) EnableModule("MinimapIcon", value); end);
-	local minimapOnHover = ui.Checkbox(category, L["Open on Hover"],
-        false, db.minimap, "openOnHover",
-        L["Open the conversation menu when you hover over the minimap button."],
-        function() modules.MinimapIcon:OnEnable(); end);
-    ui.DependsOn(minimapOnHover, minimap);
     local minimapFree = ui.Checkbox(category, L["Unlock Minimap Button"],
         false, db.minimap, "free",
         L["The button can then be dragged anywhere on the screen."],
         function() modules.MinimapIcon:OnEnable(); end);
     ui.DependsOn(minimapFree, minimap);
-    ui.Checkbox(category, L["Right-Click Opens Unread"],
-        false, db.minimap, "rightClickNew",
-        L["Applies to the minimap button, the addon compartment entry, and data broker launchers."]);
     if (_G.AddonCompartmentFrame) then
         ui.Checkbox(category, L["Addon Compartment Entry"],
             false, modules.AddonCompartment, "enabled", nil,
             function(value) EnableModule("AddonCompartment", value); end);
     end
 
-    ui.Header(layout, L["Menus & Tooltips"]);
+    ui.Header(layout, L["Tooltips"]);
     ui.Checkbox(category, L["Show WIM Tooltips"], true,
         db, "showToolTips",
         L["Shows help tooltips on WIM's windows, lists, and the custom rows of these options."]);
-    ui.Checkbox(category, L["Sort Menu by Activity"], true,
-        db, "menuSortActivity",
-        L["WIM's launcher menus list the most recently active conversations first."]);
-    local function recentSettings() return db.minimap.recentWhispers; end
-    local function refreshMenu() if (WIM.Menu) then WIM.Menu:Refresh(); end end
-    local recent = ui.Checkbox(category, L["Show Recent Whispers"], true,
-        recentSettings, "enabled",
-        L["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."],
-        refreshMenu);
-    local recentAll = ui.Checkbox(category, L["Include All Characters"], true,
-        recentSettings, "accountWide",
-        L["Recent whispers come from every character on this account, not just this one."],
-        refreshMenu);
-    ui.DependsOn(recentAll, recent);
-	ui.Checkbox(category, L["Show Hints"], true,
-        db, "menuShowFooter",
-        L["Displays shortcut hints in the conversation menu."],
-        refreshMenu);
 
     ui.Header(layout, L["Report a Bug"]);
     ui.Custom(layout, "WIM3SettingsBugReportTemplate",

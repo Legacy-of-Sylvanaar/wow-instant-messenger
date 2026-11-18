@@ -1969,7 +1969,24 @@ RegisterModernPage(function(category, ui)
 				db.modernTheme.menuGroups = not _tmp.unified and true or false;
 				LoadMenuSkin(db.modernTheme.menuSkin);
 			end);
-
+        ui.Checkbox(cat, L["Sort Menu by Activity"], true,
+            db, "menuSortActivity",
+            L["WIM's launcher menus list the most recently active conversations first."]);
+        local function recentSettings() return db.minimap.recentWhispers; end
+        local function refreshMenu() if (WIM.Menu) then WIM.Menu:Refresh(); end end
+        local recent = ui.Checkbox(cat, L["Show Recent Whispers"], true,
+            recentSettings, "enabled",
+            L["Lists your most recent whisper conversations from saved history in the launcher menu, so they are still there after a reload or relog."],
+            refreshMenu);
+        local recentAll = ui.Checkbox(cat, L["Include All Characters"], true,
+            recentSettings, "accountWide",
+            L["Recent whispers come from every character on this account, not just this one."],
+            refreshMenu);
+        ui.DependsOn(recentAll, recent);
+        ui.Checkbox(cat, L["Show Hints"], true,
+            db, "menuShowFooter",
+            L["Displays shortcut hints in the conversation menu."],
+            refreshMenu);
 
         local function backgroundItems()
             local items = {};

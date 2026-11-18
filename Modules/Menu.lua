@@ -524,24 +524,77 @@ local function createStatusIcon(parent)
     return icon;
 end
 
+-- Menu text uses the skin's font object as it is (GameFontNormal for the Modern skin),
+-- the way Blizzard's own menus do, so it follows the game's text size setting; a fixed
+-- SetFont size would not. Every row is the same type size; kinds differ by colour only.
+-- A skin naming a font file or LibSharedMedia font instead goes through SetWidgetFont.
+local function setMenuFont(fontString, widgetSkinTable)
+	local name = widgetSkinTable and widgetSkinTable.font;
+	local fontObject = type(name) == "string" and _G[name];
+	if(type(fontObject) == "table" and fontObject.GetFont) then
+		fontString:SetFontObject(fontObject);
+		local color = widgetSkinTable.font_color;
+		if(type(color) == "table") then
+			fontString:SetTextColor(unpack(color));
+		elseif(color) then
+			fontString:SetTextColor(utils.color.RGBHexToPercent(color));
+		end
+	else
+		SetWidgetFont(fontString, widgetSkinTable);
+	end
+end
+
+-- a row's height for its text: the line plus 4px above and below, never less than the skin asks.
+local function rowHeightFor(fontString, skinHeight)
+	local _, size = fontString:GetFont();
+	return _G.math.max(skinHeight or 14, _G.math.ceil((size or 12) + 8));
+end
+
+-- the skin's row highlight, shared by the window rows and the footer's action rows.
+-- A highlight with no texture is a flat band in its colour. With bleed set, the band runs
+-- past the row into the menu's side padding, edge to edge like a tooltip row.
+local function applyItemHighlight(button, skin)
+	local hl = skin.menu.item.highlight;
+	if(hl.texture) then
+		utils.skin.applyHighlightTexture(button, hl.texture);
+	else
+		button:SetHighlightTexture("Interface\\Buttons\\WHITE8X8");
+	end
+	local highlight = button:GetHighlightTexture();
+	if(highlight) then
+		if (not hl.texture or utils.skin.getAtlasInfo(hl.texture)) then
+			highlight:SetTexCoord(0, 1, 0, 1);
+		end;
+		highlight:SetBlendMode(hl.blendMode or "BLEND");
+		highlight:SetVertexColor(unpack(hl.color or {1, 1, 1, 1}));
+		highlight:ClearAllPoints();
+		highlight:SetHeight(button:GetHeight());
+		local points = hl.points or {};
+		if (#points > 0) then
+			for _, point in ipairs(points) do
+				highlight:SetPoint(unpack(point));
+			end
+		elseif (hl.bleed) then
+			local padding = skin.menu.padding or {0, 0, 0, 0};
+			highlight:SetPoint("TOPLEFT", button, "TOPLEFT", -(padding[1] or 0), 0);
+			highlight:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", padding[2] or 0, 0);
+		else
+			highlight:SetAllPoints(button);
+		end
+	end
+end
+
 local function createButton(parent)
     buttonCount = buttonCount + 1;
-    local button = CreateFrame("Button", "WIM3MenuButton"..buttonCount, parent, "UIPanelButtonTemplate");
-
-	button:DisableDrawLayer("BACKGROUND");
-
-	-- button:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight", "ADD");
-    -- button:GetHighlightTexture():SetVertexColor(.196, .388, .8);
-
-    button.text = _G[button:GetName().."Text"];
-    button.text:ClearAllPoints();
-	button.text._allowCustomFont = false; -- flag that this frame allows custom fonts.
+    -- a plain button: a template's button would re-apply its own fonts on every state change.
+    local button = CreateFrame("Button", "WIM3MenuButton"..buttonCount, parent);
+    button.text = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight");
 
     button.status = createStatusIcon(button);
     button.close = createCloseButton(button);
 
 	button.ApplySkin = function(self, skin)
-		SetWidgetFont(self.text, skin.menu.item.text);
+		setMenuFont(self.text, skin.menu.item.text);
 
 		-- item text
 		button.text:SetWordWrap(false);
@@ -573,27 +626,9 @@ local function createButton(parent)
 		end
 
 		-- other adjustments
-		button:SetHeight(skin.menu.item.height or 14);
+		button:SetHeight(rowHeightFor(button.text, skin.menu.item.height));
 
-		utils.skin.applyHighlightTexture(button, skin.menu.item.highlight.texture);
-		local highlight = self:GetHighlightTexture();
-		if(highlight) then
-			if (utils.skin.getAtlasInfo(skin.menu.item.highlight.texture)) then
-				highlight:SetTexCoord(0, 1, 0, 1);
-			end;
-			highlight:SetBlendMode(skin.menu.item.highlight.blendMode or "BLEND");
-			highlight:SetVertexColor(unpack(skin.menu.item.highlight.color or {1, 1, 1, 1}));
-			highlight:ClearAllPoints();
-			highlight:SetHeight(button:GetHeight());
-			points = skin.menu.item.highlight.points or {};
-			if (#points > 0) then
-				for _, point in ipairs(points) do
-					highlight:SetPoint(unpack(point));
-				end
-			else
-				highlight:SetAllPoints(button);
-			end
-		end
+		applyItemHighlight(button, skin);
 	end
 
     button:SetScript("OnClick", function(self, b)
@@ -673,69 +708,332 @@ local function createButton(parent)
     return button;
 end
 
--- launcher hints in the footer: what it does on the left in white, matching the names
--- above, and the mouse click that does it on the right in blue, with the row controls.
-local HINT_ACTION_COLOR = {1, 1, 1};
-local HINT_CLICK_COLOR = {0.25, 0.65, 1};
+-- launcher hints in the footer: the action on the left in blue, as a link that does it
+-- when clicked, and the launcher click that also does it on the right in grey.
+local HINT_ACTION_COLOR = {0.25, 0.65, 1};
+local HINT_CLICK_COLOR = {0.55, 0.55, 0.55};
+local TOOLS_ARROW = "Interface\\ChatFrame\\ChatFrameExpandArrow";
+local FLYOUT_GAP = 2; -- between the menu's visible edge and the Tools flyout's
 
--- The hint lines. Right-click and Shift + Right-Click swap when "Right-Click Opens
--- Unread" is on.
+local function hideMenu()
+    if(WIM.Menu) then
+        WIM.Menu:Hide();
+    end
+end
+
+-- what a launcher's right- and middle-clicks do; the footer links do the same.
+local launcherActions = {
+    unread = function() hideMenu(); ShowAllUnreadWindows(); end,
+    all = function() hideMenu(); ShowAllWindows(); end,
+    history = function() hideMenu(); ShowHistoryViewer(); end,
+    options = function() hideMenu(); ShowOptions(); end,
+};
+
+-- Clicks on any launcher: the minimap button, data broker launchers and the add-on
+-- compartment entry. The menu itself opens on hover (ShowMenuOnHover).
+function LauncherClick(button)
+    if(button == "LeftButton") then
+        launcherActions.unread();
+    elseif(button == "RightButton") then
+        launcherActions.all();
+    elseif(button == "MiddleButton") then
+        (_G.IsShiftKeyDown() and launcherActions.options or launcherActions.history)();
+    end
+end
+
+-- Hovering a launcher opens the menu, which then closes like a tooltip once the cursor
+-- leaves both.
+function ShowMenuOnHover(owner, placement)
+    local menu = WIM.Menu;
+    if(menu and not menu:IsShown()) then
+        menu:AnchorTo(owner, placement);
+        menu:ShowFor(owner, true);
+    end
+end
+
+-- The hint lines: {click, action, func}.
 local function getFooterHints()
-    local unreadFirst = db and db.minimap and db.minimap.rightClickNew;
-    local hints = {
-        {L["Right-Click"], unreadFirst and L["Show Unread"] or L["Tools"]},
-        {L["Shift + Right-Click"], unreadFirst and L["Tools"] or L["Show Unread"]},
-        {L["Shift + Middle-Click"], L["Options"]},
+    return {
+        {L["Left-Click"], L["Show Unread"], launcherActions.unread},
+        {L["Right-Click"], L["Show All Windows"], launcherActions.all},
+        {L["Middle-Click"], L["History Viewer"], launcherActions.history},
+        {L["Shift + Middle-Click"], L["Options"], launcherActions.options},
     };
-    return hints;
+end
+
+----------------------------------------------
+--            Tools flyout                  --
+----------------------------------------------
+-- The rarer actions (MENU_MINIMAP, which other modules add to) open beside the Tools
+-- row, drawn in the menu's own skin.
+
+-- the items to show, without hidden ones or spacers at either end or doubled up.
+local function getToolItems()
+    local root = GetContextMenu("MENU_MINIMAP");
+    local items = {};
+    for _, tag in ipairs(root and root.menuTable or {}) do
+        local item = GetContextMenu(tag);
+        local hidden = item and item.hidden;
+        if(type(hidden) == "function") then
+            hidden = hidden();
+        end
+        if(item and not hidden) then
+            local spacer = item.isTitle and (item.text == nil or item.text == "");
+            local prev = items[#items];
+            if(not (spacer and (not prev or prev.wimSpacer))) then
+                table.insert(items, {item = item, wimSpacer = spacer});
+            end
+        end
+    end
+    if(items[#items] and items[#items].wimSpacer) then
+        items[#items] = nil;
+    end
+    return items;
+end
+
+local function createFlyoutRow(flyout, index)
+    local row = CreateFrame("Button", flyout:GetName().."Row"..index, flyout);
+    row.text = row:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
+    row.text:SetPoint("LEFT");
+    row.text:SetJustifyH("LEFT");
+    row.text:SetWordWrap(false);
+    row:SetScript("OnClick", function(self)
+        local item = self.item;
+        hideMenu();
+        if(item and type(item.func) == "function") then
+            item.func(item);
+        end
+    end);
+    return row;
+end
+
+local function createFlyout(menu)
+    local flyout = CreateFrame("Frame", "WIM3MenuToolsFlyout", menu, "BackdropTemplate");
+    flyout:SetClampedToScreen(true);
+    flyout:Hide();
+    flyout.rows = {};
+    flyout.bg = flyout:CreateTexture(nil, "BACKGROUND");
+    flyout.bg:SetAllPoints();
+
+    -- skin the box like the menu: its backdrop, or its atlas art.
+    flyout.ApplyFrameSkin = function(self, skin)
+        local backdropInfo = skin.menu.backdropInfo;
+        if(type(backdropInfo) == "table") then
+            self:SetBackdrop(backdropInfo);
+            self:SetBackdropColor(unpack(backdropInfo.bgColor or {1, 1, 1, 1}));
+            self:SetBackdropBorderColor(unpack(backdropInfo.edgeColor or {1, 1, 1, 1}));
+            self.bg:Hide();
+        else
+            self:ClearBackdrop();
+            utils.skin.applyTexture(self.bg, skin.menu.texture);
+            self.bg:SetAlpha(skin.menu.textureAlpha or 1);
+            self.bg:SetAllPoints();
+            self.bg:Show();
+        end
+    end
+
+    -- show beside `owner` (the Tools row), first item level with it, on the side of the
+    -- menu facing the screen centre.
+    flyout.Open = function(self, owner)
+        local skin = GetSelectedMenuSkin();
+        if(not skin) then
+            return;
+        end
+        self.owner = owner;
+        self:ApplyFrameSkin(skin);
+        local padding = skin.menu.padding or {0, 0, 0, 0};
+        local offsets = skin.menu.edgeOffsets or {0, 0, 0, 0};
+        local padL, padR, padT, padB = padding[1] or 0, padding[2] or 0, padding[3] or 0, padding[4] or 0;
+        local offL, offR, offT, offB = offsets[1] or 0, offsets[2] or 0, offsets[3] or 0, offsets[4] or 0;
+        local rowHeight = menu.groups[1].buttons[1]:GetHeight();
+
+        local items = getToolItems();
+        local y = offT + padT;
+        local width = 120;
+        for i=1, _G.math.max(#items, #self.rows) do
+            local row = self.rows[i];
+            local entry = items[i];
+            if(not row and entry) then
+                row = createFlyoutRow(self, i);
+                self.rows[i] = row;
+            end
+            if(row and entry and not entry.wimSpacer) then
+                local item = entry.item;
+                row:SetHeight(rowHeight);
+                row:ClearAllPoints();
+                row:SetPoint("TOPLEFT", self, "TOPLEFT", offL + padL, -y);
+                row:SetPoint("TOPRIGHT", self, "TOPRIGHT", -(offR + padR), -y);
+                if(item.isTitle) then
+                    -- a labelled title: a gold heading, not clickable.
+                    setMenuFont(row.text, skin.menu.title);
+                    row.item = nil;
+                    row:Disable();
+                else
+                    setMenuFont(row.text, skin.menu.item.text);
+                    row.text:SetTextColor(1, 1, 1);
+                    row.item = item;
+                    row:Enable();
+                end
+                applyItemHighlight(row, skin);
+                -- a texture's alpha and its vertex colour's alpha are one value, so blank
+                -- a title's band through the colour; SetAlpha(1) would make every band opaque.
+                local highlight = row:GetHighlightTexture();
+                if(highlight and item.isTitle) then
+                    highlight:SetVertexColor(0, 0, 0, 0);
+                end
+                row.text:SetText(item.text);
+                width = _G.math.max(width, row.text:GetStringWidth() + 24);
+                row:Show();
+                y = y + rowHeight;
+            else
+                if(row) then
+                    row.item = nil;
+                    row:Hide();
+                end
+                if(entry) then
+                    y = y + rowHeight; -- a blank line where the tools menu had a spacer
+                end
+            end
+        end
+        self:SetWidth(width + padL + padR + offL + offR);
+        self:SetHeight(y + padB + offB);
+
+        -- the menu is this frame's parent, so both share one coordinate space.
+        local _, menuLeft = GetMenuGrowthAnchor(menu);
+        local dy = offT + padT;
+        self:ClearAllPoints();
+        if(menuLeft:find("RIGHT")) then
+            -- menu on the left half of the screen: open to its right.
+            local dx = (menu:GetRight() - owner:GetRight()) - offR - offL + FLYOUT_GAP;
+            self:SetPoint("TOPLEFT", owner, "TOPRIGHT", dx, dy);
+        else
+            local dx = (menu:GetLeft() - owner:GetLeft()) + offL + offR - FLYOUT_GAP;
+            self:SetPoint("TOPRIGHT", owner, "TOPLEFT", dx, dy);
+        end
+        self.stamp = _G.GetTime();
+        self:Show();
+    end
+
+    -- close shortly after the cursor leaves both the flyout and the Tools row, with
+    -- time to cross between them; leaving the menu altogether closes everything.
+    flyout:SetScript("OnUpdate", function(self)
+        if(isMouseOver(self) or (self.owner and isMouseOver(self.owner))) then
+            self.stamp = _G.GetTime();
+        elseif((_G.GetTime() - (self.stamp or 0)) > HOVER_CLOSE_DELAY) then
+            self:Hide();
+        end
+    end);
+    return flyout;
+end
+
+-- The Tools row: a gold heading with an arrow, like a submenu entry, that opens the flyout.
+local function createToolsRow(footer)
+    local row = CreateFrame("Button", footer:GetName().."Tools", footer);
+    row.text = row:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
+    row.text:SetPoint("LEFT");
+    row.text:SetJustifyH("LEFT");
+    row.text:SetText(L["Tools"]);
+    row.arrow = row:CreateTexture(nil, "OVERLAY");
+    row.arrow:SetTexture(TOOLS_ARROW);
+    row.arrow:SetSize(16, 16);
+    row.arrow:SetPoint("RIGHT", row, "RIGHT", 2, 0); -- the art carries 2px of space on its right
+    local function open(self)
+        local menu = WIM.Menu;
+        menu.flyout = menu.flyout or createFlyout(menu);
+        menu.flyout:Open(self);
+    end
+    row:SetScript("OnEnter", open);
+    row:SetScript("OnClick", function(self)
+        local flyout = WIM.Menu.flyout;
+        if(flyout and flyout:IsShown()) then
+            flyout:Hide();
+        else
+            open(self);
+        end
+    end);
+    return row;
+end
+
+local function createFooterRow(footer, index)
+    local row = CreateFrame("Button", footer:GetName().."Row"..index, footer);
+    row.action = row:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
+    row.action:SetPoint("LEFT");
+    row.action:SetJustifyH("LEFT");
+    row.key = row:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
+    row.key:SetPoint("RIGHT");
+    row.key:SetJustifyH("RIGHT");
+    row:SetScript("OnClick", function(self)
+        if(self.func) then
+            self.func(self);
+        end
+    end);
+    return row;
 end
 
 -- The footer is one frame that the menu hands to whichever section is last, so it sits
--- inside that section's box in either menu style.
+-- inside that section's box in either menu style: the Tools row, a blank row with a
+-- divider, then the launcher hints.
 local function createFooter(parent)
     local footer = CreateFrame("Frame", "WIM3MenuFooter", parent);
     footer.rows = {};
     footer.rowHeight = 14;
+    footer.tools = createToolsRow(footer);
+    footer.divider = footer:CreateTexture(nil, "ARTWORK");
+    footer.divider:SetTexture("Interface\\Common\\UI-TooltipDivider-Transparent");
+    footer.divider:SetHeight(13);
     footer.SetHints = function(self, hints, skin)
+        local h = self.rowHeight;
+        self.tools:ClearAllPoints();
+        self.tools:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0);
+        self.tools:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, 0);
+        self.tools:SetHeight(h);
+        if(skin) then
+            setMenuFont(self.tools.text, skin.menu.title);
+            applyItemHighlight(self.tools, skin);
+        end
+        -- centre the 13px divider art in the blank second row.
+        self.divider:ClearAllPoints();
+        self.divider:SetPoint("TOPLEFT", self, "TOPLEFT", 0, -1.5 * h + 6.5);
+        self.divider:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -1.5 * h + 6.5);
+        local top = 2 * h;
         for i=1, _G.math.max(#hints, #self.rows) do
             local row = self.rows[i];
             if(not row and hints[i]) then
-                row = {};
-                row.action = self:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-                row.action:SetJustifyH("LEFT");
-                row.key = self:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-                row.key:SetJustifyH("RIGHT");
+                row = createFooterRow(self, i);
                 self.rows[i] = row;
             end
             if(row) then
                 if(hints[i]) then
+                    row:SetHeight(h);
                     if(skin) then
-                        SetWidgetFont(row.key, skin.menu.item.text);
-                        SetWidgetFont(row.action, skin.menu.item.text);
+                        setMenuFont(row.key, skin.menu.item.text);
+                        setMenuFont(row.action, skin.menu.item.text);
+                        applyItemHighlight(row, skin);
                     end
                     row.action:SetTextColor(unpack(HINT_ACTION_COLOR));
                     row.key:SetTextColor(unpack(HINT_CLICK_COLOR));
                     row.key:SetText(hints[i][1]);
                     row.action:SetText(hints[i][2]);
-                    row.action:ClearAllPoints();
-                    row.action:SetPoint("TOPLEFT", self, "TOPLEFT", 0, -(i-1)*self.rowHeight);
-                    row.key:ClearAllPoints();
-                    row.key:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -(i-1)*self.rowHeight);
-                    row.key:Show(); row.action:Show();
+                    row.func = hints[i][3];
+                    row:ClearAllPoints();
+                    row:SetPoint("TOPLEFT", self, "TOPLEFT", 0, -(top + (i-1)*h));
+                    row:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -(top + (i-1)*h));
+                    row:Show();
                 else
-                    row.key:Hide(); row.action:Hide();
+                    row.func = nil;
+                    row:Hide();
                 end
             end
         end
         self.count = #hints;
-        self:SetHeight(self.rowHeight * #hints);
+        self:SetHeight(top + h * #hints);
     end
     footer.GetMinimumWidth = function(self)
-        local width = 0;
+        local width = self.tools.text:GetStringWidth() + 16 + 24;
         for i=1, (self.count or 0) do
             local row = self.rows[i];
             width = _G.math.max(width, row.key:GetStringWidth() + row.action:GetStringWidth() + 24);
-			        end
+        end
         return width;
     end
     return footer;
@@ -761,20 +1059,16 @@ local function createGroup(title, list, maxButtons, showNone, showHeader)
     group.title.text = group.title:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
     group.title.text:SetText(title.." ");
 	group.title.text:SetAllPoints();
-	group.title.text._allowCustomFont = true;
 
-	-- -- add-on name and version above the first section, like a tooltip header.
-	-- if (showHeader) then
-	-- 	group.header = CreateFrame("Frame", group:GetName().."Header", group);
-	-- 	group.header.name = group.header:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-	-- 	group.header.name:SetPoint("LEFT");
-	-- 	group.header.name:SetJustifyH("LEFT");
-	-- 	group.header.name:SetText("WIM");
-	-- 	group.header.version = group.header:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
-	-- 	group.header.version:SetPoint("RIGHT");
-	-- 	group.header.version:SetJustifyH("RIGHT");
-	-- 	group.header.version:SetText(GetDisplayVersion());
-	-- end
+	-- the add-on name on the right of the first section's title, greyed like a tooltip
+	-- header; a blank line follows before the names (see titleGap in ApplySkin).
+	if (showHeader) then
+		group.title.addon = group.title:CreateFontString(nil, "OVERLAY", "ChatFontNormal");
+		group.title.addon:SetPoint("TOPRIGHT");
+		group.title.addon:SetPoint("BOTTOMRIGHT");
+		group.title.addon:SetJustifyH("RIGHT");
+		group.title.addon:SetText("WIM");
+	end
 
 	-- debugging visuals
 	-- group.bg = group:CreateTexture(nil, "BACKGROUND");
@@ -820,7 +1114,7 @@ local function createGroup(title, list, maxButtons, showNone, showHeader)
 			local marginTop = groupMode and skin and skin.menu.item.marginTop or 0;
 			local marginBottom = groupMode and skin and skin.menu.item.marginBottom or 0;
 
-			local headerHeight = group.header and (group.header:GetHeight() + (group.headerGap or 0)) or 0;
+			local headerHeight = group.titleGap or 0;
 			-- the launcher hints, when this is the last section: a blank line, then the rows.
 			local footerHeight = group.footer and (group.footer:GetHeight() + group.footer.rowHeight) or 0;
 
@@ -902,44 +1196,38 @@ local function createGroup(title, list, maxButtons, showNone, showHeader)
 			end
 		end
 
-		-- title skinning
-		local titleHeight = skin.menu.title.height or skin.menu.title.font_height or 12;
-		SetWidgetFont(self.title.text, skin.menu.title);
+		-- title skinning: a heading in the same type size as the rows, gold, with the add-on
+		-- name greyed on the right of the first section's.
+		setMenuFont(self.title.text, skin.menu.title);
 		self.title.text:SetJustifyH(skin.menu.title.align or "LEFT");
 		self.title.text:SetJustifyV(skin.menu.title.justify or "TOP");
-		local titleTop = offsetTop + paddingTop;
-		if (self.header) then
-			-- header in the title font: name in the title colour, version greyed on the right.
-			self.header:ClearAllPoints();
-			self.header:SetPoint("TOPLEFT", self, "TOPLEFT", paddingLeft + offsetLeft, -titleTop);
-			self.header:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -(paddingRight + offsetRight), -(titleTop + titleHeight));
-			SetWidgetFont(self.header.name, skin.menu.title);
-			SetWidgetFont(self.header.version, skin.menu.title);
-			self.header.version:SetTextColor(.5, .5, .5);
-			-- two blank lines between the name and the first section.
-			self.headerGap = titleHeight * 2;
-			titleTop = titleTop + titleHeight + self.headerGap;
+		self.title.text:SetWordWrap(false);
+		if (self.title.addon) then
+			setMenuFont(self.title.addon, skin.menu.title);
+			self.title.addon:SetTextColor(.5, .5, .5);
 		end
+		local _, titleSize = self.title.text:GetFont();
+		local titleHeight = _G.math.max(skin.menu.title.height or skin.menu.title.font_height or 12,
+			_G.math.ceil((titleSize or 12) + 2));
+		local titleTop = offsetTop + paddingTop;
 		self.title:ClearAllPoints();
 		self.title:SetPoint("TOPLEFT", self, "TOPLEFT", paddingLeft + offsetLeft, -titleTop);
 		self.title:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -(paddingRight + offsetRight), -(titleTop + titleHeight));
 
-
-		-- title font + color. SetWidgetFont resolves every form a skin may
-		-- declare (font object name, LibSharedMedia name, or file path); a
-		-- raw SetFont here would silently no-op on anything but a path.
-		SetWidgetFont(self.title.text, skin.menu.title);
-		self.title.text:SetWordWrap(false);
-
-		-- buttons
+		-- buttons: skinned first, since their height follows their font.
+		for i=1, #self.buttons do
+			self.buttons[i]:ApplySkin(skin);
+		end
+		-- one blank row between a title carrying the add-on name and the first name.
+		self.titleGap = self.title.addon and self.buttons[1]:GetHeight() or 0;
 		local marginTop = skin and skin.menu.item.marginTop or 0;
 		local prev = self.title;
 		for i=1, #self.buttons do
 			local button = self.buttons[i];
 			button:ClearAllPoints();
-			button:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", 0, i == 1 and (-marginTop) or 0);
-			button:SetPoint("TOPRIGHT", prev, "BOTTOMRIGHT", 0, i == 1 and (-marginTop) or 0);
-			button:ApplySkin(skin);
+			local y = i == 1 and -(marginTop + self.titleGap) or 0;
+			button:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", 0, y);
+			button:SetPoint("TOPRIGHT", prev, "BOTTOMRIGHT", 0, y);
 			prev = button;
 		end
 	end
@@ -947,8 +1235,8 @@ local function createGroup(title, list, maxButtons, showNone, showHeader)
     group.extra = nil; -- optional second list of recent-whisper entries (whisper group only)
     group.Refresh = function(self)
         local maxWidth = 150;
-        if (self.header) then
-            maxWidth = _G.math.max(maxWidth, self.header.name:GetStringWidth() + self.header.version:GetStringWidth() + 24);
+        if (self.title.addon) then
+            maxWidth = _G.math.max(maxWidth, self.title.text:GetStringWidth() + self.title.addon:GetStringWidth() + 24);
         end
         -- the Whispers section shows only the windows that pass the list rules.
         local list = self.displayList or self.list;
@@ -1196,15 +1484,17 @@ local function createMenu()
 	end
 
     menu:SetScript("OnUpdate", function(self)
+            -- the Tools flyout hangs outside the menu but counts as part of it.
+            local overFlyout = self.flyout and self.flyout:IsShown() and isMouseOver(self.flyout);
             if(self.hoverOwner) then
-                if(isMouseOver() or isMouseOver(self.hoverOwner)) then
+                if(isMouseOver() or overFlyout or isMouseOver(self.hoverOwner)) then
                     self.hoverStamp = _G.GetTime();
                 elseif((_G.GetTime() - (self.hoverStamp or 0)) > HOVER_CLOSE_DELAY) then
                     self:Hide();
                 end
                 return;
             end
-            if(isMouseOver()) then
+            if(isMouseOver() or overFlyout) then
 				self.AUTO_CLOSE_TIMEOUT = AUTO_CLOSE_TIMEOUT_INTERACTED;
                 self.mouseStamp = _G.time();
             else
@@ -1213,6 +1503,27 @@ local function createMenu()
                 end
             end
         end);
+    -- Hang the menu from a launcher, growing toward the screen center. placement:
+    -- nil = off the owner's corner (minimap button), "beside" = next to it with the
+    -- tops or bottoms aligned (a dropdown row), "below" = above or below it with
+    -- the sides aligned (a data broker bar). The skin's edgeOffsets are the margin
+    -- around the visible frame, so shift by them to sit the visible edge flush.
+    menu.AnchorTo = function(self, owner, placement)
+        local point, relPoint = GetMenuGrowthAnchor(owner);
+        local vert = point:find("TOP") and "TOP" or "BOTTOM";
+        local horiz = point:find("RIGHT") and "RIGHT" or "LEFT";
+        if(placement == "beside") then
+            relPoint = vert..(horiz == "RIGHT" and "LEFT" or "RIGHT");
+        elseif(placement == "below") then
+            relPoint = (vert == "TOP" and "BOTTOM" or "TOP")..horiz;
+        end
+        local skin = GetSelectedMenuSkin();
+        local offsets = skin and skin.menu and skin.menu.edgeOffsets or {0, 0, 0, 0};
+        local x = (horiz == "RIGHT") and (offsets[2] or 0) or -(offsets[1] or 0);
+        local y = (vert == "TOP") and (offsets[3] or 0) or -(offsets[4] or 0);
+        self:ClearAllPoints();
+        self:SetPoint(point, owner, relPoint, x, y);
+    end
     -- Show the menu at a launcher. hover = true when it was opened by mousing over the
     -- launcher: it then closes like a tooltip once the cursor leaves both. A click
     -- (hover = false) pins it the old way, closing a moment after the cursor leaves.
@@ -1224,6 +1535,10 @@ local function createMenu()
     end
     menu:SetScript("OnHide", function(self)
         self.hoverOwner = nil;
+        -- a child, so it hides with the menu, but it would come back with it too.
+        if(self.flyout) then
+            self.flyout:Hide();
+        end
     end);
     menu:SetScript("OnShow", function(self)
 		if (not initialSkinLoaded) then

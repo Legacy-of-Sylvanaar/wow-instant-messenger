@@ -17,42 +17,11 @@ local data = {
     text = "", --L["No New Messages"],
     icon = icon,
     OnClick = function(frame, button)
-	if(button == "LeftButton") then
-            Menu:ClearAllPoints();
-            if(Menu:IsShown()) then
-                Menu:Hide();
-            else
-                Menu:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0);
-                Menu:Show();
-            end
-        elseif(button == "MiddleButton") then
-            if(_G.IsShiftKeyDown()) then
-                Menu:Hide();
-                ShowOptions();
-            end
-        else
-            if(db.minimap.rightClickNew) then
-                if(_G.IsShiftKeyDown()) then
-                    -- display tools menu
-                    PopContextMenu("MENU_MINIMAP", frame:GetName());
-                else
-                    ShowAllUnreadWindows();
-                end
-            else
-                if(_G.IsShiftKeyDown()) then
-                    ShowAllUnreadWindows();
-                else
-                    -- display tools menu
-                    PopContextMenu("MENU_MINIMAP", frame:GetName());
-                end
-            end
-        end
+        LauncherClick(button);
     end,
-    OnTooltipShow = function(tooltip)
-	tooltip:AddDoubleLine("WIM", GetDisplayVersion(), 1, .82, 0, .5, .5, .5);
-        for i=1, #Notes do
-            tooltip:AddDoubleLine("|cff"..Notes[i].color..Notes[i].tag..":|r", "|cffffffff"..Notes[i].text.."|r");
-        end
+    -- Broker displays call OnEnter in place of OnTooltipShow when it is set.
+    OnEnter = function(frame)
+        ShowMenuOnHover(frame, "below");
     end,
 };
 

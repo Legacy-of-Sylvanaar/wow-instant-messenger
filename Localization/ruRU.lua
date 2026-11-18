@@ -482,7 +482,6 @@ WIM.AddLocale("ruRU", {
     ["Animation Direction"] = "Направление анимации", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Appearance"] = "Внешний вид", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies the filter list below to captured chat messages. Community chat is not filtered."] = "Применяет список фильтров ниже к перехваченным сообщениям чата. Чат сообществ не фильтруется.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Applies to the minimap button, the addon compartment entry, and data broker launchers."] = "Относится к кнопке у миникарты, пункту в панели модификаций и кнопкам Data Broker.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies to whisper and chat history alike. Pruning runs at login."] = "Относится и к истории шёпотов, и к истории чата. Очистка выполняется при входе в игру.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Apply To"] = "Применять к", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Arrow keys keep controlling the game while the input box has focus; hold Alt to move the text cursor instead."] = "Клавиши со стрелками продолжают управлять игрой, пока поле ввода в фокусе; удерживайте Alt, чтобы вместо этого перемещать текстовый курсор.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -605,7 +604,7 @@ WIM.AddLocale("ruRU", {
     ["Links & Emoticons"] = "Ссылки и смайлики", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Главный переключатель для этого типа каналов; отдельные каналы перехватываются флажком «Перехватывать» ниже.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Максимум строк", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Menus & Tooltips"] = "Меню и подсказки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Tooltips"] = "Подсказки", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Фон области сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Формат сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Окна сообщений", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -669,7 +668,6 @@ WIM.AddLocale("ruRU", {
     ["Reset Position"] = "Сбросить положение", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention"] = "Хранение", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention caps, preview, and deletion."] = "Пределы хранения, предпросмотр и удаление.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Right-Click Opens Unread"] = "Правый клик открывает непрочитанные", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Runs the whisper filter list below. While off, addon-spam whispers open windows like any other whisper."] = "Применяет список фильтров шёпотов ниже. Пока выключено, спам-шёпоты от модификаций открывают окна, как любой другой шёпот.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["See-Through Frame"] = "Прозрачная рамка", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sender Details"] = "Сведения об отправителе", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -779,12 +777,11 @@ WIM.AddLocale("ruRU", {
     ["Include All Characters"] = "Учитывать всех персонажей",
     ["Recent whispers come from every character on this account, not just this one."] = "Недавние шёпоты берутся со всех персонажей этой учётной записи, а не только с этого.",
     ["Right-Click"] = "Правый клик",
-    ["Shift + Right-Click"] = "Shift + правый клик",
+    ["Middle-Click"] = "Средний клик",
+    ["Left-Click"] = "Левый клик",
     ["Shift + Middle-Click"] = "Shift + средний клик",
     ["Tools"] = "Инструменты",
     ["Show Unread"] = "Показать непрочитанные",
-    ["Open on Hover"] = "Открывать при наведении",
-    ["Open the conversation menu when you hover over the minimap button."] = "Открывать меню бесед при наведении на кнопку мини-карты.",
     ["Show Hints"] = "Показывать подсказки",
     ["Displays shortcut hints in the conversation menu."] = "Показывать подсказки для горячих клавиш в меню бесед.",
 });

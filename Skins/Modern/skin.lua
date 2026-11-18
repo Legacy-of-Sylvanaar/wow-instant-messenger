@@ -274,9 +274,15 @@ local WIM_ModernSkin = {
 				font_height = 12,
 				align = "LEFT",
 			},
+			-- a flat, faint gold band across the full inner width of the menu. texture,
+			-- blendMode and points are set explicitly so the Classic skin's row art and
+			-- its 20px right inset are not inherited.
 			highlight = {
-				texture = "auctionhouse-ui-row-select",
-				color = {1, 0.82, 0},
+				texture = false,
+				color = {1, 0.82, 0, 0.18},
+				blendMode = "BLEND",
+				points = {},
+				bleed = true,
 			}
 		}
 	}

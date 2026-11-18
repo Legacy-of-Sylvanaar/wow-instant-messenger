@@ -482,7 +482,6 @@ WIM.AddLocale("frFR", {
     ["Animation Direction"] = "Direction de l'animation", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Appearance"] = "Apparence", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies the filter list below to captured chat messages. Community chat is not filtered."] = "Applique la liste de filtres ci-dessous aux messages de discussion capturés. Le chat de communauté n'est pas filtré.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Applies to the minimap button, the addon compartment entry, and data broker launchers."] = "S'applique au bouton de la minicarte, à l'entrée du compartiment des addons et aux lanceurs Data Broker.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies to whisper and chat history alike. Pruning runs at login."] = "S'applique à l'historique des chuchotements comme à celui du chat. Le nettoyage s'exécute à la connexion.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Apply To"] = "Appliquer à", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Arrow keys keep controlling the game while the input box has focus; hold Alt to move the text cursor instead."] = "Les flèches continuent de contrôler le jeu pendant que la zone de saisie a le focus ; maintenez Alt pour déplacer le curseur du texte à la place.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -605,7 +604,7 @@ WIM.AddLocale("frFR", {
     ["Links & Emoticons"] = "Liens et émoticônes", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Master switch for this channel type; individual channels are captured with the Capture flag below."] = "Interrupteur principal de ce type de canal ; chaque canal est capturé avec la case Capturer ci-dessous.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Maximum Lines"] = "Lignes maximales", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Menus & Tooltips"] = "Menus et infobulles", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
+    ["Tooltips"] = "Infobulles", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Area Background"] = "Arrière-plan de la zone de messages", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Format"] = "Format des messages", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Message Windows"] = "Fenêtres de messages", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -669,7 +668,6 @@ WIM.AddLocale("frFR", {
     ["Reset Position"] = "Réinitialiser la position", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention"] = "Conservation", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention caps, preview, and deletion."] = "Limites de conservation, aperçu et suppression.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Right-Click Opens Unread"] = "Clic droit ouvre les non-lus", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Runs the whisper filter list below. While off, addon-spam whispers open windows like any other whisper."] = "Exécute la liste de filtres de chuchotements ci-dessous. Désactivé, les chuchotements de spam d'addons ouvrent des fenêtres comme tout autre chuchotement.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["See-Through Frame"] = "Cadre transparent", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sender Details"] = "Détails de l'expéditeur", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -779,12 +777,11 @@ WIM.AddLocale("frFR", {
     ["Include All Characters"] = "Inclure tous les personnages",
     ["Recent whispers come from every character on this account, not just this one."] = "Les chuchotements récents proviennent de tous les personnages de ce compte, pas seulement de celui-ci.",
     ["Right-Click"] = "Clic droit",
-    ["Shift + Right-Click"] = "Maj + Clic droit",
+    ["Middle-Click"] = "Clic milieu",
+    ["Left-Click"] = "Clic gauche",
     ["Shift + Middle-Click"] = "Maj + Clic milieu",
     ["Tools"] = "Outils",
     ["Show Unread"] = "Afficher les non-lus",
-    ["Open on Hover"] = "Ouvrir au survol",
-    ["Open the conversation menu when you hover over the minimap button."] = "Ouvre le menu de conversation lorsque vous survolez le bouton de la mini-carte.",
     ["Show Hints"] = "Afficher les indices",
     ["Displays shortcut hints in the conversation menu."] = "Affiche des indices de raccourcis dans le menu de conversation.",
 });
