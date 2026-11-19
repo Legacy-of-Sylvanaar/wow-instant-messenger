@@ -2,8 +2,10 @@
 
     <Script file="Migrate.lua" />
     <Script file="SlashHandler.lua" />
-    <Script file="Utilities.lua" />
-    <Script file="DebugTrace.lua" />
+
+	<Include file="Utilities/Includes.xml" />
+
+	<Script file="DebugTrace.lua" />
     <Script file="ContextMenu.lua" />
     <Script file="Constants.lua" />
     <Script file="StateHandler.lua" />
@@ -12,10 +14,11 @@
     <Script file="Skinner.lua" />
     <script file="TabHandler.lua" />
     <Script file="Hooks.lua" />
-    <Script file="Stewmat.lua" />
-    <Script file="Compression.lua" />
+	<!-- The following are left commented out posterity, currently is not being used. -->
+    <!-- <Script file="Stewmat.lua" /> -->
+    <!-- <Script file="Compression.lua" /> -->
+    <!-- <Script file="OpCodes.lua" /> -->
     <Script file="Clear.lua" />
-    <Script file="OpCodes.lua" />
     <Script file="EditMode.lua" />
 	<Script file="Dialog.lua" />
 

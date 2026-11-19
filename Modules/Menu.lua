@@ -88,7 +88,7 @@ local function resolveBNetID(name)
     if(isBNName(name) and _G.BNGetNumFriends) then
         local total = _G.BNGetNumFriends() or 0;
         for i=1, total do
-            local id, accountName, battleTag = GetBNGetFriendInfo(i);
+            local id, accountName, battleTag = utils.bnet.GetBNGetFriendInfo(i);
             if(id and (battleTag == name or accountName == name)) then
                 return id;
             end
@@ -336,7 +336,7 @@ end
 -- rather than the account name shown on the window.
 local function bnHistoryNames(win)
     if(win.isBN and win.bn and win.bn.id) then
-        local _, _, btag, _, toonName = GetBNGetFriendInfoByID(win.bn.id);
+        local _, _, btag, _, toonName = utils.bnet.GetBNGetFriendInfoByID(win.bn.id);
         return (btag ~= "" and btag or nil), (toonName ~= "" and toonName or nil);
     end
 end
@@ -448,7 +448,7 @@ local function buildRecentWhispers()
             local bnID = resolveBNetID(entry.target);
             local accountName;
             if(bnID) then
-                local _, name = GetBNGetFriendInfoByID(bnID);
+                local _, name = utils.bnet.GetBNGetFriendInfoByID(bnID);
                 accountName = name;
             end
             if(accountName and accountName ~= "") then
