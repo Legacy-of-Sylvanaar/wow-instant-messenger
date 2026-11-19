@@ -389,6 +389,16 @@ local function bnKeyPasses(ctx, bnKey)
     end);
     return metricResult(ctx.mode, stats);
 end
+
+local function getNameFromBattleTag (battleTag, prioritizeToon)
+	local bnID = utils.bnet.GetBNetIDFromName(battleTag);
+	if bnID then
+		local accountName, _, toonName, privateBattleTag = utils.bnet.GetBNFriendNames(bnID);
+		return WIM.db.streamMode and (prioritizeToon and toonName or privateBattleTag) or accountName or toonName or privateBattleTag or battleTag;
+	end
+
+	return battleTag;
+end
 -- ----------------------------------------------------------------------------
 
 
@@ -433,8 +443,15 @@ local function createWidget()
         _G.GameTooltip:Hide();
     end);
     button:SetScript("OnClick", function(self, button)
+		local win = self.parentWindow;
         if(self.parentWindow.isHistory) then
-            ShowHistoryViewer(self.parentWindow.theUser);
+			-- if bn, make sure we get the battle tag.
+			local _, battleTag = utils.bnet.GetBNFriendNames(win.bn.id);
+			if (win.bn and win.bn.id) then
+				ShowHistoryViewer(battleTag);
+				return;
+			end
+            ShowHistoryViewer(win.theUser);
         end
     end);
     return button;
@@ -759,7 +776,7 @@ function History:OnWindowCreated(win)
 		if (bnId) then
 			user = bnHistoryKey(bnId, user);
 			if (user ~= UNNAMED_HISTORY_CONVO) then
-				name = db.streamMode and (string.split("#", user)) or user
+				name = getNameFromBattleTag(user, true);
 			end
 		end
 
@@ -3044,7 +3061,8 @@ local function createHistoryViewer()
                             self.delete:Hide();
                             return;
                         end
-                        self.delete:Show();
+
+						self.delete:Show();
                         if (user == UNNAMED_HISTORY_CONVO) then
                             self.user = user;
                             self.rename:Show();
@@ -3055,35 +3073,48 @@ local function createHistoryViewer()
                             end
                             return;
                         end
-                        local original, extra, color = user, "";
+
+						local original, extra, color = user, "";
                         local gmTag
                         user, gmTag = string.match(original, "([^*]+)(*?)$");
+
                         -- Rows with no class to show take no embedded color: an
                         -- escape code would override the skin's row font color
                         -- (and the selected row's), which drive the text instead.
                         -- Known classes win over that, like the chat itself.
                         color = gmTag == "*" and constants.classes[L["Game Master"]].color or historyNameColor(user);
                         if(string.match(original, "^*")) then
-                            extra = " |TInterface\\AddOns\\WIM\\Skins\\Default\\minimap.blp:20:20:0:0|t";
+							local _, fontSize = self.text:GetFont();
+                            extra = " |TInterface\\AddOns\\WIM\\Skins\\Default\\minimap.blp:"..fontSize..":"..fontSize.."|t";
                             color = "fff569";
 						elseif (isBNConvoKey(user)) then
 							local path = "Interface\\FriendsFrame\\Battlenet-Battleneticon";
 							local _, fontSize = self.text:GetFont();
 							extra  = " |T"..path..":"..fontSize..":"..fontSize.."|t";
 						end
-                        if not user then
+
+						if not user then
                             self.user = nil;
                             self.text:SetText("");
                             self.delete:Hide();
                             return;
                         end
+
                         self.user = user;
                         local suffix = extra..(gmTag == "*" and " |TInterface\\ChatFrame\\UI-ChatIcon-Blizz.blp:0:2:0:0|t" or "");
-                        if(color) then
+
+						-- BNet Name resolution for BattleTag conversations
+						if (isBNConvoKey(user)) then
+							user = getNameFromBattleTag(user);
+                        end
+
+						-- apply color and extra icons to the display text
+						if(color) then
                             self.text:SetText("     |cff"..color..user.."|r"..suffix);
                         else
                             self.text:SetText("     "..user..suffix);
                         end
+
                         if(user == win.SELECT) then
                             self:Click();
                         end
@@ -4328,7 +4359,7 @@ table.insert(ViewTypes, {
 							frame,
 							"CHAT_MSG_"..(msg.event or (bn and "BN_WHISPER" or "WHISPER")),
 							msg.msg,
-							msg.from,
+							bn and msg.inbound and getNameFromBattleTag(msg.from) or msg.from,
 							nil, nil, nil, nil,
 							0,
 							msg.channelName and ChannelCache[msg.channelName],
@@ -4463,8 +4494,8 @@ function ShowHistoryViewer(user)
         HistoryViewer.SELECT = user;
         HistoryViewer.nav:Hide();
         HistoryViewer.nav:Show();
-        HistoryViewer.UpdateUserList();
         HistoryViewer:SelectConvo(user);
+        HistoryViewer.UpdateUserList();
         return;
     end
     HistoryViewer:Show();

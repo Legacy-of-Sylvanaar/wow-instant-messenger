@@ -19,10 +19,27 @@ function bnet.GetBNGetFriendInfo(friendIndex)
 		local wowProjectID = accountInfo.gameAccountInfo.wowProjectID or 0;
 		local clientProgram = accountInfo.gameAccountInfo.clientProgram ~= "" and accountInfo.gameAccountInfo.clientProgram or nil;
 
-		return	accountInfo.bnetAccountID, accountInfo.accountName, accountInfo.battleTag, accountInfo.isBattleTagFriend,
-			accountInfo.gameAccountInfo.characterName, accountInfo.gameAccountInfo.gameAccountID, clientProgram,
-			accountInfo.gameAccountInfo.isOnline, accountInfo.lastOnlineTime, accountInfo.isAFK, accountInfo.isDND, accountInfo.customMessage, accountInfo.note, accountInfo.isFriend,
-			accountInfo.customMessageTime, wowProjectID, accountInfo.rafLinkType == _G.Enum.RafLinkType.Recruit, accountInfo.gameAccountInfo.canSummon, accountInfo.isFavorite, accountInfo.gameAccountInfo.isWowMobile;
+		return
+			accountInfo.bnetAccountID, -- 1
+			accountInfo.accountName, -- 2
+			accountInfo.battleTag, -- 3
+			accountInfo.isBattleTagFriend, -- 4
+			accountInfo.gameAccountInfo.characterName, -- 5
+			accountInfo.gameAccountInfo.gameAccountID, -- 6
+			clientProgram, -- 7
+			accountInfo.gameAccountInfo.isOnline, -- 8
+			accountInfo.lastOnlineTime, -- 9
+			accountInfo.isAFK, -- 10
+			accountInfo.isDND, -- 11
+			accountInfo.customMessage, -- 12
+			accountInfo.note, -- 13
+			accountInfo.isFriend, -- 14
+			accountInfo.customMessageTime, -- 15
+			wowProjectID, -- 16
+			accountInfo.rafLinkType == _G.Enum.RafLinkType.Recruit, -- 17
+			accountInfo.gameAccountInfo.canSummon, -- 18
+			accountInfo.isFavorite, -- 19
+			accountInfo.gameAccountInfo.isWowMobile; -- 20
 	end
 end
 
@@ -41,11 +58,61 @@ function bnet.GetBNGetFriendInfoByID(id)
 		local wowProjectID = accountInfo.gameAccountInfo.wowProjectID or 0;
 		local clientProgram = accountInfo.gameAccountInfo.clientProgram ~= "" and accountInfo.gameAccountInfo.clientProgram or nil;
 
-		return	accountInfo.bnetAccountID, accountInfo.accountName, accountInfo.battleTag, accountInfo.isBattleTagFriend,
-			accountInfo.gameAccountInfo.characterName, accountInfo.gameAccountInfo.gameAccountID, clientProgram,
-			accountInfo.gameAccountInfo.isOnline, accountInfo.lastOnlineTime, accountInfo.isAFK, accountInfo.isDND, accountInfo.customMessage, accountInfo.note, accountInfo.isFriend,
-			accountInfo.customMessageTime, wowProjectID, accountInfo.rafLinkType == _G.Enum.RafLinkType.Recruit, accountInfo.gameAccountInfo.canSummon, accountInfo.isFavorite, accountInfo.gameAccountInfo.isWowMobile;
+		return
+			accountInfo.bnetAccountID, -- 1
+			accountInfo.accountName, -- 2
+			accountInfo.battleTag, -- 3
+			accountInfo.isBattleTagFriend, -- 4
+			accountInfo.gameAccountInfo.characterName, -- 5
+			accountInfo.gameAccountInfo.gameAccountID, -- 6
+			clientProgram, -- 7
+			accountInfo.gameAccountInfo.isOnline, -- 8
+			accountInfo.lastOnlineTime, -- 9
+			accountInfo.isAFK, -- 10
+			accountInfo.isDND, -- 11
+			accountInfo.customMessage, -- 12
+			accountInfo.note, -- 13
+			accountInfo.isFriend, -- 14
+			accountInfo.customMessageTime, -- 15
+			wowProjectID, -- 16
+			accountInfo.rafLinkType == _G.Enum.RafLinkType.Recruit, -- 17
+			accountInfo.gameAccountInfo.canSummon, -- 18
+			accountInfo.isFavorite, -- 19
+			accountInfo.gameAccountInfo.isWowMobile; -- 20
 	end
+end
+
+function bnet.GetBNFriendNames(id)
+	local _, accountName, battleTag, _, characterName = bnet.GetBNGetFriendInfoByID(id);
+	local privateBattleTag = (string.split("#", battleTag or ""));
+
+	return accountName, battleTag, characterName, privateBattleTag; -- 2, 3, 4
+end
+
+-- find the Battle.net account id for a name.
+-- BNet_GetBNetIDAccount only knows online friends, so fall back to scanning the
+-- whole friend list when the name is a BattleTag.
+function bnet.GetBNetIDFromName(name)
+	if(type(name) ~= "string" or name == "") then
+        return nil;
+    end
+
+	local bnID = _G.BNet_GetBNetIDAccount and _G.BNet_GetBNetIDAccount(name);
+    if(bnID) then
+        return bnID;
+    end
+
+	if((name:find("#") or name:find("@")) and _G.BNGetNumFriends) then
+        local total = _G.BNGetNumFriends() or 0;
+        for i=1, total do
+            local id, accountName, battleTag = utils.bnet.GetBNGetFriendInfo(i);
+            if(id and (battleTag == name or accountName == name)) then
+                return id;
+            end
+        end
+    end
+
+    return nil;
 end
 
 -- Character whisper target of a Battle.net friend, where the client has one (WoW Forever).
@@ -115,11 +182,29 @@ function bnet.GetBNGetGameAccountInfo(toonId)
 		local richPresence = gameAccountInfo.richPresence or "";
 		local gameAccountID = gameAccountInfo.gameAccountID or 0;
 		local playerGuid = gameAccountInfo.playerGuid or 0;
-		return	gameAccountInfo.hasFocus, characterName, gameAccountInfo.clientProgram,
-			realmName, realmID, factionName, raceName, className, "", areaName, characterLevel,
-			richPresence, nil, nil,
-			gameAccountInfo.isOnline, gameAccountID, nil, gameAccountInfo.isGameAFK, gameAccountInfo.isGameBusy,
-			playerGuid, wowProjectID, gameAccountInfo.isWowMobile
+		return
+			gameAccountInfo.hasFocus,	-- 1
+			characterName, -- 2
+			gameAccountInfo.clientProgram, -- 3
+			realmName, -- 4
+			realmID, -- 5
+			factionName, -- 6
+			raceName, -- 7
+			className, -- 8
+			"", -- 9
+			areaName, -- 10
+			characterLevel, -- 11
+			richPresence, -- 12
+			nil, -- 13
+			nil, -- 14
+			gameAccountInfo.isOnline, -- 15
+			gameAccountID, -- 16
+			nil, -- 17
+			gameAccountInfo.isGameAFK, -- 18
+			gameAccountInfo.isGameBusy, -- 19
+			playerGuid, -- 20
+			wowProjectID, -- 21
+			gameAccountInfo.isWowMobile -- 22
 	end
 end
 --End Compat wrappers for retail and classic to access same functions and expect same returns
