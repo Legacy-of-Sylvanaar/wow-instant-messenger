@@ -563,7 +563,7 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 	end
 
 	-- Process all events except for CHAT_MSG_SYSTEM
-	if (event ~= "CHAT_MSG_SYSTEM") then
+	if (event ~= "CHAT_MSG_SYSTEM" and event ~= "CHAT_MSG_BN_INLINE_TOAST_ALERT") then
 		local ignore, block = (IgnoreOrBlockEvent or function () end)(event, ...)
 
 		if (not frame._isWIM and not ignore and not block) then
@@ -580,13 +580,14 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 		end
 
 	-- Processes CHAT_MSG_SYSTEM events
-	elseif (event == "CHAT_MSG_SYSTEM") then
+	elseif (event == "CHAT_MSG_SYSTEM" or event == "CHAT_MSG_BN_INLINE_TOAST_ALERT") then
 		local msg = ...;
+		local toastAlert = event == "CHAT_MSG_BN_INLINE_TOAST_ALERT";
 
 		local ruleSet = GetPopRuleSet("whisper");
 
 		for check, pattern in pairs(CMS_PATTERNS) do
-			local user = utils.FormatUserName(string.match(msg, pattern));
+			local user = toastAlert and select(2, ...) or utils.FormatUserName(string.match(msg, pattern));
 			if (user) then
 				local win = Windows[safeName(user)];
 
