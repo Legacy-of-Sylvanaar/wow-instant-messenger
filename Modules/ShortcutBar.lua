@@ -319,51 +319,53 @@ function ShortcutBar:OnWindowShow(obj)
 	end
 end
 
-function ShortcutBar:FRIENDLIST_UPDATE()
-	local buttons = getButtonTable("whisper");
+-- Enable and Disable lay the whole window out again, so a button that is
+-- already in the right state is left alone.
+local function setButtonEnabled(button, enabled)
+	if(enabled and button.isEnabled ~= true) then
+		button:Enable();
+	elseif(not enabled and button.isEnabled ~= false) then
+		button:Disable();
+	end
+end
 
-	local friend = nil;
+local function getWhisperButtonIndex(id)
+	local buttons = getButtonTable("whisper");
 	for i=1, #buttons do
-		if(buttons[i].id == "friend") then
-			friend = i;
-		end
-	end
-	if(not friend) then
-		return;
-	end
-	for widget in Widgets("shortcuts") do
-		-- friend index is from the whisper button table; other window types (chat) have their own button sets.
-		local button = widget.type == "whisper" and widget.buttons[friend];
-		if(button and widget.parentWindow) then
-			if(_G.UnitName("player") == widget.parentWindow.theUser or lists.friends[widget.parentWindow.theUser]) then
-				button:Disable();
-			else
-				button:Enable();
-			end
+		if(buttons[i].id == id) then
+			return i;
 		end
 	end
 end
 
-function ShortcutBar:IGNORELIST_UPDATE()
-	local buttons = getButtonTable("whisper");
-
-	local ignore = nil;
-	for i=1, #buttons do
-		if(buttons[i].id == "ignore") then
-			ignore = i;
-		end
+local function updateFriendButton(widget, friend)
+	-- friend index is from the whisper button table; other window types (chat) have their own button sets.
+	local button = widget.type == "whisper" and widget.buttons[friend];
+	if(button and widget.parentWindow) then
+		local isFriend = _G.UnitName("player") == widget.parentWindow.theUser or lists.friends[widget.parentWindow.theUser];
+		setButtonEnabled(button, not isFriend);
 	end
+end
+
+function ShortcutBar:FRIENDLIST_UPDATE()
+	local friend = getWhisperButtonIndex("friend");
+	if(not friend) then
+		return;
+	end
+	for widget in Widgets("shortcuts") do
+		updateFriendButton(widget, friend);
+	end
+end
+
+function ShortcutBar:IGNORELIST_UPDATE()
+	local ignore = getWhisperButtonIndex("ignore");
 	if(not ignore) then
 		return;
 	end
 	for widget in Widgets("shortcuts") do
 		local button = widget.type == "whisper" and widget.buttons[ignore];
 		if(button and widget.parentWindow) then
-			if(widget.parentWindow.isBN or isIgnored(widget.parentWindow.theUser)) then
-				button:Disable();
-			else
-				button:Enable();
-			end
+			setButtonEnabled(button, not (widget.parentWindow.isBN or isIgnored(widget.parentWindow.theUser)));
 		end
 	end
 end
@@ -510,7 +512,12 @@ RegisterShortcut("friend", L["Add Friend"], {
 		_G.C_FriendList.AddFriend(self.parentWindow.theUser);
 	end,
 	SetDefaults = function(self)
-		ShortcutBar:FRIENDLIST_UPDATE();
+		-- only this window's button: the friend list has not changed, and
+		-- FRIENDLIST_UPDATE walks every window WIM has made this session.
+		local friend = getWhisperButtonIndex("friend");
+		if(friend) then
+			updateFriendButton(self:GetParent(), friend);
+		end
 	end
 });
 
