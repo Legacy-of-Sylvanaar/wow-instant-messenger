@@ -581,52 +581,47 @@ function WhisperEngine.ChatMessageEventFilter (frame, event, ...)
 
 	-- Processes CHAT_MSG_SYSTEM events
 	elseif (event == "CHAT_MSG_SYSTEM" or event == "CHAT_MSG_BN_INLINE_TOAST_ALERT") then
-		local msg = ...;
+		local msg, arg2 = ...;
 		local toastAlert = event == "CHAT_MSG_BN_INLINE_TOAST_ALERT";
 
 		local ruleSet = GetPopRuleSet("whisper");
 
-		for check, pattern in pairs(CMS_PATTERNS) do
-			local user = toastAlert and select(2, ...) or utils.FormatUserName(string.match(msg, pattern));
-			if (user) then
+		-- handle toast alerts separately
+		if (toastAlert) then
+			if (not frame._isWIM and (msg == "FRIEND_ONLINE" or msg == "FRIEND_OFFLINE")) then
+				local user = arg2;
 				local win = Windows[safeName(user)];
+				if (win and win:IsShown() and ruleSet.supress) then
+					return true
+				end
+			end
+		elseif (not frame._isWIM) then
+			-- if not a toast alert, continue with normal processing
+			for check, pattern in pairs(CMS_PATTERNS) do
+				local user = utils.FormatUserName(string.match(msg, pattern));
+				if (user) then
+					local win = Windows[safeName(user)];
 
-				if (win) then
-					-- error message
-					if 'PLAYER_NOT_FOUND' == check or 'CHAT_IGNORED' == check then
-						if (not frame._isWIM) then
+					if (win) then
+						-- error message
+						if 'PLAYER_NOT_FOUND' == check or 'CHAT_IGNORED' == check then
 							if(win:IsShown() and ruleSet.supress or not win.msgSent) then
 								return true;
 							end
-						else
-							if win.online then
-								win:AddMessage(msg, db.displayColors.errorMsg.r, db.displayColors.errorMsg.g, db.displayColors.errorMsg.b);
-								win.online = false;
-							end
-						end
 
-					-- system message
-					elseif 'FRIEND_ONLINE' == check or 'FRIEND_OFFLINE' == check then
-						if (not frame._isWIM) then
+						-- system message
+						elseif 'FRIEND_ONLINE' == check or 'FRIEND_OFFLINE' == check then
 							if(win:IsShown() and ruleSet.supress) then
 								return true;
 							end
-						else
-							if 'FRIEND_ONLINE' == check then
-								msg = user.." ".._G.BN_TOAST_ONLINE
-								win.online = true;
-							else
-								msg = user.." ".._G.BN_TOAST_OFFLINE
-								win.online = false;
-							end
-							win:AddMessage(msg, db.displayColors.sysMsg.r, db.displayColors.sysMsg.g, db.displayColors.sysMsg.b);
 						end
 					end
+					-- no need to check remaining patterns
+					break;
 				end
-				-- no need to check remaining patterns
-				break;
 			end
 		end
+
 	end
 
 	return false
@@ -910,9 +905,37 @@ function WhisperEngine:CHAT_MSG_SYSTEM(...)
 		return;
 	end
 
-	-- the proccessing of the actual message is taking place within the ChatMessageFilter
-	CMS_SLUG._isWIM = true;
-	processMessageEventFilters(CMS_SLUG, 'CHAT_MSG_SYSTEM', ...);
+	local msg = ...;
+
+	for check, pattern in pairs(CMS_PATTERNS) do
+		local user = utils.FormatUserName(string.match(msg, pattern));
+		if (user) then
+			local win = Windows[safeName(user)];
+
+			if (win) then
+				-- error message
+				if 'PLAYER_NOT_FOUND' == check or 'CHAT_IGNORED' == check then
+					if win.online then
+						win:AddMessage(msg, db.displayColors.errorMsg.r, db.displayColors.errorMsg.g, db.displayColors.errorMsg.b);
+						win.online = false;
+					end
+
+				-- system message
+				elseif 'FRIEND_ONLINE' == check or 'FRIEND_OFFLINE' == check then
+					if 'FRIEND_ONLINE' == check then
+						msg = user.." ".._G.BN_TOAST_ONLINE
+						win.online = true;
+					else
+						msg = user.." ".._G.BN_TOAST_OFFLINE
+						win.online = false;
+					end
+					win:AddMessage(msg, db.displayColors.sysMsg.r, db.displayColors.sysMsg.g, db.displayColors.sysMsg.b);
+				end
+			end
+			-- no need to check remaining patterns
+			break;
+		end
+	end
 end
 
 function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(...)
@@ -922,15 +945,16 @@ function WhisperEngine:CHAT_MSG_BN_INLINE_TOAST_ALERT(...)
 		return;
 	end
 
-	local process, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, unused, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons = ...;
+	-- local process, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, unused, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons = ...;
+	local process, user = ...;
 
 	local online = process == "FRIEND_ONLINE"
 	local offline = process == "FRIEND_OFFLINE"
 
-	local _, accName = utils.bnet.GetBNGetFriendInfoByID(bnSenderID)
-	local win = Windows[safeName(accName)]
+	-- local _, accName = utils.bnet.GetBNGetFriendInfoByID(bnSenderID)
+	local win = Windows[safeName(user)]
 	if win then
-		local msg = accName.." "..(online and _G.BN_TOAST_ONLINE or offline and _G.BN_TOAST_OFFLINE or "")
+		local msg = user.." "..(online and _G.BN_TOAST_ONLINE or offline and _G.BN_TOAST_OFFLINE or "")
 		win:AddMessage(msg, db.displayColors.sysMsg.r, db.displayColors.sysMsg.g, db.displayColors.sysMsg.b);
         win.online = online;
         return;
