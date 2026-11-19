@@ -45,6 +45,10 @@ end
 
 -- returns: bnetAccountID, accountName, battleTag, isBattleTagFriend, characterName, gameAccountID, clientProgram, isOnline, lastOnlineTime, isAFK, isDND, customMessage, note, isFriend, customMessageTime, wowProjectID, isRecruit, canSummon, isFavorite, isWowMobile
 function bnet.GetBNGetFriendInfoByID(id)
+	-- if id is 0, return the current player's Battle.net info.
+	if not id or id == 0 then
+		id = select(3, _G.BNGetInfo());
+	end
 	-- if id is a table, refactor to used the first value (the expected id).
 	if type(id) == "table" then id = id[1] end
 

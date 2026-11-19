@@ -1372,7 +1372,12 @@ local function instantiateWindow(obj)
 
 					-- streamer mode: hide personal info
 					if (db.streamMode) then
-						self.widgets.from:SetText(utils.GetPrivateBNetName(self.theUser));
+						local _, _, _, privateBattleTag = utils.bnet.GetBNFriendNames(id);
+						local name = privateBattleTag;
+						if (toonName and toonName ~= "" and toonName ~= privateBattleTag) then
+							name = name .. " (" .. toonName .. ")";
+						end
+						self.widgets.from:SetText(name);
 
 					-- show toon name if different
 					elseif (toonName and toonName ~= "" and toonName ~= self.theUser and not utils.bnet.IsBNCharacterNamedFriend(id)) then
@@ -2823,13 +2828,14 @@ RegisterMessageFormatting(L["Default"], function(smf, event, ...)
 		(db.coloredNames and doColoredNames(event, ...) or arg2) .. "|h" .. applyBracket(2) .. ": " .. arg1;
 	elseif (event == "CHAT_MSG_WHISPER_INFORM") then
 		arg11 = arg11 or 0;
+		local name = _G.table.concat({_G.UnitName("player")}, " ");
 		return applyBracket() ..
 		"|Hplayer:" ..
-		_G.UnitName("player") ..
+		name ..
 		":" ..
 		arg11 ..
 		"|h" ..
-		(db.coloredNames and constants.classes.GetMyColoredName() or _G.UnitName("player")) ..
+		(db.coloredNames and constants.classes.GetMyColoredName() or name) ..
 		"|h" .. applyBracket(2) .. ": " .. arg1;
 	elseif (event == "CHAT_MSG_BN_WHISPER") then
 		local win = smf.parentWindow;
@@ -2838,23 +2844,36 @@ RegisterMessageFormatting(L["Default"], function(smf, event, ...)
 			color = constants.classes[win.bn.class].color
 			color = string.len(color) == 6 and color or nil;
 		end
-		local name = db.streamMode and utils.GetPrivateBNetName(arg2, true) or arg2;
+
+		local name, bnID = arg2;
+		if (arg2:find("#") or arg2:find("@")) then
+			bnID = utils.bnet.GetBNetIDFromName(arg2);
+			if bnID then
+				local accountName, _, _, privateBattleTag = utils.bnet.GetBNFriendNames(bnID);
+				arg2 = accountName;
+				name =  WIM.db.streamMode and privateBattleTag or accountName or privateBattleTag or arg2;
+			end
+		end
+
 		return applyBracket() ..
 		"|HBNplayer:" ..
-		arg2 ..
+		arg2 .. ":" .. (bnID or utils.bnet.GetBNetIDFromName(arg2)) ..
 		":" ..
 		arg11 ..
-		"|h" .. (db.coloredNames and color and "|cff" .. color .. name .. "|r" or arg2) ..
+		"|h" .. (db.coloredNames and color and "|cff" .. color .. name .. "|r" or name) ..
 		"|h" .. applyBracket(2) .. ": " .. arg1;
 	elseif (event == "CHAT_MSG_BN_WHISPER_INFORM") then
 		arg11 = arg11 or 0;
+		local bnID = select(3, _G.BNGetInfo());
+		local accountName, _, _, privateBattleTag = utils.bnet.GetBNFriendNames(bnID);
+		local name = WIM.db.streamMode and privateBattleTag or accountName;
 		return applyBracket() ..
 		"|HBNplayer:" ..
-		_G.UnitName("player") ..
+		accountName .. ":" .. bnID ..
 		":" ..
 		arg11 ..
 		"|h" ..
-		(db.coloredNames and constants.classes.GetMyColoredName() or _G.UnitName("player")) ..
+		name ..
 		"|h" .. applyBracket(2) .. ": " .. arg1;
 	elseif (event == "CHAT_MSG_AFK") then
 		return _G.format(L["%s is Away From Keyboard: %s"],

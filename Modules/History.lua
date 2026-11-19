@@ -813,9 +813,11 @@ function History:OnWindowCreated(win)
 				win:AddMessage(
 					applyMessageFormatting(
 						win.widgets.chat_display,
-						bnId and "CHAT_MSG_BN_WHISPER" or "CHAT_MSG_WHISPER",
+						inbound and
+							(bnId and "CHAT_MSG_BN_WHISPER" or "CHAT_MSG_WHISPER") or
+							(bnId and "CHAT_MSG_BN_WHISPER_INFORM" or "CHAT_MSG_WHISPER_INFORM"),
 						tmpTable[i].msg,
-						inbound and name or tmpTable[i].from,
+						tmpTable[i].from,
 						nil, nil, nil, nil, nil, nil, nil, nil,
 						-i, "0x0300000000000000"
 					),
@@ -4357,9 +4359,9 @@ table.insert(ViewTypes, {
 					applyStringModifiers(
 						applyMessageFormatting(
 							frame,
-							"CHAT_MSG_"..(msg.event or (bn and "BN_WHISPER" or "WHISPER")),
+							"CHAT_MSG_"..(msg.event or (bn and "BN_WHISPER" or "WHISPER")..(msg.inbound and "" or "_INFORM")),
 							msg.msg,
-							bn and msg.inbound and getNameFromBattleTag(msg.from) or msg.from,
+							msg.from,
 							nil, nil, nil, nil,
 							0,
 							msg.channelName and ChannelCache[msg.channelName],

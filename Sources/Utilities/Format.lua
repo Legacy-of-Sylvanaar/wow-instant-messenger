@@ -39,17 +39,14 @@ function utils.GetReadableName(user)
 	return name .. (realm and " - " .. realm or "")
 end
 
-function utils.GetPrivateBNetName(user, shortName)
+function utils.GetPrivateBNetName(user)
 	local isId = type(user) == "number";
 	local id = isId and user or (user and _G.BNet_GetBNetIDAccount(user) or nil);
 
 	-- if we don't have an id, just return user
 	if not id then return user end
 
-	local _, _, accountId, _, toonName = WIM.utils.bnet.GetBNGetFriendInfoByID(id)
-	if toonName == "" then toonName = nil end
-	if accountId == "" then accountId = nil end
+	local _, _, toonName, privateBattleTag = utils.bnet.GetBNFriendNames(id)
 
-	return (shortName and toonName and (string.split(" ", toonName)) or toonName) or
-	(accountId and string.split("#", accountId)) or '???';
+	return privateBattleTag or toonName or '???';
 end
