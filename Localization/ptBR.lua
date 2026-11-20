@@ -487,7 +487,6 @@ WIM.AddLocale("ptBR", {
     ["Animation Direction"] = "Direção da animação", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Appearance"] = "Aparência", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies the filter list below to captured chat messages. Community chat is not filtered."] = "Aplica a lista de filtros abaixo às mensagens de bate-papo capturadas. O bate-papo de comunidade não é filtrado.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Applies to the minimap button, the addon compartment entry, and data broker launchers."] = "Vale para o botão do minimapa, a entrada no compartimento de addons e os iniciadores Data Broker.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies to whisper and chat history alike. Pruning runs at login."] = "Vale tanto para o histórico de sussurros quanto para o de bate-papo. A limpeza é executada ao entrar no jogo.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Apply To"] = "Aplicar a", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Arrow keys keep controlling the game while the input box has focus; hold Alt to move the text cursor instead."] = "As setas continuam controlando o jogo enquanto a caixa de entrada tem o foco; segure Alt para mover o cursor do texto.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -673,7 +672,6 @@ WIM.AddLocale("ptBR", {
     ["Reset Position"] = "Redefinir posição", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention"] = "Retenção", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention caps, preview, and deletion."] = "Limites de retenção, prévia e exclusão.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Right-Click Opens Unread"] = "Clique direito abre não lidas", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Runs the whisper filter list below. While off, addon-spam whispers open windows like any other whisper."] = "Executa a lista de filtros de sussurros abaixo. Desativado, sussurros de spam de addons abrem janelas como qualquer outro sussurro.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["See-Through Frame"] = "Quadro transparente", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sender Details"] = "Detalhes do remetente", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -783,12 +781,11 @@ WIM.AddLocale("ptBR", {
     ["Include All Characters"] = "Incluir todos os personagens",
     ["Recent whispers come from every character on this account, not just this one."] = "Os sussurros recentes vêm de todos os personagens desta conta, não apenas deste.",
     ["Right-Click"] = "Clique direito",
-    ["Shift + Right-Click"] = "Shift + Clique direito",
+    ["Middle-Click"] = "Clique do meio",
+    ["Left-Click"] = "Clique esquerdo",
     ["Shift + Middle-Click"] = "Shift + Clique do meio",
     ["Tools"] = "Ferramentas",
     ["Show Unread"] = "Mostrar não lidas",
-    ["Open on Hover"] = "Abrir ao passar o mouse",
-    ["Open the conversation menu when you hover over the minimap button."] = "Abra o menu de conversa quando você passar o mouse sobre o botão do minimapa.",
     ["Show Hints"] = "Mostrar dicas",
     ["Displays shortcut hints in the conversation menu."] = "Exibe dicas de atalho no menu de conversa.",
 	["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "O WIM agora possui um tema moderno projetado para complementar melhor a interface atual do jogo. O tema selecionado é um estilo mais antigo que pode parecer desatualizado ou não oferecer suporte a recursos mais recentes.",

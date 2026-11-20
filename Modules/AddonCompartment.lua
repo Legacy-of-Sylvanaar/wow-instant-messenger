@@ -4,7 +4,6 @@ local _G = _G;
 local Notes = WIM.Notifications;
 local NoteIndex = 1;
 local AddonCompartmentFrame = AddonCompartmentFrame;
-local UIParent = UIParent;
 local table = table;
 
 --set namespace
@@ -13,15 +12,7 @@ setfenv(1, WIM);
 
 local AddonCompartment = CreateModule("AddonCompartment");
 
-local updateFrame, tooltip;
-
-local function getAnchors(frame)
-	local x, y = frame:GetCenter()
-	if not x or not y then return "CENTER" end
-	local hhalf = (x > UIParent:GetWidth()*2/3) and "RIGHT" or (x < UIParent:GetWidth()/3) and "LEFT" or ""
-	local vhalf = (y > UIParent:GetHeight()/2) and "TOP" or "BOTTOM"
-	return vhalf..hhalf, frame, (vhalf == "TOP" and "BOTTOM" or "TOP")..hhalf
-end
+local updateFrame;
 
 local icon = "Interface\\Addons\\"..addonTocName.."\\Skins\\Default\\minimap";
 local iconNew = "Interface\\Addons\\"..addonTocName.."\\Skins\\Default\\minimap_new";
@@ -30,61 +21,11 @@ local data = {
     icon = icon,
 	notCheckable = true,
     func = function (data, menuInputData, menu)
-		local frame = _G.AddonCompartmentFrame;
-		if(menuInputData.buttonName == "LeftButton") then
-            Menu:ClearAllPoints();
-            if(Menu:IsShown()) then
-                Menu:Hide();
-			else
-				local button = utils.compat.GetMouseTopFocus();
-                Menu:AnchorTo(button or menu, "beside");
-                Menu:Show();
-
-				menu:HookScript("OnHide", function()
-					Menu:Hide();
-				end);
-            end
-
-			return true;
-        elseif(menuInputData.buttonName == "MiddleButton") then
-            if(_G.IsShiftKeyDown()) then
-                Menu:Hide();
-                ShowOptions();
-            end
-        else
-            if(db.minimap.rightClickNew) then
-                if(_G.IsShiftKeyDown()) then
-                    -- display tools menu
-                    PopContextMenu("MENU_MINIMAP", frame:GetName());
-                else
-                    ShowAllUnreadWindows();
-                end
-            else
-                if(_G.IsShiftKeyDown()) then
-                    ShowAllUnreadWindows();
-                else
-                    -- display tools menu
-                    PopContextMenu("MENU_MINIMAP", frame:GetName());
-                end
-            end
-        end
+        LauncherClick(menuInputData.buttonName);
     end,
 
 	funcOnEnter = function(self)
-		tooltip = tooltip or _G.CreateFrame("GameTooltip", "WIMCompartmentTooltip", UIParent, "GameTooltipTemplate")
-		tooltip:SetOwner(self, "ANCHOR_NONE")
-		tooltip:SetPoint(getAnchors(self))
-		tooltip:AddDoubleLine("WIM", GetDisplayVersion(), 1, .82, 0, .5, .5, .5);
-		for i=1, #Notes do
-			tooltip:AddDoubleLine("|cff"..Notes[i].color..Notes[i].tag..":|r", "|cffffffff"..Notes[i].text.."|r");
-		end
-		tooltip:Show();
-	end,
-
-	funcOnLeave = function()
-		if tooltip then
-			tooltip:Hide();
-		end
+		ShowMenuOnHover(self, "beside");
 	end,
 };
 

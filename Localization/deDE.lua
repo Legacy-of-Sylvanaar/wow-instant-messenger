@@ -488,7 +488,6 @@ WIM.AddLocale("deDE", {
     ["Animation Direction"] = "Animationsrichtung", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Appearance"] = "Aussehen", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies the filter list below to captured chat messages. Community chat is not filtered."] = "Wendet die Filterliste unten auf erfasste Chatnachrichten an. Community-Chat wird nicht gefiltert.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Applies to the minimap button, the addon compartment entry, and data broker launchers."] = "Gilt für den Minikartenknopf, den Eintrag im Addon-Fach und Data-Broker-Starter.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies to whisper and chat history alike. Pruning runs at login."] = "Gilt gleichermaßen für Flüster- und Chatverlauf. Das Aufräumen läuft beim Einloggen.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Apply To"] = "Anwenden auf", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Arrow keys keep controlling the game while the input box has focus; hold Alt to move the text cursor instead."] = "Die Pfeiltasten steuern weiter das Spiel, während das Eingabefeld den Fokus hat; haltet Alt gedrückt, um stattdessen den Textcursor zu bewegen.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -674,7 +673,6 @@ WIM.AddLocale("deDE", {
     ["Reset Position"] = "Position zurücksetzen", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention"] = "Aufbewahrung", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention caps, preview, and deletion."] = "Aufbewahrungsgrenzen, Vorschau und Löschen.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Right-Click Opens Unread"] = "Rechtsklick öffnet Ungelesene", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Runs the whisper filter list below. While off, addon-spam whispers open windows like any other whisper."] = "Führt die Flüster-Filterliste unten aus. Solange aus, öffnen Addon-Spam-Flüsternachrichten Fenster wie jede andere Flüsternachricht.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["See-Through Frame"] = "Durchsichtiger Rahmen", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sender Details"] = "Absenderdetails", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -784,12 +782,11 @@ WIM.AddLocale("deDE", {
     ["Include All Characters"] = "Alle Charaktere einbeziehen",
     ["Recent whispers come from every character on this account, not just this one."] = "Die letzten Flüsternachrichten stammen von allen Charakteren dieses Accounts, nicht nur von diesem.",
     ["Right-Click"] = "Rechtsklick",
-    ["Shift + Right-Click"] = "Shift + Rechtsklick",
+    ["Middle-Click"] = "Mittelklick",
+    ["Left-Click"] = "Linksklick",
     ["Shift + Middle-Click"] = "Shift + Mittelklick",
     ["Tools"] = "Werkzeuge",
     ["Show Unread"] = "Ungelesene anzeigen",
-    ["Open on Hover"] = "Beim Darüberfahren öffnen",
-    ["Open the conversation menu when you hover over the minimap button."] = "Öffnet das Konversationsmenü, wenn Sie mit der Maus über das Minikartensymbol fahren.",
     ["Show Hints"] = "Hinweise anzeigen",
     ["Displays shortcut hints in the conversation menu."] = "Zeigt Tastenkürzel-Hinweise im Konversationsmenü an.",
 	["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM verfügt jetzt über einen modernen Skin, der besser zur aktuellen Spieloberfläche passt. Ihr ausgewählter Skin ist ein älterer Stil, der veraltet aussehen oder neuere Funktionen verpassen kann.",

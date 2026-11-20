@@ -285,7 +285,8 @@ local fontPaths = {
 	"root.message_window.widgets.char_info.font",
 	"root.message_window.widgets.chat_display.font",
 	"root.message_window.widgets.msg_box.font",
-	"root.menu.title.font",
+	-- root.menu.title.font stays a font object name: the conversation menu sets it as
+	-- the object, at the game's text size, and SetWidgetFont resolves names as well.
 	"root.menu.button.font",
 };
 

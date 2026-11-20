@@ -1447,19 +1447,11 @@ local function registerCategory()
     local minimap = ui.Checkbox(category, L["Minimap Button"],
         true, modules.MinimapIcon, "enabled", nil,
         function(value) EnableModule("MinimapIcon", value); end);
-	local minimapOnHover = ui.Checkbox(category, L["Open on Hover"],
-        false, db.minimap, "openOnHover",
-        L["Open the conversation menu when you hover over the minimap button."],
-        function() modules.MinimapIcon:OnEnable(); end);
-    ui.DependsOn(minimapOnHover, minimap);
     local minimapFree = ui.Checkbox(category, L["Unlock Minimap Button"],
         false, db.minimap, "free",
         L["The button can then be dragged anywhere on the screen."],
         function() modules.MinimapIcon:OnEnable(); end);
     ui.DependsOn(minimapFree, minimap);
-    ui.Checkbox(category, L["Right-Click Opens Unread"],
-        false, db.minimap, "rightClickNew",
-        L["Applies to the minimap button, the addon compartment entry, and data broker launchers."]);
     if (_G.AddonCompartmentFrame) then
         ui.Checkbox(category, L["Addon Compartment Entry"],
             false, modules.AddonCompartment, "enabled", nil,

@@ -488,7 +488,6 @@ WIM.AddLocale("koKR", {
     ["Animation Direction"] = "애니메이션 방향", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Appearance"] = "외형", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies the filter list below to captured chat messages. Community chat is not filtered."] = "아래 필터 목록을 가져온 대화 메시지에 적용합니다. 커뮤니티 대화는 필터링되지 않습니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Applies to the minimap button, the addon compartment entry, and data broker launchers."] = "미니맵 버튼, 애드온 서랍 항목, Data Broker 실행기에 적용됩니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies to whisper and chat history alike. Pruning runs at login."] = "귓속말과 대화 기록 모두에 적용됩니다. 정리는 로그인 시 실행됩니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Apply To"] = "적용 대상", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Arrow keys keep controlling the game while the input box has focus; hold Alt to move the text cursor instead."] = "입력 상자에 포커스가 있어도 방향키는 계속 게임을 조작합니다. 대신 텍스트 커서를 옮기려면 Alt를 누른 채 사용하세요.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -674,7 +673,6 @@ WIM.AddLocale("koKR", {
     ["Reset Position"] = "위치 초기화", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention"] = "보관", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention caps, preview, and deletion."] = "보관 한도, 미리보기, 삭제.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Right-Click Opens Unread"] = "우클릭으로 안 읽은 메시지 열기", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Runs the whisper filter list below. While off, addon-spam whispers open windows like any other whisper."] = "아래 귓속말 필터 목록을 실행합니다. 꺼져 있으면 애드온 스팸 귓속말도 다른 귓속말처럼 창을 엽니다.", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["See-Through Frame"] = "투명 창 틀", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sender Details"] = "발신자 정보", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -784,12 +782,11 @@ WIM.AddLocale("koKR", {
     ["Include All Characters"] = "모든 캐릭터 포함",
     ["Recent whispers come from every character on this account, not just this one."] = "이 캐릭터뿐 아니라 이 계정의 모든 캐릭터에서 최근 귓속말을 가져옵니다.",
     ["Right-Click"] = "우클릭",
-    ["Shift + Right-Click"] = "Shift + 우클릭",
+    ["Middle-Click"] = "휠 클릭",
+    ["Left-Click"] = "좌클릭",
     ["Shift + Middle-Click"] = "Shift + 휠 클릭",
     ["Tools"] = "도구",
     ["Show Unread"] = "안 읽은 메시지 보기",
-    ["Open on Hover"] = "마우스 오버 시 열기",
-    ["Open the conversation menu when you hover over the minimap button."] = "미니맵 버튼 위에 마우스를 올리면 대화 메뉴가 열립니다.",
     ["Show Hints"] = "힌트 표시",
     ["Displays shortcut hints in the conversation menu."] = "대화 메뉴에서 단축키 힌트를 표시합니다.",
     ["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM은 이제 현재 게임 인터페이스를 더 잘 보완하도록 설계된 현대적인 스킨을 제공합니다. 선택한 스킨은 오래된 스타일로 보일 수 있으며 최신 기능을 놓칠 수 있습니다.",

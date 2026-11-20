@@ -490,7 +490,6 @@ WIM.AddLocale("zhTW", {
     ["Animation Direction"] = "動畫方向", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Appearance"] = "外觀", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies the filter list below to captured chat messages. Community chat is not filtered."] = "將下方的過濾器清單套用到擷取的聊天訊息。社群聊天不會被過濾。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Applies to the minimap button, the addon compartment entry, and data broker launchers."] = "適用於小地圖按鈕、插件收納列項目和 Data Broker 啟動器。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Applies to whisper and chat history alike. Pruning runs at login."] = "同時適用於密語與聊天紀錄。清理會在登入時執行。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Apply To"] = "套用至", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Arrow keys keep controlling the game while the input box has focus; hold Alt to move the text cursor instead."] = "輸入框取得焦點時方向鍵仍控制遊戲；按住 Alt 可改為移動文字游標。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -676,7 +675,6 @@ WIM.AddLocale("zhTW", {
     ["Reset Position"] = "重設位置", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention"] = "保留", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Retention caps, preview, and deletion."] = "保留上限、預覽與刪除。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
-    ["Right-Click Opens Unread"] = "右鍵開啟未讀訊息", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Runs the whisper filter list below. While off, addon-spam whispers open windows like any other whisper."] = "執行下方的密語過濾器清單。關閉時，插件垃圾密語會像其他密語一樣開啟視窗。", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["See-Through Frame"] = "透視框架", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
     ["Sender Details"] = "傳送者詳細資料", -- Google Translate placeholder until native language speaker can confirm locale or suggest corrected translation
@@ -786,12 +784,11 @@ WIM.AddLocale("zhTW", {
     ["Include All Characters"] = "包含所有角色",
     ["Recent whispers come from every character on this account, not just this one."] = "最近的密語來自此帳號的所有角色，而不只是目前的角色。",
     ["Right-Click"] = "右鍵",
-    ["Shift + Right-Click"] = "Shift + 右鍵",
+    ["Middle-Click"] = "中鍵",
+    ["Left-Click"] = "左鍵",
     ["Shift + Middle-Click"] = "Shift + 中鍵",
     ["Tools"] = "工具",
     ["Show Unread"] = "顯示未讀",
-    ["Open on Hover"] = "懸停時打開",
-    ["Open the conversation menu when you hover over the minimap button."] = "當你將鼠標懸停在小地圖按鈕上時，打開對話選單。",
     ["Show Hints"] = "顯示提示",
     ["Displays shortcut hints in the conversation menu."] = "在對話選單中顯示快捷鍵提示。",
 	["WIM now features a modern skin designed to better complement the current game interface. Your selected skin is an older style that may look dated or miss out on newer features."] = "WIM 現在具有現代化的皮膚，旨在更好地補充當前的遊戲介面。您選擇的皮膚是較舊的樣式，可能顯得過時或缺少新功能。",

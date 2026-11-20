@@ -15,14 +15,12 @@ local MinimapIcon = CreateModule("MinimapIcon", true);
 
 db_defaults.minimap = {
     position = 200,
-    rightClickNew = false,
     free = false,
     free_position = {
         point = "CENTER",
         x = 0,
         y = 0
     },
-	openOnHover = false,
     -- Recent whispers: fill the launcher menu's Whispers section with recent
     -- conversations from saved history so they survive a reload or relog.
     -- The Whispers list rules (open windows and saved history together, by when you
@@ -117,19 +115,6 @@ end
 ----------------------------------------------
 --          Minimap Icon Creation           --
 ----------------------------------------------
-
--- hover = true when opened by mousing over the button (closes like a tooltip);
--- false for a click, which keeps it open until the cursor has been away a moment.
-local function showMenu(parent, hover)
-    if(Menu:IsShown() and hover) then
-        return; -- already open; a hover must not downgrade a click-pinned menu.
-    end
-    -- hang off the button's corner, growing toward the screen center from
-    -- whichever quadrant the button sits in.
-    Menu:AnchorTo(parent);
-    Menu:ShowFor(parent, hover);
-end
-
 
 local function getFreePoints(x, y)
     local scale = _G.UIParent:GetEffectiveScale();
@@ -255,34 +240,7 @@ local function createMinimapIcon()
 	icon.text:SetText(text);
     end
     icon.OnClick = function(self, button)
-        if(button == "LeftButton") then
-			if (Menu:IsShown()) then
-				Menu:Hide();
-			else
-				showMenu(self, false);
-			end
-        elseif(button == "MiddleButton") then
-            if(_G.IsShiftKeyDown()) then
-                Menu:Hide();
-                ShowOptions();
-            end
-        else
-            if(db.minimap.rightClickNew) then
-                if(_G.IsShiftKeyDown()) then
-                    -- display tools menu
-                    PopContextMenu("MENU_MINIMAP", "WIM3MinimapButton");
-                else
-                    ShowAllUnreadWindows();
-                end
-            else
-                if(_G.IsShiftKeyDown()) then
-                    ShowAllUnreadWindows();
-                else
-                    -- display tools menu
-                    PopContextMenu("MENU_MINIMAP", "WIM3MinimapButton");
-                end
-            end
-        end
+        LauncherClick(button);
     end
     icon.OnMouseDown = function(self)
         self.icon:SetTexCoord(0, 1, 0, 1);
@@ -291,8 +249,8 @@ local function createMinimapIcon()
         self.icon:SetTexCoord(0.05, 0.95, 0.05, 0.95);
     end
     icon.OnEnter = function(self)
-        if(db.minimap.openOnHover and not self.dragging) then
-            showMenu(self, true);
+        if(not self.dragging) then
+            ShowMenuOnHover(self);
         end
     end
     icon.OnLeave = function(self)
@@ -367,7 +325,7 @@ local function createMinimapIcon()
     end
     icon:Load();
 
-    -- left-drag moves the button; a click without moving still opens the menu.
+    -- left-drag moves the button; a click without moving still shows unread messages.
     icon:RegisterForDrag('LeftButton');
 
 
@@ -382,8 +340,6 @@ function MinimapIcon:OnEnableWIM()
         WIM.MinimapIcon.icon:SetAlpha(1);
         WIM.MinimapIcon.flash:Show();
     end
-    local menu = GetContextMenu("ENABLE_DISABLE_WIM");
-    menu.text = L["Disable"].." WIM";
     dPrint("enable event received");
 end
 
@@ -393,8 +349,6 @@ function MinimapIcon:OnDisableWIM()
         WIM.MinimapIcon.icon:SetAlpha(.75);
         WIM.MinimapIcon.flash:Show();
     end
-    local menu = GetContextMenu("ENABLE_DISABLE_WIM");
-    menu.text = L["Enable"].." WIM";
     dPrint("disable event received");
 end
 
@@ -443,54 +397,20 @@ end
 local info = {};
 info.text = "MENU_MINIMAP";
 local minimapMenu = AddContextMenu(info.text, info);
-    --show unread messages
-    info = {};
-    info.text = L["Show All Windows"];
-    info.func = function() ShowAllWindows(); end;
-    info.notCheckable = true;
-    minimapMenu:AddSubItem(AddContextMenu("SHOW_ALL_WINDOWS", info));
-    --show unread messages
+    -- The Tools flyout in the conversation menu. Showing unread or all windows, the
+    -- history viewer and options are links in the menu footer (and launcher clicks), so
+    -- only the rarer actions live here. Other modules (Expose) append their own items.
     info = {};
     info.text = L["Hide All Windows"];
     info.func = function() HideAllWindows(); end;
     info.notCheckable = true;
     minimapMenu:AddSubItem(AddContextMenu("HIDE_ALL_WINDOWS", info));
-    --show unread messages
-    info = {};
-    info.text = L["Show Unread Messages"];
-    info.func = function() ShowAllUnreadWindows(); end;
-    info.notCheckable = true;
-    minimapMenu:AddSubItem(AddContextMenu("SHOW_UNREAD_MESSAGES", info));
-    -- add space
+    -- the shared spacer item; not used here any more, but Emoticons' menu borrows it.
     info = GetContextMenu("MENU_SPACE") or {};
     info.text = "";
     info.isTitle = true;
     info.notCheckable = true;
-    minimapMenu:AddSubItem(AddContextMenu("MENU_SPACE", info));
-    -- history viewer
-    info = {};
-    info.text = L["History Viewer"];
-    info.func = function() ShowHistoryViewer() end;
-    info.notCheckable = true;
-    minimapMenu:AddSubItem(AddContextMenu("HISTORY_VIEWER", info));
-    -- options
-    info = {};
-    info.text = L["Options"];
-    info.func = ShowOptions;
-    info.notCheckable = true;
-    minimapMenu:AddSubItem(AddContextMenu("OPTIONS", info));
-    -- add space
-    info = GetContextMenu("MENU_SPACE") or {};
-    info.text = "";
-    info.isTitle = true;
-    info.notCheckable = true;
-    minimapMenu:AddSubItem(AddContextMenu("MENU_SPACE", info));
-    --enable disable WIM
-    info = {};
-    info.text = L["Enable"].." WIM";
-    info.func = function() SetEnabled(not db.enabled); end;
-    info.notCheckable = true;
-    minimapMenu:AddSubItem(AddContextMenu("ENABLE_DISABLE_WIM", info));
+    AddContextMenu("MENU_SPACE", info);
 
 --------------------------------------
 --      Global Extensions to WIM    --
