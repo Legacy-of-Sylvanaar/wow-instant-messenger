@@ -263,11 +263,23 @@ end
 -- predicate overrides the default rule, "enabled while parent is
 -- checked".
 function ui.DependsOn(child, parent, predicate)
-    if (child and parent and child.init and child.init.SetParentInitializer) then
-        child.init:SetParentInitializer(parent.init, predicate or function()
-            return parent.setting:GetValue();
-        end);
-    end
+		child.init:Indent();
+
+		child.init:AddModifyPredicate(predicate or function()
+			return parent.setting:GetValue() == true;
+		end);
+		Settings.SetOnValueChangedCallback(parent.setting:GetVariable(), function(_setting, _value)
+			if child.frame then
+				child.frame:EvaluateState();
+			end
+		end)
+
+		_G.hooksecurefunc(_G.SettingsListElementMixin, "Init", function(frame, initializer)
+			if initializer == child.init then
+				child.frame = frame;
+				frame.Text:SetFontObject("GameFontNormalSmall");
+			end
+		end)
 end
 
 -- A custom element row inside a vertical layout page, created from one
@@ -288,13 +300,16 @@ function ui.Custom(layout, template, data)
     else
         init = Settings.CreateElementInitializer(template, data);
     end
-    if (data and data.getExtent) then
-        -- Measured at display time, so rows sized by localized text ask
-        -- for the height that text actually needs.
-        init.GetExtent = data.getExtent;
-    elseif (data and data.extent) then
-        init.GetExtent = function() return data.extent; end;
-    end
+
+    -- COMMENTED OUT: This causes taint issues.
+	-- if (data and data.getExtent) then
+    --     -- Measured at display time, so rows sized by localized text ask
+    --     -- for the height that text actually needs.
+    --     init.GetExtent = data.getExtent;
+    -- elseif (data and data.extent) then
+    --     init.GetExtent = function() return data.extent; end;
+    -- end
+
     -- Custom rows have no setting name for the search to index, so
     -- they name their contents (the grid's chat types, a list's
     -- column labels) in data.searchTags.
@@ -1091,7 +1106,7 @@ local function updateExpandableArrow(frame, expanded)
 end
 
 _G.WIM3SettingsExpandableSectionMixin = {};
-function _G.WIM3SettingsExpandableSectionMixin:Init(initializer)
+function _G.WIM3SettingsExpandableSectionMixin:_Init(initializer)
     if (_G.SettingsExpandableSectionMixin and _G.SettingsExpandableSectionMixin.Init) then
         _G.SettingsExpandableSectionMixin.Init(self, initializer);
     end
@@ -1173,7 +1188,7 @@ function ui.Expandable(layout, name, tooltip, nested, homeCategory)
     section.Add = function(control)
         local init = control and (control.init or control);
         if (init and init.AddShownPredicate) then
-            init:AddShownPredicate(section.IsExpanded);
+            -- init:AddShownPredicate(section.IsExpanded);
         end
         return control;
     end;
@@ -1254,6 +1269,10 @@ local function ensureBugReportHolder()
         link:SetScript("OnLeave", function()
             _G.GameTooltip:Hide();
         end);
+
+		local bodyHeight = options.WrappedHeight(body, settingsListWidth() - 74 - (inset + 44) - inset);
+		local height = (inset + 4) + title:GetStringHeight() + 4 + bodyHeight + 8 + 24 + (inset - 4) + 8;
+		holder:SetHeight(height);
 
         holder.wimTitle = title;
         holder.wimBody = body;
@@ -1345,14 +1364,16 @@ local function mirrorSectionInto(parentRec, rec)
     if (not parentRec.layout or not rec.layout or not rec.layout.GetInitializers) then
         return;
     end
+
     local inits = rec.layout:GetInitializers();
     if (#inits == 0) then
         return;
     end
-    local section = ui.Expandable(parentRec.layout, rec.name, rec.description);
-    local folderID = parentRec.category and parentRec.category.GetID
-        and parentRec.category:GetID();
-    local function shouldShow()
+
+	local section = ui.Expandable(parentRec.layout, rec.name, rec.description);
+    local folderID = parentRec.category and parentRec.category.GetID and parentRec.category:GetID();
+
+	local function shouldShow()
         local panel = _G.SettingsPanel;
         local box = panel and panel.SearchBox;
         local text = box and box.GetText and box:GetText();
@@ -1371,9 +1392,9 @@ local function mirrorSectionInto(parentRec, rec)
     -- searchable (a hit reads "Folder (WIM)" and opens the folder).
     for i = 1, #inits do
         local init = inits[i];
-        parentRec.layout:AddInitializer(init);
+        -- parentRec.layout:AddInitializer(init);
         if (init.AddShownPredicate) then
-            init:AddShownPredicate(shouldShow);
+            -- init:AddShownPredicate(shouldShow);
         end
     end
     if (folderID) then
@@ -1421,7 +1442,7 @@ local function mirrorFolderSections(rootCategory)
         if (rec.parent ~= rootCategory) then
             for j = 1, #subcategoryRecords do
                 if (subcategoryRecords[j].category == rec.parent) then
-                    mirrorSectionInto(subcategoryRecords[j], rec);
+                    -- mirrorSectionInto(subcategoryRecords[j], rec);
                     break;
                 end
             end
@@ -1477,19 +1498,19 @@ local function registerCategory()
 	);
 
     ui.Header(layout, L["Report a Bug"]);
-    ui.Custom(layout, "WIM3SettingsBugReportTemplate",
+    _G.test = ui.Custom(layout, "WIM3SettingsBugReportTemplate",
         { onInit = bugReportRowInit, getExtent = bugReportExtent });
     ui.Header(layout, L["Credits"]);
     ui.Custom(layout, "WIM3SettingsCreditsTemplate",
         { onInit = creditsRowInit, getExtent = creditsExtent });
 
-    -- Build the option pages (Sources/Options/ModernOptions.lua).
-    for i = 1, #pageBuilders do
+    -- -- Build the option pages (Sources/Options/ModernOptions.lua).
+    for i = 1, _G.math.min(#pageBuilders, 1) do
         pageBuilders[i](category, ui);
     end
 
     mirrorFolderSections(category);
-    watchSearchNavigation();
+    -- watchSearchNavigation();
 
     Settings.RegisterAddOnCategory(category);
 
