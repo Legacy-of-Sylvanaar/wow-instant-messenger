@@ -8,6 +8,7 @@ local table = table;
 local type = type;
 local unpack = unpack;
 local string = string;
+local UIParent = UIParent;
 
 --set namespace
 setfenv(1, WIM);
@@ -46,6 +47,67 @@ local recentWhispers = {};
 local visibleWindows = {};
 
 local BLIP_CLEAR = "Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipClear";
+
+local function getPointRelativeToUIParent (point, owner, relPoint, x, y)
+		-- Convert the given point from owner frame's coordinate system to UIParent
+		-- so the position persists even after the owner is destroyed
+		if not owner then
+			return point, UIParent, relPoint, x, y
+		end
+
+		-- Get owner's frame boundaries
+		local ownerLeft = owner:GetLeft()
+		local ownerBottom = owner:GetBottom()
+		if not ownerLeft or not ownerBottom then
+			return point, UIParent, relPoint, x, y
+		end
+
+		local ownerWidth = owner:GetWidth()
+		local ownerHeight = owner:GetHeight()
+
+		-- Calculate the anchor point's absolute screen position
+		local absX, absY = ownerLeft, ownerBottom
+
+		-- Adjust based on relPoint
+		if relPoint:find("RIGHT") then
+			absX = absX + ownerWidth
+		elseif relPoint:find("CENTER") or not relPoint:find("LEFT") and not relPoint:find("RIGHT") then
+			absX = absX + ownerWidth / 2
+		end
+
+		if relPoint:find("TOP") then
+			absY = absY + ownerHeight
+		elseif not relPoint:find("BOTTOM") and not relPoint:find("TOP") then
+			absY = absY + ownerHeight / 2
+		end
+
+		-- Apply offsets
+		absX = absX + (x or 0)
+		absY = absY + (y or 0)
+
+		-- Convert to UIParent-relative coordinates
+		local uiLeft = UIParent:GetLeft()
+		local uiBottom = UIParent:GetBottom()
+		local uiWidth = UIParent:GetWidth()
+		local uiHeight = UIParent:GetHeight()
+
+		-- Calculate UIParent-relative position based on the target point
+		local relX, relY = absX - uiLeft, absY - uiBottom
+
+		if point:find("RIGHT") then
+			relX = relX - uiWidth
+		elseif point:find("CENTER") or not point:find("LEFT") and not point:find("RIGHT") then
+			relX = relX - uiWidth / 2
+		end
+
+		if point:find("TOP") then
+			relY = relY - uiHeight
+		elseif not point:find("BOTTOM") and not point:find("TOP") then
+			relY = relY - uiHeight / 2
+		end
+
+		return point, UIParent, point, relX, relY
+	end
 
 -- strip the realm from a name so it compares the same written either way.
 local function realmKey(realm)
@@ -1219,7 +1281,7 @@ local function createMenu()
     -- nil = off the owner's corner (minimap button), "beside" = next to it with the
     -- tops or bottoms aligned (a dropdown row), "below" = above or below it with
     -- the sides aligned (a data broker bar). The skin's edgeOffsets are the margin
-    -- around the visible frame, so shift by them to sit the visible edge flush.
+    -- around the visible frame, so shift by them to sit the visible edge flushed
     menu.AnchorTo = function(self, owner, placement)
         local point, relPoint = GetMenuGrowthAnchor(owner);
         local vert = point:find("TOP") and "TOP" or "BOTTOM";
@@ -1234,7 +1296,7 @@ local function createMenu()
         local x = (horiz == "RIGHT") and (offsets[2] or 0) or -(offsets[1] or 0);
         local y = (vert == "TOP") and (offsets[3] or 0) or -(offsets[4] or 0);
         self:ClearAllPoints();
-        self:SetPoint(point, owner, relPoint, x, y);
+        self:SetPoint(getPointRelativeToUIParent(point, owner, relPoint, x, y));
     end
     -- Show the menu at a launcher. hover = true when it was opened by mousing over the
     -- launcher: it then closes like a tooltip once the cursor leaves both. A click
@@ -1246,6 +1308,11 @@ local function createMenu()
         self:Show();
     end
     menu:SetScript("OnHide", function(self)
+		if self._hideTimer then
+			self._hideTimer:Cancel();
+			self._hideTimer = nil;
+		end
+		self:SetAlpha(1); -- reset alpha if used to hide.
         self.hoverOwner = nil;
     end);
     menu:SetScript("OnShow", function(self)
@@ -1265,6 +1332,30 @@ local function createMenu()
         self:Refresh();
         libs.DropDownMenu.CloseDropDownMenus();
     end);
+
+	menu.PseudoHide = function(self)
+		self:SetAlpha(0);
+		self._hideTimer = _G.C_Timer.NewTimer(1, function()
+			self:Hide();
+			self._hideTimer = nil;
+		end);
+	end;
+
+	menu._IsShown = menu.IsShown;
+	menu.IsShown = function(self)
+		return self._hideTimer == nil and self:_IsShown();
+	end;
+
+	local resetPseudoHide = function(self)
+		if self._hideTimer then
+			self._hideTimer:Cancel();
+			self._hideTimer = nil;
+		end
+		self:SetAlpha(1); -- reset alpha if used to hide.
+	end;
+
+	_G.hooksecurefunc(menu, "Show", resetPseudoHide);
+	_G.hooksecurefunc(menu, "Hide", resetPseudoHide);
 
     return menu;
 end
