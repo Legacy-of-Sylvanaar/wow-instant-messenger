@@ -1857,8 +1857,9 @@ local function createWindow(userName, wtype, onBeforeReturn)
 			onBeforeReturn(obj);
 		end
 		CallModuleFunction("OnWindowCreated", obj);
-        table.insert(windowsByAge, obj);
-        table.sort(windowsByAge, function(a, b) return a.age > b.age; end);
+        -- loadWindowDefaults just set this window's age to now, so it is the
+        -- newest: put it first instead of sorting every window again.
+        table.insert(windowsByAge, 1, obj);
         return obj;
     else
         -- must create new object
@@ -1885,8 +1886,9 @@ local function createWindow(userName, wtype, onBeforeReturn)
 			onBeforeReturn(f);
 		end
 		CallModuleFunction("OnWindowCreated", f);
-        table.insert(windowsByAge, f);
-        table.sort(windowsByAge, function(a, b) return a.age > b.age; end);
+        -- loadWindowDefaults just set this window's age to now, so it is the
+        -- newest: put it first instead of sorting every window again.
+        table.insert(windowsByAge, 1, f);
         return f;
     end
 end
