@@ -246,7 +246,7 @@ local FormattingCalls = {}; -- functions which are passed events to be formatted
 
 local StringModifiers = {}; -- registered functions which will be used to format the message part of the string.
 
-local editBoxSlug = { Deactivate = function () end };
+local editBoxSlug = { Deactivate = function () end, Hide = function () end };
 
 -- Window's Parent (Container for all Windows)
 WindowParent = _G.CreateFrame("Frame", "WIM_UIParent", _G.UIParent);
