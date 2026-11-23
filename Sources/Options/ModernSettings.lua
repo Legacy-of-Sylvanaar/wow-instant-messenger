@@ -1,6 +1,7 @@
 --imports
 local WIM = WIM;
 local _G = _G;
+local assert = assert;
 local CreateFrame = CreateFrame;
 local tostring = tostring;
 local string = string;
@@ -10,6 +11,8 @@ local math = math;
 local select = select;
 local pcall = pcall;
 local unpack = unpack;
+local Mixin = Mixin;
+local Settings = Settings;
 
 -- Defined before the setfenv: C_Texture.GetAtlasInfo resolves the
 -- mixin of its returned struct against the calling function's
@@ -30,6 +33,107 @@ setfenv(1, WIM);
 --
 -- WIM's options live entirely inside the game's native Settings panel.
 -- ---------------------------------------------------------------------------
+
+-- Define custom vertical layout using canvas.
+
+local wimLayoutFrameIndex = 0;
+local createWIMLayoutFrame = function (options)
+	if options then
+		assert(type(options) == "table", "options must be a table");
+	end
+
+	options = options or {};
+
+	wimLayoutFrameIndex = wimLayoutFrameIndex + 1;
+
+	local frame = CreateFrame("Frame", "WIM3SettingsLayoutFrame"..wimLayoutFrameIndex, _G.UIParent, "SettingsListTemplate");
+
+	frame.Header.Title:SetText(options.title);
+	frame.Header.DefaultsButton:SetText(_G.DEFAULTS);
+
+	-- -- debug texture
+	frame.bg = frame:CreateTexture(nil, "BACKGROUND");
+	frame.bg:SetAllPoints(frame);
+	frame.bg:SetColorTexture(1, 0, 1, 0.5); -- testing background
+
+	return frame;
+end
+
+local WIMVerticalLayoutMixin = _G.CreateFromMixins(_G.SettingsLayoutMixin);
+do
+	function WIMVerticalLayoutMixin:Init()
+		_G.SettingsLayoutMixin.Init(self, _G.SettingsLayoutMixin.LayoutType.Canvas)
+
+		self.initializers = {};
+	end
+
+	function WIMVerticalLayoutMixin:GetInitializers()
+		return self.initializers;
+	end
+
+	function WIMVerticalLayoutMixin:IsEmpty()
+		return #self.initializers == 0;
+	end
+
+	function WIMVerticalLayoutMixin:AddInitializer(initializer)
+		table.insert(self.initializers, initializer);
+		return initializer;
+	end
+
+	function WIMVerticalLayoutMixin:AddMirroredInitializer(initializer)
+		if not initializer then
+			-- If initializer is nil it probably means the base setting doesn't exist in this game mode
+			return;
+		end
+
+		initializer:SetSearchIgnoredInLayout(self);
+		return self:AddInitializer(initializer);
+	end
+
+	function WIMVerticalLayoutMixin:EnumerateInitializers()
+		local iterator, tbl, index = _G.next, self.initializers, nil;
+		local function Iterator(_, index)
+			return iterator(tbl, index);
+		end
+
+		return Iterator, nil, index;
+	end
+end
+
+
+function options.RegisterWIMLayoutCategory(name, options)
+	if options then
+		assert(type(options) == "table", "options must be a table");
+	end
+
+	options = options or {};
+	options.title = options.title or name;
+
+	local frame = createWIMLayoutFrame(options);
+	local category, layout = Settings.RegisterCanvasLayoutCategory(frame, name);
+
+	Mixin(layout, WIMVerticalLayoutMixin);
+	layout:Init();
+
+	return category, layout;
+end
+
+function options.RegisterWIMLayoutSubcategory(category, name, options)
+	if options then
+		assert(type(options) == "table", "options must be a table");
+	end
+
+	options = options or {};
+	options.title = options.title or name;
+
+	local frame = createWIMLayoutFrame(options);
+	local category, layout = Settings.RegisterCanvasLayoutSubcategory(category, frame, name);
+
+	Mixin(layout, WIMVerticalLayoutMixin);
+	layout:Init();
+
+	return category, layout;
+end
 
 options.categoryMap = options.categoryMap or {};
 local CategoryMap = options.categoryMap;
@@ -57,8 +161,6 @@ if (not _G.Settings
     or not _G.Settings.RegisterAddOnCategory) then
     return;
 end
-
-local Settings = _G.Settings;
 
 -- The search results list titles each hit with its category's qualified
 -- name, formatted through this global string. Older clients ship the
@@ -160,7 +262,10 @@ function options.AttachRowHolder(row, holder)
     holder.wimRow = row;
     holder:SetParent(row);
     holder:ClearAllPoints();
-    holder:SetAllPoints(row);
+    -- holder:SetAllPoints(row);
+	holder:SetPoint("TOPLEFT", row, "TOPLEFT");
+	holder:SetPoint("RIGHT", row, "RIGHT");
+	row:SetHeight(holder:GetHeight());
     holder:Show();
 end
 
@@ -282,6 +387,33 @@ function ui.DependsOn(child, parent, predicate)
 		end)
 end
 
+local function createElementInitializer(layout, template, data)
+	local initializer = _G.CreateFromMixins(_G.SettingsListElementInitializer)
+
+	function initializer:IsParentInitializerInLayout()
+	local parentInitializer = self:GetParentInitializer();
+	if not parentInitializer then
+		return false;
+	end
+
+	local currentLayout = layout;
+	if not currentLayout then
+		return false;
+	end
+
+	for _, initializer in currentLayout:EnumerateInitializers() do
+		if initializer == parentInitializer then
+			return true;
+		end
+	end
+
+	return false;
+end
+
+	initializer:Init(template, data);
+	return initializer;
+end
+
 -- A custom element row inside a vertical layout page, created from one
 -- of the templates in ModernSettings.xml. The template's fixed height is
 -- the row's extent in the list, unless data.extent overrides it: the
@@ -298,23 +430,23 @@ function ui.Custom(layout, template, data)
     if (data and data.panel and Settings.CreatePanelInitializer) then
         init = Settings.CreatePanelInitializer(template, data);
     else
-        init = Settings.CreateElementInitializer(template, data);
+        init = createElementInitializer(layout, template, data);
     end
 
     -- COMMENTED OUT: This causes taint issues.
-	-- if (data and data.getExtent) then
-    --     -- Measured at display time, so rows sized by localized text ask
-    --     -- for the height that text actually needs.
-    --     init.GetExtent = data.getExtent;
-    -- elseif (data and data.extent) then
-    --     init.GetExtent = function() return data.extent; end;
-    -- end
+	if (data and data.getExtent) then
+        -- Measured at display time, so rows sized by localized text ask
+        -- for the height that text actually needs.
+        -- init.GetExtent = data.getExtent;
+    elseif (data and data.extent) then
+        -- init.GetExtent = function() return data.extent; end;
+    end
 
     -- Custom rows have no setting name for the search to index, so
     -- they name their contents (the grid's chat types, a list's
     -- column labels) in data.searchTags.
     if (data and data.searchTags and init.AddSearchTags) then
-        init:AddSearchTags(unpack(data.searchTags));
+        -- init:AddSearchTags(unpack(data.searchTags));
     end
     layout:AddInitializer(init);
     return init;
@@ -1217,17 +1349,17 @@ options.SettingsListWidth = settingsListWidth;
 local bugReportHolder;
 local function ensureBugReportHolder()
     if (not bugReportHolder) then
+        local inset = options.FRAME_INSET + 14;
         local holder = CreateFrame("Frame");
         holder:Hide();
         -- The same bordered panel the option lists use, seated on the
         -- native label column, with a dark ground behind the text and
         -- the contents kept clear of the frame art.
         local panel = CreateFrame("Frame", nil, holder);
-        panel:SetPoint("TOPLEFT", 37, -4);
-        panel:SetPoint("BOTTOMRIGHT", -37, 4);
+        panel:SetPoint("TOPLEFT", 37, 0);
+        panel:SetPoint("BOTTOMRIGHT", -37, 0);
         options.AddBorderedPanel(panel, true);
 
-        local inset = options.FRAME_INSET + 14;
         local icon = panel:CreateTexture(nil, "ARTWORK");
         icon:SetSize(34, 34);
         icon:SetPoint("TOPLEFT", inset, -inset);
@@ -1323,6 +1455,8 @@ local function ensureCreditsHolder()
         thanksText:SetPoint("RIGHT", -37, 0);
         thanksText:SetJustifyH("LEFT");
         thanksText:SetText(creditsText[2] or "");
+
+		holder:SetHeight(800);
 
         holder.wimCreated = created;
         holder.wimCreatedText = createdText;
@@ -1458,6 +1592,8 @@ local function registerCategory()
     options.modernCategoryID = category:GetID();
     CategoryMap["Main"] = category:GetID();
 
+	_G.test = category;
+
 	-- set tutorial info
 	category:SetCategoryTutorialInfo(L["Version"]..": "..GetDisplayVersion());
 
@@ -1498,14 +1634,15 @@ local function registerCategory()
 	);
 
     ui.Header(layout, L["Report a Bug"]);
-    _G.test = ui.Custom(layout, "WIM3SettingsBugReportTemplate",
-        { onInit = bugReportRowInit, getExtent = bugReportExtent });
-    ui.Header(layout, L["Credits"]);
+    ui.Custom(layout, "WIM3SettingsBugReportTemplate",
+        { onInit = bugReportRowInit, getExtent = bugReportExtent, height = 500 });
+
+	ui.Header(layout, L["Credits"]);
     ui.Custom(layout, "WIM3SettingsCreditsTemplate",
-        { onInit = creditsRowInit, getExtent = creditsExtent });
+        { onInit = creditsRowInit, extent = 500, sgetExtent = creditsExtent });
 
     -- -- Build the option pages (Sources/Options/ModernOptions.lua).
-    for i = 1, _G.math.min(#pageBuilders, 1) do
+    for i = 1, _G.math.min(#pageBuilders, 0) do
         pageBuilders[i](category, ui);
     end
 
@@ -1516,6 +1653,49 @@ local function registerCategory()
 
     dPrint("Modern Settings category registered (id "..tostring(options.modernCategoryID)..").");
 end
+
+
+
+
+
+
+
+
+local function sandbox ()
+
+	-- addon category
+
+
+	local category, layout = options.RegisterWIMLayoutCategory("WIM Sandbox");
+	-- _G.test = layout
+
+	ui.Custom(layout, "WIM3SettingsBugReportTemplate",
+        { onInit = bugReportRowInit, getExtent = bugReportExtent });
+
+	-- ui.Checkbox(category, L["Enable WIM"], true, db, "enabled", nil,
+    --     function(value) SetEnabled(value); end);
+
+	-- sub category
+	do
+		local category, layout = options.RegisterWIMLayoutSubcategory(category, "Sub 1");
+
+		local sub1, sub1Layout = options.RegisterWIMLayoutSubcategory(category, "Sub 1.1");
+		local sub1_2, sub1_2Layout = options.RegisterWIMLayoutSubcategory(category, "Sub 1.2");
+	end
+
+	Settings.RegisterAddOnCategory(category);
+
+end
+
+
+
+
+
+
+
+
+
+
 
 -- Register once saved variables are loaded. Registration itself does not
 -- read db (the proxy getter and setter run on interaction, after login),
@@ -1532,5 +1712,6 @@ frame:SetScript("OnEvent", function(self, event)
         return;
     end
     registerCategory();
+	sandbox();
 end);
 
