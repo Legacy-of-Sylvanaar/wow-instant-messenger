@@ -143,8 +143,9 @@ local alertPushed = false;
 local function updateMinimapAlerts()
     local count = 0;
     for _, win in pairs(Windows) do
-        if(not win:IsVisible()) then
-            count = count + (win.unreadCount or 0);
+        -- most windows have nothing unread; only ask the client about the rest.
+        if((win.unreadCount or 0) > 0 and not win:IsVisible()) then
+            count = count + win.unreadCount;
         end
     end
     if(count == 0 and alertPushed) then

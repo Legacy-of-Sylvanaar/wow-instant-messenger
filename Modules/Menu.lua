@@ -440,7 +440,11 @@ local function lastChatTime(win)
 end
 
 local function sortRanked(a, b)
-    return a.time > b.time;
+    if(a.time ~= b.time) then
+        return a.time > b.time;
+    end
+    -- time is in whole seconds: within one second, the window used last comes first.
+    return (a.win and a.win.lastActivity or 0) > (b.win and b.win.lastActivity or 0);
 end
 
 -- The Whispers list rules. Open windows and history entries are ranked together by when
@@ -542,7 +546,7 @@ local function sortWindows(a, b)
     if(db and db.menuSortActivity) then
         return a.lastActivity > b.lastActivity;
     else
-        return string.lower(a.theUser) < string.lower(b.theUser);
+        return a.wimMenuSortName < b.wimMenuSortName;
     end
 end
 
@@ -1020,6 +1024,10 @@ local function createGroup(title, list, maxButtons, showNone, showHeader)
         end
         -- the Whispers section shows only the windows that pass the list rules.
         local list = self.displayList or self.list;
+        -- lower-case each name once here, not twice in every comparison.
+        for i=1, #list do
+            list[i].wimMenuSortName = string.lower(list[i].theUser);
+        end
         table.sort(list, sortWindows);
         local extra = self.extra;
         local total = #list + (extra and #extra or 0);
@@ -1367,11 +1375,19 @@ local function createMenu()
 end
 
 
+-- A refresh sorts every window made this session. The menu refreshes itself
+-- when it opens (OnShow), so while it is closed a window change needs none.
+local function refreshIfShown()
+    if(WIM.Menu and WIM.Menu:IsShown()) then
+        WIM.Menu:Refresh();
+    end
+end
+
 function Menu:OnWindowCreated(obj)
     -- add obj to specified list & Update
     if(obj.type == "whisper" or obj.type == "chat") then
         utils.table.addToTableUnique(lists[obj.type], obj);
-        WIM.Menu:Refresh();
+        refreshIfShown();
     end
 end
 
@@ -1380,14 +1396,14 @@ function Menu:OnWindowDestroyed(obj)
     obj.widgets.close.forceShift = nil;
     if(obj.type == "whisper" or obj.type == "chat") then
         utils.table.removeFromTable(lists[obj.type], obj);
-        WIM.Menu:Refresh();
+        refreshIfShown();
     end
 end
 
 function Menu:OnWindowPopped(obj)
     -- check status of obj to specified list & Update
     if(obj.type == "whisper" or obj.type == "chat") then
-        WIM.Menu:Refresh();
+        refreshIfShown();
     end
 end
 
