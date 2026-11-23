@@ -625,28 +625,44 @@ local function safeName(user)
 	return string.lower(user or "")
 end
 
+local _bnFriendListSizeChangedTimer = nil -- time handler for debouncing RealID friend list updates
 function WIM:BN_FRIEND_LIST_SIZE_CHANGED()
-    env.cache[env.realm][env.character].friendList = env.cache[env.realm][env.character].friendList or {};
-    for key, d in pairs(env.cache[env.realm][env.character].friendList) do
-	if(d == 2) then
-            env.cache[env.realm][env.character].friendList[key] = nil;
+	-- if the timer is already set, we don't want to process this event again immediately.
+	if (_bnFriendListSizeChangedTimer and not _bnFriendListSizeChangedTimer:IsCancelled()) then
+		return
 	end
-    end
-	for i=1, _G.BNGetNumFriends() do
-	    local id, name = utils.bnet.GetBNGetFriendInfo(i);
-	    if(name) then
-		env.cache[env.realm][env.character].friendList[name] = 2; --[set place holder for quick lookup
-			if(windows.active.whisper[safeName(name)]) then
-			    windows.active.whisper[safeName(name)]:SendWho();
+
+	-- process next frame - blizzard has been sending many events within the same frame, so we delay processing to avoid redundant work.
+	_bnFriendListSizeChangedTimer = _G.C_Timer.NewTimer(0, function()
+		env.cache[env.realm][env.character].friendList = env.cache[env.realm][env.character].friendList or {};
+
+		for key, d in pairs(env.cache[env.realm][env.character].friendList) do
+			if(d == 2) then
+				env.cache[env.realm][env.character].friendList[key] = nil;
 			end
-	    end
-	    local titleTarget = utils.bnet.GetBNTitleFriendTarget(id);
-	    if(titleTarget and not env.cache[env.realm][env.character].friendList[titleTarget]) then
-		env.cache[env.realm][env.character].friendList[titleTarget] = 2;
-	    end
-	end
-    lists.friends = env.cache[env.realm][env.character].friendList;
-    dPrint("RealID list updated...");
+		end
+
+		for i=1, _G.BNGetNumFriends() do
+			local id, name = utils.bnet.GetBNGetFriendInfo(i);
+			if(name) then
+				env.cache[env.realm][env.character].friendList[name] = 2; --[set place holder for quick lookup
+				if(windows.active.whisper[safeName(name)]) then
+					windows.active.whisper[safeName(name)]:SendWho();
+				end
+			end
+
+			local titleTarget = utils.bnet.GetBNTitleFriendTarget(id);
+			if(titleTarget and not env.cache[env.realm][env.character].friendList[titleTarget]) then
+				env.cache[env.realm][env.character].friendList[titleTarget] = 2;
+			end
+		end
+
+		lists.friends = env.cache[env.realm][env.character].friendList;
+
+		dPrint("RealID list updated...");
+
+		_bnFriendListSizeChangedTimer = nil
+	end)
 end
 WIM.BN_FRIEND_INFO_CHANGED = WIM.BN_FRIEND_LIST_SIZE_CHANGED;
 
