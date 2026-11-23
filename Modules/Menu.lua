@@ -49,65 +49,71 @@ local visibleWindows = {};
 local BLIP_CLEAR = "Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipClear";
 
 local function getPointRelativeToUIParent (point, owner, relPoint, x, y)
-		-- Convert the given point from owner frame's coordinate system to UIParent
-		-- so the position persists even after the owner is destroyed
-		if not owner then
-			return point, UIParent, relPoint, x, y
-		end
-
-		-- Get owner's frame boundaries
-		local ownerLeft = owner:GetLeft()
-		local ownerBottom = owner:GetBottom()
-		if not ownerLeft or not ownerBottom then
-			return point, UIParent, relPoint, x, y
-		end
-
-		local ownerWidth = owner:GetWidth()
-		local ownerHeight = owner:GetHeight()
-
-		-- Calculate the anchor point's absolute screen position
-		local absX, absY = ownerLeft, ownerBottom
-
-		-- Adjust based on relPoint
-		if relPoint:find("RIGHT") then
-			absX = absX + ownerWidth
-		elseif relPoint:find("CENTER") or not relPoint:find("LEFT") and not relPoint:find("RIGHT") then
-			absX = absX + ownerWidth / 2
-		end
-
-		if relPoint:find("TOP") then
-			absY = absY + ownerHeight
-		elseif not relPoint:find("BOTTOM") and not relPoint:find("TOP") then
-			absY = absY + ownerHeight / 2
-		end
-
-		-- Apply offsets
-		absX = absX + (x or 0)
-		absY = absY + (y or 0)
-
-		-- Convert to UIParent-relative coordinates
-		local uiLeft = UIParent:GetLeft()
-		local uiBottom = UIParent:GetBottom()
-		local uiWidth = UIParent:GetWidth()
-		local uiHeight = UIParent:GetHeight()
-
-		-- Calculate UIParent-relative position based on the target point
-		local relX, relY = absX - uiLeft, absY - uiBottom
-
-		if point:find("RIGHT") then
-			relX = relX - uiWidth
-		elseif point:find("CENTER") or not point:find("LEFT") and not point:find("RIGHT") then
-			relX = relX - uiWidth / 2
-		end
-
-		if point:find("TOP") then
-			relY = relY - uiHeight
-		elseif not point:find("BOTTOM") and not point:find("TOP") then
-			relY = relY - uiHeight / 2
-		end
-
-		return point, UIParent, point, relX, relY
+	-- Convert the given point from owner frame's coordinate system to UIParent
+	-- so the position persists even after the owner is destroyed
+	if not owner then
+		return point, UIParent, relPoint, x, y
 	end
+
+	x = x or 0
+	y = y or 0
+
+	-- Fallback if owner is nil, already UIParent, or has no valid screen rect
+	if not owner or owner == UIParent then
+		return point, UIParent, relPoint, x, y
+	end
+
+	local left, right, top, bottom = owner:GetLeft(), owner:GetRight(), owner:GetTop(), owner:GetBottom()
+	if not (left and right and top and bottom) then
+		-- Owner isn't laid out/visible yet; fall back to default center anchor or original args
+		return point, owner, relPoint, x, y
+	end
+
+	-- 1. Find the exact position of `relPoint` on `owner` (in owner's local coordinate space)
+	local anchorX, anchorY
+	if relPoint:find("LEFT") then
+		anchorX = left
+	elseif relPoint:find("RIGHT") then
+		anchorX = right
+	else
+		anchorX = (left + right) / 2
+	end
+
+	if relPoint:find("TOP") then
+		anchorY = top
+	elseif relPoint:find("BOTTOM") then
+		anchorY = bottom
+	else
+		anchorY = (top + bottom) / 2
+	end
+
+	-- 2. Apply the (x, y) offset in the owner's coordinate space, then convert to UIParent's scale
+	local scaleRatio = owner:GetEffectiveScale() / UIParent:GetEffectiveScale()
+	local screenX = (anchorX + x) * scaleRatio
+	local screenY = (anchorY + y) * scaleRatio
+
+	-- 3. Express that exact screen coordinate relative to the same `relPoint` on UIParent
+	local uiWidth, uiHeight = UIParent:GetWidth(), UIParent:GetHeight()
+	local offsetX, offsetY
+
+	if relPoint:find("LEFT") then
+		offsetX = screenX
+	elseif relPoint:find("RIGHT") then
+		offsetX = screenX - uiWidth
+	else
+		offsetX = screenX - (uiWidth / 2)
+	end
+
+	if relPoint:find("TOP") then
+		offsetY = screenY - uiHeight
+	elseif relPoint:find("BOTTOM") then
+		offsetY = screenY
+	else
+		offsetY = screenY - (uiHeight / 2)
+	end
+
+	return point, UIParent, relPoint, offsetX, offsetY
+end
 
 -- strip the realm from a name so it compares the same written either way.
 local function realmKey(realm)
