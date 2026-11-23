@@ -253,11 +253,11 @@ local BNinviteTypes = {
 local function canInviteBN(id)
 	if not tonumber(id) then return end
 	local show = true
-	local bnetIDAccount, accountName, battleTag, isBattleTag, characterName, bnetIDGameAccount = GetBNGetFriendInfoByID(id);
+	local bnetIDAccount, accountName, battleTag, isBattleTag, characterName, bnetIDGameAccount = utils.bnet.GetBNGetFriendInfoByID(id);
 	if not bnetIDGameAccount then
 		show = false;
 	else
-		local guid = select(20, GetBNGetGameAccountInfo(bnetIDGameAccount));
+		local guid = select(20, utils.bnet.GetBNGetGameAccountInfo(bnetIDGameAccount));
 		local inviteType = _G.GetDisplayedInviteType(guid);
 		if not BNinviteTypes["BN_"..inviteType] then
 			show = false;

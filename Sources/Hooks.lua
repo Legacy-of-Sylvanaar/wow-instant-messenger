@@ -28,24 +28,24 @@ end
 -- end
 
 
-local lastLinkInserted;
-hooksecurefunc(
-	_G.ChatFrameUtil and _G.ChatFrameUtil.InsertLink and _G.ChatFrameUtil or _G,
-	_G.ChatFrameUtil and _G.ChatFrameUtil.InsertLink and "InsertLink" or "ChatEdit_InsertLink",
-	function(text)
-		if not WIM.EditBoxInFocus or not text then return end
-		if WIM.IsSecretValue(text) then return end
+-- local lastLinkInserted;
+-- hooksecurefunc(
+-- 	_G.ChatFrameUtil and _G.ChatFrameUtil.InsertLink and _G.ChatFrameUtil or _G,
+-- 	_G.ChatFrameUtil and _G.ChatFrameUtil.InsertLink and "InsertLink" or "ChatEdit_InsertLink",
+-- 	function(text)
+-- 		if not WIM.EditBoxInFocus or not text then return end
+-- 		if WIM.IsSecretValue(text) then return end
 
-		-- a native edit box already accepted the link.
-		local getActive = _G.ChatFrameUtil and _G.ChatFrameUtil.GetActiveWindow or _G.ChatEdit_GetActiveWindow;
-		if getActive and getActive() then return end
+-- 		-- a native edit box already accepted the link.
+-- 		local getActive = _G.ChatFrameUtil and _G.ChatFrameUtil.GetActiveWindow or _G.ChatEdit_GetActiveWindow;
+-- 		if getActive and getActive() then return end
 
-		-- avoid double links.
-		if lastLinkInserted == text then return end
-		lastLinkInserted = text;
+-- 		-- avoid double links.
+-- 		if lastLinkInserted == text then return end
+-- 		lastLinkInserted = text;
 
-		_G.C_Timer.After(0.1, function() lastLinkInserted = nil end);
+-- 		_G.C_Timer.After(0.1, function() lastLinkInserted = nil end);
 
-		WIM.EditBoxInFocus:Insert(text);
-	end
-);
+-- 		WIM.EditBoxInFocus:Insert(text);
+-- 	end
+-- );

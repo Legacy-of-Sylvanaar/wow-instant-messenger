@@ -246,6 +246,7 @@ local FormattingCalls = {}; -- functions which are passed events to be formatted
 
 local StringModifiers = {}; -- registered functions which will be used to format the message part of the string.
 
+local editBoxSlug = { Deactivate = function () end, Hide = function () end };
 
 -- Window's Parent (Container for all Windows)
 WindowParent = _G.CreateFrame("Frame", "WIM_UIParent", _G.UIParent);
@@ -520,6 +521,18 @@ helperFrame.ResetState = function(self)
     end
 helperFrame:SetPoint("TOPLEFT", WindowParent, "TOPLEFT", 0, 0);
 helperFrame:SetScript("OnUpdate", function(self)
+		-- shift click handling
+		do
+			if (EditBoxInFocus ~= nil) then
+				if(IsShiftKeyDown() and _G.ACTIVE_CHAT_EDIT_BOX ~= EditBoxInFocus) then
+					_G.ACTIVE_CHAT_EDIT_BOX = EditBoxInFocus;
+				elseif not IsShiftKeyDown() and _G.ACTIVE_CHAT_EDIT_BOX ~= nil then
+					_G.ACTIVE_CHAT_EDIT_BOX = editBoxSlug;
+					_G.ChatFrameUtil.DeactivateChat(_G.ACTIVE_CHAT_EDIT_BOX)
+				end
+			end
+		end
+
         if(IsShiftKeyDown()) then
 			local obj = GetMouseFocus();
 			if(obj and (obj.isWimWindow or obj.parentWindow)) then
@@ -1335,8 +1348,8 @@ local function instantiateWindow(obj)
                 -- get information of BN user from friends data.
                 local id = self.theUser and _G.BNet_GetBNetIDAccount(self.theUser) or nil;
                 if(id) then
-					local _, _, _, _, _, bnetIDGameAccount = GetBNGetFriendInfoByID(id)
-					local hasFocus, toonName, client, realmName, realmID, faction, race, class, guild, zoneName, level, gameText, broadcastText, broadcastTime = GetBNGetGameAccountInfo(bnetIDGameAccount or 0);
+					local _, _, _, _, _, bnetIDGameAccount = utils.bnet.GetBNGetFriendInfoByID(id)
+					local hasFocus, toonName, client, realmName, realmID, faction, race, class, guild, zoneName, level, gameText, broadcastText, broadcastTime = utils.bnet.GetBNGetGameAccountInfo(bnetIDGameAccount or 0);
 					self.class = class or "";
 					self.level = level or "";
 					self.race = race or "";
@@ -1359,10 +1372,15 @@ local function instantiateWindow(obj)
 
 					-- streamer mode: hide personal info
 					if (db.streamMode) then
-						self.widgets.from:SetText(utils.GetPrivateBNetName(self.theUser));
+						local _, _, _, privateBattleTag = utils.bnet.GetBNFriendNames(id);
+						local name = privateBattleTag;
+						if (toonName and toonName ~= "" and toonName ~= privateBattleTag) then
+							name = name .. " (" .. toonName .. ")";
+						end
+						self.widgets.from:SetText(name);
 
 					-- show toon name if different
-					elseif (toonName and toonName ~= "" and toonName ~= self.theUser and not IsBNCharacterNamedFriend(id)) then
+					elseif (toonName and toonName ~= "" and toonName ~= self.theUser and not utils.bnet.IsBNCharacterNamedFriend(id)) then
                         self.widgets.from:SetText(utils.GetReadableName(self.theUser).." ("..toonName..")");
                     end
 					self:UpdateIcon();
@@ -2501,6 +2519,160 @@ RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkLeave", fu
                         end
 		end)
 
+--------------------------------------------------------------------------------
+-- Shift-click on a name while the default chat box is open.
+--
+-- Blizzard's chat frames put the name in the box from their own (secure) link
+-- handler. The handler above is WIM's code, so the name it puts there through
+-- SetItemRef goes in tainted, and a protected slash command sent with it
+-- (/ginvite, /invite...) is refused: 12.x clients raise ADDON_ACTION_FORBIDDEN
+-- against WIM. A frame built from Blizzard's InlineHyperlinkFrameTemplate keeps
+-- Blizzard's own link handler, which runs untainted with the link the client
+-- hands it. So while the chat-link modifier is held over a player link and the
+-- default chat box is open, an invisible copy of the hovered line on such a
+-- frame lies over it, faintly highlighted: the click lands on Blizzard's
+-- handler and the name goes in as from Blizzard's own chat frames.
+--------------------------------------------------------------------------------
+do
+	local linkProxy;            -- nil: not built yet, false: could not be built
+	local hoveredLine = {};     -- display, region and text of the hovered line
+
+	local function clearHoveredLine()
+		hoveredLine.display, hoveredLine.region, hoveredLine.text = nil, nil, nil;
+	end
+
+	local function linkProxyWanted()
+		local display, region = hoveredLine.display, hoveredLine.region;
+		if(not display or not region or not display:IsVisible() or not region:IsVisible()) then
+			return false;
+		end
+		-- the line under the copy must still be the one copied
+		local text = region:GetText();
+		return not IsSecretValue(text) and text == hoveredLine.text;
+	end
+
+	local function hideLinkProxy()
+		if(linkProxy) then
+			linkProxy:Hide();
+		end
+	end
+
+	local function getLinkProxy()
+		if(linkProxy ~= nil) then
+			return linkProxy or nil;
+		end
+		linkProxy = false;
+		if(type(_G.InlineHyperlinkFrame_OnClick) ~= "function") then
+			return nil;
+		end
+		local ok, frame = _G.pcall(CreateFrame, "Frame", nil, _G.UIParent, "InlineHyperlinkFrameTemplate");
+		if(not ok or not frame) then
+			return nil;
+		end
+		frame:Hide();
+		frame:EnableMouse(true);
+		frame:SetAlpha(0); -- comment out to debug and see region.
+		-- The template's hover handler shows the link on GameTooltip, which has
+		-- nothing to show for a player link. Its click handler never reads this.
+		local noop = function() end;
+		frame.tooltipFrame = {SetOwner = noop, ClearAllPoints = noop, SetPoint = noop, SetHyperlink = noop, Hide = noop};
+		local highlight = frame:CreateTexture(nil, "BACKGROUND");
+		highlight:SetAllPoints(frame);
+		highlight:SetColorTexture(1, 1, 1, 0.08);
+		frame.line = frame:CreateFontString(nil, "ARTWORK");
+		frame.line:SetAllPoints(frame);
+		frame.line:SetAlpha(0.01);
+		frame:SetScript("OnHide", function ()
+			clearHoveredLine();
+		end);
+		frame:SetScript("OnHyperlinkLeave", function(self)
+			self:Hide();
+		end);
+		linkProxy = frame;
+		return frame;
+	end
+
+	-- Lays the same text, in the same font and width, over the hovered line, so
+	-- each link of the copy sits on the link it copies.
+	local function copyLine(frame, display, region, text)
+
+		-- if link is history and has a negative chatLine, reset it to 0.
+		text = text:gsub("|H(B?N?player):([^:]+):(-%d+)|h", "|H%1:%2:0|h");
+
+		local line = frame.line;
+		line.parentWindow = display.parentWindow;
+		line:SetTextColor(region:GetTextColor());
+		line:SetFontObject(region:GetFontObject() or _G.ChatFontNormal);
+		local font, size, flags = region:GetFont();
+		if(font) then
+			line:SetFont(font, size, flags or "");
+		end
+		line:SetJustifyH(region:GetJustifyH());
+		line:SetJustifyV(region:GetJustifyV());
+		line:SetSpacing(region:GetSpacing());
+		line:SetWordWrap(region:CanWordWrap());
+		line:SetNonSpaceWrap(region:CanNonSpaceWrap());
+		line:SetIndentedWordWrap(region:GetIndentedWordWrap());
+		line:SetTextScale(region:GetTextScale());
+		line:SetText(text);
+		-- parented to the display for the same scale as the line
+		frame.parentWindow = display.parentWindow;
+		frame:SetParent(display);
+		frame:SetFrameStrata(display:GetFrameStrata());
+		frame:SetFrameLevel(display:GetFrameLevel() + 50);
+		frame:ClearAllPoints();
+		frame:SetAllPoints(region);
+	end
+
+	local function showLinkProxy()
+		if(not linkProxyWanted()) then
+			hideLinkProxy();
+			return;
+		end
+		local frame = getLinkProxy();
+		if(not frame) then
+			return;
+		end
+		if(_G.pcall(copyLine, frame, hoveredLine.display, hoveredLine.region, hoveredLine.text)) then
+			frame:Show();
+		else
+			frame:Hide();
+		end
+	end
+
+	function ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkEnter(self, link, _, region)
+		if(not IsSecretValue(link) and type(link) == "string" and (string.match(link, "^player:") or string.match(link, "^BNplayer:"))
+			and type(region) == "table" and region.GetText) then
+			local lineText = region:GetText();
+			if(not IsSecretValue(lineText) and type(lineText) == "string") then
+				hoveredLine.display, hoveredLine.region, hoveredLine.text = self, region, lineText;
+				showLinkProxy();
+				return;
+			end
+		end
+		clearHoveredLine();
+		hideLinkProxy();
+	end
+
+	function ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkLeave()
+		-- the copy appearing under the mouse makes the display leave the link
+		if(linkProxy and linkProxy:IsShown() and linkProxy:IsMouseOver()) then
+			return;
+		end
+		clearHoveredLine();
+		hideLinkProxy();
+	end
+
+	RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkEnter", ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkEnter);
+
+	RegisterWidgetTrigger("chat_display", "whisper,chat,w2w", "OnHyperlinkLeave", ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkLeave);
+
+	-- pressing or releasing the modifier over a link shows or hides the copy
+	local linkProxyWatcher = CreateFrame("Frame");
+	linkProxyWatcher:RegisterEvent("MODIFIER_STATE_CHANGED");
+	linkProxyWatcher:SetScript("OnEvent", showLinkProxy);
+end
+
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w,demo", "OnEnterPressed", function(self)
 		if(strsub(self:GetText(), 1, 1) == "/") then
 			-- Chat-type commands (/s, /e, /y ...) route through the
@@ -2658,38 +2830,52 @@ RegisterMessageFormatting(L["Default"], function(smf, event, ...)
 		(db.coloredNames and doColoredNames(event, ...) or arg2) .. "|h" .. applyBracket(2) .. ": " .. arg1;
 	elseif (event == "CHAT_MSG_WHISPER_INFORM") then
 		arg11 = arg11 or 0;
+		local name = _G.table.concat({_G.UnitName("player")}, " ");
 		return applyBracket() ..
 		"|Hplayer:" ..
-		_G.UnitName("player") ..
+		name ..
 		":" ..
 		arg11 ..
 		"|h" ..
-		(db.coloredNames and constants.classes.GetMyColoredName() or _G.UnitName("player")) ..
+		(db.coloredNames and constants.classes.GetMyColoredName() or name) ..
 		"|h" .. applyBracket(2) .. ": " .. arg1;
 	elseif (event == "CHAT_MSG_BN_WHISPER") then
 		local win = smf.parentWindow;
 		local color;
-		if (win.bn.client == _G.BNET_CLIENT_WOW and constants.classes[win.bn.class] and constants.classes[win.bn.class].color) then
+		if (win and win.bn.client == _G.BNET_CLIENT_WOW and constants.classes[win.bn.class] and constants.classes[win.bn.class].color) then
 			color = constants.classes[win.bn.class].color
 			color = string.len(color) == 6 and color or nil;
 		end
-		local name = db.streamMode and utils.GetPrivateBNetName(arg2, true) or arg2;
+
+		local name, bnID = arg2;
+		if (arg2:find("#") or arg2:find("@")) then
+			bnID = utils.bnet.GetBNetIDFromName(arg2);
+			if bnID then
+				local accountName, _, _, privateBattleTag = utils.bnet.GetBNFriendNames(bnID);
+				arg2 = accountName;
+				name =  WIM.db.streamMode and privateBattleTag or accountName or privateBattleTag or arg2;
+			end
+		end
+
 		return applyBracket() ..
 		"|HBNplayer:" ..
-		arg2 ..
+		arg2 .. ":" .. (bnID or utils.bnet.GetBNetIDFromName(arg2)) ..
 		":" ..
 		arg11 ..
-		"|h" .. (db.coloredNames and color and "|cff" .. color .. name .. "|r" or arg2) ..
+		"|h" .. (db.coloredNames and color and "|cff" .. color .. name .. "|r" or name) ..
 		"|h" .. applyBracket(2) .. ": " .. arg1;
 	elseif (event == "CHAT_MSG_BN_WHISPER_INFORM") then
 		arg11 = arg11 or 0;
+		local bnID = select(3, _G.BNGetInfo());
+		local accountName, _, _, privateBattleTag = utils.bnet.GetBNFriendNames(bnID);
+		local name = WIM.db.streamMode and privateBattleTag or accountName;
 		return applyBracket() ..
-		"|Hplayer:" ..
-		_G.UnitName("player") ..
+		"|HBNplayer:" ..
+		accountName .. ":" .. bnID ..
 		":" ..
 		arg11 ..
 		"|h" ..
-		(db.coloredNames and constants.classes.GetMyColoredName() or _G.UnitName("player")) ..
+		name ..
 		"|h" .. applyBracket(2) .. ": " .. arg1;
 	elseif (event == "CHAT_MSG_AFK") then
 		return _G.format(L["%s is Away From Keyboard: %s"],

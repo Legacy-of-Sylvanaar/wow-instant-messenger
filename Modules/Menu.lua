@@ -8,6 +8,7 @@ local table = table;
 local type = type;
 local unpack = unpack;
 local string = string;
+local UIParent = UIParent;
 
 --set namespace
 setfenv(1, WIM);
@@ -46,6 +47,73 @@ local recentWhispers = {};
 local visibleWindows = {};
 
 local BLIP_CLEAR = "Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipClear";
+
+local function getPointRelativeToUIParent (point, owner, relPoint, x, y)
+	-- Convert the given point from owner frame's coordinate system to UIParent
+	-- so the position persists even after the owner is destroyed
+	if not owner then
+		return point, UIParent, relPoint, x, y
+	end
+
+	x = x or 0
+	y = y or 0
+
+	-- Fallback if owner is nil, already UIParent, or has no valid screen rect
+	if not owner or owner == UIParent then
+		return point, UIParent, relPoint, x, y
+	end
+
+	local left, right, top, bottom = owner:GetLeft(), owner:GetRight(), owner:GetTop(), owner:GetBottom()
+	if not (left and right and top and bottom) then
+		-- Owner isn't laid out/visible yet; fall back to default center anchor or original args
+		return point, owner, relPoint, x, y
+	end
+
+	-- 1. Find the exact position of `relPoint` on `owner` (in owner's local coordinate space)
+	local anchorX, anchorY
+	if relPoint:find("LEFT") then
+		anchorX = left
+	elseif relPoint:find("RIGHT") then
+		anchorX = right
+	else
+		anchorX = (left + right) / 2
+	end
+
+	if relPoint:find("TOP") then
+		anchorY = top
+	elseif relPoint:find("BOTTOM") then
+		anchorY = bottom
+	else
+		anchorY = (top + bottom) / 2
+	end
+
+	-- 2. Apply the (x, y) offset in the owner's coordinate space, then convert to UIParent's scale
+	local scaleRatio = owner:GetEffectiveScale() / UIParent:GetEffectiveScale()
+	local screenX = (anchorX + x) * scaleRatio
+	local screenY = (anchorY + y) * scaleRatio
+
+	-- 3. Express that exact screen coordinate relative to the same `relPoint` on UIParent
+	local uiWidth, uiHeight = UIParent:GetWidth(), UIParent:GetHeight()
+	local offsetX, offsetY
+
+	if relPoint:find("LEFT") then
+		offsetX = screenX
+	elseif relPoint:find("RIGHT") then
+		offsetX = screenX - uiWidth
+	else
+		offsetX = screenX - (uiWidth / 2)
+	end
+
+	if relPoint:find("TOP") then
+		offsetY = screenY - uiHeight
+	elseif relPoint:find("BOTTOM") then
+		offsetY = screenY
+	else
+		offsetY = screenY - (uiHeight / 2)
+	end
+
+	return point, UIParent, relPoint, offsetX, offsetY
+end
 
 -- strip the realm from a name so it compares the same written either way.
 local function realmKey(realm)
@@ -88,7 +156,7 @@ local function resolveBNetID(name)
     if(isBNName(name) and _G.BNGetNumFriends) then
         local total = _G.BNGetNumFriends() or 0;
         for i=1, total do
-            local id, accountName, battleTag = GetBNGetFriendInfo(i);
+            local id, accountName, battleTag = utils.bnet.GetBNGetFriendInfo(i);
             if(id and (battleTag == name or accountName == name)) then
                 return id;
             end
@@ -336,7 +404,7 @@ end
 -- rather than the account name shown on the window.
 local function bnHistoryNames(win)
     if(win.isBN and win.bn and win.bn.id) then
-        local _, _, btag, _, toonName = GetBNGetFriendInfoByID(win.bn.id);
+        local _, _, btag, _, toonName = utils.bnet.GetBNGetFriendInfoByID(win.bn.id);
         return (btag ~= "" and btag or nil), (toonName ~= "" and toonName or nil);
     end
 end
@@ -452,7 +520,7 @@ local function buildRecentWhispers()
             local bnID = resolveBNetID(entry.target);
             local accountName;
             if(bnID) then
-                local _, name = GetBNGetFriendInfoByID(bnID);
+                local _, name = utils.bnet.GetBNGetFriendInfoByID(bnID);
                 accountName = name;
             end
             if(accountName and accountName ~= "") then
@@ -1227,7 +1295,7 @@ local function createMenu()
     -- nil = off the owner's corner (minimap button), "beside" = next to it with the
     -- tops or bottoms aligned (a dropdown row), "below" = above or below it with
     -- the sides aligned (a data broker bar). The skin's edgeOffsets are the margin
-    -- around the visible frame, so shift by them to sit the visible edge flush.
+    -- around the visible frame, so shift by them to sit the visible edge flushed
     menu.AnchorTo = function(self, owner, placement)
         local point, relPoint = GetMenuGrowthAnchor(owner);
         local vert = point:find("TOP") and "TOP" or "BOTTOM";
@@ -1242,7 +1310,7 @@ local function createMenu()
         local x = (horiz == "RIGHT") and (offsets[2] or 0) or -(offsets[1] or 0);
         local y = (vert == "TOP") and (offsets[3] or 0) or -(offsets[4] or 0);
         self:ClearAllPoints();
-        self:SetPoint(point, owner, relPoint, x, y);
+        self:SetPoint(getPointRelativeToUIParent(point, owner, relPoint, x, y));
     end
     -- Show the menu at a launcher. hover = true when it was opened by mousing over the
     -- launcher: it then closes like a tooltip once the cursor leaves both. A click
@@ -1254,6 +1322,11 @@ local function createMenu()
         self:Show();
     end
     menu:SetScript("OnHide", function(self)
+		if self._hideTimer then
+			self._hideTimer:Cancel();
+			self._hideTimer = nil;
+		end
+		self:SetAlpha(1); -- reset alpha if used to hide.
         self.hoverOwner = nil;
     end);
     menu:SetScript("OnShow", function(self)
@@ -1273,6 +1346,30 @@ local function createMenu()
         self:Refresh();
         libs.DropDownMenu.CloseDropDownMenus();
     end);
+
+	menu.PseudoHide = function(self)
+		self:SetAlpha(0);
+		self._hideTimer = _G.C_Timer.NewTimer(1, function()
+			self:Hide();
+			self._hideTimer = nil;
+		end);
+	end;
+
+	menu._IsShown = menu.IsShown;
+	menu.IsShown = function(self)
+		return self._hideTimer == nil and self:_IsShown();
+	end;
+
+	local resetPseudoHide = function(self)
+		if self._hideTimer then
+			self._hideTimer:Cancel();
+			self._hideTimer = nil;
+		end
+		self:SetAlpha(1); -- reset alpha if used to hide.
+	end;
+
+	_G.hooksecurefunc(menu, "Show", resetPseudoHide);
+	_G.hooksecurefunc(menu, "Hide", resetPseudoHide);
 
     return menu;
 end

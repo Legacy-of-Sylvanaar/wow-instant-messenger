@@ -5,6 +5,7 @@ local _G = _G;
 local type = type;
 local string = string;
 local pairs = pairs;
+local concat = table.concat;
 
 -- set namespace
 setfenv(1, WIM);
@@ -112,7 +113,7 @@ classes.GetClassByTag = function(t)
 end
 
 function classes.GetMyColoredName()
-     local name = _G.UnitName("player");
+     local name = concat({_G.UnitName("player")}, " ");
      local class, englishClass = _G.UnitClass("player");
      local classColorTable = (_G.CUSTOM_CLASS_COLORS or _G.RAID_CLASS_COLORS)[englishClass];
      return string.format("\124cff%.2x%.2x%.2x", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255)..name.."\124r"

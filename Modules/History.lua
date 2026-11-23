@@ -389,6 +389,16 @@ local function bnKeyPasses(ctx, bnKey)
     end);
     return metricResult(ctx.mode, stats);
 end
+
+local function getNameFromBattleTag (battleTag, prioritizeToon)
+	local bnID = utils.bnet.GetBNetIDFromName(battleTag);
+	if bnID then
+		local accountName, _, toonName, privateBattleTag = utils.bnet.GetBNFriendNames(bnID);
+		return WIM.db.streamMode and (prioritizeToon and toonName or privateBattleTag) or accountName or toonName or privateBattleTag or battleTag;
+	end
+
+	return battleTag;
+end
 -- ----------------------------------------------------------------------------
 
 
@@ -433,8 +443,15 @@ local function createWidget()
         _G.GameTooltip:Hide();
     end);
     button:SetScript("OnClick", function(self, button)
+		local win = self.parentWindow;
         if(self.parentWindow.isHistory) then
-            ShowHistoryViewer(self.parentWindow.theUser);
+			-- if bn, make sure we get the battle tag.
+			local _, battleTag = utils.bnet.GetBNFriendNames(win.bn.id);
+			if (win.bn and win.bn.id) then
+				ShowHistoryViewer(battleTag);
+				return;
+			end
+            ShowHistoryViewer(win.theUser);
         end
     end);
     return button;
@@ -497,11 +514,11 @@ end
 -- History key for a Battle.net account. A WoW Forever character friend has no
 -- BattleTag (the field is "", not nil), so fall back to a character name.
 local function bnHistoryKey(bnId, eventName)
-    local _, _, btag, _, toonName = GetBNGetFriendInfoByID(bnId);
+    local _, _, btag, _, toonName = utils.bnet.GetBNGetFriendInfoByID(bnId);
     if(not IsSecretValue(btag) and type(btag) == "string" and btag ~= "") then
         return btag;
     end
-    return plainName(eventName) or plainName(toonName) or GetBNTitleFriendTarget(bnId) or UNNAMED_HISTORY_CONVO;
+    return plainName(eventName) or plainName(toonName) or utils.bnet.GetBNTitleFriendTarget(bnId) or UNNAMED_HISTORY_CONVO;
 end
 
 --BNet_GetValidatedCharacterName
@@ -759,7 +776,7 @@ function History:OnWindowCreated(win)
 		if (bnId) then
 			user = bnHistoryKey(bnId, user);
 			if (user ~= UNNAMED_HISTORY_CONVO) then
-				name = db.streamMode and (string.split("#", user)) or user
+				name = getNameFromBattleTag(user, true);
 			end
 		end
 
@@ -793,8 +810,19 @@ function History:OnWindowCreated(win)
 				local color = db.displayColors[inbound and "historyIn" or "historyOut"];
 				win.nextStamp = tmpTable[i].time;
 				win.nextStampColor = db.displayColors.historyOut;
-				win:AddMessage(applyMessageFormatting(win.widgets.chat_display, "CHAT_MSG_WHISPER", tmpTable[i].msg, inbound and name or tmpTable[i].from,
-								nil, nil, nil, nil, nil, nil, nil, nil, -i, "0x0300000000000000"), color.r, color.g, color.b);
+				win:AddMessage(
+					applyMessageFormatting(
+						win.widgets.chat_display,
+						inbound and
+							(bnId and "CHAT_MSG_BN_WHISPER" or "CHAT_MSG_WHISPER") or
+							(bnId and "CHAT_MSG_BN_WHISPER_INFORM" or "CHAT_MSG_WHISPER_INFORM"),
+						tmpTable[i].msg,
+						tmpTable[i].from,
+						nil, nil, nil, nil, nil, nil, nil, nil,
+						-i, "0x0300000000000000"
+					),
+					color.r, color.g, color.b
+				);
 			end
 			win.widgets.chat_display:AddMessage(" ");
 		end
@@ -3035,7 +3063,8 @@ local function createHistoryViewer()
                             self.delete:Hide();
                             return;
                         end
-                        self.delete:Show();
+
+						self.delete:Show();
                         if (user == UNNAMED_HISTORY_CONVO) then
                             self.user = user;
                             self.rename:Show();
@@ -3046,31 +3075,48 @@ local function createHistoryViewer()
                             end
                             return;
                         end
-                        local original, extra, color = user, "";
+
+						local original, extra, color = user, "";
                         local gmTag
                         user, gmTag = string.match(original, "([^*]+)(*?)$");
+
                         -- Rows with no class to show take no embedded color: an
                         -- escape code would override the skin's row font color
                         -- (and the selected row's), which drive the text instead.
                         -- Known classes win over that, like the chat itself.
                         color = gmTag == "*" and constants.classes[L["Game Master"]].color or historyNameColor(user);
                         if(string.match(original, "^*")) then
-                            extra = " |TInterface\\AddOns\\WIM\\Skins\\Default\\minimap.blp:20:20:0:0|t";
+							local _, fontSize = self.text:GetFont();
+                            extra = " |TInterface\\AddOns\\WIM\\Skins\\Default\\minimap.blp:"..fontSize..":"..fontSize.."|t";
                             color = "fff569";
-                        end
-                        if not user then
+						elseif (isBNConvoKey(user)) then
+							local path = "Interface\\FriendsFrame\\Battlenet-Battleneticon";
+							local _, fontSize = self.text:GetFont();
+							extra  = " |T"..path..":"..fontSize..":"..fontSize.."|t";
+						end
+
+						if not user then
                             self.user = nil;
                             self.text:SetText("");
                             self.delete:Hide();
                             return;
                         end
+
                         self.user = user;
                         local suffix = extra..(gmTag == "*" and " |TInterface\\ChatFrame\\UI-ChatIcon-Blizz.blp:0:2:0:0|t" or "");
-                        if(color) then
+
+						-- BNet Name resolution for BattleTag conversations
+						if (isBNConvoKey(user)) then
+							user = getNameFromBattleTag(user);
+                        end
+
+						-- apply color and extra icons to the display text
+						if(color) then
                             self.text:SetText("     |cff"..color..user.."|r"..suffix);
                         else
                             self.text:SetText("     "..user..suffix);
                         end
+
                         if(user == win.SELECT) then
                             self:Click();
                         end
@@ -3544,6 +3590,9 @@ local function createHistoryViewer()
                 stockHyperlinkClick(self, link, text, button);
             end
         end);
+
+	win.content.chatFrame:SetScript("OnHyperlinkEnter", ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkEnter);
+	win.content.chatFrame:SetScript("OnHyperlinkLeave", ScrollingMessageFramePlayerMenuOverlay_OnHyperlinkLeave);
 
     win.content.chatFrame.up = CreateFrame("Button", nil, win.content.chatFrame);
     win.content.chatFrame.up:SetWidth(28); win.content.chatFrame.up:SetHeight(28);
@@ -4288,8 +4337,9 @@ table.insert(ViewTypes, {
         frame = "chatFrame",
         func = function(frame, msg)
             local color;
+			local bn = isBNConvoKey(msg.convo)
             if(msg.type == 1) then
-                color = db.displayColors[msg.inbound and "wispIn" or "wispOut"];
+                color = db.displayColors[msg.inbound and (bn and "BNwispIn" or "wispIn") or (bn and "BNwispOut" or "wispOut")];
                 nextColor.r, nextColor.g, nextColor.b = color.r, color.g, color.b;
             elseif(msg.type == 2) then
                 if(msg.event == CHANNEL) then
@@ -4305,8 +4355,25 @@ table.insert(ViewTypes, {
                 -- must be 0 (the "no chat line" convention) because the
                 -- unit popup's chat-line validation errors on anything
                 -- outside the valid range when a player link is clicked.
-                frame:AddMessage(applyStringModifiers(applyMessageFormatting(frame, "CHAT_MSG_"..(msg.event or "WHISPER"), msg.msg, msg.from,
-                        nil, nil, nil, nil, 0, msg.channelName and ChannelCache[msg.channelName], msg.channelName, nil, 0, "0x0300000000000000"), frame), color.r, color.g, color.b);
+                frame:AddMessage(
+					applyStringModifiers(
+						applyMessageFormatting(
+							frame,
+							"CHAT_MSG_"..(msg.event or (bn and "BN_WHISPER" or "WHISPER")..(msg.inbound and "" or "_INFORM")),
+							msg.msg,
+							msg.from,
+							nil, nil, nil, nil,
+							0,
+							msg.channelName and ChannelCache[msg.channelName],
+							msg.channelName,
+							nil,
+							0,
+							"0x0300000000000000"
+						),
+						frame
+					),
+					color.r, color.g, color.b
+				);
         end
     });
 table.insert(ViewTypes, {
@@ -4329,9 +4396,10 @@ table.insert(ViewTypes, {
 	        text = L["BBCode"],
 	        frame = "textFrame",
 	        func = function(frame, msg)
-                    local color;
+				local color;
+				local bn = isBNConvoKey(msg.convo)
 	            if(msg.type == 1) then
-                        color = db.displayColors[msg.inbound and "wispIn" or "wispOut"];
+                        color = db.displayColors[msg.inbound and (bn and "BNwispIn" or "wispIn") or (bn and "BNwispOut" or "wispOut")];
                         nextColor.r, nextColor.g, nextColor.b = color.r, color.g, color.b;
                     elseif(msg.type == 2) then
                         if(msg.event == CHANNEL) then
@@ -4364,9 +4432,10 @@ table.insert(ViewTypes, {
 	        text = "HTML",
 	        frame = "textFrame",
 	        func = function(frame, msg)
-                    local color;
+				local color;
+				local bn = isBNConvoKey(msg.convo)
 	            if(msg.type == 1) then
-                        color = db.displayColors[msg.inbound and "wispIn" or "wispOut"];
+                        color = db.displayColors[msg.inbound and (bn and "BNwispIn" or "wispIn") or (bn and "BNwispOut" or "wispOut")];
                         nextColor.r, nextColor.g, nextColor.b = color.r, color.g, color.b;
                     elseif(msg.type == 2) then
                         if(msg.event == CHANNEL) then
@@ -4427,8 +4496,8 @@ function ShowHistoryViewer(user)
         HistoryViewer.SELECT = user;
         HistoryViewer.nav:Hide();
         HistoryViewer.nav:Show();
-        HistoryViewer.UpdateUserList();
         HistoryViewer:SelectConvo(user);
+        HistoryViewer.UpdateUserList();
         return;
     end
     HistoryViewer:Show();

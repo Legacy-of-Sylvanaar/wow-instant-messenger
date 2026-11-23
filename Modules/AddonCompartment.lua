@@ -41,7 +41,7 @@ local data = {
                 Menu:Show();
 
 				menu:HookScript("OnHide", function()
-					Menu:Hide();
+					Menu:PseudoHide();
 				end);
             end
 
