@@ -802,4 +802,6 @@ WIM.AddLocale("koKR", {
     ["Streaming Mode"] = "스트리밍 모드",
     ["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "대화하는 플레이어의 전체 이름과 배틀태그를 숨겨 개인 정보를 보호합니다.",
     ["Choose %s in the game menu."] = "게임 메뉴에서 %s 항목을 선택하세요.",
+    ["Redirect Slash Commands"] = "슬래시 명령어 리디렉션",
+    ["Redirect slash commands to the game's chat box in order to avoid certain protected actions from being blocked."] = "특정 보호된 동작이 차단되는 것을 방지하기 위해 슬래시 명령어를 게임 채팅창으로 리디렉션합니다.",
 });

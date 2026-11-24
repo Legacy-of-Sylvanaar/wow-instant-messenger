@@ -1470,11 +1470,14 @@ local function registerCategory()
     ui.Checkbox(category, L["Show WIM Tooltips"], db_defaults.showToolTips,
         db, "showToolTips",
         L["Shows help tooltips on WIM's windows, lists, and the custom rows of these options."]);
-	ui.Checkbox(category, L["Streaming Mode"], db_defaults.streamMode,
+		ui.Checkbox(category, L["Streaming Mode"], db_defaults.streamMode,
         db, "streamMode",
         L["Protect the privacy of players you chat with by hiding their full name and BattleTag."],
 		WIM.RefreshBNetWindows
 	);
+	ui.Checkbox(category, L["Redirect Slash Commands"], db_defaults.redirectSlashCommands,
+		db, "redirectSlashCommands",
+		L["Redirect slash commands to the game's chat box in order to avoid certain protected actions from being blocked."]);
 
     ui.Header(layout, L["Report a Bug"]);
     ui.Custom(layout, "WIM3SettingsBugReportTemplate",

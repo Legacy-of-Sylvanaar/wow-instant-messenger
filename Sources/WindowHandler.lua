@@ -71,6 +71,9 @@ db_defaults.displayColors = {
 -- streamer mode setting
 db_defaults.streamMode = false;
 
+-- Whether to redirect slash commands to the game's chat box.
+db_defaults.redirectSlashCommands = true;
+
 -- The input field takes the color of the chat type it sends as, like
 -- the game's own chat box. A Modern skin option, inert under other
 -- skins like the rest of the theme settings.
@@ -2800,7 +2803,7 @@ RegisterWidgetTrigger("msg_box", "whisper,w2w", "OnTabPressed", function(self)
 -- might have to add options for keyboard type selection for users not using a standard QWERTY keyboard.
 -- for example, on a German keyboard, the "/" character requires Shift + 7, so the key detection logic would need to account for that.
 RegisterWidgetTrigger("msg_box", "whisper,chat,w2w", "OnKeyDown", function(self, key)
-	if (key == "/" and not _G.IsShiftKeyDown() and self:GetText()) == "" then
+	if (key == "/" and not _G.IsShiftKeyDown() and self:GetText() == "" and db.redirectSlashCommands) then
 		local open = _G.ChatFrameUtil and _G.ChatFrameUtil.OpenChat or _G.ChatEdit_OpenChat;
 		open("/");
 		_G.C_Timer.After(0, function() self:SetText(""); end);

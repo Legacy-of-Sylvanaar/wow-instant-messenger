@@ -803,6 +803,8 @@ local translations = {
     ["Streaming Mode"] = "Modo de transmisión",
     ["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Protege la privacidad de los jugadores con los que chateas ocultando su nombre completo y BattleTag.",
     ["Choose %s in the game menu."] = "Elige %s en el menú del juego.",
+    ["Redirect Slash Commands"] = "Redirigir comandos de barra",
+    ["Redirect slash commands to the game's chat box in order to avoid certain protected actions from being blocked."] = "Redirige los comandos de barra al cuadro de chat del juego para evitar que ciertas acciones protegidas sean bloqueadas.",
 };
 
 if WIM.getLocale() == "esES" then

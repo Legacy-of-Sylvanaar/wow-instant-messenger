@@ -801,4 +801,6 @@ WIM.AddLocale("itIT", {
 	["Streaming Mode"] = "Modalità streaming",
 	["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "Proteggi la privacy dei giocatori con cui chat nascondendo il loro nome completo e BattleTag.",
 	["Choose %s in the game menu."] = "Scegli %s nel menu di gioco.",
+	["Redirect Slash Commands"] = "Reindirizza i comandi slash",
+	["Redirect slash commands to the game's chat box in order to avoid certain protected actions from being blocked."] = "Reindirizza i comandi slash alla chat di gioco per evitare che alcune azioni protette vengano bloccate.",
 });
