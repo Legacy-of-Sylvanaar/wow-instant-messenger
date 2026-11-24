@@ -23,6 +23,7 @@ local string = string;
 local IsShiftKeyDown = IsShiftKeyDown;
 local select = select;
 local pairs = pairs;
+local ipairs = ipairs;
 local type = type;
 local tostring = tostring;
 local unpack = unpack;
@@ -249,7 +250,12 @@ local FormattingCalls = {}; -- functions which are passed events to be formatted
 
 local StringModifiers = {}; -- registered functions which will be used to format the message part of the string.
 
-local editBoxSlug = { Deactivate = function () end, Hide = function () end };
+-- EditBox Slug Functions - used to mimic an EditBox in case something else is trying to modify the default chat frame while WIM is utilizing it.
+local editBoxSlug = {};
+local _slugs = { "Deactivate", "Hide", "SetAlpha", "EnableMouse" };
+for _, slug in ipairs(_slugs) do
+	editBoxSlug[slug] = function() end
+end
 
 -- Window's Parent (Container for all Windows)
 WindowParent = _G.CreateFrame("Frame", "WIM_UIParent", _G.UIParent);
