@@ -1680,34 +1680,6 @@ RegisterModernPage(function(category, ui)
             L["Shows the row of shortcut buttons on message windows. Turning this off takes effect after the next interface reload."],
             function(value) EnableModule("ShortcutBar", value); end);
 
-		-- -- modern-only skin theming note
-		-- local themingNoteHolder;
-        -- local function ensureThemingNote()
-        --     if (not themingNoteHolder) then
-        --         local noteHolder = CreateFrame("Frame");
-        --         noteHolder:Hide();
-        --         local text = noteHolder:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
-        --         text:SetPoint("TOPLEFT", 37, -8);
-        --         text:SetPoint("TOPRIGHT", -37, -8);
-        --         text:SetJustifyH("LEFT");
-        --         text:SetSpacing(3);
-        --         text:SetTextColor(.8, .8, .8);
-        --         text:SetText(L["These settings style WIM's modern-only skins (such as WIM Modern), which are built from the game's own interface art. They are available while a modern-only skin is selected on the Skin page; with a classic skin active they are greyed out."]);
-        --         noteHolder.text = text;
-        --         themingNoteHolder = noteHolder;
-        --     end
-        --     return themingNoteHolder;
-        -- end
-        -- ui.Custom(layout, "WIM3SettingsNoteTemplate", {
-        --     onInit = options.HolderRowInit(ensureThemingNote),
-        --     -- Measured from the localized text; the template height
-        --     -- clipped longer translations.
-        --     getExtent = function()
-        --         local width = (options.SettingsListWidth and options.SettingsListWidth() or 600) - 74;
-        --         return 16 + math.ceil(options.WrappedHeight(ensureThemingNote().text, width));
-        --     end,
-        -- });
-
 		local function backgroundItems()
             local items = {};
             local list = GetChromeBackgrounds and GetChromeBackgrounds() or {};

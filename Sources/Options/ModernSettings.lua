@@ -35,26 +35,23 @@ setfenv(1, WIM);
 -- ---------------------------------------------------------------------------
 
 -- Define custom vertical layout using canvas.
+local USE_CUSTOM_LAYOUT = true;
 
-local wimLayoutFrameIndex = 0;
+local wimLayoutFrame;
 local createWIMLayoutFrame = function (options)
-	if options then
-		assert(type(options) == "table", "options must be a table");
+	if wimLayoutFrame then
+		return wimLayoutFrame;
 	end
 
-	options = options or {};
+	local frame = CreateFrame("Frame", "WIM3SettingsLayoutFrame", _G.UIParent, "SettingsListTemplate");
 
-	wimLayoutFrameIndex = wimLayoutFrameIndex + 1;
-
-	local frame = CreateFrame("Frame", "WIM3SettingsLayoutFrame"..wimLayoutFrameIndex, _G.UIParent, "SettingsListTemplate");
-
-	frame.Header.Title:SetText(options.title);
-	frame.Header.DefaultsButton:SetText(_G.DEFAULTS);
+	frame.isWIMLayoutFrame = true;
+	wimLayoutFrame = frame;
 
 	-- -- debug texture
-	frame.bg = frame:CreateTexture(nil, "BACKGROUND");
-	frame.bg:SetAllPoints(frame);
-	frame.bg:SetColorTexture(1, 0, 1, 0.5); -- testing background
+	-- frame.bg = frame:CreateTexture(nil, "BACKGROUND");
+	-- frame.bg:SetAllPoints(frame);
+	-- frame.bg:SetColorTexture(1, 0, 1, 0.5); -- testing background
 
 	return frame;
 end
@@ -65,6 +62,25 @@ do
 		_G.SettingsLayoutMixin.Init(self, _G.SettingsLayoutMixin.LayoutType.Canvas)
 
 		self.initializers = {};
+
+		_G.hooksecurefunc(_G.SettingsPanel, "DisplayLayout", function(settingsPanel, layout)
+			if layout == self._layout then
+				-- setup frame for layout
+				self.frame.Header.Title:SetText(self._options.title);
+				self.frame.Header.DefaultsButton:SetText(_G.DEFAULTS);
+
+				self.frame:Display(self:GetInitializers());
+			end
+		end);
+
+		_G.hooksecurefunc(_G.SettingsPanel, "RepairDisplay", function(settingsPanel)
+			local layout = settingsPanel.currentLayout;
+			if layout == self._layout then
+				self.frame:RepairDisplay(self);
+				utils.debug.dump("RepairDisplay for WIM layout");
+			end
+		end);
+
 	end
 
 	function WIMVerticalLayoutMixin:GetInitializers()
@@ -91,7 +107,7 @@ do
 	end
 
 	function WIMVerticalLayoutMixin:EnumerateInitializers()
-		local iterator, tbl, index = _G.next, self.initializers, nil;
+		local iterator, tbl, index = _G.next, self:GetInitializers(), nil;
 		local function Iterator(_, index)
 			return iterator(tbl, index);
 		end
@@ -101,7 +117,7 @@ do
 end
 
 
-function options.RegisterWIMLayoutCategory(name, options)
+local function RegisterWIMLayoutCategory(name, options)
 	if options then
 		assert(type(options) == "table", "options must be a table");
 	end
@@ -112,13 +128,18 @@ function options.RegisterWIMLayoutCategory(name, options)
 	local frame = createWIMLayoutFrame(options);
 	local category, layout = Settings.RegisterCanvasLayoutCategory(frame, name);
 
-	Mixin(layout, WIMVerticalLayoutMixin);
-	layout:Init();
+	local mixin = Mixin({_layout = layout, _options = options}, WIMVerticalLayoutMixin);
+	_G.setmetatable(mixin, { __index = layout });
 
-	return category, layout;
+	local cat = { _category = category, GetLayout = function() return mixin; end }
+	_G.setmetatable(cat, { __index = category });
+
+	mixin:Init();
+
+	return cat, mixin;
 end
 
-function options.RegisterWIMLayoutSubcategory(category, name, options)
+local function RegisterWIMLayoutSubcategory(category, name, options)
 	if options then
 		assert(type(options) == "table", "options must be a table");
 	end
@@ -129,10 +150,31 @@ function options.RegisterWIMLayoutSubcategory(category, name, options)
 	local frame = createWIMLayoutFrame(options);
 	local category, layout = Settings.RegisterCanvasLayoutSubcategory(category, frame, name);
 
-	Mixin(layout, WIMVerticalLayoutMixin);
-	layout:Init();
+	local mixin = Mixin({_layout = layout, _options = options}, WIMVerticalLayoutMixin);
+	_G.setmetatable(mixin, { __index = layout });
 
-	return category, layout;
+	local cat = { _category = category, GetLayout = function() return mixin; end }
+	_G.setmetatable(cat, { __index = category });
+
+	mixin:Init();
+
+	return cat, mixin;
+end
+
+local function RegisterLayoutCategory(name, options)
+	if USE_CUSTOM_LAYOUT then
+		return RegisterWIMLayoutCategory(name, options);
+	else
+		return Settings.RegisterVerticalLayoutCategory(name);
+	end
+end
+
+local function RegisterLayoutSubcategory(category, name, options)
+	if USE_CUSTOM_LAYOUT then
+		return RegisterWIMLayoutSubcategory(category, name, options);
+	else
+		return Settings.RegisterVerticalLayoutSubcategory(category, name);
+	end
 end
 
 options.categoryMap = options.categoryMap or {};
@@ -289,7 +331,7 @@ end
 local subcategoryRecords = {};
 
 function ui.Subcategory(parentCategory, name, description)
-    local category, layout = Settings.RegisterVerticalLayoutSubcategory(parentCategory, name);
+    local category, layout = RegisterLayoutSubcategory(parentCategory, name);
     table.insert(subcategoryRecords, {
         parent = parentCategory,
         category = category,
@@ -359,7 +401,14 @@ function ui.Checkbox(category, name, default, dbTree, varName, tooltip, valChang
             if (valChanged) then valChanged(value); end
         end);
     table.insert(allSettings, setting);
-    local init = Settings.CreateCheckbox(category, setting, tooltip);
+
+	local init;
+	if (USE_CUSTOM_LAYOUT) then
+		init = Settings.CreateControlInitializer("SettingsCheckboxControlTemplate", setting, nil, tooltip);
+		category:GetLayout():AddInitializer(init);
+	else
+		init = Settings.CreateCheckbox(category, setting, tooltip);
+	end
     return { setting = setting, init = init };
 end
 
@@ -368,50 +417,23 @@ end
 -- predicate overrides the default rule, "enabled while parent is
 -- checked".
 function ui.DependsOn(child, parent, predicate)
-		child.init:Indent();
+	child.init:Indent();
 
-		child.init:AddModifyPredicate(predicate or function()
-			return parent.setting:GetValue() == true;
-		end);
-		Settings.SetOnValueChangedCallback(parent.setting:GetVariable(), function(_setting, _value)
-			if child.frame then
-				child.frame:EvaluateState();
-			end
-		end)
-
-		_G.hooksecurefunc(_G.SettingsListElementMixin, "Init", function(frame, initializer)
-			if initializer == child.init then
-				child.frame = frame;
-				frame.Text:SetFontObject("GameFontNormalSmall");
-			end
-		end)
-end
-
-local function createElementInitializer(layout, template, data)
-	local initializer = _G.CreateFromMixins(_G.SettingsListElementInitializer)
-
-	function initializer:IsParentInitializerInLayout()
-	local parentInitializer = self:GetParentInitializer();
-	if not parentInitializer then
-		return false;
-	end
-
-	local currentLayout = layout;
-	if not currentLayout then
-		return false;
-	end
-
-	for _, initializer in currentLayout:EnumerateInitializers() do
-		if initializer == parentInitializer then
-			return true;
+	child.init:AddModifyPredicate(predicate or function()
+		return parent.setting:GetValue() == true;
+	end);
+	Settings.SetOnValueChangedCallback(parent.setting:GetVariable(), function(_setting, _value)
+		if child.frame then
+			child.frame:EvaluateState();
 		end
-	end
+	end)
 
-	return false;
-end
-
-	initializer:Init(template, data);
-	return initializer;
+	_G.hooksecurefunc(_G.SettingsListElementMixin, "Init", function(frame, initializer)
+		if initializer == child.init then
+			child.frame = frame;
+			frame.Text:SetFontObject("GameFontNormalSmall");
+		end
+	end)
 end
 
 -- A custom element row inside a vertical layout page, created from one
@@ -430,16 +452,17 @@ function ui.Custom(layout, template, data)
     if (data and data.panel and Settings.CreatePanelInitializer) then
         init = Settings.CreatePanelInitializer(template, data);
     else
-        init = createElementInitializer(layout, template, data);
+        -- init = createElementInitializer(layout, template, data);
+        init = Settings.CreateElementInitializer(template, data);
     end
 
     -- COMMENTED OUT: This causes taint issues.
 	if (data and data.getExtent) then
         -- Measured at display time, so rows sized by localized text ask
         -- for the height that text actually needs.
-        -- init.GetExtent = data.getExtent;
+        init.GetExtent = data.getExtent;
     elseif (data and data.extent) then
-        -- init.GetExtent = function() return data.extent; end;
+        init.GetExtent = function() return data.extent; end;
     end
 
     -- Custom rows have no setting name for the search to index, so
@@ -739,7 +762,15 @@ function ui.Slider(category, name, default, minValue, maxValue, step, dbTree, va
     local sliderOptions = Settings.CreateSliderOptions(minValue, maxValue, step);
     sliderOptions:SetLabelFormatter(_G.MinimalSliderWithSteppersMixin.Label.Right,
         label or function(value) return tostring(value); end);
-    local init = Settings.CreateSlider(category, setting, sliderOptions, tooltip);
+
+	local init;
+	if (USE_CUSTOM_LAYOUT) then
+		init = Settings.CreateSliderInitializer(setting, sliderOptions, tooltip);
+		category:GetLayout():AddInitializer(init);
+	else
+		init = Settings.CreateSlider(category, setting, sliderOptions, tooltip);
+	end
+
     return { setting = setting, init = init };
 end
 
@@ -771,7 +802,15 @@ function ui.Dropdown(category, name, default, items, dbTree, varName, tooltip, v
         end
         return container:GetData();
     end
-    local init = Settings.CreateDropdown(category, setting, getOptions, tooltip);
+
+	local init;
+	if (USE_CUSTOM_LAYOUT) then
+		init = Settings.CreateDropdownInitializer(setting, getOptions, tooltip);
+		category:GetLayout():AddInitializer(init);
+	else
+		init = Settings.CreateDropdown(category, setting, getOptions, tooltip);
+	end
+
     return { setting = setting, init = init };
 end
 
@@ -972,7 +1011,7 @@ function ui.SoundDropdown(category, name, default, items, dbTree, varName, toolt
     if (init.AddSearchTags) then
         init:AddSearchTags(name);
     end
-    local layout = layoutForCategory(category);
+    local layout = USE_CUSTOM_LAYOUT and category:GetLayout() or layoutForCategory(category);
     if (layout) then
         layout:AddInitializer(init);
     end
@@ -1044,7 +1083,7 @@ function ui.SoundRow(category, name, tooltip, dbTree, flagKey, flagDefault, soun
     if (init.AddSearchTags) then
         init:AddSearchTags(name, L["Sound"]);
     end
-    local layout = layoutForCategory(category);
+    local layout =  USE_CUSTOM_LAYOUT and category:GetLayout() or layoutForCategory(category);
     if (layout) then
         layout:AddInitializer(init);
     end
@@ -1082,7 +1121,7 @@ function ui.SliderRow(category, name, tooltip, dbTree, enableKey, default, slide
 	local initializer = _G.CreateSettingsCheckboxSliderInitializer(
 		useSlider, name, tooltip,
 		sliderValue, options, sliderName, sliderTooltip);
-	local layout = layoutForCategory(category);
+	local layout = USE_CUSTOM_LAYOUT and category:GetLayout() or layoutForCategory(category);
 	if (layout) then
 		layout:AddInitializer(initializer);
 	end;
@@ -1142,7 +1181,16 @@ function ui.MultiDropdown(category, name, items, dbTree, varName, tooltip, noneT
         end
         return container:GetData();
     end
-    local init = Settings.CreateDropdown(category, setting, getOptions, tooltip);
+
+	local init;
+	if (USE_CUSTOM_LAYOUT) then
+		init = Settings.CreateDropdownInitializer(setting, getOptions, tooltip);
+		category:GetLayout():AddInitializer(init);
+	else
+		init = Settings.CreateDropdown(category, setting, getOptions, tooltip);
+	end
+
+
     -- Nothing selected reads as its own state; otherwise nil defers
     -- to the control's standard selection-listing text.
     init.getSelectionTextFunc = function(selections)
@@ -1166,7 +1214,15 @@ function ui.CustomCheckbox(category, name, default, getFunc, setFunc, tooltip)
             options.DebugSetting("modern", name, value);
         end);
     table.insert(allSettings, setting);
-    local init = Settings.CreateCheckbox(category, setting, tooltip);
+
+	local init;
+	if (USE_CUSTOM_LAYOUT) then
+		init = Settings.CreateCheckboxInitializer(setting, tooltip);
+		category:GetLayout():AddInitializer(init);
+	else
+		init = Settings.CreateCheckbox(category, setting, tooltip);
+	end
+
     return { setting = setting, init = init };
 end
 
@@ -1207,14 +1263,22 @@ function ui.CustomDropdown(category, name, default, items, getFunc, setFunc, too
         end
         return container:GetData();
     end
-    local init = Settings.CreateDropdown(category, setting, getOptions, tooltip);
+
+	local init;
+	if (USE_CUSTOM_LAYOUT) then
+		init = Settings.CreateDropdownInitializer(setting, getOptions, tooltip);
+		category:GetLayout():AddInitializer(init);
+	else
+		init = Settings.CreateDropdown(category, setting, getOptions, tooltip);
+	end
+
     return { setting = setting, init = init };
 end
 
 -- Synonym search tags on any adapter-made control.
 function ui.Tags(control, ...)
     if (control and control.init and control.init.AddSearchTags) then
-        control.init:AddSearchTags(...);
+        -- control.init:AddSearchTags(...);
     end
     return control;
 end
@@ -1320,7 +1384,7 @@ function ui.Expandable(layout, name, tooltip, nested, homeCategory)
     section.Add = function(control)
         local init = control and (control.init or control);
         if (init and init.AddShownPredicate) then
-            -- init:AddShownPredicate(section.IsExpanded);
+            init:AddShownPredicate(section.IsExpanded);
         end
         return control;
     end;
@@ -1402,10 +1466,6 @@ local function ensureBugReportHolder()
             _G.GameTooltip:Hide();
         end);
 
-		local bodyHeight = options.WrappedHeight(body, settingsListWidth() - 74 - (inset + 44) - inset);
-		local height = (inset + 4) + title:GetStringHeight() + 4 + bodyHeight + 8 + 24 + (inset - 4) + 8;
-		holder:SetHeight(height);
-
         holder.wimTitle = title;
         holder.wimBody = body;
         bugReportHolder = holder;
@@ -1455,8 +1515,6 @@ local function ensureCreditsHolder()
         thanksText:SetPoint("RIGHT", -37, 0);
         thanksText:SetJustifyH("LEFT");
         thanksText:SetText(creditsText[2] or "");
-
-		holder:SetHeight(800);
 
         holder.wimCreated = created;
         holder.wimCreatedText = createdText;
@@ -1526,9 +1584,9 @@ local function mirrorSectionInto(parentRec, rec)
     -- searchable (a hit reads "Folder (WIM)" and opens the folder).
     for i = 1, #inits do
         local init = inits[i];
-        -- parentRec.layout:AddInitializer(init);
+        parentRec.layout:AddInitializer(init);
         if (init.AddShownPredicate) then
-            -- init:AddShownPredicate(shouldShow);
+            init:AddShownPredicate(shouldShow);
         end
     end
     if (folderID) then
@@ -1576,7 +1634,7 @@ local function mirrorFolderSections(rootCategory)
         if (rec.parent ~= rootCategory) then
             for j = 1, #subcategoryRecords do
                 if (subcategoryRecords[j].category == rec.parent) then
-                    -- mirrorSectionInto(subcategoryRecords[j], rec);
+                    mirrorSectionInto(subcategoryRecords[j], rec);
                     break;
                 end
             end
@@ -1587,14 +1645,12 @@ end
 local function registerCategory()
     MigrateOptions();
 
-    local category, layout = Settings.RegisterVerticalLayoutCategory("WIM");
+    local category, layout = RegisterLayoutCategory("WIM", options);
     options.modernCategory = category;
     options.modernCategoryID = category:GetID();
     CategoryMap["Main"] = category:GetID();
 
-	_G.test = category;
-
-	-- set tutorial info
+	-- -- set tutorial info
 	category:SetCategoryTutorialInfo(L["Version"]..": "..GetDisplayVersion());
 
     ui.Checkbox(category, L["Enable WIM"], true, db, "enabled", nil,
@@ -1642,62 +1698,20 @@ local function registerCategory()
 
 	ui.Header(layout, L["Credits"]);
     ui.Custom(layout, "WIM3SettingsCreditsTemplate",
-        { onInit = creditsRowInit, extent = 500, sgetExtent = creditsExtent });
+        { onInit = creditsRowInit, getExtent = creditsExtent });
 
     -- -- Build the option pages (Sources/Options/ModernOptions.lua).
-    for i = 1, _G.math.min(#pageBuilders, 0) do
+    for i = 1, _G.math.min(#pageBuilders, 20) do
         pageBuilders[i](category, ui);
     end
 
     mirrorFolderSections(category);
-    -- watchSearchNavigation();
+    watchSearchNavigation();
 
-    Settings.RegisterAddOnCategory(category);
+    Settings.RegisterAddOnCategory(USE_CUSTOM_LAYOUT and category._category or category);
 
     dPrint("Modern Settings category registered (id "..tostring(options.modernCategoryID)..").");
 end
-
-
-
-
-
-
-
-
-local function sandbox ()
-
-	-- addon category
-
-
-	local category, layout = options.RegisterWIMLayoutCategory("WIM Sandbox");
-	-- _G.test = layout
-
-	ui.Custom(layout, "WIM3SettingsBugReportTemplate",
-        { onInit = bugReportRowInit, getExtent = bugReportExtent });
-
-	-- ui.Checkbox(category, L["Enable WIM"], true, db, "enabled", nil,
-    --     function(value) SetEnabled(value); end);
-
-	-- sub category
-	do
-		local category, layout = options.RegisterWIMLayoutSubcategory(category, "Sub 1");
-
-		local sub1, sub1Layout = options.RegisterWIMLayoutSubcategory(category, "Sub 1.1");
-		local sub1_2, sub1_2Layout = options.RegisterWIMLayoutSubcategory(category, "Sub 1.2");
-	end
-
-	Settings.RegisterAddOnCategory(category);
-
-end
-
-
-
-
-
-
-
-
-
 
 
 -- Register once saved variables are loaded. Registration itself does not
@@ -1715,6 +1729,5 @@ frame:SetScript("OnEvent", function(self, event)
         return;
     end
     registerCategory();
-	sandbox();
 end);
 
