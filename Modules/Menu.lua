@@ -49,65 +49,71 @@ local visibleWindows = {};
 local BLIP_CLEAR = "Interface\\AddOns\\"..addonTocName.."\\Sources\\Options\\Textures\\blipClear";
 
 local function getPointRelativeToUIParent (point, owner, relPoint, x, y)
-		-- Convert the given point from owner frame's coordinate system to UIParent
-		-- so the position persists even after the owner is destroyed
-		if not owner then
-			return point, UIParent, relPoint, x, y
-		end
-
-		-- Get owner's frame boundaries
-		local ownerLeft = owner:GetLeft()
-		local ownerBottom = owner:GetBottom()
-		if not ownerLeft or not ownerBottom then
-			return point, UIParent, relPoint, x, y
-		end
-
-		local ownerWidth = owner:GetWidth()
-		local ownerHeight = owner:GetHeight()
-
-		-- Calculate the anchor point's absolute screen position
-		local absX, absY = ownerLeft, ownerBottom
-
-		-- Adjust based on relPoint
-		if relPoint:find("RIGHT") then
-			absX = absX + ownerWidth
-		elseif relPoint:find("CENTER") or not relPoint:find("LEFT") and not relPoint:find("RIGHT") then
-			absX = absX + ownerWidth / 2
-		end
-
-		if relPoint:find("TOP") then
-			absY = absY + ownerHeight
-		elseif not relPoint:find("BOTTOM") and not relPoint:find("TOP") then
-			absY = absY + ownerHeight / 2
-		end
-
-		-- Apply offsets
-		absX = absX + (x or 0)
-		absY = absY + (y or 0)
-
-		-- Convert to UIParent-relative coordinates
-		local uiLeft = UIParent:GetLeft()
-		local uiBottom = UIParent:GetBottom()
-		local uiWidth = UIParent:GetWidth()
-		local uiHeight = UIParent:GetHeight()
-
-		-- Calculate UIParent-relative position based on the target point
-		local relX, relY = absX - uiLeft, absY - uiBottom
-
-		if point:find("RIGHT") then
-			relX = relX - uiWidth
-		elseif point:find("CENTER") or not point:find("LEFT") and not point:find("RIGHT") then
-			relX = relX - uiWidth / 2
-		end
-
-		if point:find("TOP") then
-			relY = relY - uiHeight
-		elseif not point:find("BOTTOM") and not point:find("TOP") then
-			relY = relY - uiHeight / 2
-		end
-
-		return point, UIParent, point, relX, relY
+	-- Convert the given point from owner frame's coordinate system to UIParent
+	-- so the position persists even after the owner is destroyed
+	if not owner then
+		return point, UIParent, relPoint, x, y
 	end
+
+	x = x or 0
+	y = y or 0
+
+	-- Fallback if owner is nil, already UIParent, or has no valid screen rect
+	if not owner or owner == UIParent then
+		return point, UIParent, relPoint, x, y
+	end
+
+	local left, right, top, bottom = owner:GetLeft(), owner:GetRight(), owner:GetTop(), owner:GetBottom()
+	if not (left and right and top and bottom) then
+		-- Owner isn't laid out/visible yet; fall back to default center anchor or original args
+		return point, owner, relPoint, x, y
+	end
+
+	-- 1. Find the exact position of `relPoint` on `owner` (in owner's local coordinate space)
+	local anchorX, anchorY
+	if relPoint:find("LEFT") then
+		anchorX = left
+	elseif relPoint:find("RIGHT") then
+		anchorX = right
+	else
+		anchorX = (left + right) / 2
+	end
+
+	if relPoint:find("TOP") then
+		anchorY = top
+	elseif relPoint:find("BOTTOM") then
+		anchorY = bottom
+	else
+		anchorY = (top + bottom) / 2
+	end
+
+	-- 2. Apply the (x, y) offset in the owner's coordinate space, then convert to UIParent's scale
+	local scaleRatio = owner:GetEffectiveScale() / UIParent:GetEffectiveScale()
+	local screenX = (anchorX + x) * scaleRatio
+	local screenY = (anchorY + y) * scaleRatio
+
+	-- 3. Express that exact screen coordinate relative to the same `relPoint` on UIParent
+	local uiWidth, uiHeight = UIParent:GetWidth(), UIParent:GetHeight()
+	local offsetX, offsetY
+
+	if relPoint:find("LEFT") then
+		offsetX = screenX
+	elseif relPoint:find("RIGHT") then
+		offsetX = screenX - uiWidth
+	else
+		offsetX = screenX - (uiWidth / 2)
+	end
+
+	if relPoint:find("TOP") then
+		offsetY = screenY - uiHeight
+	elseif relPoint:find("BOTTOM") then
+		offsetY = screenY
+	else
+		offsetY = screenY - (uiHeight / 2)
+	end
+
+	return point, UIParent, relPoint, offsetX, offsetY
+end
 
 -- strip the realm from a name so it compares the same written either way.
 local function realmKey(realm)
@@ -434,7 +440,11 @@ local function lastChatTime(win)
 end
 
 local function sortRanked(a, b)
-    return a.time > b.time;
+    if(a.time ~= b.time) then
+        return a.time > b.time;
+    end
+    -- time is in whole seconds: within one second, the window used last comes first.
+    return (a.win and a.win.lastActivity or 0) > (b.win and b.win.lastActivity or 0);
 end
 
 -- The Whispers list rules. Open windows and history entries are ranked together by when
@@ -536,7 +546,7 @@ local function sortWindows(a, b)
     if(db and db.menuSortActivity) then
         return a.lastActivity > b.lastActivity;
     else
-        return string.lower(a.theUser) < string.lower(b.theUser);
+        return a.wimMenuSortName < b.wimMenuSortName;
     end
 end
 
@@ -1014,6 +1024,10 @@ local function createGroup(title, list, maxButtons, showNone, showHeader)
         end
         -- the Whispers section shows only the windows that pass the list rules.
         local list = self.displayList or self.list;
+        -- lower-case each name once here, not twice in every comparison.
+        for i=1, #list do
+            list[i].wimMenuSortName = string.lower(list[i].theUser);
+        end
         table.sort(list, sortWindows);
         local extra = self.extra;
         local total = #list + (extra and #extra or 0);
@@ -1361,11 +1375,19 @@ local function createMenu()
 end
 
 
+-- A refresh sorts every window made this session. The menu refreshes itself
+-- when it opens (OnShow), so while it is closed a window change needs none.
+local function refreshIfShown()
+    if(WIM.Menu and WIM.Menu:IsShown()) then
+        WIM.Menu:Refresh();
+    end
+end
+
 function Menu:OnWindowCreated(obj)
     -- add obj to specified list & Update
     if(obj.type == "whisper" or obj.type == "chat") then
         utils.table.addToTableUnique(lists[obj.type], obj);
-        WIM.Menu:Refresh();
+        refreshIfShown();
     end
 end
 
@@ -1374,14 +1396,14 @@ function Menu:OnWindowDestroyed(obj)
     obj.widgets.close.forceShift = nil;
     if(obj.type == "whisper" or obj.type == "chat") then
         utils.table.removeFromTable(lists[obj.type], obj);
-        WIM.Menu:Refresh();
+        refreshIfShown();
     end
 end
 
 function Menu:OnWindowPopped(obj)
     -- check status of obj to specified list & Update
     if(obj.type == "whisper" or obj.type == "chat") then
-        WIM.Menu:Refresh();
+        refreshIfShown();
     end
 end
 

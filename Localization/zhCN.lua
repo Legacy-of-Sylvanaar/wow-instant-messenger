@@ -803,4 +803,6 @@ WIM.AddLocale("zhCN", {
     ["Streaming Mode"] = "流媒体模式",
     ["Protect the privacy of players you chat with by hiding their full name and BattleTag."] = "通过隐藏玩家的全名和战网昵称来保护你聊天对象的隐私。",
     ["Choose %s in the game menu."] = "请在游戏菜单中选择“%s”。",
+    ["Redirect Slash Commands"] = "重定向斜杠命令",
+    ["Redirect slash commands to the game's chat box in order to avoid certain protected actions from being blocked."] = "将斜杠命令重定向到游戏聊天框，以避免某些受保护的操作被阻止。",
 });
