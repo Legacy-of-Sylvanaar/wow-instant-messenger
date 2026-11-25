@@ -35,6 +35,7 @@ do
 
 		GameDialogMixin.OnShow(self);
 		_G.C_Timer.After(0, function()
+			self.CoverFrame:SetFrameLevel(self:GetFrameLevel() - 1);
 			AddEscapeWindow(self);
 		end);
 	end
