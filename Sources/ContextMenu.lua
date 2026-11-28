@@ -130,8 +130,7 @@ end
 
 -- Renders a registered menu tree through the game's Menu API instead
 -- of LibDropDownMenu, drawing the chamfered context-menu frame current
--- right-click menus use. Chosen by PopContextMenu when the selected
--- skin asks for it (skin.menu.style == "context").
+-- right-click menus use.
 local function describeItems(menu, description)
     local items = menu.menuTable;
     if(not items) then return; end
@@ -206,8 +205,8 @@ function PopContextMenu(tag, parent)
             WIM.Menu:Hide();
         end
         local skin = GetSelectedSkin and GetSelectedSkin();
-        if(skin and skin.menu and skin.menu.style == "context"
-                and _G.MenuUtil and _G.MenuUtil.CreateContextMenu) then
+        local useNativeMenu = tag == "MENU_MINIMAP" or (skin and skin.menu and skin.menu.style == "context");
+        if(useNativeMenu and _G.MenuUtil and _G.MenuUtil.CreateContextMenu) then
             DDM.CloseDropDownMenus();
             local owner = parent;
             if(type(owner) == "string") then owner = _G[owner]; end
