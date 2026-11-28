@@ -16,6 +16,8 @@ end
 -- Standard gold UI label color, for the panel title and section headers.
 local goldR, goldG, goldB = GameFontNormal:GetTextColor();
 
+WIM.utils.skin.registerAtlasFallback("friends-icon-addFriend", { path = "Interface\\Icons\\ACHIEVEMENT_REPUTATION_01" });
+
 --Default window skin
 local WIM_ClassicSkin = {
 	title = "WIM Classic",
@@ -259,8 +261,8 @@ local WIM_ClassicSkin = {
                         location = "Interface\\Icons\\Ability_TownWatch",
                         invite = "Interface\\Icons\\INV_Misc_GroupNeedMore",
                         guild = "Interface\\Icons\\INV_Shirt_GuildTabard_01",
-                        friend = "Interface\\Icons\\ACHIEVEMENT_REPUTATION_01",
-                        ignore = "Interface\\Icons\\Spell_Holy_Silence",
+                        friend = "friends-icon-addFriend",
+                        ignore = "Interface\\Buttons\\UI-GroupLoot-Pass-Up",
                         rpprofile = "Interface\\Icons\\INV_Misc_Book_09",
                     }
                 }

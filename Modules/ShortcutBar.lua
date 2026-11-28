@@ -166,7 +166,12 @@ local function createShortCutBar(win)
 				self.buttons[i]:SetNormalTexture(skin.buttons.NormalTexture);
 				self.buttons[i]:SetPushedTexture(skin.buttons.PushedTexture);
 				self.buttons[i]:SetHighlightTexture(skin.buttons.HighlightTexture, skin.buttons.HighlightAlphaMode);
-				self.buttons[i].icon:SetTexture(skin.buttons.icons[buttons[i].id] or "Interface\\Icons\\INV_Misc_QuestionMark");
+				local icon = skin.buttons.icons[buttons[i].id] or "Interface\\Icons\\INV_Misc_QuestionMark";
+				if type(icon) == "number" then
+					self.buttons[i].icon:SetTexture(icon);
+				else
+					utils.skin.applyTexture(self.buttons[i].icon, icon);
+				end
 			end
 			self:UpdateButtons();
 		end
@@ -509,7 +514,13 @@ end
 
 RegisterShortcut("friend", L["Add Friend"], {
 	OnClick = function(self)
-		_G.C_FriendList.AddFriend(self.parentWindow.theUser);
+		local name = self.parentWindow.theUser;
+		local battleNet = _G.C_BattleNet;
+		if battleNet and battleNet.AreTitleFriendsEnabled and battleNet.AreTitleFriendsEnabled() then
+			battleNet.SendTitleFriendInviteByName(name);
+		else
+			_G.C_FriendList.AddFriend(name);
+		end
 	end,
 	SetDefaults = function(self)
 		-- only this window's button: the friend list has not changed, and
